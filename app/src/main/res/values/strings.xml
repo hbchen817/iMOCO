@@ -1,0 +1,202 @@
+<resources>
+    <string name="app_name">莫科智家</string>
+    <string name="contentDescription_null"></string>
+    <string name="app_ver">1.0.0</string>
+
+    <string name="main_home">我的家</string>
+    <string name="main_home_description">%s共有%d个房间</string>
+    <string name="main_device_description">共有%d个设备, 其中%d个在线</string>
+    <string name="main_device">设备</string>
+    <string name="main_room">房间</string>
+    <string name="main_share">分享</string>
+    <string name="main_onekeyscene">一键执行场景</string>
+    <string name="main_scenename">场景名称</string>
+
+    <string name="scene_scene">场景</string>
+    <string name="scene_my">我的</string>
+
+    <string name="dialog_title">系统提示</string>
+    <string name="dialog_confirm">确认</string>
+    <string name="dialog_send">命令发送成功</string>
+    <string name="dialog_ok">确认</string>
+    <string name="dialog_yes">是</string>
+    <string name="dialog_no">否</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_unbind">你真的要解绑定当前设备吗？</string>
+    <string name="dialog_unbind_ok">当前设备已经解除绑定。</string>
+    <string name="dialog_unlogin">系统没有登录，请先登录。</string>
+
+    <string name="longconnection_disconnected">与服务器连接断开,不能发送命令。</string>
+
+    <string name="connection_status_unable">未激活</string>
+    <string name="connection_status_online">在线</string>
+    <string name="connection_status_offline">离线</string>
+    <string name="connection_status_prohibit">禁用</string>
+
+    <string name="add_status_success">添加成功</string>
+    <string name="add_status_otherbind">子设备已被其它网关绑定</string>
+    <string name="add_status_fail">子设备注册失败</string>
+    <string name="add_status_logout">注销</string>
+
+    <string name="homespace_defaulthome">我的家</string>
+
+    <string name="api_commitfailure">调用接口[%s]失败! %s</string>
+    <string name="api_responseerror">调用接口[%s]成功, 但是响应发生错误! %s</string>
+
+    <string name="login_success">System login succeeded</string>
+    <string name="login_failed">System login failed</string>
+    <string name="logout_success">System logout succeeded</string>
+    <string name="logout_failed">System logout failed</string>
+
+    <string name="login_inputusername">请录入用户名称</string>
+    <string name="login_inputpassword">请录入用户密码</string>
+    <string name="login_login">登录</string>
+    <string name="login_register">注册</string>
+    <string name="login_forgetpassword">忘记密码?</string>
+
+    <string name="configproduct_title">请选择要添加的产品</string>
+    <string name="configproduct_productname">产品名称</string>
+    <string name="configproduct_productkey">产品Key</string>
+    <string name="configproduct_notproducthint">没有可供添加的产品设备，请到管理后台先配置好再执行添加。</string>
+    <string name="configproduct_gateofflinehint">网关不在线，不能添加子设备。</string>
+
+    <string name="productguidance_title">添加产品引导</string>
+    <string name="productguidance_opearte">配网操作</string>
+
+    <string name="wifi_title">请选择WiFi</string>
+    <string name="wifi_name">SSID</string>
+    <string name="wifi_description">信号强度: %ddBm</string>
+
+    <string name="ble_name">设备名称</string>
+    <string name="ble_address">设备MAC地址</string>
+    <string name="ble_send_failed_hint">发送数据失败，可能蓝牙设备已经断开了。</string>
+
+    <string name="include_title">标题</string>
+
+    <string name="scanble_bleeror_hint">系统不支持蓝牙或蓝牙没有打开，请确保支持蓝牙并且蓝牙已经打开。</string>
+    <string name="scanble_scan">扫描网关</string>
+    <string name="scanble_rescan">再次扫描网关</string>
+    <string name="scanble_scanhint">系统正在扫描网关设备... </string>
+    <string name="scanble_stop">停止扫描 </string>
+
+    <string name="confignetwork_ssid">请录入路由器SSID</string>
+    <string name="confignetwork_pwd">请录入路由器密码</string>
+    <string name="confignetwork_noconnect">没有与配网设备的蓝牙建立连接，不能进行配置。</string>
+    <string name="confignetwork_cofnig">配置</string>
+    <string name="confignetwork_cancel">取消</string>
+    <string name="confignetwork_timeout">长时配网仍未成功，请重试！</string>
+    <string name="confignetwork_ackyzfail">与网关设备数据验证失败! 返回错误码为%d。</string>
+    <string name="confignetwork_success">当前设备配网成功</string>
+
+    <string name="permitjoin_hint">系统正在扫描%s</string>
+    <string name="permitjoin_permit">允许入网</string>
+    <string name="permitjoin_prohibit">拒绝入网</string>
+    <string name="permitjoin_success">子设备入网并成功绑定</string>
+    <string name="permitjoin_timeout">长时没有扫描到子设备，请重试！</string>
+
+    <string name="devicelist_name">设备名称</string>
+    <string name="devicelist_status">状态: %s</string>
+
+    <string name="roomlist_name">房间名称</string>
+    <string name="roomlist_description">共有%d个设备</string>
+
+    <string name="choicegateway_title">请选择所属网关</string>
+    <string name="choicegateway_nohasgatewayhint">目前还没有一个网关设备,请先增加网关设备。</string>
+    <string name="choicegateway_gateofflinehint">所选网关不在线, 不能添加子设备。</string>
+
+    <string name="detailgateway_count">共%d/%d在线</string>
+    <string name="detailgateway_armmode_cancel">撤防模式</string>
+    <string name="detailgateway_armmode_deploy">布防模式</string>
+    <string name="detailgateway_add">添加子设备</string>
+
+    <string name="oneswitch_state">状态</string>
+    <string name="oneswitch_state_on">On</string>
+    <string name="oneswitch_state_off">Off</string>
+
+    <string name="towswitch_state_1">第1路状态</string>
+    <string name="towswitch_state_2">第2路状态</string>
+    <string name="twoswitch_state_on">On</string>
+    <string name="twoswitch_state_off">Off</string>
+
+    <string name="detailsensor_state">状态</string>
+    <string name="detailsensor_state_normal">正常</string>
+    <string name="detailsensor_state_exception">异常</string>
+    <string name="detailsensor_power">电池电量</string>
+    <string name="detailsensor_temperature">当前温度</string>
+    <string name="detailsensor_humidity">当前湿度</string>
+
+    <string name="sensorstate_powername">电池电量</string>
+    <string name="sensorstate_contactname">接触状态</string>
+    <string name="sensorstate_contactclose">闭合</string>
+    <string name="sensorstate_contactopen">打开</string>
+    <string name="sensorstate_gasname">燃气状态</string>
+    <string name="sensorstate_gashas">有燃气泄漏</string>
+    <string name="sensorstate_gasnonhas">无燃气泄漏</string>
+    <string name="sensorstate_smokename">烟雾状态</string>
+    <string name="sensorstate_smokehas">有烟雾</string>
+    <string name="sensorstate_smokenonhas">无烟雾</string>
+    <string name="sensorstate_watername">水浸状态</string>
+    <string name="sensorstate_waterhas">有水溢出</string>
+    <string name="sensorstate_waternonhas">无水溢出</string>
+    <string name="sensorstate_motionname">运动状态</string>
+    <string name="sensorstate_motionhas">有人体移动</string>
+    <string name="sensorstate_motionnonhas">无人体移动</string>
+    <string name="sensorstate_buttonstate">按钮状态</string>
+    <string name="sensorstate_trigger">触发</string>
+    <string name="sensorstate_tamperalarm">防撬报警</string>
+    <string name="sensorstate_protectionalarm">布防报警</string>
+
+    <string name="moredevice_function">功能设置</string>
+    <string name="moredevice_normal">通用信息</string>
+    <string name="moredevice_name">备注名称:</string>
+    <string name="moredevice_namehint">请录入备注名称:</string>
+    <string name="moredevice_bindtime">绑定时间:</string>
+    <string name="moredevice_room">所属房间:</string>
+    <string name="moredevice_msg">消息记录:</string>
+    <string name="moredevice_version">固件版本号:</string>
+    <string name="moredevice_upgrade">固件升级:</string>
+    <string name="moredevice_unbind">解除绑定</string>
+
+    <string name="moregateway_armmode">安防模式</string>
+    <string name="moregateway_armmode_deploy">布防模式</string>
+    <string name="moregateway_armmode_cancel">撤防模式</string>
+    <string name="moregateway_alarmbellid">报警铃音</string>
+    <string name="moregateway_bellvolume">门铃音量</string>
+    <string name="moregateway_bellmusicid">门铃音乐</string>
+    <string name="moregateway_alarmvolume">报警音量</string>
+
+    <string name="messagerecord_title">消息记录</string>
+    <string name="messagerecord_is">为</string>
+    <string name="messagerecord_happen">发生</string>
+    <string name="messagerecord_today">今天</string>
+    <string name="messagerecord_yesterday">昨天</string>
+    <string name="messagerecord_loadend">全部信息已经加载结束。</string>
+
+    <string name="choicecontent_title">请选择消息记录内容</string>
+
+    <string name="scenemodel_recommend">推荐场景</string>
+    <string name="scenemodel_night_rise_on">起夜开灯</string>
+    <string name="scenemodel_unmanned_off">无人关灯</string>
+    <string name="scenemodel_alarm_on">报警开灯</string>
+    <string name="scenemodel_remote_control_on">遥控开灯</string>
+    <string name="scenemodel_open_door_on">开门亮灯</string>
+    <string name="scenemodel_bell_play">门铃播报</string>
+    <string name="scenemodel_alarm_play">报警播报</string>
+    <string name="scenemodel_pir_deploy_alarm">红外布防报警</string>
+    <string name="scenemodel_door_deploy_alarm">门磁布防报警</string>
+    <string name="scenemodel_one_key">一键场景</string>
+    <string name="scenemodel_go_home_pattern">回家模式</string>
+    <string name="scenemodel_leave_home_pattern">离家模式</string>
+    <string name="scenemodel_sleep_pattern">睡觉模式</string>
+    <string name="scenemodel_getup_pattern">起床模式</string>
+
+    <string name="scene_maintain_create">创建</string>
+    <string name="scene_maintain_name">场景名称</string>
+    <string name="scene_maintain_trigger">触发设备</string>
+    <string name="scene_maintain_reponse">响应设备</string>
+    <string name="scene_maintain_time">时间</string>
+    <string name="scene_maintain_select">选择</string>
+    <string name="scene_maintain_nohas">无设备</string>
+    <string name="scene_maintain_use">启用</string>
+
+</resources>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<RelativeLayout
+		android:id="@+id/triggerListRelItem"
+		android:layout_marginTop="2dp"
+		android:layout_marginRight="4dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+
+		<ImageView
+			android:id="@+id/triggerListImgIcon"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
+			android:layout_alignParentLeft="true"
+			android:layout_marginTop="2dp"
+			android:background="@drawable/icon_button"
+			android:contentDescription="@string/contentDescription_null"/>
+
+		<TextView
+			android:id="@+id/triggerListLblName"
+			style="@style/NormalFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/triggerListImgIcon"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="2dp"
+			android:text="@string/devicelist_name" />
+
+		<TextView android:id="@+id/triggerListLblState"
+			android:layout_below="@+id/triggerListLblName"
+			android:layout_width="wrap_content"
+			android:layout_marginTop="2dp"
+			android:layout_marginLeft="10dp"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/triggerListImgIcon"
+			android:text="@string/devicelist_status"
+			style="@style/SmallFontStyle"/>
+
+		<CheckBox android:id="@+id/triggerlistChkSelect"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="@style/NormalFontStyle"/>
+
+		<TextView android:id="@+id/triggerlistLblNohas"
+			android:layout_alignParentRight="true"
+			android:layout_width="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+			android:text="@string/scene_maintain_nohas"
+			style="@style/NormalFontStyle"/>
+
+		<Space
+			android:layout_alignParentRight="true"
+			android:layout_width="wrap_content"
+			android:layout_height="45dp" />
+
+	</RelativeLayout>
+
+</LinearLayout>

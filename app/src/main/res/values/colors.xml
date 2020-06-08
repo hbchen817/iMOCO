@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_list">#FFFFFF</color>
+    <color name="background_list_selector">#FFE9D6</color>
+    <color name="background_list_item">#FFFFFF</color>
+    <color name="background_list_item_day">#FFA400</color>
+    <color name="background_list_item_divier">#D9D9D9</color>
+    <color name="background_main">#FFFFFF</color>
+    <color name="background_detail">#E0E0E0</color>
+    <color name="titlebar">#01CBDF</color>
+    <color name="colorLine">#D9D9D9</color>
+    <color name="colorPrimary">#808A87</color>
+    <color name="colorAccent">#0000FF</color>
+</resources>

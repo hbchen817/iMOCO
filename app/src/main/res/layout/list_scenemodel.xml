@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<RelativeLayout
+		android:id="@+id/sceneModelRelItem"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<Space
+			android:layout_width="wrap_content"
+			android:layout_height="25dp"
+			android:layout_alignParentRight="true" />
+
+		<ImageView
+			android:id="@+id/sceneModelImgIcon"
+			android:background="@drawable/scen_background1"
+			android:layout_width="match_parent"
+			android:layout_height="130dp" />
+
+		<TextView
+			android:id="@+id/sceneModelLblName"
+			style="@style/NormalFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_marginLeft="16dp"
+			android:text="@string/roomlist_name"
+			android:textColor="#FFFFFF" />
+
+	</RelativeLayout>
+
+</LinearLayout>

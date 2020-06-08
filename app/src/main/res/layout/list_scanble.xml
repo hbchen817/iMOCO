@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/configproductlistRelItem"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<ImageView
+		android:id="@+id/scanbleLblIcon"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="5dp"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_marginLeft="10dp"
+		android:layout_marginBottom="5dp"
+		android:src="@drawable/ble"
+		android:contentDescription="@string/contentDescription_null" />
+
+	<TextView android:id="@+id/scanbleLblName"
+		android:layout_width="wrap_content"
+		android:layout_alignTop="@+id/scanbleLblIcon"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="5dp"
+		android:layout_toRightOf="@+id/scanbleLblIcon"
+		android:text="@string/ble_name"
+		style="@style/NormalFontStyle"/>
+
+	<TextView android:id="@+id/scanbleLblAddress"
+		android:layout_below="@+id/scanbleLblName"
+		android:layout_width="wrap_content"
+		android:layout_marginTop="3dp"
+		android:layout_marginLeft="5dp"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@+id/scanbleLblIcon"
+		android:text="@string/ble_address"
+		style="@style/SmallFontStyle" />
+
+	<Space
+		android:layout_alignParentRight="true"
+		android:layout_width="wrap_content"
+		android:layout_height="52dp" />
+</RelativeLayout>

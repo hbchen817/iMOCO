@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/sceneRelItem"
+	android:background="@drawable/background_white_corner"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_marginRight="10dp">
+
+	<ImageView
+		android:id="@+id/sceneImgIcon"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="10dp"
+		android:layout_centerVertical="true"
+		android:src="@drawable/scene"
+		android:contentDescription="@string/contentDescription_null"/>
+
+	<TextView
+		android:id="@+id/sceneLblName"
+		style="@style/NormalFontStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="60dp"
+		android:layout_centerVertical="true"
+		android:layout_toRightOf="@+id/sceneImgIcon"
+		android:layout_marginLeft="10dp"
+		android:gravity="center_vertical|left"
+		android:text="@string/main_scenename" />
+
+</RelativeLayout>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/permitJoinLl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:id="@+id/permitJoinLblHint"
+        style="@style/NormalFontStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:text="@string/permitjoin_permit" />
+
+    <FrameLayout
+        android:id="@+id/permitJoinFLProgress"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+        <com.rexense.imoco.utility.ComCircularProgress
+            android:id="@+id/permitJoinCPProgress"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:padding="30dp"
+            android:layout_gravity="center"
+            app:backColor="@color/colorPrimary"
+            app:backWidth="3dp"
+            app:progStartColor="#B0E0E6"
+            app:progFirstColor="@color/colorAccent"
+            app:progWidth="10dp"
+            app:maxProgress="1200"
+            app:progress="600" />
+
+        <TextView
+            android:id="@+id/permitJoinLblRemainSecond"
+            android:layout_gravity="center"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/permitJoinRLPermit"
+        android:layout_width="260dp"
+        android:layout_gravity="center|bottom"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/permitJoinImgPermit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/permitJoinLblPermit"
+            style="@style/NormalWhiteFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/permitjoin_permit" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="260dp"
+        android:layout_gravity="center|bottom"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/permitJoinImgProhibit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/permitJoinLblProhibit"
+            style="@style/NormalWhiteFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/permitjoin_prohibit" />
+
+    </RelativeLayout>
+
+</LinearLayout>

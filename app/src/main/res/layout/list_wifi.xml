@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/configproductlistRelItem"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<ImageView
+		android:id="@+id/wifiListImgIcon"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="5dp"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_marginLeft="10dp"
+		android:src="@drawable/wifi"
+		android:contentDescription="@string/contentDescription_null" />
+
+	<TextView android:id="@+id/wifiListLblName"
+		android:layout_width="wrap_content"
+		android:layout_alignTop="@+id/wifiListImgIcon"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="10dp"
+		android:layout_toRightOf="@+id/wifiListImgIcon"
+		android:text="@string/wifi_name"
+		style="@style/NormalFontStyle"/>
+
+	<TextView android:id="@+id/wifiListLblDescription"
+		android:layout_below="@+id/wifiListLblName"
+		android:layout_width="wrap_content"
+		android:layout_marginTop="2dp"
+		android:layout_marginLeft="10dp"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@+id/wifiListImgIcon"
+		android:text="@string/wifi_description"
+		style="@style/SmallFontStyle" />
+
+	<Space
+		android:layout_alignParentRight="true"
+		android:layout_width="wrap_content"
+		android:layout_height="52dp" />
+</RelativeLayout>

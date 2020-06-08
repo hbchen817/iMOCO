@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detailGatewayLl"
+    android:layout_width="match_parent"
+    android:background="@color/background_main"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_detail" />
+
+    <RelativeLayout
+        android:id="@+id/detailGatewayRLSecurity"
+        android:layout_width="fill_parent"
+        android:background="#DDDDDD"
+        android:layout_height="180dp">
+
+        <ImageView
+            android:id="@+id/detailGatewayImgMessage"
+            style="@style/OperateIconStyle"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/message" />
+
+        <ImageView
+            android:id="@+id/detailGatewayImgSecurity"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/security_cancel" />
+
+        <ImageView
+            android:id="@+id/detailGatewayImgAdd"
+            style="@style/OperateIconStyle"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/add_default" />
+
+        <TextView
+            android:id="@+id/detailGatewayLblCount"
+            android:background="@drawable/shape_frame"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical|left"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            style="@style/SmallFontStyle"
+            android:text="@string/detailgateway_count" />
+
+        <TextView
+            android:id="@+id/detailGatewayLblArmMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            style="@style/SmallFontStyle"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/shape_frame"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/detailgateway_armmode_cancel" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_below="@+id/oneItemWheelPickerLblValue"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:layout_height="1dp" />
+
+    <ListView
+        android:id="@+id/detailGatewayLstSubdevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:divider="@null"
+        android:layout_weight="1"
+        android:horizontalSpacing="1dip">
+    </ListView>
+
+</LinearLayout>

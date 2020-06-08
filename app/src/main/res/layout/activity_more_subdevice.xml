@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/moreSubdeviceFl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/detailGatewaySetLl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/include_title" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                style="@style/NormalFontStyle"
+                android:gravity="center_vertical"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/moredevice_name"/>
+
+            <TextView
+                android:id="@+id/moreSubdeviceLblName"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/moreSubdeviceImgName"
+                android:gravity="center_vertical"
+                android:text="客厅主灯开关" />
+
+            <ImageView
+                android:id="@+id/moreSubdeviceImgName"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/go" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:background="@color/colorLine"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                style="@style/NormalFontStyle"
+                android:gravity="center_vertical"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/moredevice_room"/>
+
+            <TextView
+                android:id="@+id/moreSubdeviceLblRoom"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                style="@style/NormalFontStyle"
+                android:layout_height="50dp"
+                android:layout_toLeftOf="@+id/moreSubdeviceImgRoom"
+                android:layout_marginRight="5dp"
+                android:text="客厅"/>
+
+            <ImageView
+                android:id="@+id/moreSubdeviceImgRoom"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/go" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:background="@color/colorLine"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_bindtime" />
+
+            <TextView
+                android:id="@+id/moreSubdeviceLblBindTime"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                style="@style/NormalFontStyle"
+                android:layout_height="50dp"
+                android:layout_marginRight="35dp"
+                android:text="2020-04-27 12:16:18"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:background="@color/colorLine"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                style="@style/NormalFontStyle"
+                android:gravity="center_vertical"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/moredevice_msg"/>
+
+            <ImageView
+                android:id="@+id/moreSubdeviceImgMsg"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/go" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:background="@color/colorLine"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                style="@style/NormalFontStyle"
+                android:gravity="center_vertical"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/moredevice_version"/>
+
+            <TextView
+                android:id="@+id/moreSubdeviceLblVersion"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                style="@style/NormalFontStyle"
+                android:layout_height="50dp"
+                android:layout_marginRight="35dp"
+                android:text="1.0.0"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="center|bottom"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <ImageView
+            android:id="@+id/moreSubdeviceImgUnbind"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/moreSubdeviceLblUnbind"
+            style="@style/NormalWhiteFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/moredevice_unbind"
+            android:textColor="#ffffff" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/include_oneitemwheelpicker" />
+</FrameLayout>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/configureNetworkLl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="5dp">
+
+    <RelativeLayout
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp" >
+
+        <ImageView
+            android:id="@+id/configureNetworkImgSSID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/ssid" />
+
+        <ImageView
+            android:id="@+id/configureNetworkImgChoice"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/configureNetworkImgSSID"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="3dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/go" />
+
+        <ImageView
+            android:id="@+id/configureNetworkImgPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="53dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/pwd"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:id="@+id/configureNetworkTxtSSID"
+            style="@style/NormalFontStyle"
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="2dp"
+            android:background="@null"
+            android:hint="@string/confignetwork_ssid"
+            android:drawableBottom="@drawable/line"
+            android:inputType="text"
+            android:autofillHints="">
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/configureNetworkTxtPwd"
+            style="@style/NormalFontStyle"
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="46dp"
+            android:drawableBottom="@drawable/line"
+            android:background="@null"
+            android:hint="@string/confignetwork_pwd"
+            android:inputType="text"
+            android:layout_alignParentStart="true"
+            android:autofillHints="">
+        </EditText>
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="90dp"
+            android:layout_toEndOf="@+id/configureNetworkImgSSID">
+
+            <ImageView
+                android:id="@+id/configNetworkImgConfig"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/login"
+                android:contentDescription="@string/contentDescription_null" />
+
+            <TextView
+                android:id="@+id/configureNetworkLblConfig"
+                style="@style/NormalWhiteFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/confignetwork_cofnig" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="90dp"
+            android:layout_gravity="center" >
+
+            <ImageView
+                android:id="@+id/configureNetworkImgCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/register"
+                android:contentDescription="@string/contentDescription_null" />
+
+            <TextView
+                android:id="@+id/configureNetworkLblCancel"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#00ffff"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/confignetwork_cancel" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/configureNetworkFLProgress"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+        <com.rexense.imoco.utility.ComCircularProgress
+            android:id="@+id/configureNetworkCPProgress"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:padding="30dp"
+            android:layout_gravity="center"
+            app:backColor="@color/colorPrimary"
+            app:backWidth="3dp"
+            app:progStartColor="#B0E0E6"
+            app:progFirstColor="@color/colorAccent"
+            app:progWidth="10dp"
+            app:maxProgress="1200"
+            app:progress="600" />
+
+        <TextView
+            android:id="@+id/configureNetworkLblRemainSecond"
+            android:layout_gravity="center"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </FrameLayout>
+
+</LinearLayout>

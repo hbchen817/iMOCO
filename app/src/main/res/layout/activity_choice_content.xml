@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choiceContentLl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title" />
+
+    <ListView
+        android:id="@+id/choiceContentLstContent"
+        android:listSelector="@color/background_list_selector"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/background_list"
+        android:divider="@color/background_list_item_divier"
+        android:dividerHeight="1px"
+        android:horizontalSpacing="1dip">
+    </ListView>
+</LinearLayout>

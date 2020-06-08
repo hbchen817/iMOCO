@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detailOneSwitchLl"
+    android:background="@color/background_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="5dp">
+
+    <include layout="@layout/include_detail" />
+
+    <ImageView
+        android:id="@+id/detailOneSwitchImgOperate"
+        android:layout_marginTop="20dp"
+        android:layout_width="200dp"
+        android:contentDescription="@string/contentDescription_null"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:src="@drawable/state_oneswitch_off" />
+
+    <RelativeLayout
+        android:id="@+id/detailOneSwitchRLState"
+        style="@style/StateItemStyle">
+
+        <TextView
+            android:id="@+id/detailOneSwitchLblStateName"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:text="@string/oneswitch_state" />
+
+        <TextView
+            android:id="@+id/detailOneSwitchLblStateValue"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:text="@string/oneswitch_state_off" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/detailOneSwitchRLBottom">
+
+        <ImageView
+            android:id="@+id/detailOneSwitchImgTimer"
+            android:layout_marginRight="6dp"
+            style="@style/OperateIconStyle"
+            android:layout_toLeftOf="@+id/detailOneSwitchSpaMiddle"
+            android:src="@drawable/cloud_timer" />
+
+        <Space
+            android:id="@+id/detailOneSwitchSpaMiddle"
+            android:layout_width="1dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/detailOneSwitchImgMessage"
+            android:layout_marginLeft="6dp"
+            style="@style/OperateIconStyle"
+            android:layout_toRightOf="@+id/detailOneSwitchSpaMiddle"
+            android:src="@drawable/message" />
+    </RelativeLayout>
+
+</LinearLayout>

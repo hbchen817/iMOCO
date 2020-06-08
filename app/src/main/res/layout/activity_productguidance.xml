@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/productGuidanceLl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_title" />
+
+    <ImageView
+        android:id="@+id/productGuidanceImgIcon"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/productGuidanceLblCopywriting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/NormalFontStyle"
+        android:singleLine="false"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:text="TextView" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="center|bottom"
+        android:layout_height="50dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="35dp">
+
+        <ImageView
+            android:id="@+id/productGuidanceImgOperate"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/productGuidanceLblOperate"
+            style="@style/NormalWhiteFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/productguidance_opearte" />
+
+    </RelativeLayout>
+
+</LinearLayout>
