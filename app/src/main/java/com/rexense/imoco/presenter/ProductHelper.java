@@ -5,8 +5,11 @@ import android.os.Handler;
 
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EAPIChannel;
+import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.sdk.APIChannel;
 import com.rexense.imoco.utility.Logger;
+
+import java.util.List;
 
 
 /**
@@ -57,5 +60,17 @@ public class ProductHelper {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETGUIDANCEINFOMATION;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取产品名称
+    public static String getProductName(String productKey, List<EProduct.configListEntry> productList){
+        String name = "";
+        for(EProduct.configListEntry product : productList){
+            if(product.productKey.equalsIgnoreCase(productKey)){
+                name = product.name;
+                break;
+            }
+        }
+        return name;
     }
 }

@@ -96,6 +96,7 @@
 
     <string name="devicelist_name">设备名称</string>
     <string name="devicelist_status">状态: %s</string>
+    <string name="devicelist_action">动作: %s</string>
 
     <string name="roomlist_name">房间名称</string>
     <string name="roomlist_description">共有%d个设备</string>
@@ -109,12 +110,23 @@
     <string name="detailgateway_armmode_deploy">布防模式</string>
     <string name="detailgateway_add">添加子设备</string>
 
+    <string name="gateway_armmode">布撤防</string>
+    <string name="gateway_armmode_deploy">布防</string>
+    <string name="gateway_armmode_disarm">撤防</string>
+    <string name="gateway_service_invokemode">触发</string>
+    <string name="gateway_service_invokevoice1">触发门铃</string>
+    <string name="gateway_service_invokevoice2">触发报警</string>
+
     <string name="oneswitch_state">状态</string>
     <string name="oneswitch_state_on">On</string>
     <string name="oneswitch_state_off">Off</string>
 
-    <string name="towswitch_state_1">第1路状态</string>
-    <string name="towswitch_state_2">第2路状态</string>
+    <string name="twoswitch_state_1">第1路状态</string>
+    <string name="twoswitch_state_2">第2路状态</string>
+    <string name="twoswitch_state_1_on">第1路On</string>
+    <string name="twoswitch_state_2_on">第2路On</string>
+    <string name="twoswitch_state_1_off">第1路Off</string>
+    <string name="twoswitch_state_2_off">第2路Off</string>
     <string name="twoswitch_state_on">On</string>
     <string name="twoswitch_state_off">Off</string>
 
@@ -175,6 +187,7 @@
     <string name="choicecontent_title">请选择消息记录内容</string>
 
     <string name="scenemodel_recommend">推荐场景</string>
+    <string name="scenemodel_name">场景名称</string>
     <string name="scenemodel_night_rise_on">起夜开灯</string>
     <string name="scenemodel_unmanned_off">无人关灯</string>
     <string name="scenemodel_alarm_on">报警开灯</string>
@@ -192,11 +205,21 @@
 
     <string name="scene_maintain_create">创建</string>
     <string name="scene_maintain_name">场景名称</string>
-    <string name="scene_maintain_trigger">触发设备</string>
-    <string name="scene_maintain_reponse">响应设备</string>
+    <string name="scene_maintain_parametertitle">参数标题</string>
+    <string name="scene_maintain_trigger">如果</string>
+    <string name="scene_maintain_condition">并且</string>
+    <string name="scene_maintain_reponse">就</string>
     <string name="scene_maintain_time">时间</string>
     <string name="scene_maintain_select">选择</string>
     <string name="scene_maintain_nohas">无设备</string>
     <string name="scene_maintain_use">启用</string>
 
+    <string name="week_all">每一天</string>
+    <string name="week_0">周日</string>
+    <string name="week_1">周一</string>
+    <string name="week_2">周二</string>
+    <string name="week_3">周三</string>
+    <string name="week_4">周四</string>
+    <string name="week_5">周五</string>
+    <string name="week_6">周六</string>
 </resources>

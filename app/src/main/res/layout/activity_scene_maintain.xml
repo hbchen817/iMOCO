@@ -61,129 +61,26 @@
         android:layout_marginRight="10dp"
         android:layout_height="1dp" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
-            style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:text="@string/scene_maintain_trigger"/>
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:background="@color/colorLine"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_height="1dp" />
-
     <ListView
-        android:id="@+id/sceneMaintainLstTrigger"
+        android:id="@+id/sceneMaintainLstParameter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
         android:divider="@color/background_list_item_divier"
         android:dividerHeight="0.5dp"
-        android:layout_weight="0.2"
         android:horizontalSpacing="1dip">
     </ListView>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
-            style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:text="@string/scene_maintain_reponse"/>
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:background="@color/colorLine"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_height="1dp" />
-
-    <ListView
-        android:id="@+id/sceneMaintainLstResponse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:divider="@color/background_list_item_divier"
-        android:dividerHeight="0.5dp"
-        android:layout_weight="0.5"
-        android:horizontalSpacing="1dip">
-    </ListView>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
-            style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
-            android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            android:text="@string/scene_maintain_time"/>
-
-        <TextView
-            android:id="@+id/sceneMaintainLblTime"
-            style="@style/NormalFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/sceneMaintainImgTime"
-            android:gravity="center_vertical"
-            android:text="00:00 - 23:59" />
-
-        <ImageView
-            android:id="@+id/sceneMaintainImgTime"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@string/contentDescription_null"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/go" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:background="@color/colorLine"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_height="1dp" />
-
-    <RelativeLayout
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/shape_frame_txt"
         android:id="@+id/sceneMaintainRllUse">
 

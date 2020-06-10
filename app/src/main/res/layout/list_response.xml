@@ -4,14 +4,13 @@
 	android:layout_height="wrap_content" >
 
 	<RelativeLayout
-		android:id="@+id/triggerListRelItem"
-		android:layout_marginTop="2dp"
+		android:id="@+id/responseListRelItem"
 		android:layout_marginRight="4dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" >
 
 		<ImageView
-			android:id="@+id/triggerListImgIcon"
+			android:id="@+id/responseListImgIcon"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
 			android:layout_alignParentLeft="true"
@@ -20,33 +19,33 @@
 			android:contentDescription="@string/contentDescription_null"/>
 
 		<TextView
-			android:id="@+id/triggerListLblName"
+			android:id="@+id/responseListLblName"
 			style="@style/NormalFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_toRightOf="@+id/triggerListImgIcon"
+			android:layout_toRightOf="@+id/responseListImgIcon"
 			android:layout_marginLeft="10dp"
 			android:layout_marginTop="6dp"
 			android:text="@string/devicelist_name" />
 
-		<TextView android:id="@+id/triggerListLblState"
-			android:layout_below="@+id/triggerListLblName"
+		<TextView android:id="@+id/responseListLblAction"
+			android:layout_below="@+id/responseListLblName"
 			android:layout_width="wrap_content"
 			android:layout_marginTop="2dp"
 			android:layout_marginLeft="10dp"
 			android:layout_height="wrap_content"
-			android:layout_toRightOf="@+id/triggerListImgIcon"
-			android:text="@string/devicelist_status"
+			android:layout_toRightOf="@+id/responseListImgIcon"
+			android:text="@string/devicelist_action"
 			style="@style/SmallFontStyle"/>
 
-		<CheckBox android:id="@+id/triggerlistChkSelect"
+		<CheckBox android:id="@+id/responselistChkSelect"
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			style="@style/NormalFontStyle"/>
 
-		<TextView android:id="@+id/triggerlistLblNohas"
+		<TextView android:id="@+id/responselistLblNohas"
 			android:layout_alignParentRight="true"
 			android:layout_width="wrap_content"
 			android:layout_centerVertical="true"

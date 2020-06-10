@@ -196,8 +196,8 @@ public class TSLHelper {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
                 // 两路开关处理
-                list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_1, this.mContext.getString(R.string.towswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
-                list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_2, this.mContext.getString(R.string.towswitch_state_2), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_1, this.mContext.getString(R.string.twoswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_2, this.mContext.getString(R.string.twoswitch_state_2), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理

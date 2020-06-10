@@ -31,6 +31,7 @@ public class DeviceBuffer {
                     EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
                     deviceEntry.iotId = entry.iotId;
                     deviceEntry.nickName = entry.nickName;
+                    deviceEntry.deviceName = entry.deviceName;
                     deviceEntry.productKey = entry.productKey;
                     deviceEntry.roomId = entry.roomId == null ? "" : entry.roomId;
                     deviceEntry.roomName = entry.roomName == null ? "" : entry.roomName;
@@ -43,6 +44,7 @@ public class DeviceBuffer {
                     if(deviceEntry != null) {
                         deviceEntry.iotId = entry.iotId;
                         deviceEntry.nickName = entry.nickName;
+                        deviceEntry.deviceName = entry.deviceName;
                         deviceEntry.productKey = entry.productKey;
                         deviceEntry.roomId = entry.roomId == null ? "" : entry.roomId;
                         deviceEntry.roomName = entry.roomName == null ? "" : entry.roomName;
@@ -65,6 +67,7 @@ public class DeviceBuffer {
                     EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
                     deviceEntry.iotId = entry.iotId;
                     deviceEntry.nickName = entry.nickName;
+                    deviceEntry.deviceName = entry.deviceName;
                     deviceEntry.productKey = entry.productKey;
                     deviceEntry.owned = entry.owned;
                     deviceEntry.bindTime = entry.bindTime;

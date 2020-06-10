@@ -5,7 +5,7 @@
 	android:layout_height="wrap_content" >
 
 	<RelativeLayout
-		android:id="@+id/sceneModelRelItem"
+		android:id="@+id/sceneParameterTitleRelItem"
 		android:layout_marginLeft="10dp"
 		android:layout_marginRight="10dp"
 		android:layout_width="match_parent"
@@ -13,24 +13,16 @@
 
 		<Space
 			android:layout_width="wrap_content"
-			android:layout_height="25dp"
+			android:layout_height="40dp"
 			android:layout_alignParentRight="true" />
 
-		<ImageView
-			android:id="@+id/sceneModelImgIcon"
-			android:background="@drawable/scen_background1"
-			android:layout_width="match_parent"
-			android:layout_height="130dp" />
-
 		<TextView
-			android:id="@+id/sceneModelLblName"
-			style="@style/NormalFontStyle"
+			android:id="@+id/sceneParameterTitleLblName"
+			style="@style/TitleBoldFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerVertical="true"
-			android:layout_marginLeft="16dp"
-			android:text="@string/scenemodel_name"
-			android:textColor="#FFFFFF" />
+			android:text="@string/scene_maintain_parametertitle" />
 
 	</RelativeLayout>
 

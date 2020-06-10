@@ -122,18 +122,12 @@ public class SceneActivity extends BaseActivity {
                     return;
                 }
 
-                // 推荐场景处理
-                if(mModelList.get(position).code <= CScene.SMC_DOOR_DEPLOY_ALARM){
-                    Intent intent = new Intent(SceneActivity.this, SceneMaintainActivity.class);
-                    intent.putExtra("operateType", 1);
-                    intent.putExtra("sceneModelCode", mModelList.get(position).code);
-                    intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
-                    intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
-                    startActivity(intent);
-                    return;
-                }
-
-                // 一键场景处理
+                Intent intent = new Intent(SceneActivity.this, SceneMaintainActivity.class);
+                intent.putExtra("operateType", 1);
+                intent.putExtra("sceneModelCode", mModelList.get(position).code);
+                intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
+                intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                startActivity(intent);
             }
         });
 

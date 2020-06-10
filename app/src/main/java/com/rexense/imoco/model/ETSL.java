@@ -70,6 +70,42 @@ public class ETSL {
         }
     }
 
+    // 状态参数实体
+    public static class serviceArgEntry {
+        public String name;
+        public String rawName;
+        public String value;
+        public String rawValue;
+
+        // 构造
+        public serviceArgEntry(String name, String rawName, String value, String rawValue) {
+            this.name = name;
+            this.rawName = rawName;
+            this.value = value;
+            this.rawValue = rawValue;
+        }
+    }
+
+    // 服务实体
+    public static class serviceEntry {
+        public String name;
+        public String rawName;
+        public List<serviceArgEntry> args;
+
+        // 构造
+        public serviceEntry(String name, String rawName) {
+            this.name = name;
+            this.rawName = rawName;
+            this.args = new ArrayList<serviceArgEntry>();
+        }
+
+        // 增加参数
+        public void addArg(String name, String rawName, String value, String rawValue) {
+            serviceArgEntry arg = new serviceArgEntry(name, rawName, value, rawValue);
+            this.args.add(arg);
+        }
+    }
+
     // 事件实体
     public static class eventEntry {
         public String name;

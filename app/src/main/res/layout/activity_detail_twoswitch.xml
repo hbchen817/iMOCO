@@ -52,7 +52,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
-            android:text="@string/towswitch_state_1" />
+            android:text="@string/twoswitch_state_1" />
 
         <TextView
             android:id="@+id/detailTwoSwitchLblStateValue1"
@@ -78,7 +78,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/towswitch_state_2" />
+            android:text="@string/twoswitch_state_2" />
 
         <TextView
             android:id="@+id/detailTwoSwitchLblStateValue2"

@@ -15,6 +15,7 @@ import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
+import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.sdk.APIChannel;
 import com.rexense.imoco.utility.Logger;
 
@@ -85,57 +86,186 @@ public class SceneManager {
         return list;
     }
 
-    // 获取指定场景模板的触发器设备
-    public List<EScene.triggerEntry> getTrigger(int sceneModelCode, List<EProduct.configListEntry> productList){
+    // 生成指定场景模板参数列表
+    public List<EScene.parameterEntry> genSceneModelParameterList(int sceneModelCode, List<EProduct.configListEntry> productList){
+        List<EScene.parameterEntry> list = new ArrayList<EScene.parameterEntry>();
+
+        // 触发设备处理
+        List<EScene.triggerEntry> triggerEntries = this.getTrigger(sceneModelCode, productList);
+        if(triggerEntries != null && triggerEntries.size() > 0){
+            // 触发标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = 0;
+            parameterTitle.typeName = this.mContext.getString(R.string.scene_maintain_trigger);
+            list.add(parameterTitle);
+            // 触发设备处理
+            for(EScene.triggerEntry triggerEntry : triggerEntries){
+                EScene.parameterEntry parameter = new EScene.parameterEntry();
+                parameter.type = 1;
+                parameter.triggerEntry = triggerEntry;
+                list.add(parameter);
+            }
+        }
+
+        // 时间条件处理
+        EScene.conditionTimeEntry conditionTimeEntry = this.getConditionTime(sceneModelCode);
+        // 状态条件处理
+        List<EScene.conditionStateEntry> conditionStateEntries = this.getConditionState(sceneModelCode, productList);
+        if(conditionTimeEntry != null || (conditionStateEntries != null && conditionStateEntries.size() > 0)){
+            // 条件标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = 2;
+            parameterTitle.typeName = this.mContext.getString(R.string.scene_maintain_condition);
+            list.add(parameterTitle);
+            // 时间条件处理
+            if(conditionTimeEntry != null) {
+                EScene.parameterEntry parameterTime = new EScene.parameterEntry();
+                parameterTime.type = 3;
+                parameterTime.conditionTimeEntry = conditionTimeEntry;
+                list.add(parameterTime);
+            }
+            // 状态条件处理
+            if(conditionStateEntries != null && conditionStateEntries.size() > 0){
+                // 响应设备处理
+                for(EScene.conditionStateEntry conditionStateEntry: conditionStateEntries){
+                    EScene.parameterEntry parameter = new EScene.parameterEntry();
+                    parameter.type = 4;
+                    parameter.conditionStateEntry = conditionStateEntry;
+                    list.add(parameter);
+                }
+            }
+        }
+
+        // 响应设备处理
+        List<EScene.responseEntry> responseEntries = this.getResponse(sceneModelCode, productList);
+        if(responseEntries != null && responseEntries.size() > 0){
+            // 响应标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = 5;
+            parameterTitle.typeName = this.mContext.getString(R.string.scene_maintain_reponse);
+            list.add(parameterTitle);
+            // 响应设备处理
+            for(EScene.responseEntry responseEntry : responseEntries){
+                EScene.parameterEntry parameter = new EScene.parameterEntry();
+                parameter.type = 6;
+                parameter.responseEntry = responseEntry;
+                list.add(parameter);
+            }
+        }
+
+        return list;
+    }
+
+    // 获取指定场景模板的触发设备
+    private List<EScene.triggerEntry> getTrigger(int sceneModelCode, List<EProduct.configListEntry> productList){
         List<EScene.triggerEntry> list = new ArrayList<EScene.triggerEntry>();
         switch (sceneModelCode){
+            // 起夜开灯、红外布防报警处理
             case CScene.SMC_NIGHT_RISE_ON:
-                // 起夜开灯场景处理
-                // 1.获取PIR
-                Map<String, EDevice.deviceEntry> pir = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
-                if(pir == null || pir.size() == 0){
-                    EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
-                    triggerEntry.productKey = CTSL.PK_PIRSENSOR;
-                    for(EProduct.configListEntry product : productList){
-                        if(product.productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR)){
-                            triggerEntry.name = product.name;
-                            break;
-                        }
-                    }
-                    triggerEntry.state = CodeMapper.getPropertyTriggerState(this.mContext, CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON);
-                    list.add(triggerEntry);
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+                // 获取PIR
+                Map<String, EDevice.deviceEntry> pir_has = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
+                if(pir_has == null || pir_has.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON, productList, list);
                 } else {
-                    for(EDevice.deviceEntry entry : pir.values()){
-                        EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
-                        triggerEntry.productKey = CTSL.PK_PIRSENSOR;
-                        triggerEntry.iotId = entry.iotId;
-                        triggerEntry.name = entry.nickName;
-                        triggerEntry.state = CodeMapper.getPropertyTriggerState(this.mContext, CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON);
-                        list.add(triggerEntry);
-                    }
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON, pir_has, list);
                 }
-                // 2.获取门磁
+                break;
+            // 无人关灯处理
+            case CScene.SMC_UNMANNED_OFF:
+                // 获取PIR
+                Map<String, EDevice.deviceEntry> pir_nohas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
+                if(pir_nohas == null || pir_nohas.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, pir_nohas, list);
+                }
+                break;
+            // 报警开灯处理
+            case CScene.SMC_ALARM_ON:
+                // 获取烟感气传感器
+                Map<String, EDevice.deviceEntry> smoke = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_SMOKESENSOR);
+                if(smoke == null || smoke.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, smoke, list);
+                }
+                // 获取水浸气传感器
+                Map<String, EDevice.deviceEntry> water = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_WATERSENSOR);
+                if(water == null || water.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, water, list);
+                }
+                // 获取燃气传感器
+                Map<String, EDevice.deviceEntry> gas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GASSENSOR);
+                if(gas == null || gas.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, gas, list);
+                }
+                break;
+            // 遥控开灯、门铃播报、报警播报处理
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_BELL_PLAY:
+            case CScene.SMC_ALARM_PLAY:
+                // 获取遥控按钮
+                Map<String, EDevice.deviceEntry> button = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_REMOTECONTRILBUTTON);
+                if(button == null || button.size() == 0){
+                    this.addTriggerProduct(CTSL.PK_REMOTECONTRILBUTTON, CScene.SMC_REMOTE_CONTROL_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_REMOTECONTRILBUTTON, CScene.SMC_REMOTE_CONTROL_ON, button, list);
+                }
+                break;
+            // 开门亮灯、门磁布防报警处理
+            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 获取门磁
                 Map<String, EDevice.deviceEntry> door = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_DOORSENSOR);
                 if(door == null || door.size() == 0){
-                    EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
-                    triggerEntry.productKey = CTSL.PK_DOORSENSOR;
-                    for(EProduct.configListEntry product : productList){
-                        if(product.productKey.equalsIgnoreCase(CTSL.PK_DOORSENSOR)){
-                            triggerEntry.name = product.name;
-                            break;
-                        }
-                    }
-                    triggerEntry.state = CodeMapper.getPropertyTriggerState(this.mContext, CTSL.PK_DOORSENSOR, CScene.SMC_NIGHT_RISE_ON);
-                    list.add(triggerEntry);
+                    this.addTriggerProduct(CTSL.PK_DOORSENSOR, CScene.SMC_OPEN_DOOR_ON, productList, list);
                 } else {
-                    for(EDevice.deviceEntry entry : door.values()){
-                        EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
-                        triggerEntry.productKey = CTSL.PK_DOORSENSOR;
-                        triggerEntry.iotId = entry.iotId;
-                        triggerEntry.name = entry.nickName;
-                        triggerEntry.state = CodeMapper.getPropertyTriggerState(this.mContext, CTSL.PK_DOORSENSOR, CScene.SMC_NIGHT_RISE_ON);
-                        list.add(triggerEntry);
-                    }
+                    this.addTriggerDevice(CTSL.PK_DOORSENSOR, CScene.SMC_OPEN_DOOR_ON, door, list);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+
+    // 获取指定场景模板的时间条件
+    private EScene.conditionTimeEntry getConditionTime(int sceneModelCode){
+        switch (sceneModelCode){
+            // 起夜开灯、无人关灯、开门亮灯、门铃播报、红外布防报警、门磁布防报警处理
+            case CScene.SMC_NIGHT_RISE_ON:
+            case CScene.SMC_UNMANNED_OFF:
+            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_BELL_PLAY:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                return new EScene.conditionTimeEntry();
+            default:
+                break;
+        }
+
+        return null;
+    }
+
+    // 获取指定场景模板的状态条件
+    private List<EScene.conditionStateEntry> getConditionState(int sceneModelCode, List<EProduct.configListEntry> productList){
+        List<EScene.conditionStateEntry> list = new ArrayList<EScene.conditionStateEntry>();
+        switch (sceneModelCode){
+            // 红外布防报警、门磁布防报警处理
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 获取网关
+                Map<String, EDevice.deviceEntry> gateway = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway == null || gateway.size() == 0){
+                    this.addConditionStateProduct(CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON, productList, list);
+                } else {
+                    this.addConditionStateDevice(CTSL.PK_PIRSENSOR, CScene.SMC_NIGHT_RISE_ON, gateway, list);
                 }
                 break;
             default:
@@ -146,40 +276,125 @@ public class SceneManager {
     }
 
     // 获取指定场景模板的响应设备
-    public List<EScene.responseEntry> getResponse(int sceneModelCode){
+    private List<EScene.responseEntry> getResponse(int sceneModelCode, List<EProduct.configListEntry> productList){
         List<EScene.responseEntry> list = new ArrayList<EScene.responseEntry>();
         switch (sceneModelCode){
+            // 起夜开灯、报警开灯、遥控开灯、开门亮灯场景处理
             case CScene.SMC_NIGHT_RISE_ON:
-                // 起夜开灯场景处理
+            case CScene.SMC_ALARM_ON:
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_OPEN_DOOR_ON:
                 // 1.获取一键单火开关
-                Map<String, EDevice.deviceEntry> oneSwitch = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
-                if(oneSwitch == null || oneSwitch.size() == 0){
-                    EScene.responseEntry responseEntry = new EScene.responseEntry();
-                    responseEntry.productKey = CTSL.PK_ONEWAYSWITCH;
-                    list.add(responseEntry);
+                Map<String, EDevice.deviceEntry> oneSwitch_on = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
+                if(oneSwitch_on == null || oneSwitch_on.size() == 0){
+                    this.addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_NIGHT_RISE_ON, productList, list);
                 } else {
-                    for(EDevice.deviceEntry entry : oneSwitch.values()){
-                        EScene.responseEntry responseEntry = new EScene.responseEntry();
-                        responseEntry.productKey = CTSL.PK_ONEWAYSWITCH;
-                        responseEntry.iotId = entry.iotId;
-                        responseEntry.name = entry.nickName;
-                        list.add(responseEntry);
-                    }
+                    this.addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_NIGHT_RISE_ON, oneSwitch_on, list);
                 }
                 // 2.获取两键单火开关
-                Map<String, EDevice.deviceEntry> twoSwitch = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH);
-                if(twoSwitch == null || twoSwitch.size() == 0){
-                    EScene.responseEntry responseEntry = new EScene.responseEntry();
-                    responseEntry.productKey = CTSL.PK_TWOWAYSWITCH;
-                    list.add(responseEntry);
+                Map<String, EDevice.deviceEntry> twoSwitch_on = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH);
+                if(twoSwitch_on == null || twoSwitch_on.size() == 0){
+                    this.addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_NIGHT_RISE_ON, productList, list);
                 } else {
-                    for(EDevice.deviceEntry entry : twoSwitch.values()){
-                        EScene.responseEntry responseEntry = new EScene.responseEntry();
-                        responseEntry.productKey = CTSL.PK_TWOWAYSWITCH;
-                        responseEntry.iotId = entry.iotId;
-                        responseEntry.name = entry.nickName;
-                        list.add(responseEntry);
-                    }
+                    this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_NIGHT_RISE_ON, twoSwitch_on, list);
+                }
+                break;
+            // 无人关灯场景处理
+            case CScene.SMC_UNMANNED_OFF:
+                // 1.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_off = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
+                if(oneSwitch_off == null || oneSwitch_off.size() == 0){
+                    this.addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_UNMANNED_OFF, oneSwitch_off, list);
+                }
+                // 2.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_off = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH);
+                if(twoSwitch_off == null || twoSwitch_off.size() == 0){
+                    this.addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_UNMANNED_OFF, twoSwitch_off, list);
+                }
+                break;
+            // 门铃播报场景处理
+            case CScene.SMC_BELL_PLAY:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway == null || gateway.size() == 0){
+                    this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_BELL_PLAY, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_BELL_PLAY, gateway, list);
+                }
+                break;
+            // 报警播报、红外布防报警、门磁布防报警场景处理
+            case CScene.SMC_ALARM_PLAY:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_alarm = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway_alarm == null || gateway_alarm.size() == 0){
+                    this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_ALARM_PLAY, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_ALARM_PLAY, gateway_alarm, list);
+                }
+                break;
+            // 回家模式场景处理
+            case CScene.SMC_GO_HOME_PATTERN:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_gohome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway_gohome == null || gateway_gohome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_GO_HOME_PATTERN, gateway_gohome, list);
+                }
+                // 2.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_gohome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
+                if(oneSwitch_gohome == null || oneSwitch_gohome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, oneSwitch_gohome, list);
+                }
+                // 3.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_gonhome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH);
+                if(twoSwitch_gonhome == null || twoSwitch_gonhome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, twoSwitch_gonhome, list);
+                }
+                break;
+            // 离家模式、睡觉模式场景处理
+            case CScene.SMC_LEAVE_HOME_PATTERN:
+            case CScene.SMC_SLEEP_PATTERN:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway_leavehome == null || gateway_leavehome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_LEAVE_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_LEAVE_HOME_PATTERN, gateway_leavehome, list);
+                }
+                // 2.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
+                if(oneSwitch_leavehome == null || oneSwitch_leavehome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_LEAVE_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_LEAVE_HOME_PATTERN, oneSwitch_leavehome, list);
+                }
+                // 3.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH);
+                if(twoSwitch_leavehome == null || twoSwitch_leavehome.size() == 0){
+                    this.addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_LEAVE_HOME_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_LEAVE_HOME_PATTERN, twoSwitch_leavehome, list);
+                }
+                break;
+            // 起床模式场景处理
+            case CScene.SMC_GETUP_PATTERN:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_getup = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if(gateway_getup == null || gateway_getup.size() == 0){
+                    this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, productList, list);
+                } else {
+                    this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, gateway_getup, list);
                 }
                 break;
             default:
@@ -188,4 +403,122 @@ public class SceneManager {
 
         return list;
     }
+
+    // 追加触发产品
+    private void addTriggerProduct(String productKey, int sceneModelCode, List<EProduct.configListEntry> productList, List<EScene.triggerEntry> triggers){
+        List<ETSL.stateEntry> list = CodeMapper.getPropertyTriggerState(this.mContext, productKey, sceneModelCode);
+        String name = ProductHelper.getProductName(productKey, productList);
+        if(list != null && list.size() > 0){
+            for (ETSL.stateEntry state : list ){
+                EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
+                triggerEntry.name = name;
+                triggerEntry.productKey = productKey;
+                triggerEntry.state = state;
+                triggers.add(triggerEntry);
+            }
+        }
+    }
+
+    // 追加触发设备
+    private void addTriggerDevice(String productKey, int sceneModelCode, Map<String, EDevice.deviceEntry> devices, List<EScene.triggerEntry> triggers){
+        List<ETSL.stateEntry> list = CodeMapper.getPropertyTriggerState(this.mContext, productKey, sceneModelCode);
+        for(EDevice.deviceEntry entry :devices.values()){
+            for (ETSL.stateEntry sate : list ){
+                EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
+                triggerEntry.productKey = productKey;
+                triggerEntry.iotId = entry.iotId;
+                triggerEntry.name = entry.nickName;
+                triggerEntry.deviceName = entry.deviceName;
+                triggerEntry.state = sate;
+                triggers.add(triggerEntry);
+            }
+        }
+    }
+
+    // 追加状态条件产品
+    private void addConditionStateProduct(String productKey, int sceneModelCode, List<EProduct.configListEntry> productList, List<EScene.conditionStateEntry> conditionStateEntries){
+        List<ETSL.stateEntry> list = CodeMapper.getPropertyConditionState(this.mContext, productKey, sceneModelCode);
+        String name = ProductHelper.getProductName(productKey, productList);
+        if(list != null && list.size() > 0){
+            for (ETSL.stateEntry state : list ){
+                EScene.conditionStateEntry conditionStateEntry = new EScene.conditionStateEntry();
+                conditionStateEntry.name = name;
+                conditionStateEntry.productKey = productKey;
+                conditionStateEntry.state = state;
+                conditionStateEntries.add(conditionStateEntry);
+            }
+        }
+    }
+
+    // 追加状态条件设备
+    private void addConditionStateDevice(String productKey, int sceneModelCode, Map<String, EDevice.deviceEntry> devices, List<EScene.conditionStateEntry> conditionStateEntries){
+        List<ETSL.stateEntry> list = CodeMapper.getPropertyConditionState(this.mContext, productKey, sceneModelCode);
+        for(EDevice.deviceEntry entry :devices.values()){
+            for (ETSL.stateEntry sate : list ){
+                EScene.conditionStateEntry conditionStateEntry = new EScene.conditionStateEntry();
+                conditionStateEntry.productKey = productKey;
+                conditionStateEntry.iotId = entry.iotId;
+                conditionStateEntry.name = entry.nickName;
+                conditionStateEntry.deviceName = entry.deviceName;
+                conditionStateEntry.state = sate;
+                conditionStateEntries.add(conditionStateEntry);
+            }
+        }
+    }
+
+    // 追加响应产品
+    private void addResponseProduct(String productKey, int sceneModelCode, List<EProduct.configListEntry> productList, List<EScene.responseEntry> responses){
+        List<ETSL.stateEntry> states = CodeMapper.getPropertyResponseState(this.mContext, productKey, sceneModelCode);
+        List<ETSL.serviceEntry> services = CodeMapper.getServiceResponseAction(this.mContext, productKey, sceneModelCode);
+        String name = ProductHelper.getProductName(productKey, productList);
+        if(states != null && states.size() > 0){
+            for(ETSL.stateEntry state : states){
+                EScene.responseEntry responseEntry = new EScene.responseEntry();
+                responseEntry.productKey = productKey;
+                responseEntry.name = name;
+                responseEntry.state = state;
+                responses.add(responseEntry);
+            }
+        }
+        if(services != null && services.size() > 0){
+            for(ETSL.serviceEntry service : services){
+                EScene.responseEntry responseEntry = new EScene.responseEntry();
+                responseEntry.productKey = productKey;
+                responseEntry.name = name;
+                responseEntry.service = service;
+                responses.add(responseEntry);
+            }
+        }
+    }
+
+    // 追加响应设备
+    private void addResponseDevice(String productKey, int sceneModelCode, Map<String, EDevice.deviceEntry> devices, List<EScene.responseEntry> responses){
+        List<ETSL.stateEntry> states = CodeMapper.getPropertyResponseState(this.mContext, productKey, sceneModelCode);
+        List<ETSL.serviceEntry> services = CodeMapper.getServiceResponseAction(this.mContext, productKey, sceneModelCode);
+        for(EDevice.deviceEntry entry :devices.values()){
+            if(states != null && states.size() > 0){
+                for(ETSL.stateEntry state : states){
+                    EScene.responseEntry responseEntry = new EScene.responseEntry();
+                    responseEntry.productKey = productKey;
+                    responseEntry.iotId = entry.iotId;
+                    responseEntry.name = entry.nickName;
+                    responseEntry.deviceName = entry.deviceName;
+                    responseEntry.state = state;
+                    responses.add(responseEntry);
+                }
+            }
+            if(services != null && services.size() > 0){
+                for(ETSL.serviceEntry service : services){
+                    EScene.responseEntry responseEntry = new EScene.responseEntry();
+                    responseEntry.productKey = productKey;
+                    responseEntry.iotId = entry.iotId;
+                    responseEntry.name = entry.nickName;
+                    responseEntry.deviceName = entry.deviceName;
+                    responseEntry.service = service;
+                    responses.add(responseEntry);
+                }
+            }
+        }
+    }
+
 }

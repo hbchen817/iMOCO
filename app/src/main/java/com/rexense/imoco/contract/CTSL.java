@@ -50,6 +50,12 @@ public class CTSL {
         }
     };
     public static final String GW_P_ArmMode_deploy          = "1";
+    public static final String GW_P_ArmMode_disarm          = "0";
+    // 定义网关服务常量
+    public static final String GW_S_InvokeMode              = "InvokeMode";
+    public static final String GW_SA_InvokeMode_Voice       = "InvokeVoice";
+    public static final String GW_SA_InvokeMode_Voice1      = "0";
+    public static final String GW_SA_InvokeMode_Voice2      = "1";
 
     // 定义一键开关属性常量
     public static final String OWS_P_PowerSwitch_1          = "PowerSwitch_1";
@@ -141,6 +147,7 @@ public class CTSL {
         }
     };
     public static final String PIR_P_MotionAlarmState_Has   = "1";
+    public static final String PIR_P_MotionAlarmState_NoHas = "0";
 
     // 定义属性配置文件
     public static final Map<String, Map<String, PTYPE>> propertyProfile = new HashMap<String, Map<String, PTYPE>>() {

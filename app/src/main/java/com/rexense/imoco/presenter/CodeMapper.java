@@ -8,6 +8,9 @@ import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.ETSL;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-15 15:29
@@ -109,13 +112,13 @@ public class CodeMapper {
             case CTSL.PK_TWOWAYSWITCH:
                 // 两路开关状态
                 if (propertyName.equals(CTSL.TWS_P_PowerSwitch_1)) {
-                    mapName = context.getString(R.string.towswitch_state_1);
+                    mapName = context.getString(R.string.twoswitch_state_1);
                     mapValue = context.getString(R.string.twoswitch_state_off);
                     if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
                         mapValue = context.getString(R.string.twoswitch_state_on);
                     }
                 } else if (propertyName.equals(CTSL.TWS_P_PowerSwitch_2)) {
-                    mapName = context.getString(R.string.towswitch_state_2);
+                    mapName = context.getString(R.string.twoswitch_state_2);
                     mapValue = context.getString(R.string.twoswitch_state_off);
                     if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
                         mapValue = context.getString(R.string.twoswitch_state_on);
@@ -201,25 +204,230 @@ public class CodeMapper {
     }
 
     // 获取属性触发状态
-    public static ETSL.stateEntry getPropertyTriggerState(Context context, String productKey, int sceneModelCode) {
-        ETSL.stateEntry stateEntry = null;
+    public static List<ETSL.stateEntry> getPropertyTriggerState(Context context, String productKey, int sceneModelCode) {
+        List<ETSL.stateEntry> list = new ArrayList<ETSL.stateEntry>();
         switch (sceneModelCode) {
+            // 起夜开灯、红外布防报警处理
             case CScene.SMC_NIGHT_RISE_ON:
-                // 起夜开灯处理
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+                if(productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR)) {
+                    // 处理人体热释放传感器状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
+                            context.getString(R.string.sensorstate_motionhas), CTSL.PIR_P_MotionAlarmState_Has);
+                    list.add(stateEntry);
+                }
+                break;
+            // 无人关灯处理
+            case CScene.SMC_UNMANNED_OFF:
+                if(productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR)) {
+                    // 处理人体热释放传感器状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
+                            context.getString(R.string.sensorstate_motionnonhas), CTSL.PIR_P_MotionAlarmState_NoHas);
+                    list.add(stateEntry);
+                }
+                break;
+            // 报警开灯处理
+            case CScene.SMC_ALARM_ON:
+                ETSL.stateEntry stateEntry_alarm = null;
+                if(productKey.equalsIgnoreCase(CTSL.PK_SMOKESENSOR)) {
+                    // 处理烟感传感器状态
+                    stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_smokename), CTSL.SS_P_SmokeSensorState,
+                            context.getString(R.string.sensorstate_smokehas), CTSL.SS_P_SmokeSensorState_Has);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_WATERSENSOR)) {
+                    // 处理水浸传感器状态
+                    stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_watername), CTSL.WS_P_WaterSensorState,
+                            context.getString(R.string.sensorstate_waterhas), CTSL.WS_P_WaterSensorState_Has);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_GASSENSOR)) {
+                    // 处理燃气传感器状态
+                    stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_gasname), CTSL.GS_P_GasSensorState,
+                            context.getString(R.string.sensorstate_gashas), CTSL.GS_P_GasSensorState_Has);
+                }
+                if(stateEntry_alarm != null){
+                    list.add(stateEntry_alarm);
+                }
+                break;
+            // 遥控开灯、门铃播报、报警播报处理
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_BELL_PLAY:
+            case CScene.SMC_ALARM_PLAY:
+                if(productKey.equalsIgnoreCase(CTSL.PK_REMOTECONTRILBUTTON))
+                {
+                    // 处理遥控按钮状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_buttonstate), CTSL.RCB_P_EmergencyAlarm,
+                            context.getString(R.string.sensorstate_trigger), CTSL.RCB_P_EmergencyAlarm_Trigger);
+                    list.add(stateEntry);
+                }
+                break;
+            // 开门亮灯、门磁布防报警处理
+            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
                 if(productKey.equalsIgnoreCase(CTSL.PK_DOORSENSOR))
                 {
                     // 处理门磁传感器状态
-                    stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_contactname), CTSL.DS_P_ContactState,
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_contactname), CTSL.DS_P_ContactState,
                             context.getString(R.string.sensorstate_contactopen), CTSL.DS_P_ContactState_Open);
-                } else {
-                    // 处理人体热释放传感器状态
-                    stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
-                            context.getString(R.string.sensorstate_motionhas), CTSL.PIR_P_MotionAlarmState_Has);
+                    list.add(stateEntry);
                 }
+                break;
             default:
                 break;
         }
-        return stateEntry;
+        return list;
+    }
+
+    // 获取属性条件状态
+    public static List<ETSL.stateEntry> getPropertyConditionState(Context context, String productKey, int sceneModelCode) {
+        List<ETSL.stateEntry> list = new ArrayList<ETSL.stateEntry>();
+        switch (sceneModelCode) {
+            // 红外布防报警、门磁布防报警处理
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)) {
+                    // 处理网关布防状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,
+                            context.getString(R.string.gateway_armmode_deploy), CTSL.GW_P_ArmMode_deploy);
+                    list.add(stateEntry);
+                }
+                break;
+            default:
+                break;
+        }
+        return list;
+    }
+
+    // 获取属性响应状态
+    public static List<ETSL.stateEntry> getPropertyResponseState(Context context, String productKey, int sceneModelCode) {
+        List<ETSL.stateEntry> list = new ArrayList<ETSL.stateEntry>();
+        switch (sceneModelCode) {
+            // 起夜开灯、报警开灯、遥控开灯、开门亮灯处理
+            case CScene.SMC_NIGHT_RISE_ON:
+            case CScene.SMC_ALARM_ON:
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_OPEN_DOOR_ON:
+                if(productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                    // 处理一键单火开关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
+                            context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)){
+                    // 处理两键单火开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
+                            context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2), CTSL.TWS_P_PowerSwitch_2,
+                            context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                }
+                break;
+            // 无人关灯处理
+            case CScene.SMC_UNMANNED_OFF:
+                if(productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                    // 处理一键单火开关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
+                            context.getString(R.string.oneswitch_state_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)){
+                    // 处理两键单火开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
+                            context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2), CTSL.TWS_P_PowerSwitch_2,
+                            context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                }
+                break;
+            // 回家模式处理
+            case CScene.SMC_GO_HOME_PATTERN:
+                if(productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                    // 处理一键单火开关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
+                            context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)){
+                    // 处理两键单火开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
+                            context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2), CTSL.TWS_P_PowerSwitch_2,
+                            context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
+                    // 处理网关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,
+                            context.getString(R.string.gateway_armmode_disarm), CTSL.GW_P_ArmMode_disarm);
+                    list.add(stateEntry);
+                }
+                break;
+            // 离家模式、睡觉模式处理
+            case CScene.SMC_LEAVE_HOME_PATTERN:
+            case CScene.SMC_SLEEP_PATTERN:
+                if(productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                    // 处理一键单火开关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
+                            context.getString(R.string.oneswitch_state_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)){
+                    // 处理两键单火开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
+                            context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2), CTSL.TWS_P_PowerSwitch_2,
+                            context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                } else if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
+                    // 处理网关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,
+                            context.getString(R.string.gateway_armmode_deploy), CTSL.GW_P_ArmMode_deploy);
+                    list.add(stateEntry);
+                }
+                break;
+            // 起床模式处理
+            case CScene.SMC_GETUP_PATTERN:
+                if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
+                    // 处理网关
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,
+                            context.getString(R.string.gateway_armmode_disarm), CTSL.GW_P_ArmMode_disarm);
+                    list.add(stateEntry);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+
+    // 获取服务响应动作
+    public static List<ETSL.serviceEntry> getServiceResponseAction(Context context, String productKey, int sceneModelCode) {
+        List<ETSL.serviceEntry> list = new ArrayList<ETSL.serviceEntry>();
+        switch (sceneModelCode) {
+            // 门铃播报处理
+            case CScene.SMC_BELL_PLAY:
+                if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)) {
+                    // 处理网关
+                    ETSL.serviceEntry serviceEntry = new ETSL.serviceEntry(context.getString(R.string.gateway_service_invokevoice1), CTSL.GW_S_InvokeMode);
+                    serviceEntry.addArg(context.getString(R.string.gateway_service_invokevoice1),
+                            CTSL.GW_SA_InvokeMode_Voice, context.getString(R.string.gateway_service_invokevoice1), CTSL.GW_SA_InvokeMode_Voice1);
+                    list.add(serviceEntry);
+                }
+                break;
+            // 报警播报、门磁布防报警、红外布防报警处理
+            case CScene.SMC_ALARM_PLAY:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+                if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)) {
+                    // 处理网关
+                    ETSL.serviceEntry serviceEntry = new ETSL.serviceEntry(context.getString(R.string.gateway_service_invokevoice2), CTSL.GW_S_InvokeMode);
+                    serviceEntry.addArg(context.getString(R.string.gateway_service_invokevoice2),
+                            CTSL.GW_SA_InvokeMode_Voice, context.getString(R.string.gateway_service_invokevoice2), CTSL.GW_SA_InvokeMode_Voice2);
+                    list.add(serviceEntry);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
     }
 
     // 处理事件
