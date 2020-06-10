@@ -8,7 +8,7 @@ android {
     signingConfigs {
         debug {
             v2SigningEnabled false
-            storeFile file('E:\\AndroidApp\\RexSmartHome\\debug.jks')
+            storeFile file('debug.jks')
             storePassword '123456'
             keyAlias = 'ray_ni'
             keyPassword '123456'

@@ -24,5 +24,4 @@ public class CBLE {
     public static final String READ_WRITE_SERVICE_UUID          = "91BC9BBE-ED4C-4CEE-8E7D-D8516C886547";
     public static final String READ_WRITE_CHARACTERISTIC_UUID   = "7BA2A753-97AF-4E83-AF8B-7A413F8DBBDD";
 
-
 }
