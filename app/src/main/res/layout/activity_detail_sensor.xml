@@ -18,7 +18,6 @@
         android:layout_height="180dp"
         android:layout_gravity="center"
         android:src="@drawable/icon_doorsensor" />
-
     <RelativeLayout
         android:id="@+id/deteailSensorRLState"
         style="@style/StateItemStyle">

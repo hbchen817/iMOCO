@@ -11,4 +11,50 @@
     <color name="colorLine">#D9D9D9</color>
     <color name="colorPrimary">#808A87</color>
     <color name="colorAccent">#0000FF</color>
+
+    <!-- 常用的一些颜色-->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#808080</color>
+    <color name="red">#FF0000</color>
+    <color name="gold">#FFD700</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="green">#008000</color>
+    <color name="purple">#800080</color>
+    <color name="pink">#FFC0CB</color>
+    <color name="orange">#FFA500</color>
+    <color name="darkorange">#ED896F</color>
+    <color name="darkgrey">#6C6C6C</color>
+    <color name="grey">#ACACAC</color>
+    <color name="blue">#0074A6</color>
+    <color name="darkblue">#0000FF</color>
+    <color name="all_c">#cccccc</color>
+    <color name="all_3">#333333</color>
+
+    <color name="appbgcolor">#ECECEC</color>
+    <color name="fontgrey">#ADADAD</color>
+    <color name="appcolor">#117BC5</color>
+    <color name="lightappcolor">#EAF2FF</color>
+    <color name="appcolorlight">#DB427A</color>
+    <color name="index_imgcolor">#262E52</color>
+    <color name="appfontcolor">#117BC5</color>
+    <color name="pricefontcolor">#FF6B53</color>
+    <color name="design_free_blue">#30CBDD</color>
+    <color name="design_free_yellow">#FFD800</color>
+    <color name="appfontcolorgrey">#40D0B482</color>
+    <color name="appblue">#11A3DC</color>
+    <color name="applightblue">#408ED0</color>
+    <color name="lightlightblue">#EAF2FF</color>
+    <color name="statuscolor">#7BA0A6</color>
+    <color name="appred">#E20025</color>
+    <color name="appgreen">#0EBD7A</color>
+    <color name="transparent_color">#00000000</color>
+
+    <color name="srlAccentColor">#E20025</color>
+    <color name="srlPrimaryColor">#062855</color>
+    <color name="light_gray">#F5F4F9</color>
+    <color name="light_grey">#F7F8F8</color>
+    <color name="all_8">#888888</color>
+    <color name="all_5">#555555</color>
+    <color name="all_9">#999999</color>
 </resources>
