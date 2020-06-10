@@ -23,4 +23,6 @@ public class CBLE {
     // 定义要读写的服务及特征(要根据项目中采用的蓝牙芯片进行修改)
     public static final String READ_WRITE_SERVICE_UUID          = "91BC9BBE-ED4C-4CEE-8E7D-D8516C886547";
     public static final String READ_WRITE_CHARACTERISTIC_UUID   = "7BA2A753-97AF-4E83-AF8B-7A413F8DBBDD";
+
+
 }
