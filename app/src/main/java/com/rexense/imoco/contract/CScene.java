@@ -21,4 +21,13 @@ public class CScene {
     public static final int SMC_LEAVE_HOME_PATTERN  = 11;
     public static final int SMC_SLEEP_PATTERN       = 12;
     public static final int SMC_GETUP_PATTERN       = 13;
+
+    // 场景参数类型
+    public static final int SPT_TRIGGER_TITLE       = 0;
+    public static final int SPT_TRIGGER             = 1;
+    public static final int SPT_CONDITION_TITLE     = 2;
+    public static final int SPT_CONDITION_TIME      = 3;
+    public static final int SPT_CONDITION_STATE     = 4;
+    public static final int SPT_RESPONSE_TITLE      = 5;
+    public static final int SPT_RESPONSE            = 6;
 }

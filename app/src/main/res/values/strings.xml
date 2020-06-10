@@ -209,6 +209,7 @@
     <string name="scene_maintain_trigger">如果</string>
     <string name="scene_maintain_condition">并且</string>
     <string name="scene_maintain_reponse">就</string>
+    <string name="scene_maintain_reponse_only_action">执行动作</string>
     <string name="scene_maintain_time">时间</string>
     <string name="scene_maintain_select">选择</string>
     <string name="scene_maintain_nohas">无设备</string>

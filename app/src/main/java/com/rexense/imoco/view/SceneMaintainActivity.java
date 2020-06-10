@@ -8,12 +8,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.aliyun.iot.link.ui.component.LinkBottomDialog;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
@@ -21,6 +24,7 @@ import com.rexense.imoco.presenter.AptSceneParameter;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ProductHelper;
 import com.rexense.imoco.presenter.SceneManager;
+import com.rexense.imoco.utility.Logger;
 
 /**
  * Creator: xieshaobing
@@ -101,6 +105,26 @@ public class SceneMaintainActivity extends BaseActivity {
         new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
     }
 
+    // 生成场景参数列表
+    private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList){
+        this.mParameterList = this.mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+        AptSceneParameter aptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
+        aptSceneParameter.setData(this.mParameterList);
+        ListView lstParameter = (ListView)findViewById(R.id.sceneMaintainLstParameter);
+        lstParameter.setAdapter(aptSceneParameter);
+
+        // 列表点击事件处理
+        lstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // 设置时间
+                if(mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
+                    Logger.d("The corn string is " + mParameterList.get(position).conditionTimeEntry.genCornString());
+                }
+            }
+        });
+    }
+
     // 数据处理器
     private Handler processDataHandler = new Handler(new Handler.Callback(){
         @Override
@@ -109,13 +133,8 @@ public class SceneMaintainActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
-
                     // 生成场景参数
-                    mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
-                    AptSceneParameter aptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
-                    aptSceneParameter.setData(mParameterList);
-                    ListView lstParameter = (ListView)findViewById(R.id.sceneMaintainLstParameter);
-                    lstParameter.setAdapter(aptSceneParameter);
+                    genSceneParameterList(mConfigProductList);
                     break;
                 default:
                     break;
@@ -128,7 +147,6 @@ public class SceneMaintainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.model.EScene;
 
 import java.util.ArrayList;
@@ -73,7 +74,8 @@ public class AptSceneParameter extends BaseAdapter {
 		LayoutInflater inflater = LayoutInflater.from(this.mContext);
 
 		// 触发设备标题、条件村里、响应设备标题处理
-		if(this.mParameterList.get(position).type == 0 || this.mParameterList.get(position).type == 2 || this.mParameterList.get(position).type == 5){
+		if(this.mParameterList.get(position).type == CScene.SPT_TRIGGER_TITLE || this.mParameterList.get(position).type == CScene.SPT_CONDITION_TITLE ||
+				this.mParameterList.get(position).type == CScene.SPT_RESPONSE_TITLE){
 			convertView = inflater.inflate(R.layout.list_sceneparametertitle, null, true);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.sceneParameterTitleLblName);
 			convertView.setTag(viewHolder);
@@ -82,7 +84,7 @@ public class AptSceneParameter extends BaseAdapter {
 		}
 
 		// 触发设备处理
-		if(this.mParameterList.get(position).type == 1){
+		if(this.mParameterList.get(position).type == CScene.SPT_TRIGGER){
 			convertView = inflater.inflate(R.layout.list_trigger, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.triggerListImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.triggerListLblName);
@@ -119,7 +121,7 @@ public class AptSceneParameter extends BaseAdapter {
 		}
 
 		// 时间条件处理
-		if(this.mParameterList.get(position).type == 3){
+		if(this.mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
 			convertView = inflater.inflate(R.layout.list_trigger, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.triggerListImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.triggerListLblName);
@@ -148,7 +150,7 @@ public class AptSceneParameter extends BaseAdapter {
 		}
 
 		// 状态条件处理
-		if(this.mParameterList.get(position).type == 4){
+		if(this.mParameterList.get(position).type == CScene.SPT_CONDITION_STATE){
 			convertView = inflater.inflate(R.layout.list_trigger, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.triggerListImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.triggerListLblName);
@@ -185,7 +187,7 @@ public class AptSceneParameter extends BaseAdapter {
 		}
 
 		// 响应设备处理
-		if(this.mParameterList.get(position).type == 6){
+		if(this.mParameterList.get(position).type == CScene.SPT_RESPONSE){
 			convertView = inflater.inflate(R.layout.list_response, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.responseListImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.responseListLblName);
@@ -194,11 +196,10 @@ public class AptSceneParameter extends BaseAdapter {
 			viewHolder.select.setTag(position);
 			viewHolder.noHas = (TextView) convertView.findViewById(R.id.responselistLblNohas);
 			convertView.setTag(viewHolder);
-			String actions = "";
+			viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).responseEntry.productKey));
+			viewHolder.name.setText(this.mParameterList.get(position).responseEntry.name);
 			// 处理属性状态
 			if(this.mParameterList.get(position).responseEntry.state != null) {
-				viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).responseEntry.productKey));
-				viewHolder.name.setText(this.mParameterList.get(position).responseEntry.name);
 				viewHolder.action.setText(this.mParameterList.get(position).responseEntry.state.value);
 			}
 			// 处理服务
