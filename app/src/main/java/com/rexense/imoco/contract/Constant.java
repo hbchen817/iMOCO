@@ -28,14 +28,18 @@ public class Constant {
     public static final int CONNECTION_STATUS_PROHIBIT              = 8;
 
     // 定义请求码
-    public static final int REQUESTCODE_CALLMOREACTIVITY            = 1;
-    public static final int REQUESTCODE_CALLCHOICECONTENTACTIVITY   = 2;
-    public static final int REQUESTCODE_CALLCHOICEWIFIACTIVITY      = 3;
+    public static final int REQUESTCODE_CALLCHOICEACTIVITY          = 1;
+    public static final int REQUESTCODE_CALLMOREACTIVITY            = 2;
+    public static final int REQUESTCODE_CALLCHOICECONTENTACTIVITY   = 3;
+    public static final int REQUESTCODE_CALLCHOICEWIFIACTIVITY      = 4;
+    public static final int REQUESTCODE_CALLSETTIMEACTIVITY         = 5;
 
     // 定义结果码
-    public static final int RESULTCODE_CALLMOREACTIVITYUNBIND       = 1000;
-    public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY    = 1001;
-    public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY       = 1002;
+    public static final int RESULTCODE_CALLCHOICEACTIVITY           = 1000;
+    public static final int RESULTCODE_CALLMOREACTIVITYUNBIND       = 1001;
+    public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY    = 1002;
+    public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY       = 1003;
+    public static final int RESULTCODE_CALLSETTIMEACTIVITY          = 1004;
 
     // 定义API PATH常量
     public static final String API_PATH_GETCONFIGPROCDUCTLIST       = "/thing/productInfo/getByAppKey";

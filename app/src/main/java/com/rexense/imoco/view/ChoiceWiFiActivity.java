@@ -34,8 +34,8 @@ public class ChoiceWiFiActivity extends Activity {
         title.setText(R.string.wifi_title);
 
         // 回退处理
-        ImageView imgAdd = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgAdd.setOnClickListener(new OnClickListener(){
+        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
+        imgBack.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
                 finish();

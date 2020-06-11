@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/choiceLlItem"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/include_title" />
+
+    <ListView
+        android:id="@+id/choiceLstItem"
+        android:listSelector="@color/background_list_selector"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/background_list"
+        android:divider="@color/background_list_item_divier"
+        android:dividerHeight="1px"
+        android:horizontalSpacing="1dip">
+    </ListView>
+
+    <RelativeLayout
+        android:id="@+id/choiceRelOk"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/shape_frame_txt">
+
+        <Space
+            android:id="@+id/sceneMaintainSpaNull"
+            android:layout_width="1dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/choiceLblOk"
+            android:textAlignment="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            style="@style/NormalFontStyle"
+            android:textColor="#FFFFFF"
+            android:text="@string/dialog_ok" />
+
+    </RelativeLayout>
+
+</LinearLayout>

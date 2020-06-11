@@ -24,7 +24,6 @@ import com.rexense.imoco.presenter.AptSceneParameter;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ProductHelper;
 import com.rexense.imoco.presenter.SceneManager;
-import com.rexense.imoco.utility.Logger;
 
 /**
  * Creator: xieshaobing
@@ -36,6 +35,8 @@ public class SceneMaintainActivity extends BaseActivity {
     private int mOperateType, mSceneModelCode;
     private TextView mLblName;
     private List<EScene.parameterEntry> mParameterList;
+    private  AptSceneParameter mAptSceneParameter;
+    private int mSetTimeIndex = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,18 +109,22 @@ public class SceneMaintainActivity extends BaseActivity {
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList){
         this.mParameterList = this.mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
-        AptSceneParameter aptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
-        aptSceneParameter.setData(this.mParameterList);
+        mAptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
+        mAptSceneParameter.setData(this.mParameterList);
         ListView lstParameter = (ListView)findViewById(R.id.sceneMaintainLstParameter);
-        lstParameter.setAdapter(aptSceneParameter);
+        lstParameter.setAdapter(mAptSceneParameter);
 
         // 列表点击事件处理
         lstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSetTimeIndex = -1;
                 // 设置时间
                 if(mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
-                    Logger.d("The corn string is " + mParameterList.get(position).conditionTimeEntry.genCornString());
+                    mSetTimeIndex = position;
+                    Intent intent = new Intent(SceneMaintainActivity.this, SetTimeActivity.class);
+                    intent.putExtra("corn", mParameterList.get(position).conditionTimeEntry.genCornString());
+                    startActivityForResult(intent, Constant.REQUESTCODE_CALLSETTIMEACTIVITY);
                 }
             }
         });
@@ -152,5 +157,20 @@ public class SceneMaintainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 处理自定义周循环
+        if(requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY){
+            Bundle bundle = data.getExtras();
+            String corn = bundle.getString("corn");
+            EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(corn);
+            if(mSetTimeIndex >= 0){
+                mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;
+                mAptSceneParameter.notifyDataSetChanged();
+            }
+        }
     }
 }

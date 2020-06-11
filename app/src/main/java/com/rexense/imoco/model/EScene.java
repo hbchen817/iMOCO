@@ -115,21 +115,48 @@ public class EScene {
             }
             this.isSelected = false;
         }
+        public conditionTimeEntry(String corn){
+            String[] items = corn.split(" ");
+            String[] minutes = items[0].split("-");
+            String[] hours = items[1].split("-");
+            String[] days = items[4].split(",");
+            this.beginHour = Integer.parseInt(hours[0]);
+            this.beginMinute = Integer.parseInt(minutes[0]);
+            this.endHour = Integer.parseInt(hours[1]);
+            this.endMinute = Integer.parseInt(minutes[1]);
+            this.repeat = new ArrayList<Integer>();
+            for(int i = 0; i < days.length; i++){
+                this.repeat.add(Integer.parseInt(days[i]));
+            }
+            this.isSelected = false;
+        }
 
         // 添加周循环
         public void addWeekRepeat(int dayIndex){
+            boolean isExist = false;
+            for(Integer day : this.repeat){
+                if(dayIndex == day){
+                    return;
+                }
+            }
             this.repeat.add(dayIndex);
         }
 
-        // 生成时间范围字符串
-        public String genTimeRangeString(){
-            return String.format("%d:%d - %d:%d", this.beginHour, this.beginMinute, this.endHour, this.endMinute);
+        // 获取时间范围字符串
+        public String getTimeRangeString(){
+            return String.format("%02d:%02d - %02d:%02d", this.beginHour, this.beginMinute, this.endHour, this.endMinute);
         }
 
-        // 生成星期循环字符串
-        public String genWeekRepeatString(Context context){
+        // 获取星期循环字符串
+        public String getWeekRepeatString(Context context){
             if(this.isEveryDay()){
-                return context.getString(R.string.week_all);
+                return context.getString(R.string.set_time_everyday);
+            }
+            if(this.isWorkDay()){
+                return context.getString(R.string.set_time_workday);
+            }
+            if(this.isWeekEnd()){
+                return context.getString(R.string.set_time_weekend);
             }
 
             String weekRepeat = "";
@@ -145,7 +172,7 @@ public class EScene {
                 }
                 if(isFound){
                     if(weekRepeat.length() > 0) {
-                        weekRepeat = weekRepeat + ",";
+                        weekRepeat = weekRepeat + " ";
                     }
                     switch (i){
                         case 0:
@@ -177,6 +204,53 @@ public class EScene {
             return weekRepeat;
         }
 
+        // 获取取周循环选项
+        public List<EChoice.itemEntry> getReportChoiceItems(Context context){
+            List<EChoice.itemEntry> list = new ArrayList<EChoice.itemEntry>();
+            String name = "";
+            boolean isFound = false;
+            for(int i = 0; i < 7; i++)
+            {
+                switch (i){
+                    case 0:
+                        name = context.getString(R.string.week_0);
+                        break;
+                    case 1:
+                        name = context.getString(R.string.week_1);
+                        break;
+                    case 2:
+                        name = context.getString(R.string.week_2);
+                        break;
+                    case 3:
+                        name = context.getString(R.string.week_3);
+                        break;
+                    case 4:
+                        name = context.getString(R.string.week_4);
+                        break;
+                    case 5:
+                        name = context.getString(R.string.week_5);
+                        break;
+                    case 6:
+                        name = context.getString(R.string.week_6);
+                        break;
+                    default:
+                        break;
+                }
+
+                isFound = false;
+                for(Integer r : this.repeat){
+                    if(r == i){
+                        isFound = true;
+                        break;
+                    }
+                }
+                EChoice.itemEntry item = new EChoice.itemEntry(name, i + "", isFound);
+                list.add(item);
+            }
+
+            return list;
+        }
+
         // 生成Corn字符串
         public String genCornString(){
             String weekRepeat = "";
@@ -191,11 +265,16 @@ public class EScene {
                     }
                 }
             }
-            return String.format("%d-%d %d-%d * * %s", this.beginMinute, this.endMinute, this.beginHour, this.endHour, weekRepeat);
+            return String.format("%02d-%02d %02d-%02d * * %s", this.beginMinute, this.endMinute, this.beginHour, this.endHour, weekRepeat);
+        }
+
+        // 是否全天
+        public boolean isAllDay() {
+            return this.beginHour == 0 && this.beginMinute == 0 && this.endHour == 23 && this.endMinute == 59 ? true : false;
         }
 
         // 是否每一天
-        private boolean isEveryDay() {
+        public boolean isEveryDay() {
             boolean isFound;
             for(int i = 0; i < 7; i++)
             {
@@ -210,6 +289,62 @@ public class EScene {
                 }
             }
             return true;
+        }
+
+        // 是否工作日
+        public boolean isWorkDay() {
+            boolean sunIsFound = false, staIsFound = false;
+            int otherNumber = 0;
+            for(Integer r : this.repeat){
+                if(r == 0){
+                    sunIsFound = true;
+                } else if(r == 6){
+                    staIsFound = true;
+                } else {
+                    otherNumber++;
+                }
+            }
+
+            return !sunIsFound && !staIsFound && otherNumber == 5 ? true : false;
+        }
+
+        // 是否周末
+        public boolean isWeekEnd() {
+            boolean sunIsFound = false, staIsFound = false;
+            int otherNumber = 0;
+            for(Integer r : this.repeat){
+                if(r == 0){
+                    sunIsFound = true;
+                } else if(r == 6){
+                    staIsFound = true;
+                } else {
+                    otherNumber++;
+                }
+            }
+
+            return sunIsFound && staIsFound && otherNumber == 0 ? true : false;
+        }
+
+        // 是否自定义
+        public boolean isSelfDefine(){
+            return !this.isEveryDay() && !this.isWorkDay() && !this.isWeekEnd() ? true : false;
+        }
+
+        // 快速生成周循环(type:1每一天,2工作日,3周末)
+        public void quickGenRepeat(int type){
+            this.repeat.clear();
+            if(type == 1) {
+                for(int i = 0; i < 7; i++){
+                    this.repeat.add(i);
+                }
+            } else if(type == 2) {
+                for(int i = 1; i < 6; i++){
+                    this.repeat.add(i);
+                }
+            } else if(3 == type) {
+                this.repeat.add(0);
+                this.repeat.add(6);
+            }
         }
     }
 

@@ -6,7 +6,6 @@
 	android:layout_gravity="center|bottom"
 	android:layout_height="wrap_content"
 	android:background="#E5FFfF"
-	android:visibility="gone"
 	android:layout_marginTop="10dp">
 
 	<TextView
@@ -67,7 +66,7 @@
 		app:wheel_curtain="false"
 		app:wheel_curtain_color="@color/colorPrimary"
 		app:wheel_selected_item_text_color="#ff0000"
-		app:wheel_visible_item_count="8"
+		app:wheel_visible_item_count="6"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="10dp"

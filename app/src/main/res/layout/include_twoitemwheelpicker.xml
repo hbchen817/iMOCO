@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/twoItemWheelPickerRLPicker"
+	android:layout_width="fill_parent"
+	android:layout_gravity="center|bottom"
+	android:layout_height="wrap_content"
+	android:background="#E5FFfF"
+	android:layout_marginTop="10dp">
+
+	<TextView
+		android:layout_width="fill_parent"
+		android:background="@color/colorPrimary"
+		android:layout_height="1dp" />
+
+	<TextView
+		android:id="@+id/twoItemWheelPickerLblOk"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		style="@style/NormalFontStyle"
+		android:layout_marginTop="10dp"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="10dp"
+		android:textAlignment="center"
+		android:text="@string/dialog_ok" />
+
+	<TextView
+		android:id="@+id/twoItemWheelPickerLblCancel"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		style="@style/NormalFontStyle"
+		android:layout_marginTop="10dp"
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="10dp"
+		android:textAlignment="center"
+		android:text="@string/dialog_cancel" />
+
+	<TextView
+		android:id="@+id/twoItemWheelPickerLblValue"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		style="@style/NormalFontStyle"
+		android:layout_marginTop="10dp"
+		android:layout_centerInParent="true"
+		android:textAlignment="center"
+		android:text="选择值" />
+
+	<TextView
+		android:id="@+id/twoItemWheelPickerLblLine"
+		android:layout_below="@+id/twoItemWheelPickerLblValue"
+		android:layout_width="fill_parent"
+		android:layout_marginTop="10dp"
+		android:background="@color/colorPrimary"
+		android:layout_height="1dp" />
+
+	<LinearLayout
+		android:id="@+id/ll_area"
+		android:layout_width="fill_parent"
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@+id/twoItemWheelPickerLblLine"
+		android:layout_gravity="bottom">
+
+		<com.aigestudio.wheelpicker.WheelPicker
+			android:id="@+id/firstItemWheelPickerWPPicker"
+			app:wheel_item_text_size="16sp"
+			app:wheel_atmospheric="true"
+			app:wheel_cyclic="false"
+			app:wheel_item_text_color="#0000ff"
+			app:wheel_curtain="false"
+			app:wheel_curtain_color="@color/colorPrimary"
+			app:wheel_selected_item_text_color="#ff0000"
+			app:wheel_visible_item_count="6"
+			android:layout_width="0dp"
+			android:layout_weight="0.5"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"/>
+
+		<com.aigestudio.wheelpicker.WheelPicker
+			android:id="@+id/secondItemWheelPickerWPPicker"
+			app:wheel_item_text_size="16sp"
+			app:wheel_atmospheric="true"
+			app:wheel_cyclic="false"
+			app:wheel_item_text_color="#0000ff"
+			app:wheel_curtain="false"
+			app:wheel_curtain_color="@color/colorPrimary"
+			app:wheel_selected_item_text_color="#ff0000"
+			app:wheel_visible_item_count="6"
+			android:layout_width="0dp"
+			android:layout_weight="0.5"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"/>
+
+	</LinearLayout>
+</RelativeLayout>

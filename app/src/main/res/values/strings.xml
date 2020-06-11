@@ -215,6 +215,17 @@
     <string name="scene_maintain_nohas">无设备</string>
     <string name="scene_maintain_use">启用</string>
 
+    <string name="set_time_title">设置时间</string>
+    <string name="set_time_allday">全天</string>
+    <string name="set_time_begin">开始</string>
+    <string name="set_time_end">结束</string>
+    <string name="set_time_everyday">每一天</string>
+    <string name="set_time_workday">工作日</string>
+    <string name="set_time_weekend">周末</string>
+    <string name="set_time_selfdefine">自定义</string>
+    <string name="set_time_confirm">确认</string>
+    <string name="set_time_seldefine_select">请进行自定义选择</string>
+
     <string name="week_all">每一天</string>
     <string name="week_0">周日</string>
     <string name="week_1">周一</string>

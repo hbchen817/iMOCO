@@ -183,7 +183,6 @@ public class MoreSubdeviceActivity extends BaseActivity {
         this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.oneItemWheelPickerRLPicker);
         this.mWheelPickerLayout.setVisibility(View.GONE);
         this.mWheelPickerValue = (TextView)findViewById(R.id.oneItemWheelPickerLblValue);
-        this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.oneItemWheelPickerRLPicker);
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
         this.mLblRoomName = (TextView)findViewById(R.id.moreSubdeviceLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
