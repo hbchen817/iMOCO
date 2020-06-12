@@ -9,6 +9,11 @@ public class CScene {
     // 场景类型
     public static final String TYPE_MANUAL          = "0";
     public static final String TYPE_AUTOMATIC       = "1";
+    public static final String TYPE_IFTTT           = "IFTTT";
+    public static final String TYPE_CA              = "CA";
+
+    // 场景缺省图标URL
+    public static final String DEFAULT_ICON_URL     ="http://iotx-paas-admin.oss-cn-shanghai.aliyuncs.com/publish/image/1585899444167.png";
 
     // 场景模板代码
     public static final int SMC_NONE                = 0;

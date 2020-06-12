@@ -19,6 +19,9 @@ import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.sdk.APIChannel;
 import com.rexense.imoco.utility.Logger;
 
+import com.alibaba.fastjson.JSON;
+
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-05-14 15:29
@@ -30,6 +33,263 @@ public class SceneManager {
     // 构造
     public SceneManager(Context context) {
         this.mContext = context;
+    }
+
+    // 检查参数(0失败,1成功)
+    public int checkParameter(Context context, int sceneModelCode, List<EScene.parameterEntry> parameters){
+
+
+        return 1;
+    }
+
+    // 获取场景描述
+    public String getSceneDescription(int sceneModelCode){
+        switch (sceneModelCode){
+            case CScene.SMC_NIGHT_RISE_ON:
+            case CScene.SMC_UNMANNED_OFF:
+            case CScene.SMC_ALARM_ON:
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_BELL_PLAY:
+            case CScene.SMC_ALARM_PLAY:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                return this.mContext.getString(R.string.scenemodel_recommend);
+            case CScene.SMC_GO_HOME_PATTERN:
+            case CScene.SMC_LEAVE_HOME_PATTERN:
+            case CScene.SMC_SLEEP_PATTERN:
+            case CScene.SMC_GETUP_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_one_key);
+            default:
+                break;
+        }
+        return "";
+    }
+
+    // 创建场景
+    public void create(int sceneModelCode, EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,
+                       Handler commitFailureHandler,
+                       Handler responseErrorHandler,
+                       Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", true);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        // 构造触发Triggers
+        StringBuilder jsonBuilder = new StringBuilder();
+        boolean isHasTrigger = false;
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_TRIGGER || parameter.triggerEntry == null || !parameter.triggerEntry.isSelected){
+                continue;
+            }
+            if(isHasTrigger == false){
+                jsonBuilder.append("{\"uri\":\"logical/or\",\"items\":[");
+            } else {
+                jsonBuilder.append(",\n");
+            }
+
+            jsonBuilder.append(String.format("" +
+                            "{\n" +
+                            "    \"uri\":\"trigger/device/property\",\n" +
+                            "    \"params\":{\n" +
+                            "        \"productKey\":\"%s\",\n" +
+                            "        \"deviceName\":\"%s\",\n" +
+                            "        \"propertyName\":\"%s\",\n" +
+                            "        \"compareType\":\"==\",\n" +
+                            "        \"compareValue\":%s\n" +
+                            "    }\n" +
+                            "}",
+                    parameter.triggerEntry.productKey,
+                    parameter.triggerEntry.deviceName,
+                    parameter.triggerEntry.state.rawName,
+                    parameter.triggerEntry.state.rawValue));
+
+            isHasTrigger = true;
+        }
+        if(isHasTrigger){
+            jsonBuilder.append("\n]}");
+            requestParameterEntry.addParameter("triggers", jsonBuilder.toString());
+            Logger.d("Create scene triggers json string is:\r\n" + jsonBuilder.toString());
+            jsonBuilder.delete(0, jsonBuilder.length());
+        }
+        // 构造时间条件
+        boolean isHasConditionTime = false;
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_CONDITION_TIME || parameter.conditionTimeEntry == null || !parameter.conditionTimeEntry.isSelected){
+                continue;
+            }
+            if(!isHasConditionTime){
+                jsonBuilder.append("{\"uri\":\"logical/and\",\"items\":[");
+            } else {
+                jsonBuilder.append(",\n");
+            }
+
+            jsonBuilder.append(String.format("" +
+                            "{\n" +
+                            "    \"uri\":\"condition/timeRange\",\n" +
+                            "    \"params\":{\n" +
+                            "        \"corn\":\"%s\",\n" +
+                            "        \"cronType\":\"linux\",\n" +
+                            "        \"timezoneID\":\"Asia/Shanghai\"\n" +
+                            "    }\n" +
+                            "}",
+                    parameter.conditionTimeEntry.genCornString()));
+
+            isHasConditionTime = true;
+        }
+        // 构造属性状态条件
+        boolean isHasConditionState = false;
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_CONDITION_STATE || parameter.conditionStateEntry == null || !parameter.conditionStateEntry.isSelected){
+                continue;
+            }
+            if(!isHasConditionTime){
+                if(!isHasConditionState){
+                    jsonBuilder.append("{\"uri\":\"logical/and\",\"items\":[");
+                } else {
+                    jsonBuilder.append(",\n");
+                }
+            } else {
+                jsonBuilder.append(",\n");
+            }
+
+            jsonBuilder.append(String.format("" +
+                            "{\n" +
+                            "    \"uri\":\"condition/device/property\",\n" +
+                            "    \"params\":{\n" +
+                            "        \"productKey\":\"%s\",\n" +
+                            "        \"deviceName\":\"%s\",\n" +
+                            "        \"propertyName\":\"%s\",\n" +
+                            "        \"compareType\":\"==\",\n" +
+                            "        \"compareValue\":%s\n" +
+                            "    }\n" +
+                            "}",
+                    parameter.conditionStateEntry.productKey,
+                    parameter.conditionStateEntry.deviceName,
+                    parameter.conditionStateEntry.state.rawName,
+                    parameter.conditionStateEntry.state.rawValue));
+
+            isHasConditionState = true;
+        }
+        if(isHasConditionTime || isHasConditionState){
+            jsonBuilder.append("]}");
+            requestParameterEntry.addParameter("conditions", jsonBuilder.toString());
+            Logger.d("Create scene conditions json string is:\r\n" + jsonBuilder.toString());
+            jsonBuilder.delete(0, jsonBuilder.length());
+        }
+        // 构造响应Actions
+        boolean isHasAction = false;
+        com.alibaba.fastjson.JSONArray actions = new com.alibaba.fastjson.JSONArray();
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_RESPONSE || parameter.responseEntry == null || !parameter.responseEntry.isSelected ||
+                    (parameter.responseEntry.state == null && parameter.responseEntry.service == null)){
+                continue;
+            }
+
+            if(parameter.responseEntry.state != null) {
+                // 设置属性
+                try {
+                    com.alibaba.fastjson.JSONObject state = new com.alibaba.fastjson.JSONObject();
+                    state.put("uri", "action/device/setProperty");
+                    com.alibaba.fastjson.JSONObject params = new com.alibaba.fastjson.JSONObject();
+                    params.put("iotId", parameter.responseEntry.iotId);
+                    params.put("propertyName", parameter.responseEntry.state.rawName);
+                    params.put("propertyValue", parameter.responseEntry.state.rawValue);
+                    state.put("params", params);
+                    actions.add(state);
+                }catch (Exception ex){
+                    Logger.e("Failed to create trigger of scene, because is " + ex.getMessage());
+                }
+            } else if(parameter.responseEntry.service != null) {
+                // 调用服务
+                try {
+                    com.alibaba.fastjson.JSONObject service = new com.alibaba.fastjson.JSONObject();
+                    service.put("uri", "action/device/invokeService");
+                    com.alibaba.fastjson.JSONObject params = new com.alibaba.fastjson.JSONObject();
+                    params.put("iotId", parameter.responseEntry.iotId);
+                    params.put("serviceName", parameter.responseEntry.service.rawName);
+                    params.put("propertyValue", parameter.responseEntry.state.rawValue);
+                    com.alibaba.fastjson.JSONObject args = new com.alibaba.fastjson.JSONObject();
+                    // 构造服务参数
+                    for(ETSL.serviceArgEntry arg : parameter.responseEntry.service.args){
+                        args.put(arg.rawName, arg.rawValue);
+                    }
+                    params.put("serviceArgs", args);
+                    service.put("params", params);
+                    actions.add(service);
+                }catch (Exception ex){
+                    Logger.e("Failed to create trigger of scene, because is " + ex.getMessage());
+                }
+            }
+
+            /*
+            if(isHasAction == false){
+                jsonBuilder.append("[");
+            } else {
+                jsonBuilder.append(",\n");
+            }
+
+            if(parameter.responseEntry.state != null) {
+                // 设置属性
+                jsonBuilder.append(String.format("" +
+                                "{\n" +
+                                "    \"uri\":\"action/device/setProperty\",\n" +
+                                "    \"params\":{\n" +
+                                "        \"iotId\":\"%s\",\n" +
+                                "        \"propertyName\":\"%s\",\n" +
+                                "        \"propertyValue\":%s\n" +
+                                "    }\n" +
+                                "}",
+                        parameter.responseEntry.iotId,
+                        parameter.responseEntry.state.rawName,
+                        parameter.responseEntry.state.rawValue));
+            } else if(parameter.responseEntry.service != null) {
+                // 调用服务
+                String args = "";
+                if(parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0){
+                    // 构造服务参数
+                    for(ETSL.serviceArgEntry arg : parameter.responseEntry.service.args){
+                        if(!args.equals("")){
+                            args = args + ",";
+                        }
+                        args = args + String.format("\"%s\":%s", arg.rawName, arg.rawValue);
+                    }
+                }
+                jsonBuilder.append(String.format("" +
+                                "{\n" +
+                                "    \"uri\":\"action/device/invokeService\",\n" +
+                                "    \"params\":{\n" +
+                                "        \"iotId\":\"%s\",\n" +
+                                "        \"serviceName\":\"%s\",\n" +
+                                "        \"serviceArgs\":{\n" +
+                                "        %s\n" +
+                                "        \"}\n" +
+                                "    }\n" +
+                                "}",
+                        parameter.responseEntry.iotId,
+                        parameter.responseEntry.service.rawName,
+                        args));
+            }
+            */
+
+            isHasAction = true;
+        }
+        if(isHasAction){
+            requestParameterEntry.addParameter("actions", actions);
+            Logger.d("Create scene actions json string is:\r\n" + actions.toString());
+        }
+        requestParameterEntry.addParameter("sceneType", baseInfo.sceneType);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
     // 查询场景列表
@@ -74,18 +334,6 @@ public class SceneManager {
         list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scen_background12));
         list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scen_background13));
         return list;
-    }
-
-    // 获取场景描述
-    public String getSceneDescription(int sceneModelCode){
-        switch (sceneModelCode){
-            case CScene.SMC_NIGHT_RISE_ON:
-                return this.mContext.getString(R.string.scenemodel_night_rise_on);
-            default:
-                break;
-        }
-
-        return "";
     }
 
     // 生成指定场景模板参数列表
@@ -160,13 +408,6 @@ public class SceneManager {
         }
 
         return list;
-    }
-
-    // 检查参数(0失败,1成功)
-    public int checkParameter(Context context, int sceneModelCode, List<EScene.parameterEntry> parameters){
-
-
-        return 1;
     }
 
     // 获取指定场景模板的触发设备

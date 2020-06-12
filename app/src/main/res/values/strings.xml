@@ -219,6 +219,8 @@
     <string name="scene_maintain_select">选择</string>
     <string name="scene_maintain_nohas">无设备</string>
     <string name="scene_maintain_use">启用</string>
+    <string name="scene_maintain_create_success">创建场景%s成功</string>
+    <string name="scene_maintain_create_failed">创建场景%s失败</string>
 
     <string name="set_time_title">设置时间</string>
     <string name="set_time_allday">全天</string>

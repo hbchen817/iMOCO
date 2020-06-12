@@ -400,6 +400,24 @@ public class CloudDataParser {
         return list;
     }
 
+    // 处理创建场景结果
+    public static String processCreateSceneResult(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return "";
+        }
+
+        if(cloudData.indexOf(":") < 0){
+            return cloudData;
+        }
+
+        String json = cloudData;
+        if(!cloudData.substring(0, 1).equals("{")){
+            json = "{" + json + "}";
+        }
+        JSONObject jsonObject = JSON.parseObject(json);
+        return jsonObject.getString("sceneId");
+    }
+
     // 处理场景列表
     public static EScene.sceneListEntry processSceneList(String cloudData) {
         if(cloudData == null || cloudData.length() == 0){
@@ -422,7 +440,6 @@ public class CloudDataParser {
                 item = scenes.getJSONObject(i);
                 EScene.sceneListItemEntry itemEntry = new EScene.sceneListItemEntry();
                 itemEntry.id = item.getString("id");
-                itemEntry.status = item.getInteger("status");
                 itemEntry.enable = item.getBoolean("enable");
                 itemEntry.name = item.getString("name");
                 itemEntry.description = item.getString("description");

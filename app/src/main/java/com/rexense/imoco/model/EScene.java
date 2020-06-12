@@ -2,6 +2,8 @@ package com.rexense.imoco.model;
 
 import android.content.Context;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +30,15 @@ public class EScene {
             this.catalogId = catalogId;
             this.name = name;
             this.description = description;
+            this.icon = CScene.DEFAULT_ICON_URL;
+            this.iconColor = "#FFFFFF";
+            this.sceneType = CScene.TYPE_IFTTT;
         }
     }
 
     // 场景列表列表条目实体
     public static class sceneListItemEntry {
         public String id;
-        public int status;
         public Boolean enable;
         public String name;
         public String description;
@@ -44,7 +48,6 @@ public class EScene {
         // 构造
         public sceneListItemEntry(){
             this.id = "";
-            this.status = 1;
             this.enable = false;
             this.name = "";
             this.description = "";
@@ -69,7 +72,6 @@ public class EScene {
         public void addData(sceneListItemEntry entry) {
             sceneListItemEntry sceneListItem = new sceneListItemEntry();
             sceneListItem.id = entry.id;
-            sceneListItem.status = entry.status;
             sceneListItem.enable = entry.enable;
             sceneListItem.name = entry.name;
             sceneListItem.description = entry.description;

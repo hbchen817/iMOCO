@@ -24,6 +24,9 @@ import com.rexense.imoco.presenter.AptSceneParameter;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ProductHelper;
 import com.rexense.imoco.presenter.SceneManager;
+import com.rexense.imoco.presenter.SystemParameter;
+import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.ToastUtils;
 
 /**
  * Creator: xieshaobing
@@ -90,6 +93,10 @@ public class SceneMaintainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 int number = mParameterList.size();
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
+                        mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
+                mSceneManager.create(mSceneModelCode, baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
             }
         });
 
@@ -140,6 +147,16 @@ public class SceneMaintainActivity extends BaseActivity {
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
+                    break;
+                case Constant.MSG_CALLBACK_CREATESCENE:
+                    // 处理创建场景结果
+                    String sceneId = CloudDataParser.processCreateSceneResult((String) msg.obj);
+                    if (sceneId != null && sceneId.length() > 0) {
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()));
+                    } else {
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mLblName.getText().toString()));
+                    }
+                    finish();
                     break;
                 default:
                     break;
