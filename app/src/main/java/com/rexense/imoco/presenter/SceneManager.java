@@ -32,19 +32,8 @@ public class SceneManager {
         this.mContext = context;
     }
 
-    // 获取测试数据
-    public List<EScene.sceneListItemEntry> getTestData() {
-        List<EScene.sceneListItemEntry> list = new ArrayList<EScene.sceneListItemEntry>();
-        for(int i = 1; i <= 10; i++) {
-            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-            entry.name = "一键执行场景" + i;
-            list.add(entry);
-        }
-        return list;
-    }
-
-    // 获取场景列表
-    public void getSceneList(String groupId, int pageNo, int pageSize,
+    // 查询场景列表
+    public void querySceneList(String homeId, String catalogId, int pageNo, int pageSize,
                             Handler commitFailureHandler,
                             Handler responseErrorHandler,
                             Handler processDataHandler) {
@@ -55,12 +44,13 @@ public class SceneManager {
 
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
-        requestParameterEntry.path = Constant.API_PATH_GETSCENELIST;
-        requestParameterEntry.version = "1.0.5";
-        requestParameterEntry.addParameter("groupId", groupId);
+        requestParameterEntry.path = Constant.API_PATH_QUERYSCENELIST;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("catalogId", catalogId);
         requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
-        requestParameterEntry.addParameter("pageSize", pageSize <= 0  || pageSize > 50 ? 50 : pageSize);
-        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETSCENELIST;
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0  || pageSize > 30 ? 30 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERYSCENELIST;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
@@ -84,6 +74,18 @@ public class SceneManager {
         list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scen_background12));
         list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scen_background13));
         return list;
+    }
+
+    // 获取场景描述
+    public String getSceneDescription(int sceneModelCode){
+        switch (sceneModelCode){
+            case CScene.SMC_NIGHT_RISE_ON:
+                return this.mContext.getString(R.string.scenemodel_night_rise_on);
+            default:
+                break;
+        }
+
+        return "";
     }
 
     // 生成指定场景模板参数列表
@@ -158,6 +160,13 @@ public class SceneManager {
         }
 
         return list;
+    }
+
+    // 检查参数(0失败,1成功)
+    public int checkParameter(Context context, int sceneModelCode, List<EScene.parameterEntry> parameters){
+
+
+        return 1;
     }
 
     // 获取指定场景模板的触发设备

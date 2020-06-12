@@ -24,6 +24,7 @@ import com.rexense.imoco.presenter.AptSceneModel;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.SceneManager;
+import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.Logger;
 
 /**
@@ -158,7 +159,7 @@ public class SceneActivity extends BaseActivity {
         } else {
             this.mSceneList.clear();
         }
-        this.mSceneManager.getSceneList("0", 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(),"", 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
     // API数据处理器
@@ -166,7 +167,7 @@ public class SceneActivity extends BaseActivity {
         @Override
         public boolean handleMessage(Message msg){
             switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETSCENELIST:
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String)msg.obj);
                     if(sceneList != null && sceneList.scenes != null) {
@@ -175,7 +176,7 @@ public class SceneActivity extends BaseActivity {
                         }
                         if(sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mSceneManager.getSceneList("0", sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), "", sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则设置场景列表数据
                             // ToDo

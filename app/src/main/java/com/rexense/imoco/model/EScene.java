@@ -11,6 +11,26 @@ import java.util.List;
  * Description: 设备实体(包括网关及子设备)
  */
 public class EScene {
+    // 场景基本信息实体
+    public static class sceneBaseInfoEntry {
+        public String homeId;
+        public String catalogId;
+        public boolean enable;
+        public String name;
+        public String description;
+        public String icon;
+        public String iconColor;
+        public String sceneType;
+
+        // 构造
+        public sceneBaseInfoEntry(String homeId, String catalogId, String name, String description){
+            this.homeId = homeId;
+            this.catalogId = catalogId;
+            this.name = name;
+            this.description = description;
+        }
+    }
+
     // 场景列表列表条目实体
     public static class sceneListItemEntry {
         public String id;
@@ -19,7 +39,7 @@ public class EScene {
         public String name;
         public String description;
         public Boolean valid;
-        public String groupId;
+        public String catalogId;
 
         // 构造
         public sceneListItemEntry(){
@@ -29,7 +49,7 @@ public class EScene {
             this.name = "";
             this.description = "";
             this.valid = false;
-            this.groupId = "0";
+            this.catalogId = "0";
         }
     }
 
@@ -54,7 +74,7 @@ public class EScene {
             sceneListItem.name = entry.name;
             sceneListItem.description = entry.description;
             sceneListItem.valid = entry.valid;
-            sceneListItem.groupId = entry.groupId;
+            sceneListItem.catalogId = entry.catalogId;
             this.scenes.add(sceneListItem);
         }
     }

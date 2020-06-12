@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.ActivityRouter;
 import com.rexense.imoco.presenter.AptDeviceGrid;
@@ -72,7 +73,7 @@ public class MainActivity extends BaseActivity {
     private AptDeviceList mAptDeviceList = null;
     private AptDeviceGrid mAptDeviceGrid = null;
     private AptRoomList mAptRoomList = null;
-    private final int mScenePageSize = 50;
+    private final int mScenePageSize = 30;
     private final int mDevicePageSize = 50;
     private final int mRoomPageSize = 20;
     private int mDeviceDisplayType = 1;
@@ -382,7 +383,7 @@ public class MainActivity extends BaseActivity {
         } else {
             this.mSceneList.clear();
         }
-        this.mSceneManager.getSceneList("0", 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
     // 开始获取设备列表
@@ -496,7 +497,7 @@ public class MainActivity extends BaseActivity {
                         Logger.d("HomeId is " + SystemParameter.getInstance().getHomeId());
                     }
                     break;
-                case Constant.MSG_CALLBACK_GETSCENELIST:
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String)msg.obj);
                     if(sceneList != null && sceneList.scenes != null) {
@@ -505,7 +506,7 @@ public class MainActivity extends BaseActivity {
                         }
                         if(sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mSceneManager.getSceneList("0", sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则设置场景列表数据
                             setSceneList(mSceneList);

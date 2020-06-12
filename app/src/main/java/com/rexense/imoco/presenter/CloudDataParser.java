@@ -427,7 +427,7 @@ public class CloudDataParser {
                 itemEntry.name = item.getString("name");
                 itemEntry.description = item.getString("description");
                 itemEntry.valid = item.getBoolean("valid");
-                itemEntry.groupId = item.getString("groupId");
+                itemEntry.catalogId = item.getString("catalogId");
                 sceneList.addData(itemEntry);
             }
         }

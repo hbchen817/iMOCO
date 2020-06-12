@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.rexense.imoco.R;
@@ -215,6 +214,9 @@ public class SetTimeActivity extends Activity {
         rllEveryday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                    return;
+                }
                 mImgEveryday.setVisibility(View.VISIBLE);
                 mImgWorkday.setVisibility(View.GONE);
                 mImgWeekend.setVisibility(View.GONE);
@@ -229,6 +231,9 @@ public class SetTimeActivity extends Activity {
         rllWorkday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                    return;
+                }
                 mImgEveryday.setVisibility(View.GONE);
                 mImgWorkday.setVisibility(View.VISIBLE);
                 mImgWeekend.setVisibility(View.GONE);
@@ -243,6 +248,9 @@ public class SetTimeActivity extends Activity {
         rllWeekend.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                    return;
+                }
                 mImgEveryday.setVisibility(View.GONE);
                 mImgWorkday.setVisibility(View.GONE);
                 mImgWeekend.setVisibility(View.VISIBLE);
@@ -257,6 +265,9 @@ public class SetTimeActivity extends Activity {
         rllSelfdefine.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                    return;
+                }
                 mImgEveryday.setVisibility(View.GONE);
                 mImgWorkday.setVisibility(View.GONE);
                 mImgWeekend.setVisibility(View.GONE);
@@ -288,6 +299,13 @@ public class SetTimeActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        // 刷新数据
+        processWeekReport();
     }
 
     @Override

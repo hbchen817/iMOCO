@@ -6,6 +6,10 @@ package com.rexense.imoco.contract;
  * Description: 场景常量
  */
 public class CScene {
+    // 场景类型
+    public static final String TYPE_MANUAL          = "0";
+    public static final String TYPE_AUTOMATIC       = "1";
+
     // 场景模板代码
     public static final int SMC_NONE                = 0;
     public static final int SMC_NIGHT_RISE_ON       = 1;

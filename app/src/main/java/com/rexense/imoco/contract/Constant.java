@@ -62,7 +62,8 @@ public class Constant {
     public static final String API_PATH_UPDATEDEVICEROOM            = "/living/home/room/device/full/update";
     public static final String API_PATH_GETOTAFIRMWAREINFO          = "/thing/ota/info/queryByUser";
     public static final String API_PATH_GETTHINGBASEINFORMATION     = "/thing/info/get";
-    public static final String API_PATH_GETSCENELIST                = "/scene/list/get";
+    public static final String API_PATH_CREATESCENE                 = "/living/scene/create";
+    public static final String API_PATH_QUERYSCENELIST              = "/living/scene/query";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -110,7 +111,8 @@ public class Constant {
     public static final int MSG_CALLBACK_UPDATEDEVICEROOM           = 119;
     public static final int MSG_CALLBACK_GETOTAFIRMWAREINFO         = 120;
     public static final int MSG_CALLBACK_GETTHINGBASEINFO           = 121;
-    public static final int MSG_CALLBACK_GETSCENELIST               = 122;
+    public static final int MSG_CALLBACK_CREATESCENE                = 122;
+    public static final int MSG_CALLBACK_QUERYSCENELIST             = 123;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;
