@@ -34,14 +34,18 @@
         android:appComponentFactory="@string/app_name">
 
         <activity
-            android:name="com.rexense.imoco.view.IndexActivity"
-            android:label="@string/app_name"
+            android:name="com.rexense.imoco.view.StartActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.rexense.imoco.view.IndexActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.SceneMaintainActivity"
             android:label="@string/app_name">
@@ -137,6 +141,15 @@
         <activity
             android:name="com.rexense.imoco.view.RegisterFillPasswordActivity"
             android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.MyInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.DeleteAccountActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.NickNameActivity"
             android:screenOrientation="portrait"/>
 
         <service android:name="com.rexense.imoco.utility.BLEService" android:enabled="true"/>

@@ -92,6 +92,7 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
+        mUnbinder.unbind();
         super.onDestroyView();
     }
 
@@ -106,6 +107,8 @@ public class IndexFragment1 extends BaseFragment {
         mActivity = getActivity();
 
         View view = inflater.inflate(setLayout(), container, false);
+        // 绑定ButterKnife
+        mUnbinder = ButterKnife.bind(this, view);
 
         this.mSceneManager = new SceneManager(getActivity());
         this.mLblSceneTitle = (TextView) view.findViewById(R.id.mainLblSceneTitle);

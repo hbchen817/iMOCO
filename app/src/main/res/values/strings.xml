@@ -3,7 +3,7 @@
     <string name="contentDescription_null"></string>
     <string name="app_ver">1.0.0</string>
 
-    <string name="rb_tab_one_desc">首页</string>
+    <string name="rb_tab_one_desc">家</string>
     <string name="rb_tab_two_desc">场景</string>
     <string name="rb_tab_three_desc">我的</string>
     <string name="rb_tab_four_desc">备用</string>
@@ -48,10 +48,10 @@
     <string name="api_commitfailure">调用接口[%s]失败! %s</string>
     <string name="api_responseerror">调用接口[%s]成功, 但是响应发生错误! %s</string>
 
-    <string name="login_success">System login succeeded</string>
-    <string name="login_failed">System login failed</string>
-    <string name="logout_success">System logout succeeded</string>
-    <string name="logout_failed">System logout failed</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_failed">登录失败</string>
+    <string name="logout_success">退出登录成功</string>
+    <string name="logout_failed">退出登录失败</string>
 
     <string name="login_inputusername">请录入用户名称</string>
     <string name="login_inputpassword">请录入用户密码</string>
@@ -245,4 +245,37 @@
 
     <string name="other_login_method">其他登录方式</string>
     <string name="login_by_sms">短信登录</string>
+    <string name="press_again_to_exit">再按一次退出程序</string>
+
+    <string name="myinfo_title">账号信息</string>
+    <string name="myinfo_logout_tips">确定退出登录?</string>
+    <string name="myinfo_headimg">头像</string>
+    <string name="myinfo_nickname">昵称</string>
+    <string name="myinfo_account">账号</string>
+    <string name="myinfo_change_password">修改密码</string>
+    <string name="myinfo_delete_account">注销账号</string>
+    <string name="myinfo_logout">退出登录</string>
+
+    <string name="fragment3_edit_myinfo">编辑个人资料</string>
+    <string name="fragment3_advice_feedback">意见反馈</string>
+    <string name="fragment3_msg_center">消息中心</string>
+    <string name="fragment3_scene_log">场景日志</string>
+    <string name="fragment3_share_device">设备共享</string>
+    <string name="fragment3_more_service">更多服务</string>
+    <string name="fragment3_about_us">关于</string>
+
+    <string name="delete_account_text1">为了保障账号安全，请确认以下信息。</string>
+    <string name="delete_account_account_safety">账号安全</string>
+    <string name="delete_account_account_safety_detail">删除账号后，账号下的个人信息都将被删除。此操作不可逆，请知悉！</string>
+    <string name="delete_account_device_safety">设备安全</string>
+    <string name="delete_account_device_safety_detail">删除账号后，账号下绑定的所有设备都将无法使用。此操作不可逆，请知悉！</string>
+    <string name="delete_account_confirm_again">再次确认提示</string>
+    <string name="delete_account_confirm_again_tips">已阅读以上内容，并确定执行注销操作！</string>
+    <string name="delete_account_confirm_btn">我已阅读并申请退出</string>
+    <string name="delete_account_success">账号已注销</string>
+
+    <string name="nick_name_hint">请输入昵称</string>
+    <string name="nick_name_save">保存</string>
+    <string name="nick_name_modify_success">昵称修改成功</string>
+
 </resources>

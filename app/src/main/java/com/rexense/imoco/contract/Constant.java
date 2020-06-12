@@ -6,6 +6,8 @@ package com.rexense.imoco.contract;
  * Description: 常量
  */
 public class Constant {
+    // APPKEY
+    public static final String APPKEY                               = "29162669";
     // 定义设备类型常量
     public static final String NODETYPE_GATEWAY                     = "GATEWAY";
     public static final int DEVICETYPE_GATEWAY                      = 1;
@@ -64,6 +66,8 @@ public class Constant {
     public static final String API_PATH_GETTHINGBASEINFORMATION     = "/thing/info/get";
     public static final String API_PATH_CREATESCENE                 = "/living/scene/create";
     public static final String API_PATH_QUERYSCENELIST              = "/living/scene/query";
+    public static final String API_PATH_UNREGISTER                  = "/account/unregister";
+    public static final String API_PATH_MODIFYACCOUNT                 = "/iotx/account/modifyAccount";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -113,6 +117,8 @@ public class Constant {
     public static final int MSG_CALLBACK_GETTHINGBASEINFO           = 121;
     public static final int MSG_CALLBACK_CREATESCENE                = 122;
     public static final int MSG_CALLBACK_QUERYSCENELIST             = 123;
+    public static final int MSG_CALLBACK_UNREGISTER                 = 124;
+    public static final int MSG_CALLBACK_MODIFYACCOUNT              = 124;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

@@ -1,5 +1,7 @@
 package com.rexense.imoco.sdk;
 
+import android.text.TextUtils;
+
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
@@ -57,6 +59,33 @@ public class Account {
                 }
             }
         });
+    }
+
+    //获取用户昵称
+    public static String getUserNick() {
+        String userName = "";
+        if (LoginBusiness.isLogin()) {
+            UserInfo userInfo = LoginBusiness.getUserInfo();
+            if (userInfo != null) {
+                if (!TextUtils.isEmpty(userInfo.userNick) && !"null".equalsIgnoreCase(userInfo.userNick)) {
+                    userName = userInfo.userNick;
+                }
+            }
+        }
+        return userName;
+    }
+    //获取用户手机号
+    public static String getUserPhone() {
+        String userName = "";
+        if (LoginBusiness.isLogin()) {
+            UserInfo userInfo = LoginBusiness.getUserInfo();
+            if (userInfo != null) {
+                if (!TextUtils.isEmpty(userInfo.userPhone)) {
+                    userName = userInfo.userPhone;
+                }
+            }
+        }
+        return userName;
     }
 }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/appbgcolor"
@@ -8,55 +9,96 @@
     <include layout="@layout/layout_common_toolbar" />
 
     <RelativeLayout
-        android:id="@+id/my_info_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_20"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_18">
+        android:paddingVertical="@dimen/dp_12">
         <TextView
-            android:id="@+id/user_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
-            android:text="15288888888"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/user_account"
-            android:layout_marginTop="@dimen/dp_10"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_12"
-            android:text="@string/fragment3_edit_myinfo"/>
+            android:text="头像"/>
         <ImageView
             android:id="@+id/head_img"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:background="@color/appbgcolor"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
     <RelativeLayout
-        android:id="@+id/advice_view"
+        android:id="@+id/nick_name_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="昵称"/>
+        <TextView
+            android:id="@+id/nick_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_24"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="账号"/>
+        <TextView
+            android:id="@+id/user_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/change_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_30"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_advice_feedback"/>
+            android:text="修改密码"/>
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
@@ -65,102 +107,20 @@
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
     <RelativeLayout
-        android:id="@+id/msg_view"
+        android:id="@+id/delete_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_0_5"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_msg_center"/>
-        <ImageView
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20"
-            android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/scene_log_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
-        android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_scene_log"/>
-        <ImageView
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20"
-            android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/share_device_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
-        android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_share_device"/>
-        <ImageView
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20"
-            android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/service_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
-        android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_more_service"/>
+            android:text="注销账号"/>
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
@@ -170,29 +130,19 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/aboutus_view"
+        android:id="@+id/logout_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
+        android:layout_marginTop="@dimen/dp_30"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
-        <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
+            android:layout_centerInParent="true"
+            android:textColor="@color/red"
             android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_about_us"/>
-        <ImageView
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20"
-            android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:text="退出登录"/>
     </RelativeLayout>
 </LinearLayout>

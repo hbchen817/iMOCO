@@ -80,7 +80,7 @@ public abstract class BaseFragment extends Fragment {
      */
     public Activity mActivity;
 
-    private Unbinder mUnbinder;
+    public Unbinder mUnbinder;
     private View rootView;
     @Nullable
     @Override

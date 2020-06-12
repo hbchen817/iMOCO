@@ -28,6 +28,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import butterknife.ButterKnife;
 
 /**
  * @author fyy
@@ -45,6 +46,7 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -57,6 +59,8 @@ public class IndexFragment2 extends BaseFragment {
         // 获取碎片所依附的活动的上下文环境
         mActivity = getActivity();
         View view = inflater.inflate(setLayout(), container, false);
+        mUnbinder = ButterKnife.bind(this, view);
+
         this.mImgAdd = (ImageView)view.findViewById(R.id.sceneImgAdd);
         this.mLblScene = (TextView)view.findViewById(R.id.sceneLblScene);
         this.mLblMy = (TextView)view.findViewById(R.id.sceneLblMy);

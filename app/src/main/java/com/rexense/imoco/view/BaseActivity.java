@@ -1,8 +1,11 @@
 package com.rexense.imoco.view;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.Toast;
 import java.util.Map;
 
@@ -10,6 +13,8 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.utility.Logger;
+
+import androidx.annotation.Nullable;
 
 /**
  * Creator: xieshaobing
@@ -61,4 +66,15 @@ public class BaseActivity extends Activity {
             return false;
         }
     });
+
+    public Context mActivity;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActivity = this;
+    }
+
+    public void back(View view){
+        finish();
+    }
 }

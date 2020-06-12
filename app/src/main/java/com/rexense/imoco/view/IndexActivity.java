@@ -66,6 +66,11 @@ public class IndexActivity extends AppCompatActivity {
 
     public static IndexActivity mainActivity;
 
+    public static void start(Context context) {
+        ToastUtils.showToastCentrally(context,context.getString(R.string.login_success));
+        Intent starter = new Intent(context, IndexActivity.class);
+        context.startActivity(starter);
+    }
 
     /**
      * RadioGroup的RadioButton选中监听器
@@ -217,7 +222,7 @@ public class IndexActivity extends AppCompatActivity {
             System.exit(0);
         } else {
             // 如果两次点按返回键的间隔时间不小于2秒, 弹吐司提示用户
-            ToastUtils.showToastCentrally(this, "再按一次退出程序");
+            ToastUtils.showToastCentrally(this, getString(R.string.press_again_to_exit));
 
             // 将第一次点按返回键的时间置为系统的当前时间
             mFirstPressTime = System.currentTimeMillis();
