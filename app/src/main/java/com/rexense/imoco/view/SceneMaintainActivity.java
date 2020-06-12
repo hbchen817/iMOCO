@@ -96,7 +96,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
                         mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
-                mSceneManager.create(mSceneModelCode, baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
             }
         });
 
