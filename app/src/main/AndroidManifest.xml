@@ -34,7 +34,7 @@
         android:appComponentFactory="@string/app_name">
 
         <activity
-            android:name="com.rexense.imoco.view.MainActivity"
+            android:name="com.rexense.imoco.view.IndexActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -122,6 +122,30 @@
             android:name="com.rexense.imoco.view.ChoiceContentActivity"
             android:label="@string/app_name">
         </activity>
+        <activity
+            android:name="com.rexense.imoco.view.OALoginActivity"
+            android:theme="@style/Login"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.RegisterActivity"
+            android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.LoginWithSmsCodeActivity"
+            android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.ResetPasswordActivity"
+            android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.ResetPasswordFillPasswordActivity"
+            android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.RegisterFillPasswordActivity"
+            android:theme="@style/Register"
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.rexense.imoco.utility.BLEService" android:enabled="true"/>
     </application>

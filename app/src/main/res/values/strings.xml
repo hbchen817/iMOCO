@@ -3,6 +3,11 @@
     <string name="contentDescription_null"></string>
     <string name="app_ver">1.0.0</string>
 
+    <string name="rb_tab_one_desc">首页</string>
+    <string name="rb_tab_two_desc">场景</string>
+    <string name="rb_tab_three_desc">我的</string>
+    <string name="rb_tab_four_desc">备用</string>
+
     <string name="main_home">我的家</string>
     <string name="main_home_description">%s共有%d个房间</string>
     <string name="main_device_description">共有%d个设备, 其中%d个在线</string>
@@ -234,4 +239,8 @@
     <string name="week_4">周四</string>
     <string name="week_5">周五</string>
     <string name="week_6">周六</string>
+
+
+    <string name="other_login_method">其他登录方式</string>
+    <string name="login_by_sms">短信登录</string>
 </resources>

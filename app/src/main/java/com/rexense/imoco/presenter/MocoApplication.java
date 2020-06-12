@@ -1,8 +1,13 @@
 package com.rexense.imoco.presenter;
 
 import androidx.multidex.MultiDex;
+
+import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIConfigs;
 import com.aliyun.iot.aep.sdk.framework.AApplication;
+import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.aliyun.iot.aep.sdk.login.oa.OALoginAdapter;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.view.OALoginActivity;
 
 /**
  * Creator: xieshaobing
@@ -26,6 +31,13 @@ public class MocoApplication extends AApplication {
 
         // 初始化SDK
         Initializer.sdkProcess(this);
+
+        //登录页为我们自己的登录页
+        OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
+        if (adapter != null) {
+            adapter.setDefaultLoginClass(OALoginActivity.class);
+        }
+
     }
 
 }

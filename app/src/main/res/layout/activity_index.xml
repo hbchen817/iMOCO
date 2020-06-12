@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <FrameLayout
+                android:id="@+id/fl_main_container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <RadioGroup
+                android:id="@+id/rg_tab_container"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_54"
+                android:layout_gravity="bottom"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="2dp"
+                android:paddingTop="1dp">
+
+                <RadioButton
+                    android:id="@+id/rb_tab_one"
+                    style="@style/rb_tab_style"
+                    android:checked="true"
+                    android:drawableTop="@drawable/selector_rb_tab_one"
+                    android:text="@string/rb_tab_one_desc" />
+
+                <RadioButton
+                    android:id="@+id/rb_tab_two"
+                    style="@style/rb_tab_style"
+                    android:drawableTop="@drawable/selector_rb_tab_two"
+                    android:text="@string/rb_tab_two_desc" />
+
+                <RadioButton
+                    android:id="@+id/rb_tab_three"
+                    style="@style/rb_tab_style"
+                    android:drawableTop="@drawable/selector_rb_tab_three"
+                    android:text="@string/rb_tab_three_desc" />
+
+            </RadioGroup>
+        </LinearLayout>
+    <!--</FrameLayout>-->
+
+</FrameLayout>

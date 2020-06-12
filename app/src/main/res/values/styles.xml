@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
@@ -74,6 +74,33 @@
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">35dp</item>
+    </style>
+
+    <style name="Login" parent="@style/OpenAccountDefault">
+        <item name="ali_sdk_openaccount_attrs_login_register_text_color">@color/appcolor</item>
+        <item name="ali_sdk_openaccount_attrs_login_reset_password_text_color">@color/appcolor</item>
+        <item name="ali_sdk_openaccount_attrs_login_other_plateform_login_text_color">#999999</item>
+        <item name="ali_sdk_openaccount_attrs_title_bar_title">@string/ali_sdk_openaccount_text_login</item>
+        <item name="ali_sdk_openaccount_attrs_title_bar_visibility">invisible</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_plateform">taobao|qq|weibo|weixin|alipay</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>
+        <item name="ali_sdk_openaccount_attrs_next_step_bg">@drawable/shape_appcolor</item>
+    </style>
+    <style name="Register" parent="@style/OpenAccountDefault">
+        <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>
+        <item name="ali_sdk_openaccount_attrs_next_step_bg">@drawable/shape_appcolor</item>
+    </style>
+
+    <!--主页底部RadioButton的Style-->
+    <style name="rb_tab_style">
+        <item name="android:textColor">@drawable/selector_rb_tab_text_color</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
 </resources>
