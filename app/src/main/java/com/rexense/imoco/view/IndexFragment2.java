@@ -17,11 +17,13 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EScene;
+import com.rexense.imoco.presenter.AptSceneList;
 import com.rexense.imoco.presenter.AptSceneModel;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
+import com.rexense.imoco.utility.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,10 @@ public class IndexFragment2 extends BaseFragment {
     private SceneManager mSceneManager = null;
     private List<EScene.sceneModelEntry> mModelList = null;
     private List<EScene.sceneListItemEntry> mSceneList = null;
+    private AptSceneList mAptSceneList;
     private ListView mListSceneModel, mListMy;
     private final int mScenePageSize = 50;
+    private String mSceneType;
 
     @Override
     public void onDestroyView() {
@@ -67,6 +71,8 @@ public class IndexFragment2 extends BaseFragment {
         this.mListSceneModel = (ListView)view.findViewById(R.id.sceneLstSceneModel);
         this.mListMy = (ListView)view.findViewById(R.id.sceneLstMy);
         initView();
+        // 开始获取场景列表
+        this.startGetSceneList(CScene.TYPE_AUTOMATIC);
         return view;
     }
 
@@ -74,19 +80,20 @@ public class IndexFragment2 extends BaseFragment {
     protected void init() {
 
     }
+
     private void initView() {
         this.mSceneManager = new SceneManager(getActivity());
         this.mModelList = this.mSceneManager.genSceneModelList();
         AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
         aptSceneModel.setData(this.mModelList);
         this.mListSceneModel.setAdapter(aptSceneModel);
-
+        this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
 
         // 添加点击处理
         this.mImgAdd.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                PluginHelper.createScene(getActivity(), "CA");
+                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT);
             }
         });
 
@@ -134,22 +141,22 @@ public class IndexFragment2 extends BaseFragment {
         });
     }
 
-    // 设备列表点击监听器
-    private AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener(){
+    // 场景列表长按监听器
+    private AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener(){
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            mAptSceneList.setDelete(position);
+            return false;
         }
     };
 
     // 开始获取场景列表
-    private void startGetSceneList() {
+    private void startGetSceneList(String type) {
+        this.mSceneType = type;
         if(this.mSceneList == null) {
             this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
-        } else {
-            this.mSceneList.clear();
         }
-        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
     // API数据处理器
@@ -166,12 +173,28 @@ public class IndexFragment2 extends BaseFragment {
                         }
                         if(sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
-                            // 数据获取完则设置场景列表数据
-                            // ToDo
+                            // 如果自动场景获取结束则开始获取手动场景
+                            if(mSceneType.equals(CScene.TYPE_AUTOMATIC)){
+                                startGetSceneList(CScene.TYPE_MANUAL);
+                            }
+                            if(mSceneType.equals(CScene.TYPE_MANUAL)){
+                                // 数据获取完则设置场景列表数据
+                                mAptSceneList.setData(mSceneList);
+                                mListMy.setAdapter(mAptSceneList);
+                                mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
+                            }
                         }
                     }
+                    break;
+                case Constant.MSG_CALLBACK_DELETESCENE:
+                    // 处理删除列表数据
+                    String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
+                    if (sceneId != null && sceneId.length() > 0) {
+                        mAptSceneList.deleteData(sceneId);
+                    }
+                    ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
                     break;
                 default:
                     break;
@@ -179,6 +202,4 @@ public class IndexFragment2 extends BaseFragment {
             return false;
         }
     });
-
-
 }

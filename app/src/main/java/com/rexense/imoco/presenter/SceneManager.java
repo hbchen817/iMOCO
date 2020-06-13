@@ -98,7 +98,7 @@ public class SceneManager {
             params.put("deviceName", parameter.triggerEntry.deviceName);
             params.put("propertyName", parameter.triggerEntry.state.rawName);
             params.put("compareType", "==");
-            params.put("compareValue", parameter.triggerEntry.state.rawValue);
+            params.put("compareValue", Integer.parseInt(parameter.triggerEntry.state.rawValue));
             item.put("params", params);
             items.add(item);
             isHasTrigger = true;
@@ -139,7 +139,7 @@ public class SceneManager {
             params.put("deviceName", parameter.conditionStateEntry.deviceName);
             params.put("propertyName", parameter.conditionStateEntry.state.rawName);
             params.put("compareType", "==");
-            params.put("compareValue", parameter.conditionStateEntry.state.rawValue);
+            params.put("compareValue", Integer.parseInt(parameter.conditionStateEntry.state.rawValue));
             item.put("params", params);
             conditions_items.add(item);
             isHasConditionState = true;
@@ -163,7 +163,7 @@ public class SceneManager {
                 JSONObject params = new JSONObject();
                 params.put("iotId", parameter.responseEntry.iotId);
                 params.put("propertyName", parameter.responseEntry.state.rawName);
-                params.put("propertyValue", parameter.responseEntry.state.rawValue);
+                params.put("propertyValue", Integer.parseInt(parameter.responseEntry.state.rawValue));
                 state.put("params", params);
                 actions.add(state);
             } else if(parameter.responseEntry.service != null) {
@@ -177,7 +177,7 @@ public class SceneManager {
                 JSONObject args = new JSONObject();
                 // 构造服务参数
                 for(ETSL.serviceArgEntry arg : parameter.responseEntry.service.args){
-                    args.put(arg.rawName, arg.rawValue);
+                    args.put(arg.rawName, Integer.parseInt(arg.rawValue));
                 }
                 params.put("serviceArgs", args);
                 service.put("params", params);
@@ -214,6 +214,46 @@ public class SceneManager {
         requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
         requestParameterEntry.addParameter("pageSize", pageSize <= 0  || pageSize > 30 ? 30 : pageSize);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERYSCENELIST;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 执行场景
+    public void executeScene(String sceneId,
+                               Handler commitFailureHandler,
+                               Handler responseErrorHandler,
+                               Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_EXECUTESCENE;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("sceneId", sceneId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXECUTESCENE;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 删除场景
+    public void deleteScene(String sceneId,
+                             Handler commitFailureHandler,
+                             Handler responseErrorHandler,
+                             Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_DELETESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("sceneId", sceneId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DELETESCENE;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

@@ -2,6 +2,7 @@ package com.rexense.imoco.presenter;
 
 import android.content.Context;
 
+import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.sdk.Plugin;
 
@@ -25,14 +26,14 @@ public class PluginHelper {
     // 创建场景
     public static void createScene(Context context, String sceneType){
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? "IFTTT" : sceneType);
+        parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? CScene.TYPE_IFTTT : sceneType);
         Plugin.call(context, Constant.PLUGIN_URL_SCENE, parameters);
     }
 
     // 编辑场景
     public static void editScene(Context context, String sceneType, String sceneId){
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? "IFTTT" : sceneType);
+        parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? CScene.TYPE_IFTTT : sceneType);
         parameters.put("sceneId", sceneId);
         Plugin.call(context, Constant.PLUGIN_URL_SCENE, parameters);
     }

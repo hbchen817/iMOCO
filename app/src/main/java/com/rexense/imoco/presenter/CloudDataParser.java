@@ -450,4 +450,22 @@ public class CloudDataParser {
         }
         return sceneList;
     }
+
+    // 处理删除场景结果
+    public static String processDeleteSceneResult(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return "";
+        }
+
+        if(cloudData.indexOf(":") < 0){
+            return cloudData;
+        }
+
+        String json = cloudData;
+        if(!cloudData.substring(0, 1).equals("{")){
+            json = "{" + json + "}";
+        }
+        JSONObject jsonObject = JSON.parseObject(json);
+        return jsonObject.getString("sceneId");
+    }
 }

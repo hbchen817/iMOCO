@@ -168,7 +168,6 @@ public class IndexFragment1 extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (!LoginBusiness.isLogin()){
-//                if (!SystemParameter.getInstance().getIsLogin()) {
                     Dialog.confirmLogin(getActivity(), R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
                     return;
                 }
@@ -292,7 +291,10 @@ public class IndexFragment1 extends BaseFragment {
         }
 
         // 刷新房间列表数据
-        syncRoomListData();
+        this.syncRoomListData();
+
+        // 刷新一键场景列表数据
+        this.startGetSceneList();
     }
 
     // 设置场景水平列表
@@ -327,8 +329,8 @@ public class IndexFragment1 extends BaseFragment {
         AptSceneGrid aptScene = new AptSceneGrid(getActivity());
         aptScene.setData(list);
         this.mGrdScene.setAdapter(aptScene);
+        this.mGrdScene.setOnItemClickListener(this.sceneListOnItemClickListener);
     }
-
 
     // 设置实时数据处理
     private void setRealtimeDataProcess() {
@@ -345,6 +347,16 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey, mDeviceList.get(position).status, mDeviceList.get(position).nickName);
+            }
+        }
+    };
+
+    // 一键场景列表点击监听器
+    private AdapterView.OnItemClickListener sceneListOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if(mSceneList != null && mSceneList.size() > 0) {
+                new SceneManager(getActivity()).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         }
     };
@@ -465,8 +477,6 @@ public class IndexFragment1 extends BaseFragment {
                     setRealtimeDataProcess();
                     // 获取家列表
                     mHomeSpaceManager.getHomeList(1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    // 开始获取场景列表
-                    startGetSceneList();
                     break;
                 case Constant.MSG_CALLBACK_CREATEHOME:
                     // 处理创建家数据
@@ -526,8 +536,6 @@ public class IndexFragment1 extends BaseFragment {
                             // 数据获取完则开始获取设备列表数据
                             startGetDeviceList();
                             mLblHomeDescription.setText(String.format(getString(R.string.main_home_description), SystemParameter.getInstance().getHomeName(), HomeSpaceManager.getRoomBufferData().size()));
-                            // 不进行显示
-                            //mLblHomeDescription.setVisibility(View.VISIBLE);
                         }
                     }
                     break;

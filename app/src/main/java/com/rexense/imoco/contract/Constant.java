@@ -66,8 +66,10 @@ public class Constant {
     public static final String API_PATH_GETTHINGBASEINFORMATION     = "/thing/info/get";
     public static final String API_PATH_CREATESCENE                 = "/living/scene/create";
     public static final String API_PATH_QUERYSCENELIST              = "/living/scene/query";
+    public static final String API_PATH_EXECUTESCENE                = "/scene/fire";
+    public static final String API_PATH_DELETESCENE                 = "/living/scene/delete";
     public static final String API_PATH_UNREGISTER                  = "/account/unregister";
-    public static final String API_PATH_MODIFYACCOUNT                 = "/iotx/account/modifyAccount";
+    public static final String API_PATH_MODIFYACCOUNT               = "/iotx/account/modifyAccount";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -119,6 +121,8 @@ public class Constant {
     public static final int MSG_CALLBACK_QUERYSCENELIST             = 123;
     public static final int MSG_CALLBACK_UNREGISTER                 = 124;
     public static final int MSG_CALLBACK_MODIFYACCOUNT              = 124;
+    public static final int MSG_CALLBACK_EXECUTESCENE               = 125;
+    public static final int MSG_CALLBACK_DELETESCENE                = 126;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

@@ -8,13 +8,13 @@
 
 	<ImageView
 		android:id="@+id/sceneImgIcon"
-		android:layout_width="30dp"
-		android:layout_height="30dp"
+		android:layout_width="25dp"
+		android:layout_height="25dp"
 		android:layout_alignParentLeft="true"
-		android:layout_marginLeft="10dp"
 		android:layout_centerVertical="true"
-		android:src="@drawable/scene"
-		android:contentDescription="@string/contentDescription_null"/>
+		android:layout_marginLeft="4dp"
+		android:contentDescription="@string/contentDescription_null"
+		android:src="@drawable/scene" />
 
 	<TextView
 		android:id="@+id/sceneLblName"
@@ -23,7 +23,7 @@
 		android:layout_height="60dp"
 		android:layout_centerVertical="true"
 		android:layout_toRightOf="@+id/sceneImgIcon"
-		android:layout_marginLeft="10dp"
+		android:layout_marginLeft="3dp"
 		android:gravity="center_vertical|left"
 		android:text="@string/main_scenename" />
 

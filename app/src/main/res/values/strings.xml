@@ -19,6 +19,7 @@
 
     <string name="scene_scene">场景</string>
     <string name="scene_my">我的</string>
+    <string name="delete">删除</string>
 
     <string name="dialog_title">系统提示</string>
     <string name="dialog_confirm">确认</string>
@@ -208,6 +209,12 @@
     <string name="scenemodel_sleep_pattern">睡觉模式</string>
     <string name="scenemodel_getup_pattern">起床模式</string>
 
+    <string name="scenename">场景名称</string>
+    <string name="scenetype_manual">手动场景</string>
+    <string name="scenetype_automatic">自动场景</string>
+    <string name="scene_delete_confirm">你真的要删除当前场景吗？</string>
+    <string name="scene_delete_sucess">场景删除成功</string>
+
     <string name="scene_maintain_create">创建</string>
     <string name="scene_maintain_name">场景名称</string>
     <string name="scene_maintain_parametertitle">参数标题</string>
@@ -241,7 +248,6 @@
     <string name="week_4">周四</string>
     <string name="week_5">周五</string>
     <string name="week_6">周六</string>
-
 
     <string name="other_login_method">其他登录方式</string>
     <string name="login_by_sms">短信登录</string>
