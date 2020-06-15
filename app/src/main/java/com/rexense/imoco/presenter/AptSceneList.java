@@ -180,7 +180,7 @@ public class AptSceneList extends BaseAdapter {
 					tag.isDeleted = false;
 				}
 				notifyDataSetChanged();
-				PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).id);
+				PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
 			}
 		});
 

@@ -173,7 +173,6 @@ public class SceneManager {
                 JSONObject params = new JSONObject();
                 params.put("iotId", parameter.responseEntry.iotId);
                 params.put("serviceName", parameter.responseEntry.service.rawName);
-                params.put("propertyValue", parameter.responseEntry.state.rawValue);
                 JSONObject args = new JSONObject();
                 // 构造服务参数
                 for(ETSL.serviceArgEntry arg : parameter.responseEntry.service.args){

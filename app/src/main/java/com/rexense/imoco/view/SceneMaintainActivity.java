@@ -131,7 +131,8 @@ public class SceneMaintainActivity extends BaseActivity {
                 if(mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
                     mSetTimeIndex = position;
                     Intent intent = new Intent(SceneMaintainActivity.this, SetTimeActivity.class);
-                    intent.putExtra("cron", mParameterList.get(position).conditionTimeEntry.genCronString());
+                    String cron = mParameterList.get(position).conditionTimeEntry.genCronString();
+                    intent.putExtra("cron", cron);
                     startActivityForResult(intent, Constant.REQUESTCODE_CALLSETTIMEACTIVITY);
                 }
             }
@@ -185,7 +186,7 @@ public class SceneMaintainActivity extends BaseActivity {
         // 处理自定义周循环
         if(requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY){
             Bundle bundle = data.getExtras();
-            String corn = bundle.getString("corn");
+            String corn = bundle.getString("cron");
             EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(corn);
             if(mSetTimeIndex >= 0){
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;

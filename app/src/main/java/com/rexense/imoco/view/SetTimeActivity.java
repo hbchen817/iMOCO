@@ -137,7 +137,8 @@ public class SetTimeActivity extends Activity {
 
         // 创建时间条件实例
         Intent intent = getIntent();
-        this.mConditionTime = new EScene.conditionTimeEntry(intent.getStringExtra("cron"));
+        String cron = intent.getStringExtra("cron");
+        this.mConditionTime = new EScene.conditionTimeEntry(cron);
 
         TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
         title.setText(R.string.set_time_title);

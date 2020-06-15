@@ -141,6 +141,9 @@ public class EScene {
             String[] items = cron.split(" ");
             String[] minutes = items[0].split("-");
             String[] hours = items[1].split("-");
+            if(items[4].equals("*")){
+                items[4] = "0,1,2,3,4,5,6";
+            }
             String[] days = items[4].split(",");
             this.beginHour = Integer.parseInt(hours[0]);
             this.beginMinute = Integer.parseInt(minutes[0]);

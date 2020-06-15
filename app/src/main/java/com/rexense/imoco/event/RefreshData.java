@@ -1,6 +1,7 @@
 package com.rexense.imoco.event;
 
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Creator: xieshaobing

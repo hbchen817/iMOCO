@@ -175,6 +175,10 @@ public class IndexFragment2 extends BaseFragment {
         this.mSceneType = type;
         if (this.mSceneList == null) {
             this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+        } else {
+            if(this.mSceneType.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)){
+                this.mSceneList.clear();
+            }
         }
         this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }

@@ -31,10 +31,12 @@ public class PluginHelper {
     }
 
     // 编辑场景
-    public static void editScene(Context context, String sceneType, String sceneId){
+    public static void editScene(Context context, String sceneType, String catalogId, String homeId, String sceneId){
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? CScene.TYPE_IFTTT : sceneType);
         parameters.put("sceneId", sceneId);
+        parameters.put("homeId", homeId);
+        parameters.put("catalogId", catalogId);
         Plugin.call(context, Constant.PLUGIN_URL_SCENE, parameters);
     }
 }
