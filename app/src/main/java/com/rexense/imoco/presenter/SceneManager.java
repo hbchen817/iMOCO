@@ -119,7 +119,7 @@ public class SceneManager {
             JSONObject item = new JSONObject();
             item.put("uri", "condition/timeRange");
             JSONObject params = new JSONObject();
-            params.put("corn", parameter.conditionTimeEntry.genCornString());
+            params.put("cron", parameter.conditionTimeEntry.genCronString());
             params.put("cronType", "linux");
             params.put("timezoneID", "Asia/Shanghai");
             item.put("params", params);

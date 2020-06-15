@@ -137,7 +137,7 @@ public class SetTimeActivity extends Activity {
 
         // 创建时间条件实例
         Intent intent = getIntent();
-        this.mConditionTime = new EScene.conditionTimeEntry(intent.getStringExtra("corn"));
+        this.mConditionTime = new EScene.conditionTimeEntry(intent.getStringExtra("cron"));
 
         TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
         title.setText(R.string.set_time_title);
@@ -293,7 +293,7 @@ public class SetTimeActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
-                bundle.putString("corn", mConditionTime.genCornString());
+                bundle.putString("cron", mConditionTime.genCronString());
                 intent.putExtras(bundle);
                 setResult(Constant.RESULTCODE_CALLSETTIMEACTIVITY, intent);
                 finish();

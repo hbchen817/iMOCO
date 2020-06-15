@@ -137,8 +137,8 @@ public class EScene {
             }
             this.isSelected = false;
         }
-        public conditionTimeEntry(String corn){
-            String[] items = corn.split(" ");
+        public conditionTimeEntry(String cron){
+            String[] items = cron.split(" ");
             String[] minutes = items[0].split("-");
             String[] hours = items[1].split("-");
             String[] days = items[4].split(",");
@@ -273,8 +273,8 @@ public class EScene {
             return list;
         }
 
-        // 生成Corn字符串
-        public String genCornString(){
+        // 生成Cron字符串
+        public String genCronString(){
             String weekRepeat = "";
             for(int i = 0; i < 7; i++)
             {
@@ -287,6 +287,11 @@ public class EScene {
                     }
                 }
             }
+
+            if(this.isEveryDay()){
+                weekRepeat = "*";
+            }
+
             return String.format("%02d-%02d %02d-%02d * * %s", this.beginMinute, this.endMinute, this.beginHour, this.endHour, weekRepeat);
         }
 

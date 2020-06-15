@@ -18,6 +18,7 @@ import com.aliyun.iot.link.ui.component.LinkBottomDialog;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.AptSceneParameter;
@@ -130,7 +131,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 if(mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
                     mSetTimeIndex = position;
                     Intent intent = new Intent(SceneMaintainActivity.this, SetTimeActivity.class);
-                    intent.putExtra("corn", mParameterList.get(position).conditionTimeEntry.genCornString());
+                    intent.putExtra("cron", mParameterList.get(position).conditionTimeEntry.genCronString());
                     startActivityForResult(intent, Constant.REQUESTCODE_CALLSETTIMEACTIVITY);
                 }
             }
@@ -153,6 +154,8 @@ public class SceneMaintainActivity extends BaseActivity {
                     String sceneId = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId != null && sceneId.length() > 0) {
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()));
+                        // 发送刷新列表数据事件
+                        RefreshData.refreshSceneListData();
                     } else {
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mLblName.getText().toString()));
                     }

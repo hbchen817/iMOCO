@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.CEvent;
+import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.AptSceneList;
 import com.rexense.imoco.presenter.AptSceneModel;
@@ -30,6 +32,11 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.ButterKnife;
 
 /**
@@ -50,7 +57,18 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // 注销刷新场景数据事件
+        EventBus.getDefault().unregister(this);
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)){
+            // 订阅刷新场景数据事件
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -65,14 +83,16 @@ public class IndexFragment2 extends BaseFragment {
         View view = inflater.inflate(setLayout(), container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-        this.mImgAdd = (ImageView)view.findViewById(R.id.sceneImgAdd);
-        this.mLblScene = (TextView)view.findViewById(R.id.sceneLblScene);
-        this.mLblMy = (TextView)view.findViewById(R.id.sceneLblMy);
-        this.mListSceneModel = (ListView)view.findViewById(R.id.sceneLstSceneModel);
-        this.mListMy = (ListView)view.findViewById(R.id.sceneLstMy);
+        this.mImgAdd = (ImageView) view.findViewById(R.id.sceneImgAdd);
+        this.mLblScene = (TextView) view.findViewById(R.id.sceneLblScene);
+        this.mLblMy = (TextView) view.findViewById(R.id.sceneLblMy);
+        this.mListSceneModel = (ListView) view.findViewById(R.id.sceneLstSceneModel);
+        this.mListMy = (ListView) view.findViewById(R.id.sceneLstMy);
         initView();
         // 开始获取场景列表
         this.startGetSceneList(CScene.TYPE_AUTOMATIC);
+
+
         return view;
     }
 
@@ -90,7 +110,7 @@ public class IndexFragment2 extends BaseFragment {
         this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
 
         // 添加点击处理
-        this.mImgAdd.setOnClickListener(new View.OnClickListener(){
+        this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT);
@@ -98,7 +118,7 @@ public class IndexFragment2 extends BaseFragment {
         });
 
         // 场景点击处理
-        this.mLblScene.setOnClickListener(new View.OnClickListener(){
+        this.mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mLblScene.setBackgroundResource(R.drawable.shape_frame_txt);
@@ -111,7 +131,7 @@ public class IndexFragment2 extends BaseFragment {
         });
 
         // 我的点击处理
-        this.mLblMy.setOnClickListener(new View.OnClickListener(){
+        this.mLblMy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mLblScene.setBackgroundColor(Color.parseColor("#FFFFFF"));
@@ -127,7 +147,7 @@ public class IndexFragment2 extends BaseFragment {
         this.mListSceneModel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mModelList.get(position).code == CScene.SMC_NONE){
+                if (mModelList.get(position).code == CScene.SMC_NONE) {
                     return;
                 }
 
@@ -142,7 +162,7 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     // 场景列表长按监听器
-    private AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener(){
+    private AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             mAptSceneList.setDelete(position);
@@ -153,33 +173,33 @@ public class IndexFragment2 extends BaseFragment {
     // 开始获取场景列表
     private void startGetSceneList(String type) {
         this.mSceneType = type;
-        if(this.mSceneList == null) {
+        if (this.mSceneList == null) {
             this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
         }
         this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
-                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String)msg.obj);
-                    if(sceneList != null && sceneList.scenes != null) {
-                        for(EScene.sceneListItemEntry item : sceneList.scenes) {
+                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    if (sceneList != null && sceneList.scenes != null) {
+                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
                             mSceneList.add(item);
                         }
-                        if(sceneList.scenes.size() >= sceneList.pageSize) {
+                        if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
                             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 如果自动场景获取结束则开始获取手动场景
-                            if(mSceneType.equals(CScene.TYPE_AUTOMATIC)){
+                            if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 startGetSceneList(CScene.TYPE_MANUAL);
                             }
-                            if(mSceneType.equals(CScene.TYPE_MANUAL)){
+                            if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
                                 mAptSceneList.setData(mSceneList);
                                 mListMy.setAdapter(mAptSceneList);
@@ -202,4 +222,12 @@ public class IndexFragment2 extends BaseFragment {
             return false;
         }
     });
+
+    // 订阅刷新场景数据事件
+    @Subscribe
+    public void onMessages(EEvent eventEntry){
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)){
+            startGetSceneList(CScene.TYPE_AUTOMATIC);
+        }
+    }
 }
