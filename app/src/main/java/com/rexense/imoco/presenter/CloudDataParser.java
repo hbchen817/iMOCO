@@ -9,6 +9,10 @@ import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.EUser;
+import com.rexense.imoco.model.ItemMsgCenter;
+import com.rexense.imoco.model.Visitable;
+import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.TimeUtils;
 import com.rexense.imoco.utility.Utility;
 
 import java.util.ArrayList;
@@ -467,5 +471,38 @@ public class CloudDataParser {
         }
         JSONObject jsonObject = JSON.parseObject(json);
         return jsonObject.getString("sceneId");
+    }
+
+    // 处理消息中心列表
+    public static List<Visitable> processMsgCenterList(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return null;
+        }
+        Logger.e(cloudData);
+        List<Visitable> msgList = new ArrayList<>();
+        JSONObject dataJson = JSONObject.parseObject(cloudData);
+        JSONArray dataArr = dataJson.getJSONArray("data");
+        if (dataArr!=null){
+            for (int i=0;i<dataArr.size();i++){
+                JSONObject msgJson = dataArr.getJSONObject(i);
+                ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
+                itemMsgCenter.setContent(msgJson.getString("body"));
+                itemMsgCenter.setShowBtnView("share".equals(msgJson.getString("messageType")));
+                itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
+
+                JSONObject extData = msgJson.getJSONObject("extData");
+                if (extData!=null){
+                    String nickName = extData.getString("nickName");
+                    if (nickName!=null){
+                        itemMsgCenter.setTitle(nickName);
+                    }else {
+                        String productName = extData.getString("productName");
+                        itemMsgCenter.setTitle(productName);
+                    }
+                }
+                msgList.add(itemMsgCenter);
+            }
+        }
+        return msgList;
     }
 }

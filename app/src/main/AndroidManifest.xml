@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name="com.rexense.imoco.presenter.MocoApplication"
@@ -150,6 +151,15 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.NickNameActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.MsgCenterActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.ShareDeviceActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.rexense.imoco.view.DeviceQrcodeActivity"
             android:screenOrientation="portrait"/>
 
         <service android:name="com.rexense.imoco.utility.BLEService" android:enabled="true"/>

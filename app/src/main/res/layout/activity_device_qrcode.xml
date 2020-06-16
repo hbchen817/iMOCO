@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_common_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:id="@+id/qrcode_tv"
+            android:layout_width="@dimen/dp_180"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_6"
+            android:gravity="center"
+            android:textColor="@color/appcolor"
+            android:textSize="@dimen/sp_14"
+            android:text="二维码"/>
+        <TextView
+            android:id="@+id/account_tv"
+            android:layout_width="@dimen/dp_180"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_6"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="手机账号"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/qrcode_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/dp_12"
+        android:paddingVertical="@dimen/dp_30">
+        <ImageView
+            android:id="@+id/qrcode_img"
+            android:layout_width="@dimen/dp_160"
+            android:layout_height="@dimen/dp_160"
+            android:background="@color/appbgcolor"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/account_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/dp_12"
+        android:paddingVertical="@dimen/dp_16">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="+ 86"/>
+        <EditText
+            android:id="@+id/mobile_account_et"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_36"
+            android:layout_marginHorizontal="@dimen/dp_14"
+            android:inputType="phone"
+            android:hint="@string/share_device_hint"
+            android:textSize="@dimen/sp_14"
+            android:text=""
+            android:background="@null"/>
+    </LinearLayout>
+
+</LinearLayout>

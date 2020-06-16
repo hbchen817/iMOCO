@@ -14,12 +14,14 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
 import com.rexense.imoco.utility.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -259,4 +261,5 @@ public class IndexActivity extends AppCompatActivity {
             return false;
         }
     }
+
 }

@@ -15,13 +15,14 @@ import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.utility.Logger;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-14 15:29
  * Description: 基础界面
  */
-public class BaseActivity extends Activity {
+public class BaseActivity extends FragmentActivity {
     // 提交失败处理器
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback(){
         @Override

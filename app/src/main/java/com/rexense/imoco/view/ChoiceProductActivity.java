@@ -2,11 +2,17 @@ package com.rexense.imoco.view;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.List;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -15,16 +21,28 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
+import com.aliyun.iot.ilop.page.scan.ScanActivity;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.rexense.imoco.R;
 import com.rexense.imoco.presenter.AptConfigProductList;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.HomeSpaceManager;
 import com.rexense.imoco.presenter.ProductHelper;
+import com.rexense.imoco.presenter.ShareDeviceManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.Dialog;
+import com.rexense.imoco.utility.ToastUtils;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Creator: xieshaobing
@@ -36,6 +54,7 @@ public class ChoiceProductActivity extends BaseActivity {
     private String mGatewayIOTId = "";
     private int mGatewayStatus = 0;
     private int mGatewayNumber = 0;
+    private ShareDeviceManager shareDeviceManager;
 
     // 数据处理器
     private Handler processDataHandler = new Handler(new Handler.Callback(){
@@ -123,14 +142,14 @@ public class ChoiceProductActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice_product);
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
+        TextView title = (TextView)findViewById(R.id.tv_toolbar_title);
         title.setText(R.string.configproduct_title);
-
-        ImageView back = (ImageView)findViewById(R.id.includeTitleImgBack);
-        back.setOnClickListener(new OnClickListener(){
+        ImageView scanImg = (ImageView) findViewById(R.id.iv_toolbar_right);
+        scanImg.setImageResource(R.drawable.scan_img);
+        scanImg.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public void onClick(View view) {
+                requestPermission();
             }
         });
 
@@ -147,5 +166,58 @@ public class ChoiceProductActivity extends BaseActivity {
         } else {
             this.mGatewayNumber = 1;
         }
+        shareDeviceManager = new ShareDeviceManager(mActivity);
     }
+
+    private void requestPermission() {
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)) {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},1);
+            } else {
+                ToastUtils.showToastCentrally(mActivity,getString(R.string.camera_denied_and_dont_ask_msg));
+            }
+        }else {
+            Intent intent = new Intent(mActivity, ScanActivity.class);
+            startActivityForResult(intent,1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0&& grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Intent intent = new Intent(this, ScanActivity.class);
+                    startActivityForResult(intent,1);
+                }else {
+                    ToastUtils.showToastCentrally(this, getString(R.string.camera_denied_msg));
+                }
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==-1&&requestCode==1){
+            String qrKey = data.getStringExtra("result");
+            shareDeviceManager.scanQrcode(qrKey, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
+    }
+
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_SCANSHAREQRCODE:
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_scan_success));
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
 }

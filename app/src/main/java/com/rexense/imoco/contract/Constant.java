@@ -70,6 +70,10 @@ public class Constant {
     public static final String API_PATH_DELETESCENE                 = "/living/scene/delete";
     public static final String API_PATH_UNREGISTER                  = "/account/unregister";
     public static final String API_PATH_MODIFYACCOUNT               = "/iotx/account/modifyAccount";
+    public static final String API_PATH_MESSAGECENTER               = "/message/center/query/push/message";
+    public static final String API_PATH_CONFIRMSHARE                = "/uc/confirmShare";
+    public static final String API_PATH_GENERATEQRCODE              = "uc/generateShareQrCode";
+    public static final String API_PATH_SCANSHAREQRCODE              = "/uc/scanBindByShareQrCode";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -123,6 +127,10 @@ public class Constant {
     public static final int MSG_CALLBACK_MODIFYACCOUNT              = 124;
     public static final int MSG_CALLBACK_EXECUTESCENE               = 125;
     public static final int MSG_CALLBACK_DELETESCENE                = 126;
+    public static final int MSG_CALLBACK_MSGCENTER                  = 127;
+    public static final int MSG_CALLBACK_CONFIRMSHARE               = 128;
+    public static final int MSG_CALLBACK_SHAREQRCODE                = 129;
+    public static final int MSG_CALLBACK_SCANSHAREQRCODE            = 130;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

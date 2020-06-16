@@ -284,4 +284,25 @@
     <string name="nick_name_save">保存</string>
     <string name="nick_name_modify_success">昵称修改成功</string>
 
+    <string name="msg_center_clear">清空</string>
+    <string name="msg_center_device">设备</string>
+    <string name="msg_center_share">共享</string>
+    <string name="msg_center_notice">通知</string>
+    <string name="msg_center_agree">同意</string>
+    <string name="msg_center_disagree">拒绝</string>
+
+    <string name="share_device_my_device">我的设备</string>
+    <string name="share_device_share_device">共享设备</string>
+    <string name="share_device_select">选择</string>
+    <string name="share_device_share">共享</string>
+    <string name="share_device_cancel">取消</string>
+    <string name="share_device_selected_is_empty">选中项为空</string>
+    <string name="share_device_qrcode">二维码</string>
+    <string name="share_device_account">手机账号</string>
+    <string name="share_device_hint">请输入接收者的手机账号</string>
+    <string name="share_device_commit">提交</string>
+    <string name="share_device_scan_success">分享设备添加成功</string>
+    <string name="camera_denied_msg">您必须同意所需权限才能使用相机功能</string>
+    <string name="camera_denied_and_dont_ask_msg">请到应用权限管理页面开启相机权限</string>
+
 </resources>

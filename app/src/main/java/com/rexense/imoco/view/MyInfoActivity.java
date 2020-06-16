@@ -12,9 +12,13 @@ import com.alibaba.sdk.android.openaccount.OpenAccountService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
+import com.rexense.imoco.event.RefreshMyinfo;
 import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.DialogUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,16 +59,28 @@ public class MyInfoActivity extends BaseActivity {
         }
     };
 
+    @Subscribe
+    public void onRefreshMyInfo(RefreshMyinfo refreshMyinfo){
+        nickName.setText(Account.getUserNick());
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myinfo);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         myInfoActivity = this;
         tvToolbarTitle.setText(getString(R.string.myinfo_title));
         nickName.setText(Account.getUserNick());
         userAccount.setText(Account.getUserPhone());
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @OnClick({R.id.head_img,R.id.nick_name_view,R.id.change_password,R.id.delete_account,R.id.logout_btn})

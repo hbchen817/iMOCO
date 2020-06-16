@@ -17,8 +17,11 @@ import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshMyinfo;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.DialogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -62,6 +65,7 @@ public class NickNameActivity extends BaseActivity {
                     @Override
                     public void onSuccess(OpenAccountSession openAccountSession) {
                         ToastUtils.showToastCentrally(mActivity,getString(R.string.nick_name_modify_success));
+                        EventBus.getDefault().post(new RefreshMyinfo());
                         finish();
                     }
 
