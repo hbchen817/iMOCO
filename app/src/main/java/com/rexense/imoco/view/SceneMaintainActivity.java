@@ -182,13 +182,25 @@ public class SceneMaintainActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果
-                    String sceneId = CloudDataParser.processCreateSceneResult((String) msg.obj);
-                    if (sceneId != null && sceneId.length() > 0) {
+                    String sceneId_create = CloudDataParser.processCreateSceneResult((String) msg.obj);
+                    if (sceneId_create != null && sceneId_create.length() > 0) {
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();
                     } else {
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mLblName.getText().toString()));
+                    }
+                    finish();
+                    break;
+                case Constant.MSG_CALLBACK_EDITSCENE:
+                    // 处理修改场景结果
+                    String sceneId_edit = CloudDataParser.processCreateSceneResult((String) msg.obj);
+                    if (sceneId_edit != null && sceneId_edit.length() > 0) {
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mLblName.getText().toString()));
+                        // 发送刷新列表数据事件
+                        RefreshData.refreshSceneListData();
+                    } else {
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mLblName.getText().toString()));
                     }
                     finish();
                     break;
@@ -213,11 +225,10 @@ public class SceneMaintainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // 处理自定义周循环
+        // 处理设置时间结果
         if(requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY){
             Bundle bundle = data.getExtras();
-            String corn = bundle.getString("cron");
-            EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(corn);
+            EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(bundle.getString("cron"));
             if(mSetTimeIndex >= 0){
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;
                 mAptSceneParameter.notifyDataSetChanged();
