@@ -8,6 +8,8 @@ package com.rexense.imoco.contract;
 public class Constant {
     // APPKEY
     public static final String APPKEY                               = "29162669";
+    //分页时每页的数量
+    public static final int PAGE_SIZE                                = 20;
     // 定义设备类型常量
     public static final String NODETYPE_GATEWAY                     = "GATEWAY";
     public static final int DEVICETYPE_GATEWAY                      = 1;
@@ -77,10 +79,14 @@ public class Constant {
     public static final String API_PATH_SCANSHAREQRCODE             = "/uc/scanBindByShareQrCode";
     public static final String API_PATH_SHAREDEVICEORSCENE          = "/uc/shareDevicesAndScenes";
     public static final String API_PATH_SHARENOTICELIST             = "/uc/getShareNoticeList";
+    public static final String API_PATH_CLEARSHARENOTICELIST        = "/uc/clearShareNoticeList";
+    public static final String API_PATH_CLEARMESSAGERECORD          = "/message/center/record/delete";
+    public static final String API_PATH_GETSCENELOG                 = "/scene/log/list/get";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
     public static final String PLUGIN_URL_SCENE                     ="link://router/scene";
+    public static final String PLUGIN_URL_ADVICE                     ="link://router/feedback";
 
     // 定义API返加代码常量
     public static final int API_CODE_SUCCESS                        = 200;
@@ -136,7 +142,10 @@ public class Constant {
     public static final int MSG_CALLBACK_SCANSHAREQRCODE            = 130;
     public static final int MSG_CALLBACK_SHAREDEVICEORSCENE         = 131;
     public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
-    public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 133;
+    public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 133;
+    public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 134;
+    public static final int MSG_CALLBACK_GETSCENELOG                = 135;
+    public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 136;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

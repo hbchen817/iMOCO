@@ -3,6 +3,7 @@ package com.rexense.imoco.typefactory;
 import android.view.View;
 
 import com.rexense.imoco.model.ItemMsgCenter;
+import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 
@@ -14,6 +15,7 @@ import com.rexense.imoco.viewholder.BaseViewHolder;
 public interface TypeFactory {
     int type(ItemMsgCenter item);
     int type(ItemShareDevice item);
+    int type(ItemSceneLog item);
 
     BaseViewHolder createViewHolder(int type, View itemView);
 }

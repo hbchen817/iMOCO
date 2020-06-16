@@ -1,6 +1,7 @@
 package com.rexense.imoco.presenter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -837,6 +838,29 @@ public class SceneManager {
                 }
             }
         }
+    }
+
+
+    // 获取消息列表
+    public void getSceneLogList(int pageNo,
+                           Handler commitFailureHandler,
+                           Handler responseErrorHandler,
+                           Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETSCENELOG;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("pageNo", pageNo);
+        requestParameterEntry.addParameter("pageSize", Constant.PAGE_SIZE);
+        requestParameterEntry.addParameter("nowTime", new Date().getTime()-1000*3600*24);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETSCENELOG;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
 }

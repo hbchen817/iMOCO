@@ -12,6 +12,7 @@ import com.aliyun.iot.aep.component.router.Router;
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.google.zxing.qrcode.encoder.QRCode;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.AppUtils;
 import com.rexense.imoco.utility.ToastUtils;
@@ -70,26 +71,31 @@ public class IndexFragment3 extends BaseFragment {
                 startActivity(intent);
                 break;
             case R.id.advice_view:
-                String code = "link://router/feedback";
                 Bundle bundle = new Bundle();
                 bundle.putString("mobileModel",android.os.Build.MODEL); // 手机型号
                 bundle.putString("mobileSystem",android.os.Build.VERSION.RELEASE); // 手机系统
                 bundle.putString("appVersion", AppUtils.getVersionName(mActivity)); // App版本
-                Router.getInstance().toUrlForResult(getActivity(), code, 1, bundle);
+                Router.getInstance().toUrlForResult(getActivity(), Constant.PLUGIN_URL_ADVICE, 1, bundle);
                 break;
             case R.id.msg_view:
                 intent = new Intent(mActivity, MsgCenterActivity.class);
                 startActivity(intent);
                 break;
             case R.id.scene_log_view:
+                intent = new Intent(mActivity, SceneLogActivity.class);
+                startActivity(intent);
                 break;
             case R.id.share_device_view:
                 intent = new Intent(mActivity, ShareDeviceActivity.class);
                 startActivity(intent);
                 break;
             case R.id.service_view:
+                intent = new Intent(mActivity, MoreServiceActivity.class);
+                startActivity(intent);
                 break;
             case R.id.aboutus_view:
+                intent = new Intent(mActivity, AboutUsActivity.class);
+                startActivity(intent);
                 break;
         }
     }

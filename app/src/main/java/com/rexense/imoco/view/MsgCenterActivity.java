@@ -1,11 +1,24 @@
 package com.rexense.imoco.view;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshMsgCenter;
+import com.rexense.imoco.event.ShareDeviceSuccessEvent;
+import com.rexense.imoco.presenter.CloudDataParser;
+import com.rexense.imoco.presenter.MsgCenterManager;
+import com.rexense.imoco.utility.SrlUtils;
+import com.rexense.imoco.utility.ToastUtils;
+import com.rexense.imoco.widget.DialogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,11 +36,23 @@ public class MsgCenterActivity extends BaseActivity {
     TextView tvToolbarRight;
     @BindView(R.id.view_pager)
     ViewPager viewPager;
-
-    String[] type = new String[3];
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
 
+    private MsgCenterManager msgCenterManager;
+    String[] type = new String[3];
+    private String[] msgTypeArr = {"device","share","announcement"};
+    private int currentPosition=0;
+    private DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            if (currentPosition==1){
+                msgCenterManager.clearShareNoticeList(mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }else {
+                msgCenterManager.clearMsgList(msgTypeArr[currentPosition], mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,13 +64,43 @@ public class MsgCenterActivity extends BaseActivity {
         type[0] = getString(R.string.msg_center_device);
         type[1] = getString(R.string.msg_center_share);
         type[2] = getString(R.string.msg_center_notice);
+        msgCenterManager = new MsgCenterManager(mActivity);
         initFragments();
     }
+
+    // API数据处理器
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_CLEARMESSAGERECORD:
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    EventBus.getDefault().post(new RefreshMsgCenter(0));
+                    break;
+                case Constant.MSG_CALLBACK_CLEARSHARENOTICELIST:
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    EventBus.getDefault().post(new RefreshMsgCenter(1));
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
 
     @OnClick({R.id.tv_toolbar_right})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_toolbar_right:
+                String confirmMsg="";
+                if (currentPosition==0){
+                    confirmMsg = getString(R.string.msg_center_clear_device_msg);
+                }else if (currentPosition==1){
+                    confirmMsg = getString(R.string.msg_center_clear_share_msg);
+                }else if (currentPosition==2){
+                    confirmMsg = getString(R.string.msg_center_clear_notice_msg);
+                }
+                DialogUtils.showEnsureDialog(mActivity,clearMsgListener,confirmMsg,"");
                 break;
         }
     }
@@ -63,6 +118,7 @@ public class MsgCenterActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                currentPosition = position;
             }
 
             @Override

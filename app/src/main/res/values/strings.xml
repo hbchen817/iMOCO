@@ -301,6 +301,10 @@
     <string name="msg_center_disagree">拒绝</string>
     <string name="msg_center_agree_success">已同意</string>
     <string name="msg_center_disagree_success">已拒绝</string>
+    <string name="msg_center_clear_success">消息已清除</string>
+    <string name="msg_center_clear_device_msg">确定要清除所有设备消息?</string>
+    <string name="msg_center_clear_share_msg">确定要清除所有共享消息?</string>
+    <string name="msg_center_clear_notice_msg">确定要清除所有通知消息?</string>
 
     <string name="share_device_my_device">我的设备</string>
     <string name="share_device_share_device">共享设备</string>

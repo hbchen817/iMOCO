@@ -8,7 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
 import com.alibaba.sdk.android.openaccount.OpenAccountService;
+import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
@@ -93,6 +95,8 @@ public class MyInfoActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.change_password:
+                OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
+                openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);
                 break;
             case R.id.delete_account:
                 intent = new Intent(mActivity,DeleteAccountActivity.class);

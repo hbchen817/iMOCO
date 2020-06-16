@@ -10,6 +10,7 @@ import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.EUser;
 import com.rexense.imoco.model.ItemMsgCenter;
+import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.TimeUtils;
@@ -524,8 +525,9 @@ public class CloudDataParser {
                 ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
                 itemMsgCenter.setContent(msgJson.getString("description"));
                 int status = msgJson.getInteger("status");//-1: 初始化0：同意1：拒绝2：取消3：过期4：抢占5：删除6：发起者已解绑99：异常
+                int isReceiver = msgJson.getInteger("isReceiver");//当前用户是否是共享设备接收者 0否1是
                 itemMsgCenter.setStatus(status);
-                itemMsgCenter.setShowBtnView(status==-1);
+                itemMsgCenter.setShowBtnView(status==-1&&isReceiver==1);
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
 
                 String productName = msgJson.getString("productName");
@@ -538,5 +540,27 @@ public class CloudDataParser {
             }
         }
         return msgList;
+    }
+    // 场景日志列表
+    public static List<Visitable> processSceneLogList(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return null;
+        }
+        Logger.e(cloudData);
+        List<Visitable> logList = new ArrayList<>();
+        JSONObject dataJson = JSONObject.parseObject(cloudData);
+        JSONArray dataArr = dataJson.getJSONArray("logs");
+        if (dataArr!=null){
+            for (int i=0;i<dataArr.size();i++){
+                JSONObject logJson = dataArr.getJSONObject(i);
+                ItemSceneLog itemSceneLog = new ItemSceneLog();
+                itemSceneLog.setIcon(logJson.getString("icon"));
+                itemSceneLog.setId(logJson.getString("id"));
+                itemSceneLog.setLogName(logJson.getString("sceneName"));
+                itemSceneLog.setLogTime(TimeUtils.getYmdhms(logJson.getLong("time")));
+                logList.add(itemSceneLog);
+            }
+        }
+        return logList;
     }
 }
