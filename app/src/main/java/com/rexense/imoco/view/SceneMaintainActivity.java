@@ -36,7 +36,7 @@ import com.rexense.imoco.utility.ToastUtils;
  */
 public class SceneMaintainActivity extends BaseActivity {
     private SceneManager mSceneManager;
-    private int mOperateType, mSceneModelCode;
+    private int mOperateType, mSceneModelCode, mSceneNumber;
     private TextView mLblName;
     private List<EScene.parameterEntry> mParameterList;
     private  AptSceneParameter mAptSceneParameter;
@@ -50,6 +50,7 @@ public class SceneMaintainActivity extends BaseActivity {
         Intent intent = getIntent();
         this.mOperateType = intent.getIntExtra("operateType", 1);
         this.mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
+        this.mSceneNumber = intent.getIntExtra("sceneNumber", 0);
 
         this.mSceneManager = new SceneManager(this);
         TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
@@ -93,7 +94,10 @@ public class SceneMaintainActivity extends BaseActivity {
         lblUse.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                int number = mParameterList.size();
+                if(!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)){
+                    return;
+                }
+
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
                         mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));

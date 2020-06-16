@@ -288,7 +288,11 @@ public class CloudDataParser {
                 device.iotId = item.getString("iotId");
                 device.deviceName = item.getString("deviceName");
                 device.productKey = item.getString("productKey");
+                device.productName = item.getString("productName");
                 device.nickName = item.getString("nickName");
+                if(device.nickName == null || device.nickName.length() == 0){
+                    device.nickName = device.productName;
+                }
                 device.image = item.getString("productImage");
                 device.status = item.getIntValue("status");
                 device.nodeType = item.getString("nodeType");

@@ -19,6 +19,7 @@ import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.sdk.APIChannel;
+import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
 
 
@@ -36,34 +37,107 @@ public class SceneManager {
     }
 
     // 检查参数(0失败,1成功)
-    public int checkParameter(Context context, int sceneModelCode, List<EScene.parameterEntry> parameters){
+    public Boolean checkParameter(int currentSceneNumber, int sceneModelCode, List<EScene.parameterEntry> parameters){
+        if(currentSceneNumber >= CScene.RULE_MAX_NUMBER){
+            Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_maxnumber_hint), CScene.RULE_MAX_NUMBER), R.drawable.dialog_fail, R.string.dialog_ok, false);
+            return false;
+        }
 
+        return true;
+    }
 
-        return 1;
+    // 生成场景模板列表
+    public List<EScene.sceneModelEntry> genSceneModelList() {
+        List<EScene.sceneModelEntry> list = new ArrayList<EScene.sceneModelEntry>();
+        list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_recommend, R.drawable.background_null));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scen_background1));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scen_background2));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scen_background3));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scen_background4));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scen_background5));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scen_background6));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scen_background7));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scen_background8));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scen_background9));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_one_key, R.drawable.background_null));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scen_background10));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scen_background11));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scen_background12));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scen_background13));
+        return list;
     }
 
     // 获取场景描述
     public String getSceneDescription(int sceneModelCode){
         switch (sceneModelCode){
             case CScene.SMC_NIGHT_RISE_ON:
+                return this.mContext.getString(R.string.scenemodel_night_rise_on);
             case CScene.SMC_UNMANNED_OFF:
+                return this.mContext.getString(R.string.scenemodel_unmanned_off);
             case CScene.SMC_ALARM_ON:
+                return this.mContext.getString(R.string.scenemodel_alarm_on);
             case CScene.SMC_REMOTE_CONTROL_ON:
+                return this.mContext.getString(R.string.scenemodel_remote_control_on);
             case CScene.SMC_OPEN_DOOR_ON:
+                return this.mContext.getString(R.string.scenemodel_open_door_on);
             case CScene.SMC_BELL_PLAY:
+                return this.mContext.getString(R.string.scenemodel_bell_play);
             case CScene.SMC_ALARM_PLAY:
+                return this.mContext.getString(R.string.scenemodel_alarm_play);
             case CScene.SMC_PIR_DEPLOY_ALARM:
+                return this.mContext.getString(R.string.scenemodel_pir_deploy_alarm);
             case CScene.SMC_DOOR_DEPLOY_ALARM:
-                return this.mContext.getString(R.string.scenemodel_recommend);
+                return this.mContext.getString(R.string.scenemodel_door_deploy_alarm);
             case CScene.SMC_GO_HOME_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_go_home_pattern);
             case CScene.SMC_LEAVE_HOME_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_leave_home_pattern);
             case CScene.SMC_SLEEP_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_sleep_pattern);
             case CScene.SMC_GETUP_PATTERN:
-                return this.mContext.getString(R.string.scenemodel_one_key);
+                return this.mContext.getString(R.string.scenemodel_getup_pattern);
             default:
                 break;
         }
+
         return "";
+    }
+
+    // 获取场景模板代码
+    public int getSceneModelCode(String sceneDescription){
+        if(sceneDescription == null) {
+            return -1;
+        }
+
+        if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_night_rise_on))){
+            return CScene.SMC_NIGHT_RISE_ON;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_unmanned_off))) {
+            return CScene.SMC_UNMANNED_OFF;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_alarm_on))) {
+            return CScene.SMC_ALARM_ON;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_remote_control_on))) {
+            return CScene.SMC_REMOTE_CONTROL_ON;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_open_door_on))) {
+            return CScene.SMC_OPEN_DOOR_ON;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_bell_play))) {
+            return CScene.SMC_BELL_PLAY;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_alarm_play))) {
+            return CScene.SMC_ALARM_PLAY;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_pir_deploy_alarm))) {
+            return CScene.SMC_PIR_DEPLOY_ALARM;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_door_deploy_alarm))) {
+            return CScene.SMC_DOOR_DEPLOY_ALARM;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_go_home_pattern))) {
+            return CScene.SMC_GO_HOME_PATTERN;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_leave_home_pattern))) {
+            return CScene.SMC_LEAVE_HOME_PATTERN;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_sleep_pattern))) {
+            return CScene.SMC_SLEEP_PATTERN;
+        } else if(sceneDescription.equalsIgnoreCase(this.mContext.getString(R.string.scenemodel_getup_pattern))) {
+            return CScene.SMC_GETUP_PATTERN;
+        }
+
+        return -1;
     }
 
     // 创建场景
@@ -255,27 +329,6 @@ public class SceneManager {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DELETESCENE;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
-    }
-
-    // 生成场景模板列表
-    public List<EScene.sceneModelEntry> genSceneModelList() {
-        List<EScene.sceneModelEntry> list = new ArrayList<EScene.sceneModelEntry>();
-        list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_recommend, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scen_background1));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scen_background2));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scen_background3));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scen_background4));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scen_background5));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scen_background6));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scen_background7));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scen_background8));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scen_background9));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_one_key, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scen_background10));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scen_background11));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scen_background12));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scen_background13));
-        return list;
     }
 
     // 生成指定场景模板参数列表

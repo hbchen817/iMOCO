@@ -156,6 +156,7 @@ public class IndexFragment2 extends BaseFragment {
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
                 intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
                 startActivity(intent);
             }
         });
