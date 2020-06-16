@@ -18,7 +18,7 @@
 
 		<ImageView
 			android:id="@+id/sceneModelImgIcon"
-			android:background="@drawable/scen_background1"
+			android:background="@drawable/scene_background1"
 			android:layout_width="match_parent"
 			android:layout_height="130dp" />
 

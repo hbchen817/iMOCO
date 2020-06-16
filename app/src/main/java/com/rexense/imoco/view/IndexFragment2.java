@@ -152,7 +152,7 @@ public class IndexFragment2 extends BaseFragment {
                 }
 
                 Intent intent = new Intent(getActivity(), SceneMaintainActivity.class);
-                intent.putExtra("operateType", 1);
+                intent.putExtra("operateType", CScene.OPERATE_CREATE);
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
                 intent.putExtra("sceneModelIcon", mModelList.get(position).icon);

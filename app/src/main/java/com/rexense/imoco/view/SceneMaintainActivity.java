@@ -12,9 +12,9 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.aliyun.iot.link.ui.component.LinkBottomDialog;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
@@ -36,10 +36,11 @@ import com.rexense.imoco.utility.ToastUtils;
  */
 public class SceneMaintainActivity extends BaseActivity {
     private SceneManager mSceneManager;
+    private String mName, mSceneId;
     private int mOperateType, mSceneModelCode, mSceneNumber;
     private TextView mLblName;
     private List<EScene.parameterEntry> mParameterList;
-    private  AptSceneParameter mAptSceneParameter;
+    private AptSceneParameter mAptSceneParameter;
     private int mSetTimeIndex = -1;
 
     @Override
@@ -47,18 +48,32 @@ public class SceneMaintainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scene_maintain);
 
+        this.mSceneManager = new SceneManager(this);
+
         Intent intent = getIntent();
         this.mOperateType = intent.getIntExtra("operateType", 1);
         this.mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
         this.mSceneNumber = intent.getIntExtra("sceneNumber", 0);
+        this.mName = intent.getStringExtra("name");
+        this.mSceneId = intent.getStringExtra("sceneId");
 
-        this.mSceneManager = new SceneManager(this);
         TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
-        this.mLblName = (TextView)findViewById(R.id.sceneMaintainLblName);
-        this.mLblName.setText(intent.getStringExtra("sceneModelName"));
+        TextView operate = (TextView)findViewById(R.id.sceneMaintainLblOperate);
         ImageView icon = (ImageView)findViewById(R.id.sceneMaintainImgIcon);
+        this.mLblName = (TextView)findViewById(R.id.sceneMaintainLblName);
         icon.setBackgroundResource(intent.getIntExtra("sceneModelIcon", 1));
+
+        if(this.mOperateType == CScene.OPERATE_CREATE){
+            title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
+            this.mLblName.setText(intent.getStringExtra("sceneModelName"));
+            operate.setText(getString(R.string.scene_maintain_create));
+        } else {
+            title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), this.mName));
+            this.mLblName.setText(this.mName);
+            operate.setText(getString(R.string.scene_maintain_edit));
+            // 获取场景详细信息
+            this.mSceneManager.querySceneDetail(this.mSceneId, CScene.TYPE_MANUAL, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
+        }
 
         // 修改场景名称处理
         ImageView editName = (ImageView) findViewById(R.id.sceneMaintainImgName);
@@ -89,19 +104,26 @@ public class SceneMaintainActivity extends BaseActivity {
             }
         });
 
-        // 启用处理
-        TextView lblUse = (TextView)findViewById(R.id.sceneMaintainLblUse);
-        lblUse.setOnClickListener(new OnClickListener() {
+        // 操作处理
+        RelativeLayout rlOperate = (RelativeLayout)findViewById(R.id.sceneMaintainRlOperate);
+        rlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 检查参数
                 if(!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)){
                     return;
                 }
 
-                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                        mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
-                        mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
-                mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                if(mOperateType == CScene.OPERATE_CREATE){
+                    // 创建场景
+                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                            mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
+                            mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
+                    mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                } else {
+                    // 修改场景
+
+                }
             }
         });
 
@@ -153,6 +175,10 @@ public class SceneMaintainActivity extends BaseActivity {
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
+                    // 处理获取场景详细信息
+                    Logger.d("Scene detail information is : " + msg.obj.toString());
                     break;
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果

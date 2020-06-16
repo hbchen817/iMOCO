@@ -216,6 +216,7 @@
     <string name="scene_delete_sucess">场景删除成功</string>
 
     <string name="scene_maintain_create">创建</string>
+    <string name="scene_maintain_edit">修改</string>
     <string name="scene_maintain_name">场景名称</string>
     <string name="scene_maintain_parametertitle">参数标题</string>
     <string name="scene_maintain_trigger">如果</string>
@@ -225,9 +226,9 @@
     <string name="scene_maintain_time">时间</string>
     <string name="scene_maintain_select">选择</string>
     <string name="scene_maintain_nohas">无设备</string>
-    <string name="scene_maintain_use">启用</string>
+    <string name="scene_maintain_save">保存</string>
     <string name="scene_maintain_maxnumber_hint">你已经创建了%d个场景，不能再创建场景了。</string>
-    <string name="scene_maintain_trigger_hint">[如果]中的触发设备中至少要选中一个，否则不能创建场景。</string>
+    <string name="scene_maintain_trigger_hint">[如果]中的触发状态至少要选中一个，否则不能创建场景。</string>
     <string name="scene_maintain_trigger_maxnumber_hint">[如果]中的触发状态选中数量已经超过最大数%d，请减少到%d个，否则不能创建场景。</string>
     <string name="scene_maintain_condition_maxnumber_hint">[并且]中的条件选中数量已经超过最大数%d，请减少到%d个，否则不能创建场景。</string>
     <string name="scene_maintain_action_hint1">[就]中的执行动作中至少要选中一个，否则不能创建场景。</string>

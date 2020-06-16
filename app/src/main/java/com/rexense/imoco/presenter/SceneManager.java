@@ -43,6 +43,54 @@ public class SceneManager {
             return false;
         }
 
+        int triggerNumber = 0, conditionNumber = 0, actionNumber = 0;
+        for(EScene.parameterEntry para : parameters){
+            if(para.type == CScene.SPT_TRIGGER && para.triggerEntry != null && para.triggerEntry.isSelected){
+                triggerNumber++;
+            }
+            if(para.type == CScene.SPT_CONDITION_TIME && para.conditionTimeEntry != null && para.conditionTimeEntry.isSelected){
+                conditionNumber++;
+            }
+            if(para.type == CScene.SPT_CONDITION_STATE && para.conditionStateEntry != null && para.conditionStateEntry.isSelected){
+                conditionNumber++;
+            }
+            if(para.type == CScene.SPT_RESPONSE && para.responseEntry != null && para.responseEntry.isSelected){
+                actionNumber++;
+            }
+        }
+
+        if(sceneModelCode <= CScene.SMC_AUTOMATIC_MAX){
+            if(triggerNumber == 0){
+                Dialog.confirm(this.mContext, R.string.dialog_title, this.mContext.getString(R.string.scene_maintain_trigger_hint), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+            if(triggerNumber > CScene.RULE_ONE_SCENE_MAX_TRIGGER){
+                Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_trigger_maxnumber_hint), CScene.RULE_ONE_SCENE_MAX_TRIGGER, CScene.RULE_ONE_SCENE_MAX_TRIGGER), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+            if(conditionNumber > CScene.RULE_ONE_SCENE_MAX_CONDITION){
+                Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_condition_maxnumber_hint), CScene.RULE_ONE_SCENE_MAX_TRIGGER, CScene.RULE_ONE_SCENE_MAX_TRIGGER), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+            if(actionNumber == 0){
+                Dialog.confirm(this.mContext, R.string.dialog_title, this.mContext.getString(R.string.scene_maintain_action_hint1), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+            if(actionNumber > CScene.RULE_ONE_SCENE_MAX_ACTION){
+                Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_action_maxnumber_hint1), CScene.RULE_ONE_SCENE_MAX_ACTION, CScene.RULE_ONE_SCENE_MAX_ACTION), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+        } else {
+            if(actionNumber == 0){
+                Dialog.confirm(this.mContext, R.string.dialog_title, this.mContext.getString(R.string.scene_maintain_action_hint2), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+            if(actionNumber > CScene.RULE_ONE_SCENE_MAX_ACTION){
+                Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_action_maxnumber_hint2), CScene.RULE_ONE_SCENE_MAX_ACTION, CScene.RULE_ONE_SCENE_MAX_ACTION), R.drawable.dialog_fail, R.string.dialog_ok, false);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -50,20 +98,20 @@ public class SceneManager {
     public List<EScene.sceneModelEntry> genSceneModelList() {
         List<EScene.sceneModelEntry> list = new ArrayList<EScene.sceneModelEntry>();
         list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_recommend, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scen_background1));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scen_background2));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scen_background3));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scen_background4));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scen_background5));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scen_background6));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scen_background7));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scen_background8));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scen_background9));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scene_background1));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scene_background2));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scene_background3));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scene_background4));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scene_background5));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scene_background6));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scene_background7));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scene_background8));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scene_background9));
         list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_one_key, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scen_background10));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scen_background11));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scen_background12));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scen_background13));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scene_background10));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scene_background11));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scene_background12));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scene_background13));
         return list;
     }
 
@@ -287,6 +335,27 @@ public class SceneManager {
         requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
         requestParameterEntry.addParameter("pageSize", pageSize <= 0  || pageSize > 30 ? 30 : pageSize);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERYSCENELIST;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 查询场景详细信息
+    public void querySceneDetail(String sceneId, String catalogId,
+                               Handler commitFailureHandler,
+                               Handler responseErrorHandler,
+                               Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_QUERYSCENEDETAIL;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("sceneId", sceneId);
+        requestParameterEntry.addParameter("catalogId", catalogId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERYSCENEDETAIL;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

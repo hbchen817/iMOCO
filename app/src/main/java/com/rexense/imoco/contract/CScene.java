@@ -7,6 +7,10 @@ package com.rexense.imoco.contract;
  */
 public class CScene {
     // 场景类型
+    public static final int OPERATE_CREATE                  = 1;
+    public static final int OPERATE_EDIT                    = 2;
+
+    // 场景类型
     public static final String TYPE_MANUAL                  = "0";
     public static final String TYPE_AUTOMATIC               = "1";
     public static final String TYPE_IFTTT                   = "IFTTT";
@@ -26,6 +30,7 @@ public class CScene {
     public static final int SMC_ALARM_PLAY                  = 7;
     public static final int SMC_PIR_DEPLOY_ALARM            = 8;
     public static final int SMC_DOOR_DEPLOY_ALARM           = 9;
+    public static final int SMC_AUTOMATIC_MAX               = 9;
     public static final int SMC_GO_HOME_PATTERN             = 10;
     public static final int SMC_LEAVE_HOME_PATTERN          = 11;
     public static final int SMC_SLEEP_PATTERN               = 12;

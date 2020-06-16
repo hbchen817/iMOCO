@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.utility.ToastUtils;
+import com.rexense.imoco.view.SceneMaintainActivity;
 
 /**
  * Creator: xieshaobing
@@ -180,7 +182,21 @@ public class AptSceneList extends BaseAdapter {
 					tag.isDeleted = false;
 				}
 				notifyDataSetChanged();
-				PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
+
+				if(mSceneList.get(index).catalogId.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)){
+					// 自动场景处理
+					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
+				} else {
+					// 手动场景处理
+					Intent intent = new Intent(mContext, SceneMaintainActivity.class);
+					intent.putExtra("operateType", CScene.OPERATE_EDIT);
+					intent.putExtra("sceneId", mSceneList.get(index).id);
+					intent.putExtra("name", mSceneList.get(index).name);
+					intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
+					intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mContext, mSceneList.get(index).description));
+					intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+					mContext.startActivity(intent);
+				}
 			}
 		});
 

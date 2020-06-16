@@ -66,6 +66,7 @@ public class Constant {
     public static final String API_PATH_GETTHINGBASEINFORMATION     = "/thing/info/get";
     public static final String API_PATH_CREATESCENE                 = "/living/scene/create";
     public static final String API_PATH_QUERYSCENELIST              = "/living/scene/query";
+    public static final String API_PATH_QUERYSCENEDETAIL            = "/living/scene/info/get";
     public static final String API_PATH_EXECUTESCENE                = "/scene/fire";
     public static final String API_PATH_DELETESCENE                 = "/living/scene/delete";
     public static final String API_PATH_UNREGISTER                  = "/account/unregister";
@@ -135,6 +136,7 @@ public class Constant {
     public static final int MSG_CALLBACK_SCANSHAREQRCODE            = 130;
     public static final int MSG_CALLBACK_SHAREDEVICEORSCENE         = 131;
     public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
+    public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 133;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;
