@@ -22,6 +22,7 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.ShareDeviceSuccessEvent;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.ERealtimeData;
@@ -44,6 +45,9 @@ import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +89,12 @@ public class IndexFragment1 extends BaseFragment {
     ImageView imgGrid;
     ImageView imgList;
     ImageView imgScene;
+
+    @Subscribe
+    public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
+        startGetDeviceList();
+    }
+
     @Override
     public void onDestroyView() {
         // 删除实时数据回调处理器
@@ -92,12 +102,14 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
+        EventBus.getDefault().unregister(this);
         mUnbinder.unbind();
         super.onDestroyView();
     }
 
     @Override
     protected int setLayout() {
+        EventBus.getDefault().register(this);
         return R.layout.fragment_index1;
     }
 

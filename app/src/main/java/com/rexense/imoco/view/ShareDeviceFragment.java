@@ -55,6 +55,8 @@ public class ShareDeviceFragment extends BaseFragment {
                 getSelectedIds();
                 if (selectedIdList.isEmpty()){
                     ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_selected_is_empty));
+                }else if (selectedIdList.size()>20){
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_num_error));
                 }else {
                     intent = new Intent(mActivity,DeviceQrcodeActivity.class);
                     intent.putStringArrayListExtra("iotIdList",selectedIdList);
@@ -126,6 +128,7 @@ public class ShareDeviceFragment extends BaseFragment {
             ItemShareDevice itemShareDevice = new ItemShareDevice();
             itemShareDevice.setId(mapKey);
             itemShareDevice.setDeviceName(mapValue.nickName);
+            itemShareDevice.setProductKey(mapValue.productKey);
             if (type==0&&mapValue.owned==1){
                 itemShareDevice.setStatus(1);
                 models.add(itemShareDevice);

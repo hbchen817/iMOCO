@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemShareDevice;
+import com.rexense.imoco.presenter.ImageProvider;
 
 import java.util.List;
 
@@ -22,6 +23,10 @@ public class ItemShareDeviceViewHolder extends BaseViewHolder<ItemShareDevice> {
         ImageView right_img = (ImageView) getView(R.id.right_img);// 0不显示 1 箭头 2 未选择 3 已选择
         View root_view = getView(R.id.root_view);
 
+        int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
+        if (imgSrcId!=0){
+            device_img.setImageResource(imgSrcId);
+        }
         device_name.setText(model.getDeviceName());
         if (model.getStatus()==0){
             right_img.setVisibility(View.GONE);

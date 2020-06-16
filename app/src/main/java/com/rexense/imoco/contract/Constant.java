@@ -73,7 +73,9 @@ public class Constant {
     public static final String API_PATH_MESSAGECENTER               = "/message/center/query/push/message";
     public static final String API_PATH_CONFIRMSHARE                = "/uc/confirmShare";
     public static final String API_PATH_GENERATEQRCODE              = "uc/generateShareQrCode";
-    public static final String API_PATH_SCANSHAREQRCODE              = "/uc/scanBindByShareQrCode";
+    public static final String API_PATH_SCANSHAREQRCODE             = "/uc/scanBindByShareQrCode";
+    public static final String API_PATH_SHAREDEVICEORSCENE          = "/uc/shareDevicesAndScenes";
+    public static final String API_PATH_SHARENOTICELIST             = "/uc/getShareNoticeList";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -131,6 +133,8 @@ public class Constant {
     public static final int MSG_CALLBACK_CONFIRMSHARE               = 128;
     public static final int MSG_CALLBACK_SHAREQRCODE                = 129;
     public static final int MSG_CALLBACK_SCANSHAREQRCODE            = 130;
+    public static final int MSG_CALLBACK_SHAREDEVICEORSCENE         = 131;
+    public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

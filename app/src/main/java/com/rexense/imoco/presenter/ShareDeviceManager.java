@@ -62,4 +62,46 @@ public class ShareDeviceManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 通过手机账号分享设备
+    public void shareDeviceByMobile(ArrayList<String> iotIdList,String mobile,
+                          Handler commitFailureHandler,
+                          Handler responseErrorHandler,
+                          Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_SHAREDEVICEORSCENE;
+        requestParameterEntry.version = "1.0.8";
+        requestParameterEntry.addParameter("iotIdList", iotIdList);
+        requestParameterEntry.addParameter("accountAttr", mobile);
+        requestParameterEntry.addParameter("accountAttrType", "MOBILE");
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_SHAREDEVICEORSCENE;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+    // 同意或拒绝设备共享
+    public void confirmShare(int agree,ArrayList<String> recordIdList,
+                          Handler commitFailureHandler,
+                          Handler responseErrorHandler,
+                          Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CONFIRMSHARE;
+        requestParameterEntry.version = "1.0.7";
+        requestParameterEntry.addParameter("recordIdList", recordIdList);
+        requestParameterEntry.addParameter("agree", agree);//0：不同意；1：同意
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CONFIRMSHARE;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
 }

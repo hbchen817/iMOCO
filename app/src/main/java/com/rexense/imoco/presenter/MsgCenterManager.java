@@ -49,5 +49,25 @@ public class MsgCenterManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    // 获取共享设备通知列表
+    public void getShareNoticeList(int pageNo,int pageSize,
+                            Handler commitFailureHandler,
+                            Handler responseErrorHandler,
+                            Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_SHARENOTICELIST;
+        requestParameterEntry.version = "1.0.7";
+        requestParameterEntry.addParameter("pageNo", pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_SHARENOTICELIST;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
 }

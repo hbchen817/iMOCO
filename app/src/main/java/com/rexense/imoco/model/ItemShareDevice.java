@@ -10,6 +10,7 @@ import com.rexense.imoco.typefactory.TypeFactory;
 public class ItemShareDevice implements Visitable {
     private String id;
     private String deviceName;
+    private String productKey;
     private int status;//右侧图片 0不显示 1 箭头 2 未选择 3 已选择
     private int type;
 
@@ -27,6 +28,14 @@ public class ItemShareDevice implements Visitable {
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public String getProductKey() {
+        return productKey;
+    }
+
+    public void setProductKey(String productKey) {
+        this.productKey = productKey;
     }
 
     public int getStatus() {

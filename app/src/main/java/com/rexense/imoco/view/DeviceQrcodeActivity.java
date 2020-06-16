@@ -73,10 +73,7 @@ public class DeviceQrcodeActivity extends BaseActivity {
                     String resultStr = (String) msg.obj;
                     if (!TextUtils.isEmpty(resultStr)) {
                         JSONObject jsonObject = JSONObject.parseObject(resultStr);
-                        String qrcodeStr = jsonObject.getString("qrKey");
-
-
-                        String content = qrcodeStr;
+                        String content = jsonObject.getString("qrKey");
                         int size = 240;
                         Hashtable<EncodeHintType, String> hints = new Hashtable<>();
                         hints.put(EncodeHintType.CHARACTER_SET, "UTF-8"); // 字符转码格式设置
@@ -94,12 +91,15 @@ public class DeviceQrcodeActivity extends BaseActivity {
                                 }
                             }
                         }
-
                         Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                         bitmap.setPixels(pixels, 0, size, 0, 0, size, size);
 
                         qrcodeImg.setImageBitmap(bitmap);
                     }
+                    break;
+                case Constant.MSG_CALLBACK_SHAREDEVICEORSCENE:
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_share_success));
+                    finish();
                     break;
                 default:
                     break;
@@ -112,11 +112,12 @@ public class DeviceQrcodeActivity extends BaseActivity {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_toolbar_right:
-                String nickNameStr = mobileAccountEt.getText().toString().trim();
-                if (TextUtils.isEmpty(nickNameStr)) {
+                String mobileStr = mobileAccountEt.getText().toString().trim();
+                if (TextUtils.isEmpty(mobileStr)) {
                     ToastUtils.showToastCentrally(mActivity, mobileAccountEt.getHint().toString());
                     return;
                 }
+                shareDeviceManager.shareDeviceByMobile(iotIdList,mobileStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 break;
             case R.id.qrcode_tv:
                 qrcodeTv.setTextColor(getResources().getColor(R.color.appcolor));

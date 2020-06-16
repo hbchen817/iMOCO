@@ -4,8 +4,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.R;
+import com.rexense.imoco.presenter.ImageProvider;
 
 import java.util.List;
 
@@ -28,6 +30,12 @@ public class ItemMsgCenterViewHolder extends BaseViewHolder<ItemMsgCenter> {
         content.setText(model.getContent());
         time.setText(model.getTime());
         btn_view.setVisibility(model.isShowBtnView()?View.VISIBLE:View.GONE);
+        int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
+        if (imgSrcId!=0){
+            msg_img.setImageResource(imgSrcId);
+        }else {
+            Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+        }
 
         agree_btn.setTag(position);
         agree_btn.setOnClickListener(adapter.getOnClickListener());

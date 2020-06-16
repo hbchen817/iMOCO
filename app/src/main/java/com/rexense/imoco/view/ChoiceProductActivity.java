@@ -28,6 +28,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.rexense.imoco.R;
+import com.rexense.imoco.event.ShareDeviceSuccessEvent;
 import com.rexense.imoco.presenter.AptConfigProductList;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.HomeSpaceManager;
@@ -39,6 +40,8 @@ import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -213,6 +216,7 @@ public class ChoiceProductActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_SCANSHAREQRCODE:
                     ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_scan_success));
+                    EventBus.getDefault().post(new ShareDeviceSuccessEvent());
                     break;
                 default:
                     break;

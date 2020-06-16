@@ -491,7 +491,6 @@ public class CloudDataParser {
                 JSONObject msgJson = dataArr.getJSONObject(i);
                 ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
                 itemMsgCenter.setContent(msgJson.getString("body"));
-                itemMsgCenter.setShowBtnView("share".equals(msgJson.getString("messageType")));
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
 
                 JSONObject extData = msgJson.getJSONObject("extData");
@@ -503,7 +502,38 @@ public class CloudDataParser {
                         String productName = extData.getString("productName");
                         itemMsgCenter.setTitle(productName);
                     }
+                    itemMsgCenter.setProductKey(extData.getString("productKey"));
                 }
+                msgList.add(itemMsgCenter);
+            }
+        }
+        return msgList;
+    }
+    // 处理消息中心共享设备消息列表
+    public static List<Visitable> processShareDeviceNoticeList(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return null;
+        }
+        Logger.e(cloudData);
+        List<Visitable> msgList = new ArrayList<>();
+        JSONObject dataJson = JSONObject.parseObject(cloudData);
+        JSONArray dataArr = dataJson.getJSONArray("data");
+        if (dataArr!=null){
+            for (int i=0;i<dataArr.size();i++){
+                JSONObject msgJson = dataArr.getJSONObject(i);
+                ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
+                itemMsgCenter.setContent(msgJson.getString("description"));
+                int status = msgJson.getInteger("status");//-1: 初始化0：同意1：拒绝2：取消3：过期4：抢占5：删除6：发起者已解绑99：异常
+                itemMsgCenter.setStatus(status);
+                itemMsgCenter.setShowBtnView(status==-1);
+                itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
+
+                String productName = msgJson.getString("productName");
+                itemMsgCenter.setTitle(productName);
+                itemMsgCenter.setProductImg(msgJson.getString("productImage"));
+
+                itemMsgCenter.setRecordId(msgJson.getString("recordId"));
+                itemMsgCenter.setBatchId(msgJson.getString("batchId"));
                 msgList.add(itemMsgCenter);
             }
         }

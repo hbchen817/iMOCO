@@ -89,6 +89,16 @@ public class ShareDeviceActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                if (position==1){
+                    tvToolbarLeft.setVisibility(View.GONE);
+                    ivToolbarLeft.setVisibility(View.VISIBLE);
+                    selectMode = false;
+                    tvToolbarRight.setVisibility(View.GONE);
+                    EventBus.getDefault().post(new ShareDeviceEvent("cancel"));
+                }else {
+                    tvToolbarRight.setVisibility(View.VISIBLE);
+                    tvToolbarRight.setText(getString(R.string.share_device_select));
+                }
             }
 
             @Override

@@ -11,6 +11,9 @@ import com.rexense.imoco.contract.CTSL;
 public class ImageProvider {
     // 生成产品图标
     public static int genProductIcon(String productKey) {
+        if (productKey==null){
+            return 0;
+        }
         switch (productKey) {
             case CTSL.PK_GATEWAY:
                 return R.drawable.icon_gateway;
