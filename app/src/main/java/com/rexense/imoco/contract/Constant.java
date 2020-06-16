@@ -144,10 +144,9 @@ public class Constant {
     public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
     public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 133;
     public static final int MSG_CALLBACK_EDITSCENE                  = 134;
-    public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 133;
-    public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 134;
-    public static final int MSG_CALLBACK_GETSCENELOG                = 135;
-    public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 136;
+    public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 135;
+    public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 136;
+    public static final int MSG_CALLBACK_GETSCENELOG                = 137;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;
