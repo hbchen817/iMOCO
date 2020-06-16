@@ -142,6 +142,8 @@ public class Constant {
     public static final int MSG_CALLBACK_SCANSHAREQRCODE            = 130;
     public static final int MSG_CALLBACK_SHAREDEVICEORSCENE         = 131;
     public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
+    public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 133;
+    public static final int MSG_CALLBACK_EDITSCENE                  = 134;
     public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 133;
     public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 134;
     public static final int MSG_CALLBACK_GETSCENELOG                = 135;
