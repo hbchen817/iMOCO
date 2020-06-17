@@ -8,30 +8,139 @@
 
     <include layout="@layout/layout_common_toolbar" />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/evaluate_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_30"
         android:background="@color/white"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/dp_12"
-        android:paddingVertical="@dimen/dp_16">
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
-            android:text="@string/myinfo_nickname"/>
-        <EditText
-            android:id="@+id/nick_name_et"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_36"
-            android:layout_marginHorizontal="@dimen/dp_14"
-            android:maxLength="12"
-            android:hint="@string/nick_name_hint"
+            android:text="@string/aboutus_evaluate"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/privacy_policy_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
             android:textSize="@dimen/sp_14"
-            android:text=""
-            android:background="@null"/>
-    </LinearLayout>
+            android:text="@string/aboutus_privacy_policy"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/user_deal_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/aboutus_user_deal"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/opensourse_deal_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/aboutus_opensourse_deal"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/version_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/aboutus_current_version"/>
+        <TextView
+            android:id="@+id/version_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/aboutus_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_0_5"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14"
+            android:text="@string/about_us"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 </LinearLayout>

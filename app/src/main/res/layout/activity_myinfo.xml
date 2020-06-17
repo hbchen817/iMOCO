@@ -24,9 +24,9 @@
             android:text="头像"/>
         <ImageView
             android:id="@+id/head_img"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:background="@color/appbgcolor"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
+            android:src="@drawable/headimg"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
     <RelativeLayout

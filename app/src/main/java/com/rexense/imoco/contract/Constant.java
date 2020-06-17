@@ -8,6 +8,10 @@ package com.rexense.imoco.contract;
 public class Constant {
     // APPKEY
     public static final String APPKEY                               = "29162669";
+    // 淘宝回调地址,用户协议，隐私政策
+    public static final String TAOBAOREDIRECTURI                    = "http://www.rexense.com/imoco";
+    public static final String USER_PROTOCOL_URL                    = "http://www.rexense.cn/nd.jsp?id=71#_np=127_530";
+    public static final String PRIVACY_POLICY_URL                   = "http://www.rexense.cn/nd.jsp?id=70#_np=127_530";
     //分页时每页的数量
     public static final int PAGE_SIZE                                = 20;
     // 定义设备类型常量
@@ -82,6 +86,9 @@ public class Constant {
     public static final String API_PATH_CLEARSHARENOTICELIST        = "/uc/clearShareNoticeList";
     public static final String API_PATH_CLEARMESSAGERECORD          = "/message/center/record/delete";
     public static final String API_PATH_GETSCENELOG                 = "/scene/log/list/get";
+    public static final String API_PATH_GETBINDTAOBAOACCOUNT        = "/account/thirdparty/get";
+    public static final String API_PATH_BINDTAOBAO                  = "/account/taobao/bind";
+    public static final String API_PATH_UNBINDTAOBAO                = "/account/thirdparty/unbind";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -147,6 +154,9 @@ public class Constant {
     public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 135;
     public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 136;
     public static final int MSG_CALLBACK_GETSCENELOG                = 137;
+    public static final int MSG_CALLBACK_GETBINDTAOBAOACCOUNT       = 138;
+    public static final int MSG_CALLBACK_BINDTAOBAO                 = 139;
+    public static final int MSG_CALLBACK_UNBINDTAOBAO               = 140;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;

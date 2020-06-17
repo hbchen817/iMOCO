@@ -32,11 +32,11 @@
             android:text="@string/fragment3_edit_myinfo"/>
         <ImageView
             android:id="@+id/head_img"
-            android:layout_width="@dimen/dp_40"
-            android:layout_height="@dimen/dp_40"
-            android:background="@color/appbgcolor"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:src="@drawable/headimg"/>
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/advice_view"
@@ -48,7 +48,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/advice_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,7 +75,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/msg_center_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -100,7 +102,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/scene_log_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -126,7 +129,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/share_device_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -152,7 +156,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/more_service_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -179,7 +184,8 @@
         android:paddingVertical="@dimen/dp_12">
         <ImageView
             android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"/>
+            android:layout_height="@dimen/dp_30"
+            android:src="@drawable/about_us_img"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

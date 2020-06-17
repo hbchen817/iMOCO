@@ -25,7 +25,7 @@ public class ItemSceneLogViewHolder extends BaseViewHolder<ItemSceneLog> {
 
         log_name.setText(model.getLogName());
         log_time.setText(model.getLogTime());
-        log_detail.setText(model.getLogDetail());
+        log_detail.setText(adapter.getmContext().getString(model.getResult()==0?R.string.scene_log_result_fail:R.string.scene_log_result_success));
         Glide.with(adapter.getmContext()).load(model.getIcon()).into(log_img);
 
         root_view.setTag(position);

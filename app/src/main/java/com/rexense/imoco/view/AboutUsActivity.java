@@ -1,23 +1,12 @@
 package com.rexense.imoco.view;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
-import com.alibaba.sdk.android.openaccount.callback.LoginCallback;
-import com.alibaba.sdk.android.openaccount.model.OpenAccountSession;
-import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.rexense.imoco.R;
-import com.rexense.imoco.event.RefreshMyinfo;
-import com.rexense.imoco.utility.ToastUtils;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.utility.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +18,8 @@ public class AboutUsActivity extends BaseActivity {
     TextView tvToolbarTitle;
     @BindView(R.id.tv_toolbar_right)
     TextView tvToolbarRight;
+    @BindView(R.id.version_tv)
+    TextView versionTv;
 
 
     @Override
@@ -37,12 +28,24 @@ public class AboutUsActivity extends BaseActivity {
         setContentView(R.layout.activity_aboutus);
         ButterKnife.bind(this);
         tvToolbarTitle.setText(getString(R.string.fragment3_about_us));
+
+        versionTv.setText(AppUtils.getVersionName(mActivity));
     }
 
-    @OnClick({R.id.tv_toolbar_right})
+    @OnClick({R.id.evaluate_view,R.id.privacy_policy_view,R.id.user_deal_view,R.id.opensourse_deal_view,R.id.aboutus_view})
     void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_toolbar_right:
+            case R.id.evaluate_view:
+                break;
+            case R.id.privacy_policy_view:
+                H5Activity.actionStart(mActivity, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+                break;
+            case R.id.user_deal_view:
+                H5Activity.actionStart(mActivity, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+                break;
+            case R.id.opensourse_deal_view:
+                break;
+            case R.id.aboutus_view:
                 break;
         }
     }

@@ -90,7 +90,7 @@ public class IndexFragment3 extends BaseFragment {
                 startActivity(intent);
                 break;
             case R.id.service_view:
-                intent = new Intent(mActivity, MoreServiceActivity.class);
+                intent = new Intent(mActivity, TmallSpiritActivity.class);
                 startActivity(intent);
                 break;
             case R.id.aboutus_view:

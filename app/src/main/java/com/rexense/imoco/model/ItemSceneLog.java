@@ -10,7 +10,7 @@ import com.rexense.imoco.typefactory.TypeFactory;
 public class ItemSceneLog implements Visitable {
     private String id;
     private String logName;
-    private String logDetail;
+    private int result;
     private String logTime;
     private String icon;
 
@@ -30,12 +30,12 @@ public class ItemSceneLog implements Visitable {
         this.logName = logName;
     }
 
-    public String getLogDetail() {
-        return logDetail;
+    public int getResult() {
+        return result;
     }
 
-    public void setLogDetail(String logDetail) {
-        this.logDetail = logDetail;
+    public void setResult(int result) {
+        this.result = result;
     }
 
     public String getLogTime() {

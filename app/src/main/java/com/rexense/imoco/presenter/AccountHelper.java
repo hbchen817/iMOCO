@@ -46,8 +46,8 @@ public class AccountHelper {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
-    // 更新账号昵称
-    public static void modifyAccountNickName(String nickName, Handler commitFailureHandler,
+    // 获取绑定的淘宝账号
+    public static void getBindTaoBaoAccount(String accountType, Handler commitFailureHandler,
                             Handler responseErrorHandler,
                             Handler processDataHandler) {
         if(processDataHandler == null){
@@ -55,16 +55,47 @@ public class AccountHelper {
             return;
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("nickName",nickName);
-        jsonObject.put("phone",Account.getUserPhone());
-        jsonObject.put("appKey",Constant.APPKEY);
+        jsonObject.put("authCode",accountType);
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
-        requestParameterEntry.path = Constant.API_PATH_MODIFYACCOUNT;
+        requestParameterEntry.path = Constant.API_PATH_GETBINDTAOBAOACCOUNT;
         requestParameterEntry.version = "1.0.5";
-//        requestParameterEntry.addParameter("identityId", homeId);
-//        requestParameterEntry.addParameter("accountMetaV2", jsonObject);
-        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_MODIFYACCOUNT;
+        requestParameterEntry.addParameter("request", jsonObject);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETBINDTAOBAOACCOUNT;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+    // 绑定淘宝账号
+    public static void bindTaoBaoAccount(String authCode, Handler commitFailureHandler,
+                            Handler responseErrorHandler,
+                            Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_BINDTAOBAO;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("authCode", authCode);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_BINDTAOBAO;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+    // 解除绑定淘宝账号
+    public static void unbindTaoBaoAccount(String accountType, Handler commitFailureHandler,
+                            Handler responseErrorHandler,
+                            Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UNBINDTAOBAO;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("accountType", accountType);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UNBINDTAOBAO;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

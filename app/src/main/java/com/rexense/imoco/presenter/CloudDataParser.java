@@ -558,6 +558,7 @@ public class CloudDataParser {
                 itemSceneLog.setId(logJson.getString("id"));
                 itemSceneLog.setLogName(logJson.getString("sceneName"));
                 itemSceneLog.setLogTime(TimeUtils.getYmdhms(logJson.getLong("time")));
+                itemSceneLog.setResult(logJson.getInteger("result"));
                 logList.add(itemSceneLog);
             }
         }

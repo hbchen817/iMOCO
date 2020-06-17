@@ -99,7 +99,7 @@ public class SceneLogActivity extends BaseActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETSCENELOG:
-                    if (page==0){
+                    if (page==1){
                         models.clear();
                     }
                     models.addAll(CloudDataParser.processSceneLogList((String) msg.obj));

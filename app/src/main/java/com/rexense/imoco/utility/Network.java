@@ -1,7 +1,11 @@
 package com.rexense.imoco.utility;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -42,5 +46,22 @@ public class Network {
 			}
 		}
 		return bitmap;
+	}
+
+	/**
+	 * 判断当前网络是否可用
+	 */
+	public static boolean isNetworkAvailable(Context context) {
+
+		ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		if (manager == null) {
+			return false;
+		}
+
+		NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+		return !(networkInfo == null || !networkInfo.isAvailable());
 	}
 }
