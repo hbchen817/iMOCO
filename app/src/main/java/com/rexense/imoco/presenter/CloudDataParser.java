@@ -564,4 +564,27 @@ public class CloudDataParser {
         }
         return logList;
     }
+
+    // 处理场景详细信息
+    public static EScene.detailEntry processSceneDetailInformation(String cloudData){
+        EScene.rawDetailEntry rawDetailEntry = new EScene.rawDetailEntry();
+        rawDetailEntry = JSON.parseObject(cloudData, EScene.rawDetailEntry.class);
+        EScene.detailEntry detailEntry = new EScene.detailEntry();
+        detailEntry.rawDetail = rawDetailEntry;
+        // 触发处理
+        if(rawDetailEntry.getTriggersJson() != null && rawDetailEntry.getTriggersJson().length() > 0){
+            detailEntry.addTrigger(rawDetailEntry.getTriggersJson());
+        }
+        // 条件处理
+        if(rawDetailEntry.getConditionsJson() != null && rawDetailEntry.getConditionsJson().length() > 0){
+            detailEntry.addCondition(rawDetailEntry.getConditionsJson());
+        }
+        // 响应动作处理
+        if(rawDetailEntry.getActionsJson() != null && rawDetailEntry.getActionsJson().size() > 0){
+            for(String item : rawDetailEntry.getActionsJson()){
+                detailEntry.addAction(item);
+            }
+        }
+        return  detailEntry;
+    }
 }

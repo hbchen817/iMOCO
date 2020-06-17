@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
@@ -71,8 +72,6 @@ public class SceneMaintainActivity extends BaseActivity {
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), this.mName));
             this.mLblName.setText(this.mName);
             operate.setText(getString(R.string.scene_maintain_edit));
-            // 获取场景详细信息
-            this.mSceneManager.querySceneDetail(this.mSceneId, CScene.TYPE_MANUAL, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
         }
 
         // 修改场景名称处理
@@ -114,15 +113,16 @@ public class SceneMaintainActivity extends BaseActivity {
                     return;
                 }
 
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        mSceneModelCode >= CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
+                        mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
                 if(mOperateType == CScene.OPERATE_CREATE){
                     // 创建场景
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            mSceneModelCode >= CScene.SMC_GO_HOME_PATTERN ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
-                            mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
                     mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 } else {
                     // 修改场景
-
+                    baseInfoEntry.sceneId = mSceneId;
+                    mSceneManager.update(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 }
             }
         });
@@ -175,10 +175,17 @@ public class SceneMaintainActivity extends BaseActivity {
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
+                    if(mOperateType == CScene.OPERATE_UPDATE){
+                        // 获取场景详细信息
+                        mSceneManager.querySceneDetail(mSceneId, mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详细信息
-                    Logger.d("Scene detail information is : " + msg.obj.toString());
+                    EScene.detailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
+                    // 初始化场景参数
+                    mSceneManager.initSceneParameterList(mParameterList, detailEntry);
+                    mAptSceneParameter.notifyDataSetChanged();
                     break;
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果
@@ -192,10 +199,10 @@ public class SceneMaintainActivity extends BaseActivity {
                     }
                     finish();
                     break;
-                case Constant.MSG_CALLBACK_EDITSCENE:
+                case Constant.MSG_CALLBACK_UPDATESCENE:
                     // 处理修改场景结果
-                    String sceneId_edit = CloudDataParser.processCreateSceneResult((String) msg.obj);
-                    if (sceneId_edit != null && sceneId_edit.length() > 0) {
+                    String sceneId_update = CloudDataParser.processCreateSceneResult((String) msg.obj);
+                    if (sceneId_update != null && sceneId_update.length() > 0) {
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mLblName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();

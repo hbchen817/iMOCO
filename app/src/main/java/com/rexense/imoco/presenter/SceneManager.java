@@ -317,6 +317,134 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 更新场景
+    public void update(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,
+                       Handler commitFailureHandler,
+                       Handler responseErrorHandler,
+                       Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", true);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        // 构造触发Triggers
+        boolean isHasTrigger = false;
+        JSONObject triggers = new JSONObject();
+        triggers.put("uri", "logical/or");
+        JSONArray items = new JSONArray();
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_TRIGGER || parameter.triggerEntry == null || !parameter.triggerEntry.isSelected){
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "trigger/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.triggerEntry.productKey);
+            params.put("deviceName", parameter.triggerEntry.deviceName);
+            params.put("propertyName", parameter.triggerEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.triggerEntry.state.rawValue));
+            item.put("params", params);
+            items.add(item);
+            isHasTrigger = true;
+        }
+        if(isHasTrigger){
+            triggers.put("items", items);
+            requestParameterEntry.addParameter("triggers", triggers);
+        }
+        // 构造时间条件
+        boolean isHasConditionTime = false;
+        JSONObject conditions = new JSONObject();
+        conditions.put("uri", "logical/and");
+        JSONArray conditions_items = new JSONArray();
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_CONDITION_TIME || parameter.conditionTimeEntry == null || !parameter.conditionTimeEntry.isSelected){
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/timeRange");
+            JSONObject params = new JSONObject();
+            params.put("cron", parameter.conditionTimeEntry.genCronString());
+            params.put("cronType", "linux");
+            params.put("timezoneID", "Asia/Shanghai");
+            item.put("params", params);
+            conditions_items.add(item);
+            isHasConditionTime = true;
+        }
+        // 构造属性状态条件
+        boolean isHasConditionState = false;
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_CONDITION_STATE || parameter.conditionStateEntry == null || !parameter.conditionStateEntry.isSelected){
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.conditionStateEntry.productKey);
+            params.put("deviceName", parameter.conditionStateEntry.deviceName);
+            params.put("propertyName", parameter.conditionStateEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.conditionStateEntry.state.rawValue));
+            item.put("params", params);
+            conditions_items.add(item);
+            isHasConditionState = true;
+        }
+        if(isHasConditionTime || isHasConditionState){
+            conditions.put("items", conditions_items);
+            requestParameterEntry.addParameter("conditions", conditions);
+        }
+        // 构造响应Actions
+        boolean isHasAction = false;
+        JSONArray actions = new JSONArray();
+        for(EScene.parameterEntry parameter : parameters){
+            if(parameter.type != CScene.SPT_RESPONSE || parameter.responseEntry == null || !parameter.responseEntry.isSelected ||
+                    (parameter.responseEntry.state == null && parameter.responseEntry.service == null)){
+                continue;
+            }
+            if(parameter.responseEntry.state != null) {
+                // 设置属性
+                JSONObject state = new JSONObject();
+                state.put("uri", "action/device/setProperty");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("propertyName", parameter.responseEntry.state.rawName);
+                params.put("propertyValue", Integer.parseInt(parameter.responseEntry.state.rawValue));
+                state.put("params", params);
+                actions.add(state);
+            } else if(parameter.responseEntry.service != null) {
+                // 调用服务
+                JSONObject service = new JSONObject();
+                service.put("uri", "action/device/invokeService");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("serviceName", parameter.responseEntry.service.rawName);
+                JSONObject args = new JSONObject();
+                // 构造服务参数
+                for(ETSL.serviceArgEntry arg : parameter.responseEntry.service.args){
+                    args.put(arg.rawName, Integer.parseInt(arg.rawValue));
+                }
+                params.put("serviceArgs", args);
+                service.put("params", params);
+                actions.add(service);
+            }
+            isHasAction = true;
+        }
+        if(isHasAction){
+            requestParameterEntry.addParameter("actions", actions);
+        }
+        requestParameterEntry.addParameter("sceneType", baseInfo.sceneType);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     // 查询场景列表
     public void querySceneList(String homeId, String catalogId, int pageNo, int pageSize,
                             Handler commitFailureHandler,
@@ -473,6 +601,62 @@ public class SceneManager {
         }
 
         return list;
+    }
+
+    // 初始化场景参数列表
+    public void initSceneParameterList(List<EScene.parameterEntry> parameterEntryList, EScene.detailEntry detailEntry){
+        if(parameterEntryList == null || parameterEntryList.size() == 0 || detailEntry == null){
+            return;
+        }
+
+        for (EScene.parameterEntry parameter : parameterEntryList) {
+            // 初始化属性状态触发
+            if(parameter.type == CScene.SPT_TRIGGER && parameter.triggerEntry != null && parameter.triggerEntry.state != null){
+                if(detailEntry.findTriggerProperty(parameter.triggerEntry.iotId, parameter.triggerEntry.deviceName, parameter.triggerEntry.state.rawName,
+                        "==", parameter.triggerEntry.state.rawValue)){
+                    parameter.triggerEntry.isSelected = true;
+                }
+                continue;
+            }
+
+            // 初始化时间范围条件
+            if(parameter.type == CScene.SPT_CONDITION_STATE && parameter.conditionStateEntry != null && parameter.conditionStateEntry.state != null){
+                String cron = detailEntry.findConditionTimeRange();
+                if(cron != null && cron.length() > 0){
+                    parameter.conditionTimeEntry = new EScene.conditionTimeEntry(cron);
+                    parameter.conditionStateEntry.isSelected = true;
+                }
+                continue;
+            }
+
+            // 初始化属性状态条件
+            if(parameter.type == CScene.SPT_CONDITION_STATE && parameter.conditionStateEntry != null && parameter.conditionStateEntry.state != null){
+                if(detailEntry.findConditionProperty(parameter.conditionStateEntry.iotId, parameter.conditionStateEntry.deviceName, parameter.conditionStateEntry.state.rawName,
+                        "==", parameter.conditionStateEntry.state.rawValue)){
+                    parameter.conditionStateEntry.isSelected = true;
+                }
+                continue;
+            }
+
+            // 初始化设置属性状态响应
+            if(parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && parameter.responseEntry.state != null){
+                if(detailEntry.findActionSetProperty(parameter.responseEntry.iotId, parameter.responseEntry.deviceName, parameter.responseEntry.state.rawName,
+                        parameter.responseEntry.state.rawValue)){
+                   parameter.responseEntry.isSelected = true;
+                }
+                continue;
+            }
+
+            // 初始化调用服务响应
+            if(parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && parameter.responseEntry.service != null){
+                if(detailEntry.findActionInvokeService(parameter.responseEntry.iotId, parameter.responseEntry.deviceName, parameter.responseEntry.service.name,
+                        parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawName : "",
+                        parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawValue : "")){
+                    parameter.responseEntry.isSelected = true;
+                }
+                continue;
+            }
+        }
     }
 
     // 获取指定场景模板的触发设备

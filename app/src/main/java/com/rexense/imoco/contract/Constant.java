@@ -71,6 +71,7 @@ public class Constant {
     public static final String API_PATH_GETOTAFIRMWAREINFO          = "/thing/ota/info/queryByUser";
     public static final String API_PATH_GETTHINGBASEINFORMATION     = "/thing/info/get";
     public static final String API_PATH_CREATESCENE                 = "/living/scene/create";
+    public static final String API_PATH_UPDATESCENE                 = "/living/scene/update";
     public static final String API_PATH_QUERYSCENELIST              = "/living/scene/query";
     public static final String API_PATH_QUERYSCENEDETAIL            = "/living/scene/info/get";
     public static final String API_PATH_EXECUTESCENE                = "/scene/fire";
@@ -150,7 +151,7 @@ public class Constant {
     public static final int MSG_CALLBACK_SHAREDEVICEORSCENE         = 131;
     public static final int MSG_CALLBACK_SHARENOTICELIST            = 132;
     public static final int MSG_CALLBACK_QUERYSCENEDETAIL           = 133;
-    public static final int MSG_CALLBACK_EDITSCENE                  = 134;
+    public static final int MSG_CALLBACK_UPDATESCENE                = 134;
     public static final int MSG_CALLBACK_CLEARSHARENOTICELIST       = 135;
     public static final int MSG_CALLBACK_CLEARMESSAGERECORD         = 136;
     public static final int MSG_CALLBACK_GETSCENELOG                = 137;

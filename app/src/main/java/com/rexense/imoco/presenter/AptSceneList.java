@@ -178,18 +178,29 @@ public class AptSceneList extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				final int index = Integer.parseInt(v.getTag().toString());
+
+				// 将删除隐藏掉
 				for(deleteTag tag : mDeleteList){
 					tag.isDeleted = false;
 				}
 				notifyDataSetChanged();
 
+				Intent intent = new Intent(mContext, SceneMaintainActivity.class);
+				intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+				intent.putExtra("sceneId", mSceneList.get(index).id);
+				intent.putExtra("name", mSceneList.get(index).name);
+				intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
+				intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mContext, mSceneList.get(index).description));
+				intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+				mContext.startActivity(intent);
+				/*
 				if(mSceneList.get(index).catalogId.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)){
 					// 自动场景处理
 					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
 				} else {
 					// 手动场景处理
 					Intent intent = new Intent(mContext, SceneMaintainActivity.class);
-					intent.putExtra("operateType", CScene.OPERATE_EDIT);
+					intent.putExtra("operateType", CScene.OPERATE_UPDATE);
 					intent.putExtra("sceneId", mSceneList.get(index).id);
 					intent.putExtra("name", mSceneList.get(index).name);
 					intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
@@ -197,6 +208,7 @@ public class AptSceneList extends BaseAdapter {
 					intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
 					mContext.startActivity(intent);
 				}
+				*/
 			}
 		});
 
