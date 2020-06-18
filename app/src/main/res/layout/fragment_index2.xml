@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sceneLl"
-    android:background="@color/background_main"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -10,7 +10,8 @@
     <RelativeLayout
         android:id="@+id/sceneRlTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/sceneImgAdd"
@@ -28,7 +29,9 @@
         android:id="@+id/sceneRlDisplay"
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
-        android:layout_height="wrap_content">
+        android:paddingBottom="@dimen/dp_10"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/sceneLblScene"
@@ -60,7 +63,8 @@
     <ListView
         android:id="@+id/sceneLstSceneModel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/appbgcolor"
         android:divider="@null"
         android:dividerHeight="1dp"
         android:layout_weight="1"
@@ -70,7 +74,8 @@
     <ListView
         android:id="@+id/sceneLstMy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
         android:divider="@null"
         android:layout_weight="1"

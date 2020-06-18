@@ -178,6 +178,27 @@ public class HomeSpaceManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    // 获取房间设备
+    public void getRoomDevice(int pageNo,String homeId, String roomId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETDEVICEINROOM;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("pageNo", pageNo);
+        requestParameterEntry.addParameter("pageSize", Constant.PAGE_SIZE);
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("roomId", roomId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETDEVICEINROOM;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
     // 清除房间缓存数据
     public static void clearRoomBufferData() {

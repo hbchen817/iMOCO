@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLl"
-    android:background="@color/background_main"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -166,29 +166,56 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/mainLstDevice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@null"
-        android:layout_weight="1"
-        android:visibility="gone"
-        android:horizontalSpacing="1dip">
-    </ListView>
-
-    <GridView
-        android:id="@+id/mainGrdDevice"
+    <LinearLayout
+        android:id="@+id/all_device_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="4dp"
+        android:background="@color/appbgcolor"
         android:layout_weight="1"
-        android:numColumns="2"/>
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/mainLstDevice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:visibility="gone"
+            android:horizontalSpacing="1dip">
+        </ListView>
+
+        <GridView
+            android:id="@+id/mainGrdDevice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="4dp"
+            android:numColumns="2"/>
+        <LinearLayout
+            android:id="@+id/alldevice_nodata_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="@dimen/dp_100"
+                android:layout_height="@dimen/dp_100"
+                android:src="@drawable/no_data"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:textColor="@color/black"
+                android:text="@string/no_data"/>
+        </LinearLayout>
+    </LinearLayout>
+
 
     <ListView
         android:id="@+id/mainLstRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
         android:divider="@null"
         android:layout_weight="1"
@@ -196,14 +223,44 @@
         android:horizontalSpacing="1dip">
     </ListView>
 
-    <ListView
-        android:id="@+id/mainLstShare"
+    <LinearLayout
+        android:id="@+id/share_device_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@null"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:background="@color/appbgcolor"
         android:visibility="gone"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/mainLstShare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:divider="@null"
+            android:visibility="visible"
+            android:horizontalSpacing="1dip">
+        </ListView>
+        <LinearLayout
+            android:id="@+id/sharedevice_nodata_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="@dimen/dp_100"
+                android:layout_height="@dimen/dp_100"
+                android:src="@drawable/no_data"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:textColor="@color/black"
+                android:text="@string/no_data"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </LinearLayout>

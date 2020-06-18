@@ -55,6 +55,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -74,9 +75,14 @@ public class IndexFragment1 extends BaseFragment {
     private UserCenter mUserCenter = null;
     private List<EScene.sceneListItemEntry> mSceneList = null;
     private List<EDevice.deviceEntry> mDeviceList = null;
+    private List<EDevice.deviceEntry> mShareDeviceList = null;
     private List<EHomeSpace.roomEntry> mRoomList = null;
-    private ListView mListDevice, mListRoom, mListShare;
+    private ListView mListDevice, mListRoom,mListShare;
     private GridView mGridDevice;
+    private View allDeviceView,shareDeviceView;
+    private View allDeviceNoDataView,shareDeviceNoDataView;
+
+    private AptDeviceList mAptShareDeviceList = null;
     private AptDeviceList mAptDeviceList = null;
     private AptDeviceGrid mAptDeviceGrid = null;
     private AptRoomList mAptRoomList = null;
@@ -139,6 +145,10 @@ public class IndexFragment1 extends BaseFragment {
         this.mGridDevice = (GridView) view.findViewById(R.id.mainGrdDevice);
         this.mListRoom = (ListView) view.findViewById(R.id.mainLstRoom);
         this.mListShare = (ListView) view.findViewById(R.id.mainLstShare);
+        this.allDeviceView = view.findViewById(R.id.all_device_view);
+        this.shareDeviceView = view.findViewById(R.id.share_device_view);
+        this.allDeviceNoDataView = view.findViewById(R.id.alldevice_nodata_view);
+        this.shareDeviceNoDataView = view.findViewById(R.id.sharedevice_nodata_view);
 
         imgGrid = (ImageView) view.findViewById(R.id.mainImgGrid);
         imgList = (ImageView) view.findViewById(R.id.mainImgList);
@@ -160,7 +170,9 @@ public class IndexFragment1 extends BaseFragment {
         this.mHomeSpaceManager = new HomeSpaceManager(getActivity());
         this.mUserCenter = new UserCenter(getActivity());
         this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
+        this.mShareDeviceList = new ArrayList<EDevice.deviceEntry>();
         this.mRoomList = new ArrayList<EHomeSpace.roomEntry>();
+        this.mAptShareDeviceList = new AptDeviceList(getActivity());
         this.mAptDeviceList = new AptDeviceList(getActivity());
         this.mAptDeviceGrid = new AptDeviceGrid(getActivity());
         this.mAptRoomList = new AptRoomList(getActivity());
@@ -200,6 +212,7 @@ public class IndexFragment1 extends BaseFragment {
                 mLblShare.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 mLblShare.setTextColor(Color.parseColor("#464645"));
                 mRlDevice.setVisibility(View.VISIBLE);
+                allDeviceView.setVisibility(View.VISIBLE);
                 if (mDeviceDisplayType == 1) {
                     mGridDevice.setVisibility(View.VISIBLE);
                     mListDevice.setVisibility(View.GONE);
@@ -208,7 +221,7 @@ public class IndexFragment1 extends BaseFragment {
                     mListDevice.setVisibility(View.VISIBLE);
                 }
                 mListRoom.setVisibility(View.GONE);
-                mListShare.setVisibility(View.GONE);
+                shareDeviceView.setVisibility(View.GONE);
             }
         });
 
@@ -223,10 +236,9 @@ public class IndexFragment1 extends BaseFragment {
                 mLblShare.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 mLblShare.setTextColor(Color.parseColor("#464645"));
                 mRlDevice.setVisibility(View.GONE);
-                mGridDevice.setVisibility(View.GONE);
-                mListDevice.setVisibility(View.GONE);
+                allDeviceView.setVisibility(View.GONE);
                 mListRoom.setVisibility(View.VISIBLE);
-                mListShare.setVisibility(View.GONE);
+                shareDeviceView.setVisibility(View.GONE);
             }
         });
 
@@ -241,10 +253,9 @@ public class IndexFragment1 extends BaseFragment {
                 mLblShare.setBackgroundResource(R.drawable.shape_frame_txt);
                 mLblShare.setTextColor(Color.parseColor("#FFFFFF"));
                 mRlDevice.setVisibility(View.GONE);
-                mGridDevice.setVisibility(View.GONE);
-                mListDevice.setVisibility(View.GONE);
+                allDeviceView.setVisibility(View.GONE);
                 mListRoom.setVisibility(View.GONE);
-                mListShare.setVisibility(View.VISIBLE);
+                shareDeviceView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -299,6 +310,24 @@ public class IndexFragment1 extends BaseFragment {
                 }
                 this.mAptDeviceList.notifyDataSetChanged();
                 this.mAptDeviceGrid.notifyDataSetChanged();
+                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty()?View.VISIBLE:View.GONE);
+            }
+            if(this.mShareDeviceList != null && this.mShareDeviceList.size() > 0) {
+                EDevice.deviceEntry bufferEntry, displayEntry;
+                for(int i = this.mShareDeviceList.size() - 1; i >= 0; i--)
+                {
+                    displayEntry = this.mShareDeviceList.get(i);
+                    bufferEntry = DeviceBuffer.getDeviceInformation(displayEntry.iotId);
+                    if(bufferEntry != null) {
+                        // 更新备注名称
+                        displayEntry.nickName = bufferEntry.nickName;
+                    } else {
+                        // 删除不存在的数据
+                        this.mShareDeviceList.remove(i);
+                    }
+                }
+                this.mAptShareDeviceList.notifyDataSetChanged();
+                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty()?View.VISIBLE:View.GONE);
             }
         }
 
@@ -362,6 +391,19 @@ public class IndexFragment1 extends BaseFragment {
             }
         }
     };
+    // 房间列表点击监听器
+    private AdapterView.OnItemClickListener roomListOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mRoomList != null && position < mRoomList.size()) {
+                EHomeSpace.roomEntry roomEntry = mRoomList.get(position);
+                Intent intent = new Intent(mActivity,RoomDeviceActivity.class);
+                intent.putExtra("roomId",roomEntry.roomId);
+                intent.putExtra("roomName",roomEntry.name);
+                startActivity(intent);
+            }
+        }
+    };
 
     // 一键场景列表点击监听器
     private AdapterView.OnItemClickListener sceneListOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -417,9 +459,9 @@ public class IndexFragment1 extends BaseFragment {
     // 同步设备列表数据
     private void syncDeviceListData() {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
-
+        this.mDeviceList.clear();
+        this.mShareDeviceList.clear();
         if (all != null && all.size() > 0) {
-            this.mDeviceList.clear();
             // 网关排前面
             for (EDevice.deviceEntry e : all.values()) {
                 if (e.nodeType.equals(Constant.NODETYPE_GATEWAY)) {
@@ -429,6 +471,10 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.productKey = e.productKey;
                     deviceEntry.status = e.status;
                     this.mDeviceList.add(deviceEntry);
+
+                    if (e.owned==0){
+                        this.mShareDeviceList.add(deviceEntry);
+                    }
                 }
             }
             for (EDevice.deviceEntry e : all.values()) {
@@ -439,21 +485,31 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.productKey = e.productKey;
                     deviceEntry.status = e.status;
                     this.mDeviceList.add(deviceEntry);
+
+                    if (e.owned==0){
+                        this.mShareDeviceList.add(deviceEntry);
+                    }
                 }
             }
-
-            // 处理设备列表
-            this.mAptDeviceList.setData(this.mDeviceList);
-            this.mListDevice.setAdapter(this.mAptDeviceList);
-            this.mListDevice.setOnItemClickListener(deviceListOnItemClickListener);
-
-            // 处理设备网格
-            this.mAptDeviceGrid.setData(this.mDeviceList);
-            this.mGridDevice.setAdapter(this.mAptDeviceGrid);
-            this.mGridDevice.setOnItemClickListener(deviceListOnItemClickListener);
-
-            this.deviceCount();
         }
+
+        // 处理设备列表
+        this.mAptDeviceList.setData(this.mDeviceList);
+        this.mListDevice.setAdapter(this.mAptDeviceList);
+        this.mListDevice.setOnItemClickListener(deviceListOnItemClickListener);
+
+        // 处理设备网格
+        this.mAptDeviceGrid.setData(this.mDeviceList);
+        this.mGridDevice.setAdapter(this.mAptDeviceGrid);
+        this.mGridDevice.setOnItemClickListener(deviceListOnItemClickListener);
+        // 分享设备
+        this.mAptShareDeviceList.setData(this.mShareDeviceList);
+        this.mListShare.setAdapter(this.mAptShareDeviceList);
+        this.mListShare.setOnItemClickListener(deviceListOnItemClickListener);
+
+        allDeviceNoDataView.setVisibility(mDeviceList.isEmpty()?View.VISIBLE:View.GONE);
+        shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty()?View.VISIBLE:View.GONE);
+        this.deviceCount();
     }
 
     // 同步房间列表数据
@@ -473,7 +529,7 @@ public class IndexFragment1 extends BaseFragment {
             // 处理列表点击事件
             this.mAptRoomList.setData(this.mRoomList);
             this.mListRoom.setAdapter(this.mAptRoomList);
-            //this.mListRoom.setOnItemClickListener(deviceListOnItemClickListener);
+            this.mListRoom.setOnItemClickListener(roomListOnItemClickListener);
         }
     }
 

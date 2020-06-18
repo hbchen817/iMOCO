@@ -3,6 +3,7 @@ package com.rexense.imoco.presenter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EOTA;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EHomeSpace;
@@ -563,6 +564,31 @@ public class CloudDataParser {
             }
         }
         return logList;
+    }
+    // 房间设备列表
+    public static List<EDevice.deviceEntry> processRoomDeviceList(String cloudData) {
+        if(cloudData == null || cloudData.length() == 0){
+            return null;
+        }
+        Logger.e(cloudData);
+        List<EDevice.deviceEntry> deviceList = new ArrayList<>();
+        JSONObject dataJson = JSONObject.parseObject(cloudData);
+        JSONArray dataArr = dataJson.getJSONArray("data");
+        if (dataArr!=null){
+            for (int i=0;i<dataArr.size();i++){
+                JSONObject jsonObject = dataArr.getJSONObject(i);
+                EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
+                deviceEntry.iotId = jsonObject.getString("iotId");
+                deviceEntry.deviceName = jsonObject.getString("deviceName");
+                deviceEntry.deviceName = jsonObject.getString("deviceName");
+                deviceEntry.nodeType = jsonObject.getString("nodeType");
+                deviceEntry.nickName = jsonObject.getString("nickName");
+                deviceEntry.productKey = jsonObject.getString("productKey");
+                deviceEntry.status = jsonObject.getInteger("status");
+                deviceList.add(deviceEntry);
+            }
+        }
+        return deviceList;
     }
 
     // 处理场景详细信息
