@@ -25,6 +25,7 @@ public class AptSceneModel extends BaseAdapter {
 	private class ViewHolder {
 		private ImageView icon;
 		private TextView name;
+		private TextView description;
 	}
 	private Context mContext;
 	private List<EScene.sceneModelEntry> mModelList;
@@ -67,16 +68,19 @@ public class AptSceneModel extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup arg2) {
 		ViewHolder viewHolder = new ViewHolder();
 		LayoutInflater inflater = LayoutInflater.from(this.mContext);
-		convertView = inflater.inflate(R.layout.list_scenemodel, null, true);
-		viewHolder.name = (TextView) convertView.findViewById(R.id.sceneModelLblName);
-		viewHolder.icon = (ImageView) convertView.findViewById(R.id.sceneModelImgIcon);
-		convertView.setTag(viewHolder);
-		viewHolder.name.setText(this.mModelList.get(position).name);
-		if(this.mModelList.get(position).code == CScene.SMC_NONE){
-			viewHolder.icon.setVisibility(View.GONE);
-			viewHolder.name.setTextColor(Color.BLACK);
+		if(this.mModelList.get(position).code == CScene.SMC_NONE) {
+			convertView = inflater.inflate(R.layout.list_scenemodel_title, null, true);
+			viewHolder.name = (TextView) convertView.findViewById(R.id.sceneModelLblName);
+			viewHolder.name.setText(this.mModelList.get(position).name);
 		} else {
+			convertView = inflater.inflate(R.layout.list_scenemodel, null, true);
+			viewHolder.name = (TextView) convertView.findViewById(R.id.sceneModelLblName);
+			viewHolder.description = (TextView) convertView.findViewById(R.id.sceneModelLblDescription);
+			viewHolder.icon = (ImageView) convertView.findViewById(R.id.sceneModelImgIcon);
+			convertView.setTag(viewHolder);
+			viewHolder.name.setText(this.mModelList.get(position).name);
 			viewHolder.icon.setBackgroundResource(this.mModelList.get(position).icon);
+			viewHolder.description.setText(new SceneManager(this.mContext).getSceneModelDescription(this.mModelList.get(position).code));
 		}
 		return convertView;
 	}

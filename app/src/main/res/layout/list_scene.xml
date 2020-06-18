@@ -14,12 +14,12 @@
 
 		<ImageView
 			android:id="@+id/sceneListImgIcon"
-			android:layout_marginTop="4dp"
-			android:layout_width="40dp"
-			android:layout_height="40dp"
+			android:layout_marginTop="5dp"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="10dp"
-			android:src="@drawable/scene"
+			android:src="@drawable/tab_2_press"
 			android:contentDescription="@string/contentDescription_null"/>
 
 		<TextView

@@ -185,20 +185,13 @@ public class AptSceneList extends BaseAdapter {
 				}
 				notifyDataSetChanged();
 
-				Intent intent = new Intent(mContext, SceneMaintainActivity.class);
-				intent.putExtra("operateType", CScene.OPERATE_UPDATE);
-				intent.putExtra("sceneId", mSceneList.get(index).id);
-				intent.putExtra("name", mSceneList.get(index).name);
-				intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
-				intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mContext, mSceneList.get(index).description));
-				intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
-				mContext.startActivity(intent);
-				/*
-				if(mSceneList.get(index).catalogId.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)){
-					// 自动场景处理
+				// 获取场景模板代码
+				int sceneModelCode = new SceneManager(mContext).getSceneModelCode(mSceneList.get(position).description);
+				if(sceneModelCode < CScene.SMC_NIGHT_RISE_ON){
+					// 非模板场景处理
 					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
 				} else {
-					// 手动场景处理
+					// 模板场景处理
 					Intent intent = new Intent(mContext, SceneMaintainActivity.class);
 					intent.putExtra("operateType", CScene.OPERATE_UPDATE);
 					intent.putExtra("sceneId", mSceneList.get(index).id);
@@ -208,7 +201,6 @@ public class AptSceneList extends BaseAdapter {
 					intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
 					mContext.startActivity(intent);
 				}
-				*/
 			}
 		});
 

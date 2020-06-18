@@ -99,25 +99,25 @@ public class SceneManager {
     public List<EScene.sceneModelEntry> genSceneModelList() {
         List<EScene.sceneModelEntry> list = new ArrayList<EScene.sceneModelEntry>();
         list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_recommend, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scene_background1));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scene_background2));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scene_background3));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scene_background4));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scene_background5));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scene_background6));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scene_background7));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scene_background8));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scene_background9));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scene_night_rise_on));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scene_unmanned_off));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scene_alarm_on));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scene_remote_control_on));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scene_open_door_on));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scene_bell_play));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scene_alarm_play));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scene_pir_deploy_alarm));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scene_door_deploy_alarm));
         list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_one_key, R.drawable.background_null));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scene_background10));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scene_background11));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scene_background12));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scene_background13));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scene_go_home_pattern));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scene_leave_home_pattern));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scene_sleep_pattern));
+        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scene_setup_pattern));
         return list;
     }
 
-    // 获取场景描述
-    public String getSceneDescription(int sceneModelCode){
+    // 获取场景模板名称
+    public String getSceneModelName(int sceneModelCode){
         switch (sceneModelCode){
             case CScene.SMC_NIGHT_RISE_ON:
                 return this.mContext.getString(R.string.scenemodel_night_rise_on);
@@ -145,6 +145,42 @@ public class SceneManager {
                 return this.mContext.getString(R.string.scenemodel_sleep_pattern);
             case CScene.SMC_GETUP_PATTERN:
                 return this.mContext.getString(R.string.scenemodel_getup_pattern);
+            default:
+                break;
+        }
+
+        return "";
+    }
+
+    // 获取场景模板描述
+    public String getSceneModelDescription(int sceneModelCode){
+        switch (sceneModelCode){
+            case CScene.SMC_NIGHT_RISE_ON:
+                return this.mContext.getString(R.string.scenemodel_night_rise_on_ds);
+            case CScene.SMC_UNMANNED_OFF:
+                return this.mContext.getString(R.string.scenemodel_unmanned_off_ds);
+            case CScene.SMC_ALARM_ON:
+                return this.mContext.getString(R.string.scenemodel_alarm_on_ds);
+            case CScene.SMC_REMOTE_CONTROL_ON:
+                return this.mContext.getString(R.string.scenemodel_remote_control_on_ds);
+            case CScene.SMC_OPEN_DOOR_ON:
+                return this.mContext.getString(R.string.scenemodel_open_door_on_ds);
+            case CScene.SMC_BELL_PLAY:
+                return this.mContext.getString(R.string.scenemodel_bell_play_ds);
+            case CScene.SMC_ALARM_PLAY:
+                return this.mContext.getString(R.string.scenemodel_alarm_play_ds);
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+                return this.mContext.getString(R.string.scenemodel_pir_deploy_alarm_ds);
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                return this.mContext.getString(R.string.scenemodel_door_deploy_alarm_ds);
+            case CScene.SMC_GO_HOME_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_go_home_pattern_ds);
+            case CScene.SMC_LEAVE_HOME_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_leave_home_pattern_ds);
+            case CScene.SMC_SLEEP_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_sleep_pattern_ds);
+            case CScene.SMC_GETUP_PATTERN:
+                return this.mContext.getString(R.string.scenemodel_getup_pattern_ds);
             default:
                 break;
         }
@@ -604,7 +640,7 @@ public class SceneManager {
     }
 
     // 初始化场景参数列表
-    public void initSceneParameterList(List<EScene.parameterEntry> parameterEntryList, EScene.detailEntry detailEntry){
+    public void initSceneParameterList(List<EScene.parameterEntry> parameterEntryList, EScene.processedDetailEntry detailEntry){
         if(parameterEntryList == null || parameterEntryList.size() == 0 || detailEntry == null){
             return;
         }
@@ -620,11 +656,11 @@ public class SceneManager {
             }
 
             // 初始化时间范围条件
-            if(parameter.type == CScene.SPT_CONDITION_STATE && parameter.conditionStateEntry != null && parameter.conditionStateEntry.state != null){
+            if(parameter.type == CScene.SPT_CONDITION_TIME && parameter.conditionTimeEntry != null && parameter.conditionTimeEntry != null){
                 String cron = detailEntry.findConditionTimeRange();
                 if(cron != null && cron.length() > 0){
                     parameter.conditionTimeEntry = new EScene.conditionTimeEntry(cron);
-                    parameter.conditionStateEntry.isSelected = true;
+                    parameter.conditionTimeEntry.isSelected = true;
                 }
                 continue;
             }

@@ -565,8 +565,8 @@ public class EScene {
         }
     }
 
-    // 详细信息实体
-    public static class detailEntry{
+    // 处理后详细信息实体
+    public static class processedDetailEntry{
         public EScene.rawDetailEntry rawDetail;
         public List<JSONObject> triggerStates;
         public List<JSONObject> conditionStates;
@@ -575,7 +575,7 @@ public class EScene {
         public List<JSONObject> actionInvokeServices;
 
         // 构造函数
-        public detailEntry(){
+        public processedDetailEntry(){
             this.triggerStates = new ArrayList<JSONObject>();
             this.conditionStates = new ArrayList<JSONObject>();
             this.conditionTimeRanges = new ArrayList<JSONObject>();
@@ -642,7 +642,7 @@ public class EScene {
 
             JSONObject params;
             String iotId_json, deviceName_json, propertyName_json, compareType_json, compareValue_json;
-            for(JSONObject obj : this.actionSetProperties){
+            for(JSONObject obj : this.triggerStates){
                 params = obj.getJSONObject("params");
                 if(params == null){
                     continue;
@@ -728,7 +728,7 @@ public class EScene {
             return false;
         }
 
-        // 查找时间范围条件(返回cron, 为空表示存在)
+        // 查找时间范围条件(返回cron, 为空表示不存在)
         public String findConditionTimeRange(){
             if(this.conditionTimeRanges == null || this.conditionTimeRanges.size() == 0){
                 return "";

@@ -13,7 +13,7 @@
     <ImageView
         android:id="@+id/sceneMaintainImgIcon"
         android:layout_width="match_parent"
-        android:background="@drawable/scene_background2"
+        android:background="@drawable/scene_unmanned_off"
         android:layout_height="130dp" />
 
     <RelativeLayout

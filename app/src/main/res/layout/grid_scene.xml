@@ -14,7 +14,7 @@
 		android:layout_centerVertical="true"
 		android:layout_marginLeft="4dp"
 		android:contentDescription="@string/contentDescription_null"
-		android:src="@drawable/scene" />
+		android:src="@drawable/tab_2_press" />
 
 	<TextView
 		android:id="@+id/sceneLblName"

@@ -43,13 +43,6 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="40dp"
@@ -89,16 +82,10 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@color/background_input">
@@ -134,13 +121,6 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:id="@+id/setTimeRllEveryday"
             android:layout_width="fill_parent"
@@ -171,17 +151,11 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:id="@+id/setTimeRllWorkday"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@color/background_input">
@@ -207,17 +181,11 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:id="@+id/setTimeRllWeekend"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@color/background_input">
@@ -243,17 +211,11 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorLine" />
-
         <RelativeLayout
             android:id="@+id/setTimeRllSefldefine"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="1dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="@color/background_input">

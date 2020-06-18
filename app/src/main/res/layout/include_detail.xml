@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/includeDetailRl"
-	android:background="@color/titlebar"
 	android:layout_width="match_parent"
-	android:layout_height="40dp" >
+	android:layout_height="@dimen/dp_46"
+	android:background="@color/white" >
 
 	<TextView
 		android:id="@+id/includeDetailLblTitle"
@@ -31,6 +31,7 @@
 		android:layout_width="fill_parent"
 		android:layout_alignParentBottom="true"
 		android:background="@color/colorPrimary"
+		android:visibility="gone"
 		android:layout_height="1dp" />
 
 </RelativeLayout>

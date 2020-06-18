@@ -9,28 +9,40 @@
 		android:layout_marginLeft="10dp"
 		android:layout_marginRight="10dp"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-
-		<Space
-			android:layout_width="wrap_content"
-			android:layout_height="25dp"
-			android:layout_alignParentRight="true" />
+		android:layout_height="140dp">
 
 		<ImageView
 			android:id="@+id/sceneModelImgIcon"
-			android:background="@drawable/scene_background1"
 			android:layout_width="match_parent"
-			android:layout_height="130dp" />
+			android:layout_height="140dp"
+			android:background="@drawable/scene_night_rise_on" />
 
 		<TextView
 			android:id="@+id/sceneModelLblName"
 			style="@style/NormalFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_marginTop="8dp"
+			android:layout_marginLeft="8dp"
 			android:layout_centerVertical="true"
-			android:layout_marginLeft="16dp"
 			android:text="@string/scenemodel_name"
+			android:background="@drawable/shape_frame_orange"
 			android:textColor="#FFFFFF" />
+
+		<TextView
+			android:id="@+id/sceneModelLblDescription"
+			style="@style/SmallFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/sceneModelImgIcon"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="8dp"
+			android:layout_marginLeft="8dp"
+			android:layout_marginBottom="8dp"
+			android:text="@string/scenemodel_night_rise_on_ds"
+			android:background="@drawable/shape_frame"
+			android:visibility="gone"
+			android:textColor="#878787" />
 
 	</RelativeLayout>
 

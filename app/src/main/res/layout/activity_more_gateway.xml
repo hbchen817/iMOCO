@@ -3,6 +3,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/moreGatewayFl"
     android:layout_width="match_parent"
+    android:background="@color/background_detail"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -19,22 +20,16 @@
             style="@style/NormalFontStyle"
             android:gravity="center_vertical"
             android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/moredevice_function"/>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_height="1dp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:id="@+id/moreGatewayLblAlarmBellId"
@@ -77,9 +72,11 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:id="@+id/moreGatewayLblBellVolume"
@@ -113,18 +110,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:id="@+id/moreGatewayLblBellMusicId"
@@ -158,18 +150,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:id="@+id/moreGatewayLblAlarmVolume"
@@ -210,21 +197,16 @@
             android:gravity="center_vertical"
             android:layout_height="30dp"
             android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/moredevice_normal"/>
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorPrimary"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_height="1dp" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -257,18 +239,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -301,18 +278,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -335,18 +307,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -369,18 +336,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -403,18 +365,13 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:background="@color/colorLine"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
-
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="20dp">
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/background_input">
 
             <TextView
                 android:layout_alignParentLeft="true"

@@ -115,7 +115,7 @@ public class SceneMaintainActivity extends BaseActivity {
 
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
                         mSceneModelCode >= CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
-                        mLblName.getText().toString(), mSceneManager.getSceneDescription(mSceneModelCode));
+                        mLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
                 if(mOperateType == CScene.OPERATE_CREATE){
                     // 创建场景
                     mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
@@ -182,7 +182,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详细信息
-                    EScene.detailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
+                    EScene.processedDetailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
                     // 初始化场景参数
                     mSceneManager.initSceneParameterList(mParameterList, detailEntry);
                     mAptSceneParameter.notifyDataSetChanged();
@@ -238,6 +238,7 @@ public class SceneMaintainActivity extends BaseActivity {
             EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(bundle.getString("cron"));
             if(mSetTimeIndex >= 0){
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;
+                mParameterList.get(mSetTimeIndex).conditionTimeEntry.isSelected = true;
                 mAptSceneParameter.notifyDataSetChanged();
             }
         }

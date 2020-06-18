@@ -566,10 +566,10 @@ public class CloudDataParser {
     }
 
     // 处理场景详细信息
-    public static EScene.detailEntry processSceneDetailInformation(String cloudData){
+    public static EScene.processedDetailEntry processSceneDetailInformation(String cloudData){
         EScene.rawDetailEntry rawDetailEntry = new EScene.rawDetailEntry();
         rawDetailEntry = JSON.parseObject(cloudData, EScene.rawDetailEntry.class);
-        EScene.detailEntry detailEntry = new EScene.detailEntry();
+        EScene.processedDetailEntry detailEntry = new EScene.processedDetailEntry();
         detailEntry.rawDetail = rawDetailEntry;
         // 触发处理
         if(rawDetailEntry.getTriggersJson() != null && rawDetailEntry.getTriggersJson().length() > 0){

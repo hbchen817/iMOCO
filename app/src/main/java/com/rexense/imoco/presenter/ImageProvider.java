@@ -3,7 +3,6 @@ package com.rexense.imoco.presenter;
 import android.content.Context;
 
 import com.rexense.imoco.R;
-import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 
 /**
@@ -134,37 +133,37 @@ public class ImageProvider {
     // 获取场景图标
     public static int genSceneIcon(Context context, String sceneDescription){
         if(sceneDescription == null) {
-            return R.drawable.scene_background1;
+            return R.drawable.scene_night_rise_on;
         }
 
         if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_night_rise_on))){
-            return R.drawable.scene_background1;
+            return R.drawable.scene_night_rise_on;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_unmanned_off))) {
-            return R.drawable.scene_background2;
+            return R.drawable.scene_unmanned_off;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_alarm_on))) {
-            return R.drawable.scene_background3;
+            return R.drawable.scene_alarm_on;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_remote_control_on))) {
-            return R.drawable.scene_background4;
+            return R.drawable.scene_remote_control_on;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_open_door_on))) {
-            return R.drawable.scene_background5;
+            return R.drawable.scene_open_door_on;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_bell_play))) {
-            return R.drawable.scene_background6;
+            return R.drawable.scene_bell_play;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_alarm_play))) {
-            return R.drawable.scene_background7;
+            return R.drawable.scene_alarm_play;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_pir_deploy_alarm))) {
-            return R.drawable.scene_background8;
+            return R.drawable.scene_pir_deploy_alarm;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_door_deploy_alarm))) {
-            return R.drawable.scene_background9;
+            return R.drawable.scene_door_deploy_alarm;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_go_home_pattern))) {
-            return R.drawable.scene_background10;
+            return R.drawable.scene_go_home_pattern;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_leave_home_pattern))) {
-            return R.drawable.scene_background11;
+            return R.drawable.scene_leave_home_pattern;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_sleep_pattern))) {
-            return R.drawable.scene_background12;
+            return R.drawable.scene_sleep_pattern;
         } else if(sceneDescription.equalsIgnoreCase(context.getString(R.string.scenemodel_getup_pattern))) {
-            return R.drawable.scene_background13;
+            return R.drawable.scene_setup_pattern;
         }
 
-        return R.drawable.scene_background1;
+        return R.drawable.scene_night_rise_on;
     }
 }

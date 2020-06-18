@@ -194,20 +194,34 @@
 
     <string name="scenemodel_recommend">推荐场景</string>
     <string name="scenemodel_name">场景名称</string>
+    <string name="scenemodel_description">场景描述</string>
     <string name="scenemodel_night_rise_on">起夜开灯</string>
+    <string name="scenemodel_night_rise_on_ds">设定时间范围内，pir检测到有人触发单火开关打开。</string>
     <string name="scenemodel_unmanned_off">无人关灯</string>
+    <string name="scenemodel_unmanned_off_ds">设定时间范围内，pir检测到无人触发单火开关关闭。</string>
     <string name="scenemodel_alarm_on">报警开灯</string>
+    <string name="scenemodel_alarm_on_ds">烟雾、燃气、水浸检测到异常触发单火开关打开。</string>
     <string name="scenemodel_remote_control_on">遥控开灯</string>
+    <string name="scenemodel_remote_control_on_ds">紧急按钮触发单火开关打开。</string>
     <string name="scenemodel_open_door_on">开门亮灯</string>
+    <string name="scenemodel_open_door_on_ds">设定时间范围内，门窗磁检测到打开触发单火开关打开。</string>
     <string name="scenemodel_bell_play">门铃播报</string>
+    <string name="scenemodel_bell_play_ds">设定时间范围内，紧急按钮触发网关播放门铃。</string>
     <string name="scenemodel_alarm_play">报警播报</string>
+    <string name="scenemodel_alarm_play_ds">紧急按钮触发网关播放报警。</string>
     <string name="scenemodel_pir_deploy_alarm">红外布防报警</string>
+    <string name="scenemodel_pir_deploy_alarm_ds">设定时间范围内，网关为布防模式，pir检测到有人触发网关报警。</string>
     <string name="scenemodel_door_deploy_alarm">门磁布防报警</string>
+    <string name="scenemodel_door_deploy_alarm_ds">设定时间范围内，网关为布防模式，门窗磁检测到打开触发网关报警。</string>
     <string name="scenemodel_one_key">一键场景</string>
     <string name="scenemodel_go_home_pattern">回家模式</string>
+    <string name="scenemodel_go_home_pattern_ds">网关设置为撤防模式，单火开关打开。</string>
     <string name="scenemodel_leave_home_pattern">离家模式</string>
+    <string name="scenemodel_leave_home_pattern_ds">网关设置为布防模式，单火开关关闭。</string>
     <string name="scenemodel_sleep_pattern">睡觉模式</string>
+    <string name="scenemodel_sleep_pattern_ds">网关设置为布防模式，单火开关关闭。</string>
     <string name="scenemodel_getup_pattern">起床模式</string>
+    <string name="scenemodel_getup_pattern_ds">网关设置为撤防模式。</string>
 
     <string name="scenename">场景名称</string>
     <string name="scenetype_manual">手动场景</string>
@@ -241,13 +255,13 @@
     <string name="scene_maintain_edit_failed">修改场景%s失败</string>
 
     <string name="set_time_title">设置时间</string>
-    <string name="set_time_allday">全天</string>
-    <string name="set_time_begin">开始</string>
-    <string name="set_time_end">结束</string>
-    <string name="set_time_everyday">每一天</string>
-    <string name="set_time_workday">工作日</string>
-    <string name="set_time_weekend">周末</string>
-    <string name="set_time_selfdefine">自定义</string>
+    <string name="set_time_allday">全天:</string>
+    <string name="set_time_begin">开始:</string>
+    <string name="set_time_end">结束:</string>
+    <string name="set_time_everyday">每一天:</string>
+    <string name="set_time_workday">工作日:</string>
+    <string name="set_time_weekend">周末:</string>
+    <string name="set_time_selfdefine">自定义:</string>
     <string name="set_time_confirm">确认</string>
     <string name="set_time_seldefine_select">请进行自定义选择</string>
 
