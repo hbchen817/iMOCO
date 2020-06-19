@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/messageRecordLl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout android:id="@+id/includeTitleRl"
         android:layout_width="match_parent"
@@ -44,16 +45,33 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/messageRecordLstMessageRecord"
-        android:listSelector="@color/background_list_selector"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/srl_fragment_me"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/background_list"
-        android:divider="@color/background_list_item_divier"
-        android:dividerHeight="1px"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:layout_height="match_parent"
+        app:srlAccentColor="@color/black"
+        app:srlEnableLoadMore="true"
+        app:srlPrimaryColor="@color/white">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlEnableLastTime="false" />
+
+        <ListView
+            android:id="@+id/messageRecordLstMessageRecord"
+            android:listSelector="@color/background_list_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_list"
+            android:divider="@color/background_list_item_divier"
+            android:dividerHeight="1px"
+            android:horizontalSpacing="1dip">
+        </ListView>
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></com.scwang.smartrefresh.layout.footer.ClassicsFooter>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
 
 </LinearLayout>

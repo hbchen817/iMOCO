@@ -11,11 +11,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshFirmwareVersion;
 import com.rexense.imoco.presenter.ImageProvider;
+import com.rexense.imoco.presenter.OTAHelper;
+import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.DialogUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +61,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
     private boolean upgradingFlag;
     private String theNewVersion;
     private String currentVersion;
-
+    private ArrayList<String> iotIdList=new ArrayList<>();
     private DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
@@ -61,8 +69,9 @@ public class UpgradeFirmwareActivity extends BaseActivity {
             progressView.setVisibility(View.VISIBLE);
             upgradeBtn.setVisibility(View.INVISIBLE);
 
+            OTAHelper.upgradeFirmware(iotIdList,mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             //定时器模拟升级过程
-            timer.schedule(task,1000,1000);
+//            timer.schedule(task,1000,1000);
         }
     };
 
@@ -73,6 +82,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
         ButterKnife.bind(this);
         tvToolbarTitle.setText(getString(R.string.upgrade_firmware));
         iotId = getIntent().getStringExtra("iotId");
+        iotIdList.add(iotId);
         productKey = getIntent().getStringExtra("productKey");
         currentVersion = getIntent().getStringExtra("currentVersion");
         theNewVersion = getIntent().getStringExtra("theNewVersion");
@@ -80,8 +90,14 @@ public class UpgradeFirmwareActivity extends BaseActivity {
         deviceImg.setImageResource(ImageProvider.genProductIcon(productKey));
         currentVersionTv.setText(currentVersion);
         newVersionTv.setText(theNewVersion);
+        RealtimeDataReceiver.addOTACallbackHandler("UpgradeFirmwareCallback", mRealtimeDataHandler);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealtimeDataReceiver.deleteCallbackHandler("UpgradeFirmwareCallback");
+    }
 
     private int num = 0;
     private Timer timer = new Timer();
@@ -117,6 +133,69 @@ public class UpgradeFirmwareActivity extends BaseActivity {
             }
         }
     };
+
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_UPGRADEFIRMWARE:
+//                    RealtimeDataReceiver.addOTACallbackHandler("UpgradeFirmwareCallback", mRealtimeDataHandler);
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+    // 实时数据处理器
+    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case Constant.MSG_CALLBACK_LNOTAUPGRADENOTIFY:
+                    JSONObject resultJson = JSONObject.parseObject((String) msg.obj);
+                    //upgradeStatus表示升级结果，可取值包括，0：待升级或待确认，1：升级中，2：升级异常，3：升级失败，4：升级完成。
+                    int upgradeStatus = resultJson.getInteger("upgradeStatus");
+                    //step -1：表示升级失败，-2：表示下载失败，-3：表示校验失败，-4：表示烧写失败 1-100为进度
+                    int step = resultJson.getInteger("step");
+                    if (step>=0&&step<=100){
+                        FrameLayout.LayoutParams layoutParams= (FrameLayout.LayoutParams) processView.getLayoutParams();
+                        if (step<100){//升级中
+                            processTv.setText(step+"%");
+                            layoutParams.width = step*processBgView.getWidth()/100;
+                            processView.setLayoutParams(layoutParams);
+                        }else {//升级完成
+                            processTv.setText("100%");
+                            layoutParams.width = processBgView.getWidth();
+                            processView.setLayoutParams(layoutParams);
+                            timer.cancel();
+                            ToastUtils.showToastCentrally(mActivity,getString(R.string.upgrade_success));
+                            EventBus.getDefault().post(new RefreshFirmwareVersion());
+                            finish();
+                        }
+                    }else {
+                        String failMsg = "";
+                        switch (step){
+                            case -1:
+                                failMsg = getString(R.string.upgrade_result_1);
+                                break;
+                            case -2:
+                                failMsg = getString(R.string.upgrade_result_2);
+                                break;
+                            case -3:
+                                failMsg = getString(R.string.upgrade_result_3);
+                                break;
+                            case -4:
+                                failMsg = getString(R.string.upgrade_result_4);
+                                break;
+                        }
+                        DialogUtils.showMsgDialog(mActivity,failMsg);
+                    }
+                    break;
+            }
+            return false;
+        }
+    });
 
     @OnClick({R.id.upgrade_btn})
     void onClick(View view) {

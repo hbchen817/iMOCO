@@ -59,6 +59,7 @@ public class AddRoomDeviceActivity extends BaseActivity {
     private CommonAdapter adapter1;
     private List<Visitable> models1 = new ArrayList<Visitable>();
     private LinearLayoutManager layoutManager1;
+
     private CommonAdapter adapter2;
     private List<Visitable> models2 = new ArrayList<Visitable>();
     private LinearLayoutManager layoutManager2;

@@ -361,6 +361,10 @@
     <string name="upgrade_now">立刻升级</string>
     <string name="upgrade_success">升级完成</string>
     <string name="current_version">当前版本</string>
+    <string name="upgrade_result_1">升级失败</string>
+    <string name="upgrade_result_2">下载失败</string>
+    <string name="upgrade_result_3">校验失败</string>
+    <string name="upgrade_result_4">烧写失败</string>
     <string name="new_version">新版本</string>
     <string name="upgrading_please_waiting_here">升级过程中请勿离开此页面</string>
 

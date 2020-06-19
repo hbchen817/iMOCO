@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.event.RefreshData;
+import com.rexense.imoco.event.RefreshFirmwareVersion;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.CodeMapper;
 import com.rexense.imoco.presenter.DeviceBuffer;
@@ -38,6 +39,9 @@ import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Creator: xieshaobing
@@ -65,7 +69,7 @@ public class MoreGatewayActivity extends BaseActivity {
     private EHomeSpace.roomListEntry mRoomListEntry;
     private String mNewNickName, mNewRoomId, mNewRoomName;
     private TSLHelper mTSLHelper;
-
+    private TextView currentVersionTv;
     // 更新状态
     protected void updateStatus(ETSL.propertyEntry propertyEntry) {
         if(propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
@@ -147,8 +151,7 @@ public class MoreGatewayActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调
                     ETSL.thingBaseInforEntry thingBaseInforEntry = CloudDataParser.processThingBaseInformation((String)msg.obj);
-                    TextView version = (TextView)findViewById(R.id.moreGatewayLblVersion);
-                    version.setText(thingBaseInforEntry.firmwareVersion);
+                    currentVersionTv.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
                     // 处理设备解除绑定回调
@@ -164,6 +167,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     currentVersion = dataJson.getString("currentVersion");
                     theNewVersion = dataJson.getString("version");
                     hasNewerVersion = !currentVersion.equals(theNewVersion);
+                    currentVersionTv.setText(currentVersion);
                     break;
                 default:
                     break;
@@ -272,11 +276,16 @@ public class MoreGatewayActivity extends BaseActivity {
         }
     }
 
+    @Subscribe
+    public void onRefreshFirmWare(RefreshFirmwareVersion refreshFirmwareVersion){
+        OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_gateway);
-
+        EventBus.getDefault().register(this);
         Intent intent = getIntent();
         this.mIOTId = intent.getStringExtra("iotId");
         this.mProductKey = intent.getStringExtra("productKey");
@@ -284,6 +293,7 @@ public class MoreGatewayActivity extends BaseActivity {
 
         this.mTSLHelper = new TSLHelper(this);
 
+        currentVersionTv =(TextView)findViewById(R.id.moreGatewayLblVersion);
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
         if(deviceEntry != null) {
@@ -306,16 +316,16 @@ public class MoreGatewayActivity extends BaseActivity {
         upgradeView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (hasNewerVersion){
+                if (hasNewerVersion){
                     Intent intent1 = new Intent(mActivity,UpgradeFirmwareActivity.class);
                     intent1.putExtra("iotId",mIOTId);
                     intent1.putExtra("productKey",mProductKey);
                     intent1.putExtra("currentVersion",currentVersion);
                     intent1.putExtra("theNewVersion",theNewVersion);
                     startActivity(intent1);
-//                }else {
-//                    ToastUtils.showToastCentrally(mActivity,getString(R.string.current_version_is_new));
-//                }
+                }else {
+                    ToastUtils.showToastCentrally(mActivity,getString(R.string.current_version_is_new));
+                }
             }
         });
         this.mAlarmBellId = (TextView)findViewById(R.id.moreGatewayLblAlarmBellId);
@@ -483,10 +493,13 @@ public class MoreGatewayActivity extends BaseActivity {
         OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
+
+
     @Override
     protected void onDestroy() {
         // 删除长连接实时数据属性回调处理器
         RealtimeDataReceiver.deleteCallbackHandler("MoreGatewayProperty");
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 }
