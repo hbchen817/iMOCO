@@ -106,8 +106,12 @@ public class DeviceBuffer {
     // 更新设备房间
     public static void updateDeviceRoom(String iotId, String roomId, String roomName) {
         if(mBuffer.containsKey(iotId)) {
+            // 原房间设备数量减1
+            HomeSpaceManager.updateRoomDeviceNumber(mBuffer.get(iotId).roomId, -1);
             mBuffer.get(iotId).roomId = roomId;
             mBuffer.get(iotId).roomName = roomName;
+            // 新房间设备数量加1
+            HomeSpaceManager.updateRoomDeviceNumber(roomId, 1);
         }
     }
 

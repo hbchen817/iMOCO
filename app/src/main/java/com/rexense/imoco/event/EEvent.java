@@ -6,7 +6,7 @@ package com.rexense.imoco.event;
  * Description: 事件实体
  */
 public class EEvent {
-    // 刷新场景数据实体
+    // 刷新数据实体
     public String name;
 
     // 构造

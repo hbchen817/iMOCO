@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.CodeMapper;
 import com.rexense.imoco.presenter.DeviceBuffer;
@@ -141,6 +142,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     mLblRoomName.setText(mNewRoomName);
                     // 更新设备缓存房间数据
                     DeviceBuffer.updateDeviceRoom(mIOTId, mNewRoomId, mNewRoomName);
+                    RefreshData.refreshRoomListData();
                     break;
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调

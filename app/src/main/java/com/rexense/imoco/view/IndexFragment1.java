@@ -24,6 +24,8 @@ import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshRoomDevice;
 import com.rexense.imoco.event.RefreshRoomName;
+import com.rexense.imoco.event.CEvent;
+import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.event.ShareDeviceSuccessEvent;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
@@ -709,4 +711,12 @@ public class IndexFragment1 extends BaseFragment {
             return false;
         }
     });
+
+    // 订阅刷新房间列表数据事件
+    @Subscribe
+    public void onRefreshRoomListData(EEvent eventEntry){
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)){
+            this.syncRoomListData();
+        }
+    }
 }

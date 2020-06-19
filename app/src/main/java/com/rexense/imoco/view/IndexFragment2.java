@@ -228,9 +228,9 @@ public class IndexFragment2 extends BaseFragment {
         }
     });
 
-    // 订阅刷新场景数据事件
+    // 订阅刷新场景列表数据事件
     @Subscribe
-    public void onMessages(EEvent eventEntry){
+    public void onRefreshSceneListData(EEvent eventEntry){
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)){
             startGetSceneList(CScene.TYPE_AUTOMATIC);
         }

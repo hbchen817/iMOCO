@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.rexense.imoco.R;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
@@ -66,6 +67,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     mLblRoomName.setText(mNewRoomName);
                     // 更新设备缓存房间数据
                     DeviceBuffer.updateDeviceRoom(mIOTId, mNewRoomId, mNewRoomName);
+                    RefreshData.refreshRoomListData();
                     break;
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调

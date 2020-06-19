@@ -7,4 +7,5 @@ package com.rexense.imoco.event;
  */
 public class CEvent {
     public final static String EVENT_NAME_REFRESH_SCENE_LIST_DATA   = "1";
+    public final static String EVENT_NAME_REFRESH_ROOM_LIST_DATA    = "2";
 }

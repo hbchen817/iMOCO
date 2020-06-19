@@ -264,4 +264,11 @@ public class HomeSpaceManager {
     public static Map<String, EHomeSpace.roomEntry> getRoomBufferData() {
         return mRoomBuffer;
     }
+
+    // 更新房间设备数量
+    public static void updateRoomDeviceNumber(String roomId, int deviceNumberChange){
+        if(mRoomBuffer.containsKey(roomId)){
+            mRoomBuffer.get(roomId).deviceCnt = mRoomBuffer.get(roomId).deviceCnt + deviceNumberChange;
+        }
+    }
 }
