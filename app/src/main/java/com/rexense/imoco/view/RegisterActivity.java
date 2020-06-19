@@ -23,6 +23,7 @@ import com.alibaba.sdk.android.openaccount.ui.ui.LoginDoubleCheckWebActivity;
 import com.alibaba.sdk.android.openaccount.ui.ui.SendSmsCodeActivity;
 import com.alibaba.sdk.android.openaccount.ui.util.ToastUtils;
 import com.alibaba.sdk.android.openaccount.ui.widget.NetworkCheckOnClickListener;
+import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.alibaba.sdk.android.openaccount.util.RpcUtils;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +47,14 @@ public class RegisterActivity extends SendSmsCodeActivity {
         this.next.setOnClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
                 RegisterActivity.this.goSetPwd((String)null, (String)null, (String)null);
+            }
+        });
+
+        View backImg = this.findViewById(ResourceUtils.getRId(this, "back_img_view"));
+        backImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
         this.addSendListener();

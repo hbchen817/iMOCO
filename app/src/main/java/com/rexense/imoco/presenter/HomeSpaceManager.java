@@ -178,6 +178,27 @@ public class HomeSpaceManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    // 更新房间设备（可批量）
+    public void updateRoomDevices(String homeId, String roomId, ArrayList<String> iotIdList,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATEDEVICEROOM;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("roomId", roomId);
+        requestParameterEntry.addParameter("iotIdList", iotIdList);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATEDEVICEROOM;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
     // 获取房间设备
     public void getRoomDevice(int pageNo,String homeId, String roomId,
                                   Handler commitFailureHandler,
@@ -196,6 +217,26 @@ public class HomeSpaceManager {
         requestParameterEntry.addParameter("homeId", homeId);
         requestParameterEntry.addParameter("roomId", roomId);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETDEVICEINROOM;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+    // 更新房间名称
+    public void updateRoomInfo(String homeId, String roomId,String name,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        if(processDataHandler == null){
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATEROOM;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("name", name);
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("roomId", roomId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATEROOM;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

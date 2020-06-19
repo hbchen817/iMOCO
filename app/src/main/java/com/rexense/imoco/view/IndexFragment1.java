@@ -22,6 +22,8 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshRoomDevice;
+import com.rexense.imoco.event.RefreshRoomName;
 import com.rexense.imoco.event.ShareDeviceSuccessEvent;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
@@ -99,6 +101,14 @@ public class IndexFragment1 extends BaseFragment {
     @Subscribe
     public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
         startGetDeviceList();
+    }
+    @Subscribe
+    public void onRefreshRoomDevice(RefreshRoomDevice refreshRoomDevice){
+        startGetRoomList();
+    }
+    @Subscribe
+    public void onRefreshRoomName(RefreshRoomName refreshRoomName){
+        startGetRoomList();
     }
 
     @Override

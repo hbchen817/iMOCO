@@ -183,6 +183,12 @@
         <activity
             android:name="com.rexense.imoco.view.RoomDeviceActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.rexense.imoco.view.UpgradeFirmwareActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.rexense.imoco.view.AddRoomDeviceActivity"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.rexense.imoco.utility.BLEService" android:enabled="true"/>
 

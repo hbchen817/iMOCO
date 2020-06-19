@@ -43,6 +43,14 @@ public class ResetPasswordActivity extends SendSmsCodeActivity {
         super.onCreate(savedInstanceState);
         mToolBar.setVisibility(View.GONE);
         this.setViewListener(this);
+
+        View backImg = this.findViewById(ResourceUtils.getRId(this, "back_img_view"));
+        backImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         this.mobileInputBox.setSupportForeignMobile(this, OpenAccountUIConfigs.MobileResetPasswordLoginFlow.mobileCountrySelectorActvityClazz, false);
         if (OpenAccountUIConfigs.MobileResetPasswordLoginFlow.supportResetPasswordWithNick) {
             if (this.mobileInputBox.getInputHint() == null) {

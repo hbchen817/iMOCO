@@ -25,6 +25,7 @@ import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.CodeMapper;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
+import com.rexense.imoco.presenter.OTAHelper;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.SystemParameter;
@@ -35,6 +36,7 @@ import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.utility.Dialog;
+import com.rexense.imoco.utility.ToastUtils;
 
 /**
  * Creator: xieshaobing
@@ -53,6 +55,10 @@ public class MoreGatewayActivity extends BaseActivity {
     private TextView mAlarmBellId, mBellVolume, mBellMusicId, mAlarmVolume;
     private TextView mAlarmBellIdValue, mBellVolumeValue, mBellMusicIdValue, mAlarmVolumeValue;
     private TextView mLblTitle, mWheelPickerValue, mLblNewNickName, mLblRoomName;
+    private View upgradeView;
+    private boolean hasNewerVersion;
+    private String currentVersion;
+    private String theNewVersion;
     private HomeSpaceManager mHomeSpaceManager;
     private UserCenter mUserCenter;
     private EHomeSpace.roomListEntry mRoomListEntry;
@@ -150,6 +156,12 @@ public class MoreGatewayActivity extends BaseActivity {
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                    break;
+                case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
+                    JSONObject dataJson = JSONObject.parseObject((String)msg.obj);
+                    currentVersion = dataJson.getString("currentVersion");
+                    theNewVersion = dataJson.getString("version");
+                    hasNewerVersion = !currentVersion.equals(theNewVersion);
                     break;
                 default:
                     break;
@@ -288,7 +300,22 @@ public class MoreGatewayActivity extends BaseActivity {
                 finish();
             }
         });
-
+        this.upgradeView = findViewById(R.id.upgrade_view);
+        upgradeView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if (hasNewerVersion){
+                    Intent intent1 = new Intent(mActivity,UpgradeFirmwareActivity.class);
+                    intent1.putExtra("iotId",mIOTId);
+                    intent1.putExtra("productKey",mProductKey);
+                    intent1.putExtra("currentVersion",currentVersion);
+                    intent1.putExtra("theNewVersion",theNewVersion);
+                    startActivity(intent1);
+//                }else {
+//                    ToastUtils.showToastCentrally(mActivity,getString(R.string.current_version_is_new));
+//                }
+            }
+        });
         this.mAlarmBellId = (TextView)findViewById(R.id.moreGatewayLblAlarmBellId);
         this.mBellVolume = (TextView)findViewById(R.id.moreGatewayLblBellVolume);
         this.mBellMusicId = (TextView)findViewById(R.id.moreGatewayLblBellMusicId);
@@ -450,6 +477,8 @@ public class MoreGatewayActivity extends BaseActivity {
         RealtimeDataReceiver.addPropertyCallbackHandler("MoreGatewayProperty", this.mRealtimeDataHandler);
 
         this.mUserCenter = new UserCenter(this);
+
+        OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     @Override

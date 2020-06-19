@@ -1,5 +1,7 @@
 package com.rexense.imoco.presenter;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -580,9 +582,11 @@ public class CloudDataParser {
                 EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
                 deviceEntry.iotId = jsonObject.getString("iotId");
                 deviceEntry.deviceName = jsonObject.getString("deviceName");
-                deviceEntry.deviceName = jsonObject.getString("deviceName");
                 deviceEntry.nodeType = jsonObject.getString("nodeType");
                 deviceEntry.nickName = jsonObject.getString("nickName");
+                if(TextUtils.isEmpty(deviceEntry.nickName)){
+                    deviceEntry.nickName = jsonObject.getString("productName");
+                }
                 deviceEntry.productKey = jsonObject.getString("productKey");
                 deviceEntry.status = jsonObject.getInteger("status");
                 deviceList.add(deviceEntry);

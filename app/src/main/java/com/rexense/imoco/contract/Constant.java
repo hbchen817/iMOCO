@@ -91,6 +91,8 @@ public class Constant {
     public static final String API_PATH_BINDTAOBAO                  = "/account/taobao/bind";
     public static final String API_PATH_UNBINDTAOBAO                = "/account/thirdparty/unbind";
     public static final String API_PATH_GETDEVICEINROOM             = "/living/home/room/device/query";
+    public static final String API_PATH_UPGRADEFIRMWARE             = "/thing/ota/batchUpgradeByUser";
+    public static final String API_PATH_UPDATEROOM                  = "/living/home/room/update";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -160,6 +162,8 @@ public class Constant {
     public static final int MSG_CALLBACK_BINDTAOBAO                 = 139;
     public static final int MSG_CALLBACK_UNBINDTAOBAO               = 140;
     public static final int MSG_CALLBACK_GETDEVICEINROOM            = 141;
+    public static final int MSG_CALLBACK_UPGRADEFIRMWARE            = 142;
+    public static final int MSG_CALLBACK_UPDATEROOM                 = 143;
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;
