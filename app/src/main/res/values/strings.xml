@@ -111,7 +111,7 @@
     <string name="choicegateway_nohasgatewayhint">目前还没有一个网关设备,请先增加网关设备。</string>
     <string name="choicegateway_gateofflinehint">所选网关不在线, 不能添加子设备。</string>
 
-    <string name="detailgateway_count">共%d/%d在线</string>
+    <string name="detailgateway_count">共%d个设备, 其中%d个在线</string>
     <string name="detailgateway_armmode_cancel">撤防模式</string>
     <string name="detailgateway_armmode_deploy">布防模式</string>
     <string name="detailgateway_add">添加子设备</string>
@@ -124,42 +124,43 @@
     <string name="gateway_service_invokevoice2">触发报警</string>
 
     <string name="oneswitch_state">状态</string>
-    <string name="oneswitch_state_on">On</string>
-    <string name="oneswitch_state_off">Off</string>
+    <string name="oneswitch_state_on">打开</string>
+    <string name="oneswitch_state_off">关闭</string>
+    <string name="detail_state_timer">定时</string>
 
     <string name="twoswitch_state_1">第1路状态</string>
     <string name="twoswitch_state_2">第2路状态</string>
-    <string name="twoswitch_state_1_on">第1路On</string>
-    <string name="twoswitch_state_2_on">第2路On</string>
-    <string name="twoswitch_state_1_off">第1路Off</string>
-    <string name="twoswitch_state_2_off">第2路Off</string>
-    <string name="twoswitch_state_on">On</string>
-    <string name="twoswitch_state_off">Off</string>
+    <string name="twoswitch_state_1_on">第1路打开</string>
+    <string name="twoswitch_state_2_on">第2路打开</string>
+    <string name="twoswitch_state_1_off">第1路关闭</string>
+    <string name="twoswitch_state_2_off">第2路关闭</string>
+    <string name="twoswitch_state_on">打开</string>
+    <string name="twoswitch_state_off">关闭</string>
 
     <string name="detailsensor_state">状态</string>
     <string name="detailsensor_state_normal">正常</string>
     <string name="detailsensor_state_exception">异常</string>
     <string name="detailsensor_power">电池电量</string>
-    <string name="detailsensor_temperature">当前温度</string>
-    <string name="detailsensor_humidity">当前湿度</string>
+    <string name="detailsensor_temperature">温度</string>
+    <string name="detailsensor_humidity">湿度</string>
 
     <string name="sensorstate_powername">电池电量</string>
-    <string name="sensorstate_contactname">接触状态</string>
-    <string name="sensorstate_contactclose">闭合</string>
-    <string name="sensorstate_contactopen">打开</string>
-    <string name="sensorstate_gasname">燃气状态</string>
-    <string name="sensorstate_gashas">有燃气泄漏</string>
-    <string name="sensorstate_gasnonhas">无燃气泄漏</string>
-    <string name="sensorstate_smokename">烟雾状态</string>
+    <string name="sensorstate_contactname">状态</string>
+    <string name="sensorstate_contactclose">门窗关闭</string>
+    <string name="sensorstate_contactopen">门窗打开</string>
+    <string name="sensorstate_gasname">状态</string>
+    <string name="sensorstate_gashas">燃气泄漏</string>
+    <string name="sensorstate_gasnonhas">安全</string>
+    <string name="sensorstate_smokename">状态</string>
     <string name="sensorstate_smokehas">有烟雾</string>
-    <string name="sensorstate_smokenonhas">无烟雾</string>
-    <string name="sensorstate_watername">水浸状态</string>
+    <string name="sensorstate_smokenonhas">安全</string>
+    <string name="sensorstate_watername">状态</string>
     <string name="sensorstate_waterhas">有水溢出</string>
-    <string name="sensorstate_waternonhas">无水溢出</string>
-    <string name="sensorstate_motionname">运动状态</string>
-    <string name="sensorstate_motionhas">有人体移动</string>
-    <string name="sensorstate_motionnonhas">无人体移动</string>
-    <string name="sensorstate_buttonstate">按钮状态</string>
+    <string name="sensorstate_waternonhas">安全</string>
+    <string name="sensorstate_motionname">状态</string>
+    <string name="sensorstate_motionhas">有人移动</string>
+    <string name="sensorstate_motionnonhas">无人移动</string>
+    <string name="sensorstate_buttonstate">状态</string>
     <string name="sensorstate_trigger">触发</string>
     <string name="sensorstate_tamperalarm">防撬报警</string>
     <string name="sensorstate_protectionalarm">布防报警</string>

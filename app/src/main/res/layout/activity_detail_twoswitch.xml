@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/detailTwoSwitchLl"
-    android:background="@color/background_detail"
+    android:background="@drawable/device_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,7 +10,7 @@
     <include layout="@layout/include_detail" />
 
     <RelativeLayout
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/deviceListRelItem"
         android:layout_width="200dp"
         android:layout_gravity="center"
@@ -42,26 +42,36 @@
 
     <RelativeLayout
         android:id="@+id/detailOneSwitchRLState1"
+        android:layout_marginTop="20dp"
         style="@style/StateItemStyle" >
+
+        <ImageView
+            android:id="@+id/detailTwoSwitchImgStateIcon1"
+            android:src="@drawable/state_icon_switch"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true" />
 
         <TextView
             android:id="@+id/detailTwoSwitchLblStateName1"
-            style="@style/NormalFontStyle"
+            style="@style/StateFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/detailTwoSwitchImgStateIcon1"
+            android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
             android:text="@string/twoswitch_state_1" />
 
         <TextView
             android:id="@+id/detailTwoSwitchLblStateValue1"
-            style="@style/NormalFontStyle"
+            style="@style/StateFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
             android:text="@string/twoswitch_state_on" />
 
     </RelativeLayout>
@@ -70,19 +80,28 @@
         android:id="@+id/detailTwoSwitchRLState2"
         style="@style/StateItemStyle" >
 
+        <ImageView
+            android:id="@+id/detailTwoSwitchImgStateIcon2"
+            android:src="@drawable/state_icon_switch"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true" />
+
         <TextView
             android:id="@+id/detailTwoSwitchLblStateName2"
-            style="@style/NormalFontStyle"
+            style="@style/StateFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/detailTwoSwitchImgStateIcon2"
+            android:layout_marginLeft="5dp"
             android:text="@string/twoswitch_state_2" />
 
         <TextView
             android:id="@+id/detailTwoSwitchLblStateValue2"
-            style="@style/NormalFontStyle"
+            style="@style/StateFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -101,28 +120,33 @@
 
     <RelativeLayout
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:id="@+id/detailTwoSwitchRLBottom">
+        android:layout_marginBottom="20dp"
+        android:layout_width="fill_parent">
 
-        <ImageView
-            android:id="@+id/detailTwoSwitchImgTimer"
-            android:layout_marginRight="6dp"
-            style="@style/OperateIconStyle"
-            android:layout_toLeftOf="@+id/detailTwoSwitchSpaBottomMiddle"
-            android:src="@drawable/cloud_timer" />
-
-        <Space
-            android:id="@+id/detailTwoSwitchSpaBottomMiddle"
-            android:layout_width="1dp"
+        <RelativeLayout
+            android:id="@+id/detailTwoSwitchRLTimer"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content" />
+            android:background="@drawable/shape_border">
 
-        <ImageView
-            android:id="@+id/detailTwoSwitchImgMessage"
-            android:layout_marginLeft="6dp"
-            style="@style/OperateIconStyle"
-            android:layout_toRightOf="@+id/detailTwoSwitchSpaBottomMiddle"
-            android:src="@drawable/message" />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/state_icon_timer" />
+
+            <TextView
+                style="@style/StateFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:text="@string/detail_state_timer" />
+
+        </RelativeLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

@@ -20,13 +20,15 @@ import com.rexense.imoco.model.ETSL;
  */
 public class DetailSensorActivity extends DetailActivity {
     private boolean mIsHasPowerSource;
+    private ImageView mIcon;
+    private ImageView mStateIcon;
     private TextView mStateName;
     private TextView mStateValue;
-    private ImageView mStateIcon;
-    private TextView mPowerName;
-    private TextView mPowerValue;
+    private ImageView mStateIcon2;
     private TextView mStateName2;
     private TextView mStateValue2;
+    private TextView mPowerName;
+    private TextView mPowerValue;
 
     // 更新状态
     @Override
@@ -52,6 +54,7 @@ public class DetailSensorActivity extends DetailActivity {
             if(propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature).length() > 0) {
                 ETSL.stateEntry tempEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.THS_P_CurrentTemperature, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature));
                 if(tempEntry != null && tempEntry.name != null && tempEntry.value != null) {
+                    mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentTemperature));
                     mStateName.setText(tempEntry.name + ":");
                     mStateValue.setText(tempEntry.value);
                 }
@@ -59,6 +62,7 @@ public class DetailSensorActivity extends DetailActivity {
             if(propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity).length() > 0) {
                 ETSL.stateEntry humEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.THS_P_CurrentHumidity, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity));
                 if(humEntry != null && humEntry.name != null && humEntry.value != null) {
+                    mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));
                     mStateName2.setText(humEntry.name + ":");
                     mStateValue2.setText(humEntry.value);
                 }
@@ -72,8 +76,8 @@ public class DetailSensorActivity extends DetailActivity {
         if(stateEntry != null && stateEntry.name != null && stateEntry.value != null) {
             mStateName.setText(stateEntry.name + ":");
             mStateValue.setText(stateEntry.value);
-            // 更新状态图标
-            mStateIcon.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, stateEntry.rawName, stateEntry.rawValue));
+            // 更新图标
+            mIcon.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, stateEntry.rawName, stateEntry.rawValue));
         }
 
         return true;
@@ -84,14 +88,16 @@ public class DetailSensorActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
 
+        mStateIcon = (ImageView) findViewById(R.id.detailSensorImgStateIcon);
         mStateName = (TextView) findViewById(R.id.detailSensorLblStateName);
         mStateValue = (TextView) findViewById(R.id.detailSensorLblStateValue);
-        mStateIcon = (ImageView) findViewById(R.id.detailSensorImgIcon);
+        mIcon = (ImageView) findViewById(R.id.detailSensorImgIcon);
         mPowerName = (TextView)findViewById(R.id.detailSensorLblPowerName);
         mPowerValue = (TextView)findViewById(R.id.detailSensorLblPowerValue);
 
         // 初始化设备状态图标
-        mStateIcon.setImageResource(ImageProvider.genProductIcon(mProductKey));
+        mIcon.setImageResource(ImageProvider.genProductIcon(mProductKey));
+        mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, ""));
 
         this.mIsHasPowerSource = getIntent().getBooleanExtra("isHasPowerSource", false);
         // 如果没有电池电源则不显示
@@ -111,21 +117,9 @@ public class DetailSensorActivity extends DetailActivity {
         // 温湿度要使用状态2显示栏
         if(mProductKey.equals(CTSL.PK_TEMHUMSENSOR)) {
             mLayoutState2.setVisibility(View.VISIBLE);
+            mStateIcon2 = (ImageView) findViewById(R.id.detailSensorImgStateIcon2);
             mStateName2 = (TextView) findViewById(R.id.detailSensorLblStateName2);
             mStateValue2 = (TextView) findViewById(R.id.detailSensorLblStateValue2);
         }
-
-        // 消息记录处理
-        View.OnClickListener messageRecordListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Intent intent = new Intent(DetailSensorActivity.this, MessageRecordActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
-            }
-        };
-        ImageView imgMessageRecord = (ImageView)findViewById(R.id.detailSensorImgMessage);
-        imgMessageRecord.setOnClickListener(messageRecordListener);
     }
 }

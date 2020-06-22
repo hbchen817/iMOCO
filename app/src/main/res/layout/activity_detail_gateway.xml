@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/detailGatewayLl"
     android:layout_width="match_parent"
-    android:background="@color/background_main"
+    android:background="@color/background_detail_gateway1"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -11,7 +11,6 @@
     <RelativeLayout
         android:id="@+id/detailGatewayRLSecurity"
         android:layout_width="fill_parent"
-        android:background="#DDDDDD"
         android:layout_height="180dp">
 
         <ImageView
@@ -41,21 +40,6 @@
             android:src="@drawable/add_default" />
 
         <TextView
-            android:id="@+id/detailGatewayLblCount"
-            android:background="@drawable/shape_frame"
-            android:layout_width="wrap_content"
-            android:gravity="center_vertical|left"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            style="@style/SmallFontStyle"
-            android:text="@string/detailgateway_count" />
-
-        <TextView
             android:id="@+id/detailGatewayLblArmMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,21 +55,65 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_below="@+id/oneItemWheelPickerLblValue"
+    <RelativeLayout
+        android:background="@color/background_main"
         android:layout_width="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:layout_height="1dp" />
+        android:layout_height="30dp">
+
+        <TextView
+            android:id="@+id/detailGatewayLblCount"
+            android:background="@drawable/shape_frame"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical|left"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            style="@style/SmallFontStyle"
+            android:text="@string/detailgateway_count" />
+
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/detailGatewayLstSubdevice"
+        android:background="@color/background_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
         android:divider="@null"
         android:layout_weight="1"
         android:horizontalSpacing="1dip">
     </ListView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="center|bottom"
+        android:background="@color/background_main"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/moreImgUnbind"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape_add"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/moreLblUnbind"
+            style="@style/NormalWhiteFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/detailgateway_add"
+            android:textColor="#ffffff" />
+
+    </RelativeLayout>
 
 </LinearLayout>

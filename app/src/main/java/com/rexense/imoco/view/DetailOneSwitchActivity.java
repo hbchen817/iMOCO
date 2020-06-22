@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
@@ -72,23 +73,11 @@ public class DetailOneSwitchActivity extends DetailActivity {
         mStateValue = (TextView) findViewById(R.id.detailOneSwitchLblStateValue);
 
         // 云端定时处理
-        ImageView timer = (ImageView)findViewById(R.id.detailOneSwitchImgTimer);
+        RelativeLayout timer = (RelativeLayout)findViewById(R.id.detailOneSwitchRLTimer);
         timer.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
                 PluginHelper.cloudTimer(DetailOneSwitchActivity.this, mIOTId, mProductKey);
-            }
-        });
-
-        // 消息记录处理
-        ImageView messageRecord = (ImageView)findViewById(R.id.detailOneSwitchImgMessage);
-        messageRecord.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DetailOneSwitchActivity.this, MessageRecordActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
             }
         });
     }

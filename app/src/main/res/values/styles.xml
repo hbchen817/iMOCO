@@ -42,6 +42,13 @@
         <item name="android:typeface">sans</item>
     </style>
 
+    <!-- 状态字体样式 -->
+    <style name="StateFontStyle">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
     <!-- 正常白色字体样式 -->
     <style name="NormalWhiteFontStyle">
         <item name="android:textSize">14sp</item>
@@ -68,12 +75,12 @@
 
     <!-- 状态条目样式 -->
     <style name="StateItemStyle">
-        <item name="android:background">@drawable/shape_frame</item>
+        <item name="android:background">@drawable/shape_frame_detail</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_height">40dp</item>
     </style>
 
     <style name="Login" parent="@style/OpenAccountDefault">

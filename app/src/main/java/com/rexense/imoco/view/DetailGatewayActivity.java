@@ -75,9 +75,9 @@ public class DetailGatewayActivity extends DetailActivity {
 
             RelativeLayout rl = (RelativeLayout)findViewById(R.id.detailGatewayRLSecurity);
             if(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
-                rl.setBackgroundColor(Color.rgb(0x00, 0xBB, 0x00));
+                rl.setBackgroundColor(Color.rgb(0xFC, 0x7C, 0x23));
             } else {
-                rl.setBackgroundColor(Color.rgb(0xDD, 0xDD, 0xDD));
+                rl.setBackgroundColor(Color.rgb(0xF1, 0x97, 0x25));
             }
         }
         return true;
@@ -172,7 +172,7 @@ public class DetailGatewayActivity extends DetailActivity {
                     online++;
                 }
             }
-            lblCount.setText(String.format(getString(R.string.detailgateway_count), online, this.mDeviceList.size()));
+            lblCount.setText(String.format(getString(R.string.detailgateway_count), this.mDeviceList.size(), online));
         } else {
             lblCount.setText(String.format(getString(R.string.detailgateway_count), 0, 0));
         }

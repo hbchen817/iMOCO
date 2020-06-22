@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.sdk.TSL;
 
 /**
  * Creator: xieshaobing
@@ -38,8 +39,39 @@ public class ImageProvider {
             case CTSL.PK_TEMHUMSENSOR:
                 return R.drawable.icon_thsensor;
             default:
-                return R.drawable.icon_gateway;
+                break;
         }
+        return R.drawable.icon_gateway;
+    }
+
+    // 生成产品属性图标
+    public static int genProductPropertyIcon(String productKey, String propertyName) {
+        if (productKey==null){
+            return R.drawable.icon_gateway;
+        }
+        switch (productKey) {
+            case CTSL.PK_DOORSENSOR:
+                return R.drawable.state_icon_door;
+            case CTSL.PK_PIRSENSOR:
+                return R.drawable.state_icon_pir;
+            case CTSL.PK_GASSENSOR:
+                return R.drawable.state_icon_smoke;
+            case CTSL.PK_SMOKESENSOR:
+                return R.drawable.state_icon_gas;
+            case CTSL.PK_WATERSENSOR:
+                return R.drawable.state_icon_water;
+            case CTSL.PK_TEMHUMSENSOR:
+                if(propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentHumidity)){
+                    return R.drawable.state_icon_humdity;
+                }
+                if(propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentTemperature)){
+                    return R.drawable.state_icon_temp;
+                }
+                break;
+            default:
+                break;
+        }
+        return R.drawable.icon_gateway;
     }
 
     // 生成设备状态图标
