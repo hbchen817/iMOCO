@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sceneLl"
-    android:background="@color/white"
+    android:background="@color/appbgcolor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -43,9 +43,22 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="0dp"
-            android:background="@drawable/shape_frame_txt"
             android:text="@string/scene_scene"
-            android:textColor="#FFFFFF" />
+            android:textColor="#33CCFF" />
+
+        <TextView
+            android:id="@+id/sceneLblSceneDL"
+            style="@style/TitleBarFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/sceneLblScene"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:background="#33CCFF"
+            android:textColor="#33CCFF"
+            android:text="@string/scene_scene" />
 
         <TextView
             android:id="@+id/sceneLblMy"
@@ -54,9 +67,23 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="28dp"
             android:layout_toRightOf="@+id/sceneLblScene"
             android:text="@string/scene_my"/>
+
+        <TextView
+            android:id="@+id/sceneLblMyDL"
+            style="@style/TitleBarFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/sceneLblMy"
+            android:layout_alignLeft="@+id/sceneLblMy"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_centerVertical="true"
+            android:background="#33CCFF"
+            android:textColor="#33CCFF"
+            android:visibility="invisible"
+            android:text="@string/scene_my" />
 
     </RelativeLayout>
 
@@ -66,7 +93,7 @@
         android:layout_height="match_parent"
         android:background="@color/appbgcolor"
         android:divider="@null"
-        android:dividerHeight="1dp"
+        android:dividerHeight="3dp"
         android:layout_weight="1"
         android:horizontalSpacing="1dip">
     </ListView>

@@ -1,4 +1,4 @@
-package com.rexense.imoco.utility;
+package com.rexense.imoco.widget;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;

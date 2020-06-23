@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,9 +41,9 @@ import com.rexense.imoco.model.EUser;
  * Description: 网关详细界面
  */
 public class DetailGatewayActivity extends DetailActivity {
-    private int mAlarmMode = 0;
-    private TextView mLblCount;
-    private ImageView mSecurity;
+    private int mAarmMode = 0;
+    private TextView mLblCount, mLblAarmMode, mLblAarmModeClick;
+    private ImageView mImgSecurity, mImgSecurityRound;
     private AptDeviceList mAptDeviceList = null;
     private List<EDevice.deviceEntry> mDeviceList;
     private int mStatus;
@@ -65,19 +66,21 @@ public class DetailGatewayActivity extends DetailActivity {
         }
 
         if(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode) != null && propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).length() > 0) {
-            this.mAlarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
+            this.mAarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(DetailGatewayActivity.this, mProductKey, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             if(mapperEntry != null && mapperEntry.name != null) {
                 TextView lblAarmMode = (TextView)findViewById(R.id.detailGatewayLblArmMode);
                 lblAarmMode.setText(mapperEntry.value);
             }
-            this.mSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
+            this.mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
 
-            RelativeLayout rl = (RelativeLayout)findViewById(R.id.detailGatewayRLSecurity);
+            LinearLayout rl = (LinearLayout)findViewById(R.id.detailGatewayLlMain);
             if(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
                 rl.setBackgroundColor(Color.rgb(0xFC, 0x7C, 0x23));
+                mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
             } else {
                 rl.setBackgroundColor(Color.rgb(0xF1, 0x97, 0x25));
+                mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
             }
         }
         return true;
@@ -179,6 +182,18 @@ public class DetailGatewayActivity extends DetailActivity {
         this.mLblCount.setVisibility(View.VISIBLE);
     }
 
+    // 安防模式点击监听器
+    private OnClickListener armModeClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(mAarmMode == 0) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_ArmMode}, new String[]{"1"});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_ArmMode}, new String[]{"0"});
+            }
+        }
+    };
+
     // 设备列表点击监听器
     private AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener(){
         @Override
@@ -204,17 +219,14 @@ public class DetailGatewayActivity extends DetailActivity {
         this.mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
 
         // 安防模式设置处理
-        this.mSecurity = (ImageView)findViewById(R.id.detailGatewayImgSecurity);
-        this.mSecurity.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mAlarmMode == 0) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_ArmMode}, new String[]{"1"});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_ArmMode}, new String[]{"0"});
-                }
-            }
-        });
+        this.mImgSecurity = (ImageView)findViewById(R.id.detailGatewayImgSecurity);
+        this.mImgSecurityRound = (ImageView)findViewById(R.id.detailGatewayImgSecurityRound);
+        this.mLblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
+        this.mLblAarmModeClick = (TextView) findViewById(R.id.detailGatewayLblArmModeClick);
+        this.mImgSecurity.setOnClickListener(this.armModeClick);
+        this.mImgSecurityRound.setOnClickListener(this.armModeClick);
+        this.mLblAarmMode.setOnClickListener(this.armModeClick);
+        this.mLblAarmModeClick.setOnClickListener(this.armModeClick);
 
         // 添加子设备处理
         OnClickListener onAddClickListener = new OnClickListener(){
@@ -227,19 +239,9 @@ public class DetailGatewayActivity extends DetailActivity {
             }
         };
         ImageView imgAdd = (ImageView)findViewById(R.id.detailGatewayImgAdd);
+        TextView lblAdd = (TextView)findViewById(R.id.detailGatewayLblAdd);
         imgAdd.setOnClickListener(onAddClickListener);
-
-        // 消息记录处理
-        ImageView messageRecord = (ImageView)findViewById(R.id.detailGatewayImgMessage);
-        messageRecord.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DetailGatewayActivity.this, MessageRecordActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
-            }
-        });
+        lblAdd.setOnClickListener(onAddClickListener);
 
         // 添加实时数据连接状态回调处理器
         RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", this.mRealtimeDataHandler);

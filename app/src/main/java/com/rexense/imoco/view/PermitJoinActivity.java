@@ -18,7 +18,7 @@ import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.ERealtimeData;
-import com.rexense.imoco.utility.ComCircularProgress;
+import com.rexense.imoco.widget.ComCircularProgress;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.Utility;

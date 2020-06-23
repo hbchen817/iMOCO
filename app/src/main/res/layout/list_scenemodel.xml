@@ -11,11 +11,16 @@
 		android:layout_width="match_parent"
 		android:layout_height="140dp">
 
-		<ImageView
+		<com.rexense.imoco.widget.ComRoundCornerImageView
 			android:id="@+id/sceneModelImgIcon"
 			android:layout_width="match_parent"
 			android:layout_height="140dp"
-			android:background="@drawable/scene_night_rise_on" />
+			android:scaleType="centerCrop"
+			app:left_top_radius="10dp"
+			app:right_top_radius="10dp"
+			app:left_bottom_radius="10dp"
+			app:right_bottom_radius="10dp"
+			android:src="@drawable/scene_night_rise_on" />
 
 		<TextView
 			android:id="@+id/sceneModelLblName"

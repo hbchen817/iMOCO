@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--圆环属性-->
     <declare-styleable name="ComCircularProgress">
         <attr name="backWidth" format="dimension" />    <!--背景圆环宽度-->
         <attr name="progWidth" format="dimension" />    <!--进度圆环宽度-->
@@ -10,4 +11,14 @@
         <attr name="maxProgress" format="integer" />    <!--圆环最大进度-->
         <attr name="progress" format="integer" />       <!--圆环进度-->
     </declare-styleable>
+
+    <!--圆解图片-->
+    <declare-styleable name="RoundCornerImageView">
+        <attr name="radius" format="dimension" />
+        <attr name="left_top_radius" format="dimension" />
+        <attr name="right_top_radius" format="dimension" />
+        <attr name="right_bottom_radius" format="dimension" />
+        <attr name="left_bottom_radius" format="dimension" />
+    </declare-styleable>
+
 </resources>

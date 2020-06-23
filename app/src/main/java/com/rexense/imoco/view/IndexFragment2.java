@@ -45,7 +45,7 @@ import butterknife.ButterKnife;
  */
 public class IndexFragment2 extends BaseFragment {
     private ImageView mImgAdd;
-    private TextView mLblScene, mLblMy;
+    private TextView mLblScene, mLblSceneDL, mLblMy, mLblMyDL;
     private SceneManager mSceneManager = null;
     private List<EScene.sceneModelEntry> mModelList = null;
     private List<EScene.sceneListItemEntry> mSceneList = null;
@@ -85,13 +85,14 @@ public class IndexFragment2 extends BaseFragment {
 
         this.mImgAdd = (ImageView) view.findViewById(R.id.sceneImgAdd);
         this.mLblScene = (TextView) view.findViewById(R.id.sceneLblScene);
+        this.mLblSceneDL = (TextView) view.findViewById(R.id.sceneLblSceneDL);
         this.mLblMy = (TextView) view.findViewById(R.id.sceneLblMy);
+        this.mLblMyDL = (TextView) view.findViewById(R.id.sceneLblMyDL);
         this.mListSceneModel = (ListView) view.findViewById(R.id.sceneLstSceneModel);
         this.mListMy = (ListView) view.findViewById(R.id.sceneLstMy);
         initView();
         // 开始获取场景列表
         this.startGetSceneList(CScene.TYPE_AUTOMATIC);
-
 
         return view;
     }
@@ -121,10 +122,11 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setBackgroundResource(R.drawable.shape_frame_txt);
-                mLblScene.setTextColor(Color.parseColor("#FFFFFF"));
-                mLblMy.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                mLblScene.setTextColor(Color.parseColor("#33CCFF"));
+                mLblSceneDL.setVisibility(View.VISIBLE);
                 mLblMy.setTextColor(Color.parseColor("#464645"));
+                mLblMyDL.setVisibility(View.INVISIBLE);
+
                 mListSceneModel.setVisibility(View.VISIBLE);
                 mListMy.setVisibility(View.GONE);
             }
@@ -134,10 +136,11 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblMy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 mLblScene.setTextColor(Color.parseColor("#464645"));
-                mLblMy.setBackgroundResource(R.drawable.shape_frame_txt);
-                mLblMy.setTextColor(Color.parseColor("#FFFFFF"));
+                mLblSceneDL.setVisibility(View.INVISIBLE);
+                mLblMy.setTextColor(Color.parseColor("#33CCFF"));
+                mLblMyDL.setVisibility(View.VISIBLE);
+
                 mListSceneModel.setVisibility(View.GONE);
                 mListMy.setVisibility(View.VISIBLE);
             }

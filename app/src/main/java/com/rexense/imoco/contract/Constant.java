@@ -8,12 +8,14 @@ package com.rexense.imoco.contract;
 public class Constant {
     // APPKEY
     public static final String APPKEY                               = "29162669";
+
     // 淘宝回调地址,用户协议，隐私政策
     public static final String TAOBAOREDIRECTURI                    = "http://www.rexense.com/imoco";
     public static final String USER_PROTOCOL_URL                    = "http://www.rexense.cn/nd.jsp?id=71#_np=127_530";
     public static final String PRIVACY_POLICY_URL                   = "http://www.rexense.cn/nd.jsp?id=70#_np=127_530";
     //分页时每页的数量
     public static final int PAGE_SIZE                                = 20;
+
     // 定义设备类型常量
     public static final String NODETYPE_GATEWAY                     = "GATEWAY";
     public static final int DEVICETYPE_GATEWAY                      = 1;

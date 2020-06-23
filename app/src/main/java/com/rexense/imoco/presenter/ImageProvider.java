@@ -14,7 +14,7 @@ import com.rexense.imoco.sdk.TSL;
 public class ImageProvider {
     // 生成产品图标
     public static int genProductIcon(String productKey) {
-        if (productKey==null){
+        if (productKey == null){
             return R.drawable.icon_gateway;
         }
         switch (productKey) {
@@ -44,9 +44,30 @@ public class ImageProvider {
         return R.drawable.icon_gateway;
     }
 
+    // 生成房间图标
+    public static int genRoomIcon(Context context, String roomName) {
+        if (roomName == null){
+            return R.drawable.room_livingroom;
+        }
+
+        if(roomName.equalsIgnoreCase(context.getString(R.string.room_restaurant))){
+            return R.drawable.room_restaurant;
+        } else if(roomName.equalsIgnoreCase(context.getString(R.string.room_kitchen))){
+            return R.drawable.room_kitchen;
+        } else if(roomName.equalsIgnoreCase(context.getString(R.string.room_mainbedroom))){
+            return R.drawable.room_mainbedroom;
+        } else if(roomName.equalsIgnoreCase(context.getString(R.string.room_study))){
+            return R.drawable.room_study;
+        } else if(roomName.equalsIgnoreCase(context.getString(R.string.room_2thbedroom))){
+            return R.drawable.room_2thbedroom;
+        }
+
+        return R.drawable.room_livingroom;
+    }
+
     // 生成产品属性图标
     public static int genProductPropertyIcon(String productKey, String propertyName) {
-        if (productKey==null){
+        if (productKey == null){
             return R.drawable.icon_gateway;
         }
         switch (productKey) {
@@ -81,9 +102,9 @@ public class ImageProvider {
                 // 网关处理
                 if(property.equals(CTSL.GW_P_ArmMode)) {
                     if(state.equals(CTSL.GW_P_ArmMode_deploy)) {
-                        return R.drawable.security_deploy;
+                        return R.drawable.state_icon_deploy;
                     } else {
-                        return R.drawable.security_cancel;
+                        return R.drawable.state_icon_cancel;
                     }
                 }
             case CTSL.PK_ONEWAYSWITCH:

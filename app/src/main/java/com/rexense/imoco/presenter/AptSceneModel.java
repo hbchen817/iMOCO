@@ -79,7 +79,7 @@ public class AptSceneModel extends BaseAdapter {
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.sceneModelImgIcon);
 			convertView.setTag(viewHolder);
 			viewHolder.name.setText(this.mModelList.get(position).name);
-			viewHolder.icon.setBackgroundResource(this.mModelList.get(position).icon);
+			viewHolder.icon.setImageResource(this.mModelList.get(position).icon);
 			viewHolder.description.setText(new SceneManager(this.mContext).getSceneModelDescription(this.mModelList.get(position).code));
 		}
 		return convertView;

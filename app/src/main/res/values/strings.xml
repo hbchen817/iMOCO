@@ -17,8 +17,8 @@
     <string name="main_onekeyscene">一键执行场景</string>
     <string name="main_scenename">场景名称</string>
 
-    <string name="scene_scene">场景</string>
-    <string name="scene_my">我的</string>
+    <string name="scene_scene">快速创建</string>
+    <string name="scene_my">我的场景</string>
     <string name="delete">删除</string>
 
     <string name="dialog_title">系统提示</string>
@@ -104,6 +104,13 @@
     <string name="devicelist_status">状态: %s</string>
     <string name="devicelist_action">动作: %s</string>
 
+    <string name="room_restaurant">餐厅</string>
+    <string name="room_kitchen">厨房</string>
+    <string name="room_mainbedroom">主卧</string>
+    <string name="room_livingroom">客厅</string>
+    <string name="room_study">书房</string>
+    <string name="room_2thbedroom">次卧</string>
+
     <string name="roomlist_name">房间名称</string>
     <string name="roomlist_description">共有%d个设备</string>
 
@@ -112,8 +119,10 @@
     <string name="choicegateway_gateofflinehint">所选网关不在线, 不能添加子设备。</string>
 
     <string name="detailgateway_count">共%d个设备, 其中%d个在线</string>
-    <string name="detailgateway_armmode_cancel">撤防模式</string>
-    <string name="detailgateway_armmode_deploy">布防模式</string>
+    <string name="detailgateway_armmode_cancel">网关已撤防</string>
+    <string name="detailgateway_armmode_deploy">网关已布防</string>
+    <string name="detailgateway_armmode_cancel_click">点击撤防</string>
+    <string name="detailgateway_armmode_deploy_click">点击布防</string>
     <string name="detailgateway_add">添加子设备</string>
 
     <string name="gateway_armmode">布撤防</string>
@@ -177,8 +186,10 @@
     <string name="moredevice_unbind">解除绑定</string>
 
     <string name="moregateway_armmode">安防模式</string>
-    <string name="moregateway_armmode_deploy">布防模式</string>
-    <string name="moregateway_armmode_cancel">撤防模式</string>
+    <string name="moregateway_armmode_deploy">网关已布防</string>
+    <string name="moregateway_armmode_cancel">网关已撤防</string>
+    <string name="moregateway_armmode_click_deploy">点击布防</string>
+    <string name="moregateway_armmode_click_cancel">点击撤防</string>
     <string name="moregateway_alarmbellid">报警铃音</string>
     <string name="moregateway_bellvolume">门铃音量</string>
     <string name="moregateway_bellmusicid">门铃音乐</string>

@@ -73,7 +73,7 @@ public class IndexFragment1 extends BaseFragment {
     private HorizontalScrollView mHscSceneList;
     private GridView mGrdScene;
     private TextView mLblHome, mLblHomeDescription, mLblDeviceDescription;
-    private TextView mLblDevice, mLblRoom, mLblShare;
+    private TextView mLblDevice, mLblDeviceDL, mLblRoom, mLblRoomDL, mLblShare, mLblShareDL;
     private RelativeLayout mRlDevice;
     private HomeSpaceManager mHomeSpaceManager = null;
     private UserCenter mUserCenter = null;
@@ -98,7 +98,6 @@ public class IndexFragment1 extends BaseFragment {
     ImageView imgAdd;
     ImageView imgGrid;
     ImageView imgList;
-    ImageView imgScene;
 
     @Subscribe
     public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
@@ -150,9 +149,12 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblHomeDescription = (TextView) view.findViewById(R.id.mainLblHomeDescription);
         this.mLblDeviceDescription = (TextView) view.findViewById(R.id.mainLblDeviceDescription);
         this.mLblDevice = (TextView) view.findViewById(R.id.mainLblDevice);
+        this.mLblDeviceDL = (TextView) view.findViewById(R.id.mainLblDeviceDL);
         this.mRlDevice = (RelativeLayout) view.findViewById(R.id.mainRlDevice);
         this.mLblRoom = (TextView) view.findViewById(R.id.mainLblRoom);
+        this.mLblRoomDL = (TextView) view.findViewById(R.id.mainLblRoomDL);
         this.mLblShare = (TextView) view.findViewById(R.id.mainLblShare);
+        this.mLblShareDL = (TextView) view.findViewById(R.id.mainLblShareDL);
         this.mListDevice = (ListView) view.findViewById(R.id.mainLstDevice);
         this.mGridDevice = (GridView) view.findViewById(R.id.mainGrdDevice);
         this.mListRoom = (ListView) view.findViewById(R.id.mainLstRoom);
@@ -217,12 +219,13 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setBackgroundResource(R.drawable.shape_frame_txt);
-                mLblDevice.setTextColor(Color.parseColor("#FFFFFF"));
-                mLblRoom.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                mLblDevice.setTextColor(Color.parseColor("#33CCFF"));
+                mLblDeviceDL.setVisibility(View.VISIBLE);
                 mLblRoom.setTextColor(Color.parseColor("#464645"));
-                mLblShare.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                mLblRoomDL.setVisibility(View.INVISIBLE);
                 mLblShare.setTextColor(Color.parseColor("#464645"));
+                mLblShareDL.setVisibility(View.INVISIBLE);
+
                 mRlDevice.setVisibility(View.VISIBLE);
                 allDeviceView.setVisibility(View.VISIBLE);
                 if (mDeviceDisplayType == 1) {
@@ -241,12 +244,13 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 mLblDevice.setTextColor(Color.parseColor("#464645"));
-                mLblRoom.setBackgroundResource(R.drawable.shape_frame_txt);
-                mLblRoom.setTextColor(Color.parseColor("#FFFFFF"));
-                mLblShare.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                mLblDeviceDL.setVisibility(View.INVISIBLE);
+                mLblRoom.setTextColor(Color.parseColor("#33CCFF"));
+                mLblRoomDL.setVisibility(View.VISIBLE);
                 mLblShare.setTextColor(Color.parseColor("#464645"));
+                mLblShareDL.setVisibility(View.INVISIBLE);
+
                 mRlDevice.setVisibility(View.GONE);
                 allDeviceView.setVisibility(View.GONE);
                 mListRoom.setVisibility(View.VISIBLE);
@@ -258,12 +262,13 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 mLblDevice.setTextColor(Color.parseColor("#464645"));
-                mLblRoom.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                mLblDeviceDL.setVisibility(View.INVISIBLE);
                 mLblRoom.setTextColor(Color.parseColor("#464645"));
-                mLblShare.setBackgroundResource(R.drawable.shape_frame_txt);
-                mLblShare.setTextColor(Color.parseColor("#FFFFFF"));
+                mLblRoomDL.setVisibility(View.INVISIBLE);
+                mLblShare.setTextColor(Color.parseColor("#33CCFF"));
+                mLblShareDL.setVisibility(View.VISIBLE);
+
                 mRlDevice.setVisibility(View.GONE);
                 allDeviceView.setVisibility(View.GONE);
                 mListRoom.setVisibility(View.GONE);
@@ -278,6 +283,8 @@ public class IndexFragment1 extends BaseFragment {
                 mGridDevice.setVisibility(View.VISIBLE);
                 mListDevice.setVisibility(View.GONE);
                 mDeviceDisplayType = 1;
+                imgGrid.setAlpha((float) 1.0);
+                imgList.setAlpha((float) 0.4);
             }
         });
 
@@ -288,6 +295,8 @@ public class IndexFragment1 extends BaseFragment {
                 mListDevice.setVisibility(View.VISIBLE);
                 mGridDevice.setVisibility(View.GONE);
                 mDeviceDisplayType = 2;
+                imgGrid.setAlpha((float) 0.4);
+                imgList.setAlpha((float) 1.0);
             }
         });
     }
@@ -358,7 +367,7 @@ public class IndexFragment1 extends BaseFragment {
             return;
         }
 
-        this.mLblSceneTitle.setVisibility(View.VISIBLE);
+        //this.mLblSceneTitle.setVisibility(View.VISIBLE);
         this.mHscSceneList.setVisibility(View.VISIBLE);
         int size = list.size();
         int length = 130;

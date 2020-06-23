@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLl"
-    android:background="@color/white"
+    android:background="@color/appbgcolor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
+        android:visibility="gone"
         android:text="@string/main_onekeyscene" />
 
     <HorizontalScrollView
@@ -102,8 +103,21 @@
             android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/shape_frame_txt"
-            android:textColor="#FFFFFF"
+            android:textColor="#33CCFF"
+            android:text="@string/main_device" />
+
+        <TextView
+            android:id="@+id/mainLblDeviceDL"
+            style="@style/TitleBarFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/mainLblDevice"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:background="#33CCFF"
+            android:textColor="#33CCFF"
             android:text="@string/main_device" />
 
         <TextView
@@ -113,9 +127,23 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="28dp"
             android:layout_toRightOf="@+id/mainLblDevice"
             android:text="@string/main_room"/>
+
+        <TextView
+            android:id="@+id/mainLblRoomDL"
+            style="@style/TitleBarFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/mainLblRoom"
+            android:layout_alignLeft="@+id/mainLblRoom"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_centerVertical="true"
+            android:background="#33CCFF"
+            android:textColor="#33CCFF"
+            android:visibility="invisible"
+            android:text="@string/main_room" />
 
         <TextView
             android:id="@+id/mainLblShare"
@@ -124,9 +152,23 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="28dp"
             android:layout_toRightOf="@+id/mainLblRoom"
             android:text="@string/main_share"/>
+
+        <TextView
+            android:id="@+id/mainLblShareDL"
+            style="@style/TitleBarFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/mainLblShare"
+            android:layout_alignLeft="@+id/mainLblShare"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_centerVertical="true"
+            android:background="#33CCFF"
+            android:textColor="#33CCFF"
+            android:visibility="invisible"
+            android:text="@string/main_share" />
 
     </RelativeLayout>
 
@@ -152,7 +194,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="2dp"
             android:layout_toLeftOf="@+id/mainImgList"
-            android:src="@drawable/grid" />
+            android:src="@drawable/grid_icon" />
 
         <ImageView
             android:id="@+id/mainImgList"
@@ -162,7 +204,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="9dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/list" />
+            android:alpha="0.4"
+            android:src="@drawable/list_icon" />
 
     </RelativeLayout>
 
@@ -210,7 +253,6 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <ListView
         android:id="@+id/mainLstRoom"
         android:layout_width="match_parent"
@@ -218,6 +260,7 @@
         android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
         android:divider="@null"
+        android:dividerHeight="3dp"
         android:layout_weight="1"
         android:visibility="gone"
         android:horizontalSpacing="1dip">
@@ -236,7 +279,6 @@
             android:id="@+id/mainLstShare"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:divider="@null"
             android:visibility="visible"
             android:horizontalSpacing="1dip">
@@ -259,7 +301,6 @@
                 android:textColor="@color/black"
                 android:text="@string/no_data"/>
         </LinearLayout>
-
 
     </LinearLayout>
 

@@ -34,7 +34,8 @@
     <color name="all_c">#cccccc</color>
     <color name="all_3">#333333</color>
 
-    <color name="appbgcolor">#F2F2F2</color>
+    <!--<color name="appbgcolor">#F2F2F2</color>-->
+    <color name="appbgcolor">#FFFFFF</color>
     <color name="fontgrey">#ADADAD</color>
     <color name="appcolor">#F49400</color>
     <color name="lightappcolor">#EAF2FF</color>

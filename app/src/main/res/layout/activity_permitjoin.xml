@@ -26,7 +26,7 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content">
 
-        <com.rexense.imoco.utility.ComCircularProgress
+        <com.rexense.imoco.widget.ComCircularProgress
             android:id="@+id/permitJoinCPProgress"
             android:layout_width="260dp"
             android:layout_height="260dp"

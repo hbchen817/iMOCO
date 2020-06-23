@@ -24,6 +24,7 @@ import java.util.List;
  */
 public class AptRoomList extends BaseAdapter {
 	private class ViewHolder {
+		private ImageView icon;
 		private TextView name;
 		private TextView status;
 	}
@@ -71,12 +72,14 @@ public class AptRoomList extends BaseAdapter {
 			viewHolder = new ViewHolder();
 			LayoutInflater inflater = LayoutInflater.from(this.mContext);
 			convertView = inflater.inflate(R.layout.list_room, null, true);
+			viewHolder.icon = (ImageView)convertView.findViewById(R.id.roomListImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.roomListLblName);
 			viewHolder.status = (TextView) convertView.findViewById(R.id.roomListLblStatus);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
+		viewHolder.icon.setImageResource(ImageProvider.genRoomIcon(this.mContext, this.mRoomList.get(position).name));
 		viewHolder.name.setText(this.mRoomList.get(position).name);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.roomlist_description), this.mRoomList.get(position).deviceCnt));
 

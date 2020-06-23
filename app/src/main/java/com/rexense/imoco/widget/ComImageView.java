@@ -1,4 +1,4 @@
-package com.rexense.imoco.utility;
+package com.rexense.imoco.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.utility.Network;
 
 import java.io.IOException;
 
