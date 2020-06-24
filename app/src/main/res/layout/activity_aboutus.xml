@@ -81,6 +81,7 @@
         android:layout_marginTop="@dimen/dp_0_5"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
+        android:visibility="gone"
         android:paddingVertical="@dimen/dp_12">
         <TextView
             android:layout_width="wrap_content"
@@ -127,6 +128,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_0_5"
         android:background="@color/white"
+        android:visibility="gone"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView

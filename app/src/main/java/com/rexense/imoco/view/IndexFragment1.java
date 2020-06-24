@@ -81,7 +81,7 @@ public class IndexFragment1 extends BaseFragment {
     private List<EDevice.deviceEntry> mDeviceList = null;
     private List<EDevice.deviceEntry> mShareDeviceList = null;
     private List<EHomeSpace.roomEntry> mRoomList = null;
-    private ListView mListDevice, mListRoom,mListShare;
+    private ListView mListDevice, mListRoom, mListShare;
     private GridView mGridDevice;
     private View allDeviceView,shareDeviceView;
     private View allDeviceNoDataView,shareDeviceNoDataView;
@@ -95,9 +95,7 @@ public class IndexFragment1 extends BaseFragment {
     private final int mRoomPageSize = 20;
     private int mDeviceDisplayType = 1;
 
-    ImageView imgAdd;
-    ImageView imgGrid;
-    ImageView imgList;
+    private ImageView imgAdd, imgGrid, imgList;
 
     @Subscribe
     public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
@@ -219,11 +217,11 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setTextColor(Color.parseColor("#33CCFF"));
+                mLblDevice.setTextColor(getResources().getColor(R.color.topic_color1));
                 mLblDeviceDL.setVisibility(View.VISIBLE);
-                mLblRoom.setTextColor(Color.parseColor("#464645"));
+                mLblRoom.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblRoomDL.setVisibility(View.INVISIBLE);
-                mLblShare.setTextColor(Color.parseColor("#464645"));
+                mLblShare.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblShareDL.setVisibility(View.INVISIBLE);
 
                 mRlDevice.setVisibility(View.VISIBLE);
@@ -244,11 +242,11 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setTextColor(Color.parseColor("#464645"));
+                mLblDevice.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblDeviceDL.setVisibility(View.INVISIBLE);
-                mLblRoom.setTextColor(Color.parseColor("#33CCFF"));
+                mLblRoom.setTextColor(getResources().getColor(R.color.topic_color1));
                 mLblRoomDL.setVisibility(View.VISIBLE);
-                mLblShare.setTextColor(Color.parseColor("#464645"));
+                mLblShare.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblShareDL.setVisibility(View.INVISIBLE);
 
                 mRlDevice.setVisibility(View.GONE);
@@ -262,11 +260,11 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setTextColor(Color.parseColor("#464645"));
+                mLblDevice.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblDeviceDL.setVisibility(View.INVISIBLE);
-                mLblRoom.setTextColor(Color.parseColor("#464645"));
+                mLblRoom.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblRoomDL.setVisibility(View.INVISIBLE);
-                mLblShare.setTextColor(Color.parseColor("#33CCFF"));
+                mLblShare.setTextColor(getResources().getColor(R.color.topic_color1));
                 mLblShareDL.setVisibility(View.VISIBLE);
 
                 mRlDevice.setVisibility(View.GONE);
@@ -276,7 +274,7 @@ public class IndexFragment1 extends BaseFragment {
             }
         });
 
-        // 网格显示处理
+        // 设备网格显示处理
         imgGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -288,7 +286,7 @@ public class IndexFragment1 extends BaseFragment {
             }
         });
 
-        // 列表显示处理
+        // 设备列表显示处理
         imgList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,8 +329,10 @@ public class IndexFragment1 extends BaseFragment {
                 }
                 this.mAptDeviceList.notifyDataSetChanged();
                 this.mAptDeviceGrid.notifyDataSetChanged();
-                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty()?View.VISIBLE:View.GONE);
+                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
             }
+
+            // 分享设备处理
             if(this.mShareDeviceList != null && this.mShareDeviceList.size() > 0) {
                 EDevice.deviceEntry bufferEntry, displayEntry;
                 for(int i = this.mShareDeviceList.size() - 1; i >= 0; i--)
@@ -348,7 +348,7 @@ public class IndexFragment1 extends BaseFragment {
                     }
                 }
                 this.mAptShareDeviceList.notifyDataSetChanged();
-                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty()?View.VISIBLE:View.GONE);
+                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE: View.GONE);
             }
         }
 
@@ -380,10 +380,9 @@ public class IndexFragment1 extends BaseFragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(gridViewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
         // 设置GirdView布局参数(横向布局的关键)
         this.mGrdScene.setLayoutParams(params);
-        // 设置列表项宽
+        // 设置列宽
         this.mGrdScene.setColumnWidth(itemWidth);
-        // 设置列表项水平间距
-        this.mGrdScene.setHorizontalSpacing(5);
+        // 设置列比例模式
         this.mGrdScene.setStretchMode(GridView.NO_STRETCH);
         // 设置列数量为列表集合数
         this.mGrdScene.setNumColumns(size);
@@ -408,10 +407,23 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey, mDeviceList.get(position).status, mDeviceList.get(position).nickName);
+                ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
             }
         }
     };
+
+    // 分享设备列表点击监听器
+    private AdapterView.OnItemClickListener shareDeviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (mShareDeviceList != null && position < mShareDeviceList.size()) {
+                ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
+                        mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
+            }
+        }
+    };
+
     // 房间列表点击监听器
     private AdapterView.OnItemClickListener roomListOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -491,10 +503,20 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.nickName = e.nickName;
                     deviceEntry.productKey = e.productKey;
                     deviceEntry.status = e.status;
+                    deviceEntry.owned = e.owned;
+                    deviceEntry.roomName = e.roomName;
                     this.mDeviceList.add(deviceEntry);
 
-                    if (e.owned==0){
-                        this.mShareDeviceList.add(deviceEntry);
+                    // 分享设备处理
+                    if (e.owned == 0){
+                        EDevice.deviceEntry deviceEntryShare = new EDevice.deviceEntry();
+                        deviceEntryShare.iotId = e.iotId;
+                        deviceEntryShare.nickName = e.nickName;
+                        deviceEntryShare.productKey = e.productKey;
+                        deviceEntryShare.status = e.status;
+                        deviceEntryShare.owned = e.owned;
+                        deviceEntryShare.roomName = e.roomName;
+                        this.mShareDeviceList.add(deviceEntryShare);
                     }
                 }
             }
@@ -505,10 +527,20 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.nickName = e.nickName;
                     deviceEntry.productKey = e.productKey;
                     deviceEntry.status = e.status;
+                    deviceEntry.owned = e.owned;
+                    deviceEntry.roomName = e.roomName;
                     this.mDeviceList.add(deviceEntry);
 
-                    if (e.owned==0){
-                        this.mShareDeviceList.add(deviceEntry);
+                    // 分享设备处理
+                    if (e.owned == 0){
+                        EDevice.deviceEntry deviceEntryShare = new EDevice.deviceEntry();
+                        deviceEntryShare.iotId = e.iotId;
+                        deviceEntryShare.nickName = e.nickName;
+                        deviceEntryShare.productKey = e.productKey;
+                        deviceEntryShare.status = e.status;
+                        deviceEntryShare.owned = e.owned;
+                        deviceEntryShare.roomName = e.roomName;
+                        this.mShareDeviceList.add(deviceEntryShare);
                     }
                 }
             }
@@ -523,10 +555,11 @@ public class IndexFragment1 extends BaseFragment {
         this.mAptDeviceGrid.setData(this.mDeviceList);
         this.mGridDevice.setAdapter(this.mAptDeviceGrid);
         this.mGridDevice.setOnItemClickListener(deviceListOnItemClickListener);
+
         // 分享设备
         this.mAptShareDeviceList.setData(this.mShareDeviceList);
         this.mListShare.setAdapter(this.mAptShareDeviceList);
-        this.mListShare.setOnItemClickListener(deviceListOnItemClickListener);
+        this.mListShare.setOnItemClickListener(shareDeviceListOnItemClickListener);
 
         allDeviceNoDataView.setVisibility(mDeviceList.isEmpty()?View.VISIBLE:View.GONE);
         shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty()?View.VISIBLE:View.GONE);

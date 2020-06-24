@@ -166,6 +166,12 @@ public class MoreSubdeviceActivity extends BaseActivity {
         this.mLblTitle = (TextView)findViewById(R.id.includeTitleLblTitle);
         this.mLblTitle.setText(this.mName);
 
+        // 分享设备不允许修改房间，故不显示
+        if(intent.getIntExtra("owned", 0) == 0){
+            RelativeLayout rlRoom = (RelativeLayout)findViewById(R.id.moreSubdeviceRLRoom);
+            rlRoom.setVisibility(View.GONE);
+        }
+
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
         if(deviceEntry != null) {

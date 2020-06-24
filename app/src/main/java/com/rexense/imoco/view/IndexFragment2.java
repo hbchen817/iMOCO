@@ -101,7 +101,6 @@ public class IndexFragment2 extends BaseFragment {
     protected void init() {
 
     }
-
     private void initView() {
         this.mSceneManager = new SceneManager(getActivity());
         this.mModelList = this.mSceneManager.genSceneModelList();
@@ -122,9 +121,9 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setTextColor(Color.parseColor("#33CCFF"));
+                mLblScene.setTextColor(getResources().getColor(R.color.topic_color1));
                 mLblSceneDL.setVisibility(View.VISIBLE);
-                mLblMy.setTextColor(Color.parseColor("#464645"));
+                mLblMy.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblMyDL.setVisibility(View.INVISIBLE);
 
                 mListSceneModel.setVisibility(View.VISIBLE);
@@ -136,9 +135,9 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblMy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setTextColor(Color.parseColor("#464645"));
+                mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblSceneDL.setVisibility(View.INVISIBLE);
-                mLblMy.setTextColor(Color.parseColor("#33CCFF"));
+                mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
                 mLblMyDL.setVisibility(View.VISIBLE);
 
                 mListSceneModel.setVisibility(View.GONE);

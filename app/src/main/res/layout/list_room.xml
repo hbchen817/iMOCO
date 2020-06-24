@@ -28,20 +28,23 @@
 			style="@style/NormalFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="20dp"
-			android:layout_centerVertical="true"
+			android:layout_marginTop="8dp"
+			android:layout_marginLeft="8dp"
 			android:textColor="#FFFFFF"
+			android:alpha="0.7"
 			android:background="@drawable/shape_frame_orange"
 			android:text="@string/roomlist_name" />
 
 		<TextView android:id="@+id/roomListLblStatus"
 			style="@style/SmallFontStyle"
+			android:textSize="8sp"
 			android:layout_below="@+id/roomListLblName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="2dp"
-			android:layout_marginLeft="20dp"
+			android:layout_marginTop="4dp"
+			android:layout_marginLeft="8dp"
 			android:background="@drawable/shape_frame_orange"
+			android:alpha="0.7"
 			android:text="@string/roomlist_description"
 			android:textColor="#FFFFFF"/>
 

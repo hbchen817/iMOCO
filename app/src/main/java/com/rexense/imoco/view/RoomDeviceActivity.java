@@ -150,7 +150,8 @@ public class RoomDeviceActivity extends BaseActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey, mDeviceList.get(position).status, mDeviceList.get(position).nickName);
+                ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
             }
         }
     };

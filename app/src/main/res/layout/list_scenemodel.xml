@@ -29,8 +29,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="8dp"
 			android:layout_marginLeft="8dp"
-			android:layout_centerVertical="true"
 			android:text="@string/scenemodel_name"
+			android:alpha="0.7"
 			android:background="@drawable/shape_frame_orange"
 			android:textColor="#FFFFFF" />
 

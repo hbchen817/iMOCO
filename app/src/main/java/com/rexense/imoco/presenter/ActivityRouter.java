@@ -16,7 +16,7 @@ import com.rexense.imoco.view.DetailTwoSwitchActivity;
  */
 public class ActivityRouter {
     // 到详细界面
-    public static void toDetail(Context context, String iotId, String productKey, int status, String name) {
+    public static void toDetail(Context context, String iotId, String productKey, int status, String name, int owned) {
         Intent intent = null;
         switch (productKey) {
             case CTSL.PK_GATEWAY:
@@ -59,6 +59,7 @@ public class ActivityRouter {
             intent.putExtra("productKey", productKey);
             intent.putExtra("status", status);
             intent.putExtra("name", name);
+            intent.putExtra("owned", owned);
             context.startActivity(intent);
         }
     }

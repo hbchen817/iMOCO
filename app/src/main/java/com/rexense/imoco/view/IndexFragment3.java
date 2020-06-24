@@ -51,7 +51,7 @@ public class IndexFragment3 extends BaseFragment {
 
     @Override
     protected int setLayout() {
-//        EventBus.getDefault().register(this);
+        // EventBus.getDefault().register(this);
         return R.layout.fragment_index3;
     }
 
@@ -62,8 +62,9 @@ public class IndexFragment3 extends BaseFragment {
         userAccount.setText(Account.getUserPhone());
     }
 
-    @OnClick({R.id.my_info_view, R.id.advice_view, R.id.msg_view, R.id.share_device_view, R.id.service_view, R.id.aboutus_view,R.id.scene_log_view,
-    R.id.tv_toolbar_right})
+    // 点击事件处理
+    @OnClick({R.id.my_info_view, R.id.advice_view, R.id.msg_view, R.id.share_device_view,
+            R.id.service_view, R.id.aboutus_view,R.id.scene_log_view, R.id.tv_toolbar_right})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.my_info_view:
@@ -99,6 +100,4 @@ public class IndexFragment3 extends BaseFragment {
                 break;
         }
     }
-
-
 }

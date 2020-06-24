@@ -198,9 +198,10 @@ public class ETSL {
 
     // 消息记录实体
     public static class messageRecordEntry {
-        // 类型,1表日期提示（精确到天，此是description无效）,2表详细信息
+        // 类型,1表日期提示（精确到天，此时description无效）,2表详细信息开头,3表详细信息中间,4表详细结束
         public String type;
         public String day;
+        public String week;
         public  String description;
 
         // 构造

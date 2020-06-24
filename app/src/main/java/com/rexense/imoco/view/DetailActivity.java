@@ -29,6 +29,7 @@ public class DetailActivity extends BaseActivity {
     protected String mIOTId = "";
     protected String mProductKey = "";
     protected String mName = "";
+    protected int mOwned = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class DetailActivity extends BaseActivity {
         this.mIOTId = intent.getStringExtra("iotId");
         this.mProductKey = intent.getStringExtra("productKey");
         this.mName = intent.getStringExtra("name");
+        this.mOwned = intent.getIntExtra("owned", 0);
 
         // 处理布局文件
         switch (this.mProductKey) {
@@ -89,6 +91,7 @@ public class DetailActivity extends BaseActivity {
                 intent.putExtra("iotId", mIOTId);
                 intent.putExtra("productKey", mProductKey);
                 intent.putExtra("name", mName);
+                intent.putExtra("owned", mOwned);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
             }
         });

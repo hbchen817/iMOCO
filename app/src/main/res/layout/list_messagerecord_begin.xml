@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/messageRecordListRelItem"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<ImageView
+		android:id="@+id/messageRecordListImgIcon"
+		android:layout_width="15dp"
+		android:layout_height="15dp"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="18dp"
+		android:layout_centerVertical="true"
+		android:src="@drawable/point_begin"
+		android:contentDescription="@string/contentDescription_null"/>
+
+	<TextView
+		android:id="@+id/messageRecordListLblLine"
+		style="@style/NormalFontStyle"
+		android:layout_width="1dp"
+		android:layout_height="17dp"
+		android:layout_alignParentLeft="true"
+		android:background="@color/colorPrimary"
+		android:layout_marginLeft="25dp"
+		android:layout_marginTop="31dp"
+		android:text="" />
+
+	<TextView
+		android:id="@+id/messageRecordListLblDescription"
+		style="@style/NormalFontStyle"
+		android:textColor="@color/topic_color1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_marginLeft="10dp"
+		android:layout_marginTop="6dp"
+		android:layout_toRightOf="@+id/messageRecordListImgIcon"
+		android:text="Description" />
+
+	<Space
+		android:layout_width="wrap_content"
+		android:layout_height="46dp"
+		android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

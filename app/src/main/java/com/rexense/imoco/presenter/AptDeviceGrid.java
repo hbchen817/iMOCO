@@ -25,6 +25,7 @@ public class AptDeviceGrid extends BaseAdapter {
 	private class ViewHolder {
 		private ImageView icon;
 		private TextView name;
+		private TextView room;
 		private TextView status;
 	}
 	private Context mContext;
@@ -73,6 +74,7 @@ public class AptDeviceGrid extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.grid_device, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.deviceGridImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.deviceGridLblName);
+			viewHolder.room = (TextView) convertView.findViewById(R.id.deviceGridLblRoom);
 			viewHolder.status = (TextView) convertView.findViewById(R.id.deviceGridLblStatus);
 			convertView.setTag(viewHolder);
 		} else {
@@ -80,14 +82,17 @@ public class AptDeviceGrid extends BaseAdapter {
 		}
 		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
 		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
+		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
 
 		// 如果离线显示为浅灰色
 		if(this.mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
 			viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
+			viewHolder.room.setTextColor(Color.parseColor("#AAAAAA"));
 			viewHolder.status.setTextColor(Color.parseColor("#AAAAAA"));
 		} else {
 			viewHolder.name.setTextColor(Color.parseColor("#464645"));
+			viewHolder.room.setTextColor(Color.parseColor("#464645"));
 			viewHolder.status.setTextColor(Color.parseColor("#464645"));
 		}
 

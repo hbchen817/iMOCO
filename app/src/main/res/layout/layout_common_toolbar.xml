@@ -57,4 +57,5 @@
         android:paddingStart="6dp"
         android:textColor="@color/black"
         tools:ignore="RelativeOverlap" />
+
 </RelativeLayout>

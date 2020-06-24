@@ -44,12 +44,11 @@ public class MessageRecordActivity extends BaseActivity {
     private int mPageSize = 30;
     private ListView mListView;
     private AptMessageRecord mAPTMessageRecord;
-    private int mTotalItemCount;
     private long mMinTimeStamp = 0;
     private TextView mTitle;
     private ImageView mDropDown;
-    int page=0;
     SmartRefreshLayout mSrlFragmentMe;
+
     private OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -62,7 +61,7 @@ public class MessageRecordActivity extends BaseActivity {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mMinTimeStamp--;
-            secondQuery();
+            nextQuery();
         }
     };
 
@@ -142,32 +141,6 @@ public class MessageRecordActivity extends BaseActivity {
         this.mAPTMessageRecord = new AptMessageRecord(this);
         this.mListView = (ListView)findViewById(R.id.messageRecordLstMessageRecord);
         this.mListView.setAdapter(this.mAPTMessageRecord);
-        // 消息记录列表滚动事件处理
-//        this.mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//                if(mContentId != null && mContentId.length() > 0) {
-//                    int lastVisibleIndex = mListView.getLastVisiblePosition();
-//                    if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && lastVisibleIndex == mTotalItemCount - 1 && mMinTimeStamp > 0) {
-//                        // 加载下一页数据
-//                        if(mContentType == Constant.CONTENTTYPE_PROPERTY) {
-//                            mTSLHelper.getPropertyTimelineData(mIODId, mContentId, 0, mMinTimeStamp - 1, mPageSize, "desc",
-//                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-//                        } else {
-//                            mTSLHelper.getEventTimelineData(mIODId, mContentId, mContentType, 0, mMinTimeStamp - 1, mPageSize, "desc",
-//                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-//                if(mContentId != null && mContentId.length() > 0) {
-//                    mTotalItemCount = totalItemCount;
-//                }
-//            }
-//        });
 
         this.mTSLHelper = new TSLHelper(this);
         // 获取设备消息记录内容
@@ -208,6 +181,7 @@ public class MessageRecordActivity extends BaseActivity {
 
     // 开始查询
     private void startQuery() {
+        mAPTMessageRecord.clearData();
         if(this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
             this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
                     mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
@@ -217,7 +191,8 @@ public class MessageRecordActivity extends BaseActivity {
         }
     }
 
-    private void secondQuery() {
+    // 下一页查询
+    private void nextQuery() {
         if(this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
             this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, mMinTimeStamp, this.mPageSize, "desc",
                     mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);

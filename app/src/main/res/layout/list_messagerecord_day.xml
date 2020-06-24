@@ -6,7 +6,7 @@
 
 	<TextView
 		android:id="@+id/messageRecordListLblDay"
-		style="@style/NormalFontStyle"
+		style="@style/TitleBoldFontStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerVertical="true"
@@ -15,30 +15,20 @@
 		android:layout_marginLeft="10dp"
 		android:text="Day" />
 
-	<ImageView
-		android:id="@+id/messageRecordListImgIcon"
-		android:layout_width="20dp"
-		android:layout_height="20dp"
-		android:layout_alignParentLeft="true"
-		android:layout_marginLeft="20dp"
-		android:layout_centerVertical="true"
-		android:src="@drawable/message_record"
-		android:contentDescription="@string/contentDescription_null"/>
-
 	<TextView
-		android:id="@+id/messageRecordListLblDescription"
+		android:id="@+id/messageRecordListLblWeek"
 		style="@style/NormalFontStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerVertical="true"
 		android:layout_marginTop="6dp"
-		android:layout_toRightOf="@+id/messageRecordListImgIcon"
-		android:layout_marginLeft="5dp"
-		android:text="Description" />
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="10dp"
+		android:text="Week" />
 
 	<Space
 		android:layout_width="wrap_content"
-		android:layout_height="36dp"
+		android:layout_height="46dp"
 		android:layout_alignParentRight="true"/>
 
 </RelativeLayout>

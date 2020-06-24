@@ -291,6 +291,12 @@ public class MoreGatewayActivity extends BaseActivity {
         this.mProductKey = intent.getStringExtra("productKey");
         this.mName = intent.getStringExtra("name");
 
+        // 分享设备不允许修改房间，故不显示
+        if(intent.getIntExtra("owned", 0) == 0){
+            RelativeLayout rlRoom = (RelativeLayout)findViewById(R.id.moreGatewayRLRoom);
+            rlRoom.setVisibility(View.GONE);
+        }
+
         this.mTSLHelper = new TSLHelper(this);
 
         currentVersionTv =(TextView)findViewById(R.id.moreGatewayLblVersion);
@@ -492,8 +498,6 @@ public class MoreGatewayActivity extends BaseActivity {
 
         OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
-
-
 
     @Override
     protected void onDestroy() {

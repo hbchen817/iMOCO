@@ -5,7 +5,7 @@
 
     <string name="rb_tab_one_desc">家</string>
     <string name="rb_tab_two_desc">场景</string>
-    <string name="rb_tab_three_desc">我的</string>
+    <string name="rb_tab_three_desc">我</string>
     <string name="rb_tab_four_desc">备用</string>
 
     <string name="main_home">我的家</string>
@@ -17,8 +17,8 @@
     <string name="main_onekeyscene">一键执行场景</string>
     <string name="main_scenename">场景名称</string>
 
-    <string name="scene_scene">快速创建</string>
-    <string name="scene_my">我的场景</string>
+    <string name="scene_scene">场景</string>
+    <string name="scene_my">我的</string>
     <string name="delete">删除</string>
 
     <string name="dialog_title">系统提示</string>
@@ -285,6 +285,13 @@
     <string name="week_4">周四</string>
     <string name="week_5">周五</string>
     <string name="week_6">周六</string>
+    <string name="week_0_all">星期日</string>
+    <string name="week_1_all">星期一</string>
+    <string name="week_2_all">星期二</string>
+    <string name="week_3_all">星期三</string>
+    <string name="week_4_all">星期四</string>
+    <string name="week_5_all">星期五</string>
+    <string name="week_6_all">星期六</string>
 
     <string name="other_login_method">其他登录方式</string>
     <string name="login_by_sms">短信登录</string>

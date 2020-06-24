@@ -20,6 +20,7 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:background="@color/grey"
+                android:alpha="0.4"
                 android:layout_height="1dp" />
 
             <RadioGroup

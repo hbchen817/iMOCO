@@ -54,6 +54,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/moreSubdeviceRLRoom"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:background="@color/background_input"

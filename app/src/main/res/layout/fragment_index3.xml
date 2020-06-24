@@ -11,7 +11,7 @@
         android:id="@+id/my_info_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_18">
@@ -36,20 +36,29 @@
             android:layout_height="@dimen/dp_50"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:visibility="gone"
             android:src="@drawable/headimg"/>
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/advice_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_30"
+        android:layout_marginTop="@dimen/dp_10"
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
+
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:src="@drawable/advice_img"/>
+            android:src="@drawable/advice_img" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,10 +82,11 @@
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
+
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:src="@drawable/msg_center_img"/>
+            android:src="@drawable/msg_center_img" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -100,10 +110,11 @@
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
+
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:src="@drawable/scene_log_img"/>
+            android:src="@drawable/scene_log_img" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -182,10 +193,11 @@
         android:background="@color/white"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
+
         <ImageView
-            android:layout_width="@dimen/dp_30"
-            android:layout_height="@dimen/dp_30"
-            android:src="@drawable/about_us_img"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/about_us_img" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

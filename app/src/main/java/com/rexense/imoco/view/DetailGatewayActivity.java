@@ -76,10 +76,10 @@ public class DetailGatewayActivity extends DetailActivity {
 
             LinearLayout rl = (LinearLayout)findViewById(R.id.detailGatewayLlMain);
             if(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
-                rl.setBackgroundColor(Color.rgb(0xFC, 0x7C, 0x23));
+                rl.setBackgroundColor(getResources().getColor(R.color.topic_color1));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
             } else {
-                rl.setBackgroundColor(Color.rgb(0xF1, 0x97, 0x25));
+                rl.setBackgroundColor(getResources().getColor(R.color.topic_color2));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
             }
         }
@@ -199,7 +199,8 @@ public class DetailGatewayActivity extends DetailActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(DetailGatewayActivity.this, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey, mDeviceList.get(position).status, mDeviceList.get(position).nickName);
+                ActivityRouter.toDetail(DetailGatewayActivity.this, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
             }
         }
     };
