@@ -97,19 +97,6 @@ public class IndexFragment1 extends BaseFragment {
 
     private ImageView imgAdd, imgGrid, imgList;
 
-    @Subscribe
-    public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
-        startGetDeviceList();
-    }
-    @Subscribe
-    public void onRefreshRoomDevice(RefreshRoomDevice refreshRoomDevice){
-        startGetRoomList();
-    }
-    @Subscribe
-    public void onRefreshRoomName(RefreshRoomName refreshRoomName){
-        startGetRoomList();
-    }
-
     @Override
     public void onDestroyView() {
         // 删除实时数据回调处理器
@@ -117,6 +104,7 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
+        // 注销事件总线
         EventBus.getDefault().unregister(this);
         mUnbinder.unbind();
         super.onDestroyView();
@@ -124,6 +112,7 @@ public class IndexFragment1 extends BaseFragment {
 
     @Override
     protected int setLayout() {
+        // 注册事件总线
         EventBus.getDefault().register(this);
         return R.layout.fragment_index1;
     }
@@ -354,9 +343,6 @@ public class IndexFragment1 extends BaseFragment {
 
         // 刷新房间列表数据
         this.syncRoomListData();
-
-        // 刷新一键场景列表数据
-        this.startGetSceneList();
     }
 
     // 设置场景水平列表
@@ -608,22 +594,6 @@ public class IndexFragment1 extends BaseFragment {
                         Logger.d("HomeId is " + SystemParameter.getInstance().getHomeId());
                     }
                     break;
-                case Constant.MSG_CALLBACK_QUERYSCENELIST:
-                    // 处理获取场景列表数据
-                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
-                    if (sceneList != null && sceneList.scenes != null) {
-                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            mSceneList.add(item);
-                        }
-                        if (sceneList.scenes.size() >= sceneList.pageSize) {
-                            // 数据没有获取完则获取下一页数据
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                        } else {
-                            // 数据获取完则设置场景列表数据
-                            setSceneList(mSceneList);
-                        }
-                    }
-                    break;
                 case Constant.MSG_CALLBACK_GETHOMELIST:
                     // 处理获取家列表数据
                     EHomeSpace.homeListEntry homeList = CloudDataParser.processHomeList((String) msg.obj);
@@ -655,11 +625,29 @@ public class IndexFragment1 extends BaseFragment {
                             mHomeSpaceManager.getHomeRoomList(SystemParameter.getInstance().getHomeId(), roomList.pageNo + 1, mRoomPageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             syncRoomListData();
-                            // 数据获取完则开始获取设备列表数据
-                            startGetDeviceList();
+                            // 开始获取场景列表数据
+                            startGetSceneList();
                             mLblHomeDescription.setText(String.format(getString(R.string.main_home_description), SystemParameter.getInstance().getHomeName(), HomeSpaceManager.getRoomBufferData().size()));
                         }
                     }
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
+                    // 处理获取场景列表数据
+                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    if (sceneList != null && sceneList.scenes != null) {
+                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                            mSceneList.add(item);
+                        }
+                        if (sceneList.scenes.size() >= sceneList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        } else {
+                            // 数据获取完则设置场景列表数据
+                            setSceneList(mSceneList);
+                        }
+                    }
+                    // 数据获取完则开始获取设备列表数据
+                    startGetDeviceList();
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
@@ -760,5 +748,31 @@ public class IndexFragment1 extends BaseFragment {
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)){
             this.syncRoomListData();
         }
+    }
+
+    // 订阅刷新手动执行场景列表数据事件
+    @Subscribe
+    public void onRefreshSceneListData(EEvent eventEntry){
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)){
+            this.startGetSceneList();
+        }
+    }
+
+    // 订阅共享设备成功事件
+    @Subscribe
+    public void shareDeviceSuccess(ShareDeviceSuccessEvent shareDeviceSuccessEvent){
+        startGetDeviceList();
+    }
+
+    // 订阅刷新房间设备列表数据事件
+    @Subscribe
+    public void onRefreshRoomDevice(RefreshRoomDevice refreshRoomDevice){
+        startGetRoomList();
+    }
+
+    // 订阅刷新房间房间名称事件
+    @Subscribe
+    public void onRefreshRoomName(RefreshRoomName refreshRoomName){
+        startGetRoomList();
     }
 }
