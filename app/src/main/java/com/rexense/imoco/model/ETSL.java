@@ -70,6 +70,30 @@ public class ETSL {
         }
     }
 
+    // 状态时间实体
+    public static class stateTimeEntry {
+        public String name;
+        public String value;
+        public String time;
+
+        // 构造
+        public stateTimeEntry(String productKey, String name, String value, String time) {
+            this.processStateTime(productKey, name, value, time);
+        }
+
+        // 更新
+        public void update(String productKey, String name, String value, String time) {
+            this.processStateTime(productKey, name, value, time);
+        }
+
+        // 处理状态时间
+        private void processStateTime(String productKey, String name, String value, String time){
+            this.name = name;
+            this.value = value;
+            this.time = time;
+        }
+    }
+
     // 状态参数实体
     public static class serviceArgEntry {
         public String name;

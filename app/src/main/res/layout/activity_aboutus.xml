@@ -120,6 +120,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:textColor="@color/black"
+            android:layout_marginRight="9dp"
             android:textSize="@dimen/sp_14"/>
     </RelativeLayout>
     <RelativeLayout

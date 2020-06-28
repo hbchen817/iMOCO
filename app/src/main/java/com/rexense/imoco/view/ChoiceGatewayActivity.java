@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
-import com.rexense.imoco.presenter.AptDeviceList;
 import com.rexense.imoco.presenter.AptGatewayList;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.HomeSpaceManager;

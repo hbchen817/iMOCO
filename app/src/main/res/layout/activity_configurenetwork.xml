@@ -17,14 +17,14 @@
 
         <ImageView
             android:id="@+id/configureNetworkImgSSID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/ssid" />
 
@@ -41,13 +41,13 @@
 
         <ImageView
             android:id="@+id/configureNetworkImgPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="13dp"
             android:layout_marginStart="13dp"
-            android:layout_marginTop="53dp"
+            android:layout_marginTop="56dp"
             android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/pwd"
             android:layout_alignParentStart="true" />

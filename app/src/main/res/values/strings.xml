@@ -101,7 +101,7 @@
     <string name="permitjoin_timeout">长时没有扫描到子设备，请重试！</string>
 
     <string name="devicelist_name">设备名称</string>
-    <string name="devicelist_status">状态: %s</string>
+    <string name="devicelist_status">%s</string>
     <string name="devicelist_action">动作: %s</string>
 
     <string name="room_restaurant">餐厅</string>

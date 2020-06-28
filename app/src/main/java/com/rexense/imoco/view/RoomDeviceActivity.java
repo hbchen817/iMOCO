@@ -17,6 +17,7 @@ import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.presenter.ActivityRouter;
 import com.rexense.imoco.presenter.AptDeviceList;
 import com.rexense.imoco.presenter.CloudDataParser;
+import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.SrlUtils;
@@ -150,8 +151,10 @@ public class RoomDeviceActivity extends BaseActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
+                // 处理owned以在下级页面判断是否可以修改房间
+                int owned = DeviceBuffer.getDeviceOwned(mDeviceList.get(position).iotId);
                 ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
-                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, owned);
             }
         }
     };

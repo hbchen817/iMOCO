@@ -48,6 +48,27 @@ public class AptDeviceList extends BaseAdapter {
 		this.mDeviceList.clear();
 	}
 
+	// 更新数据
+	public void updateData(String iotId, String propertyName, String propertyValue, long timeStamp){
+		boolean isExist = false;
+		EDevice.deviceEntry deviceEntry = null;
+		if(this.mDeviceList.size() > 0){
+			for(EDevice.deviceEntry entry : this.mDeviceList){
+				if(entry.iotId.equalsIgnoreCase(iotId)){
+					isExist = true;
+					deviceEntry = entry;
+					break;
+				}
+			}
+		}
+		if(!isExist){
+			return;
+		}
+
+		deviceEntry.processStateTime(this.mContext, propertyName, propertyValue, timeStamp);
+		this.notifyDataSetChanged();
+	}
+
 	// 返回列表条目数量
 	@Override
 	public int getCount() {
@@ -90,6 +111,10 @@ public class AptDeviceList extends BaseAdapter {
 		} else {
 			viewHolder.name.setTextColor(Color.parseColor("#464645"));
 			viewHolder.status.setTextColor(Color.parseColor("#464645"));
+			// 如果有属性状态则显示属性状态
+			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0){
+				viewHolder.status.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+			}
 		}
 
 		return convertView;

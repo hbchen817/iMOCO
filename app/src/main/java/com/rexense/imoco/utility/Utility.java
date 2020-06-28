@@ -47,6 +47,12 @@ public class Utility {
 		return sdf.format(timeStamp);
 	}
 
+	// 时间戳(毫秒)转换时分字符串(HH:mm)
+	public static String timeStampToHMString(long timeStamp) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		return sdf.format(timeStamp);
+	}
+
 	// 格式字符串(yyyy-MM-dd HH:mm:ss)转换成时间戳(毫秒)
 	public static long formatStringToTimeStamp(String dateTime) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

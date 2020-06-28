@@ -513,6 +513,7 @@ public class CloudDataParser {
         }
         return msgList;
     }
+
     // 处理消息中心共享设备消息列表
     public static List<Visitable> processShareDeviceNoticeList(String cloudData) {
         if(cloudData == null || cloudData.length() == 0){
@@ -544,6 +545,7 @@ public class CloudDataParser {
         }
         return msgList;
     }
+
     // 场景日志列表
     public static List<Visitable> processSceneLogList(String cloudData) {
         if(cloudData == null || cloudData.length() == 0){
@@ -567,12 +569,12 @@ public class CloudDataParser {
         }
         return logList;
     }
+
     // 房间设备列表
     public static List<EDevice.deviceEntry> processRoomDeviceList(String cloudData) {
         if(cloudData == null || cloudData.length() == 0){
             return null;
         }
-        Logger.e(cloudData);
         List<EDevice.deviceEntry> deviceList = new ArrayList<>();
         JSONObject dataJson = JSONObject.parseObject(cloudData);
         JSONArray dataArr = dataJson.getJSONArray("data");

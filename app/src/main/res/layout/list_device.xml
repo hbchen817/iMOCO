@@ -5,10 +5,9 @@
 
 	<RelativeLayout
 		android:id="@+id/deviceListRelItem"
-		android:background="@drawable/background_white_corner"
-		android:layout_marginTop="2dp"
+		android:background="@drawable/shape_frame_item"
 		android:layout_marginLeft="10dp"
-		android:layout_marginRight="6dp"
+		android:layout_marginRight="10dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" >
 

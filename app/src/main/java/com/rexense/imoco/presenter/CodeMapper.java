@@ -113,15 +113,15 @@ public class CodeMapper {
                 // 两路开关状态
                 if (propertyName.equals(CTSL.TWS_P_PowerSwitch_1)) {
                     mapName = context.getString(R.string.twoswitch_state_1);
-                    mapValue = context.getString(R.string.twoswitch_state_off);
+                    mapValue = context.getString(R.string.twoswitch_state_1_off);
                     if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
-                        mapValue = context.getString(R.string.twoswitch_state_on);
+                        mapValue = context.getString(R.string.twoswitch_state_1_on);
                     }
                 } else if (propertyName.equals(CTSL.TWS_P_PowerSwitch_2)) {
                     mapName = context.getString(R.string.twoswitch_state_2);
-                    mapValue = context.getString(R.string.twoswitch_state_off);
+                    mapValue = context.getString(R.string.twoswitch_state_2_off);
                     if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
-                        mapValue = context.getString(R.string.twoswitch_state_on);
+                        mapValue = context.getString(R.string.twoswitch_state_2_on);
                     }
                 }
                 break;

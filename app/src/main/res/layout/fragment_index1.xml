@@ -82,7 +82,7 @@
                 android:id="@+id/mainGrdScene"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:horizontalSpacing="4dp"
+                android:horizontalSpacing="6dp"
                 android:numColumns="auto_fit"
                 android:scrollbars="none"
                 android:stretchMode="spacingWidthUniform" />
@@ -194,7 +194,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="6dp"
             android:layout_toLeftOf="@+id/mainImgList"
             android:src="@drawable/grid_icon" />
 
@@ -224,7 +224,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:dividerHeight="3dp"
+            android:dividerHeight="6dp"
             android:visibility="gone"
             android:horizontalSpacing="1dip">
         </ListView>
@@ -233,8 +233,8 @@
             android:id="@+id/mainGrdDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="10dp"
             android:numColumns="2"/>
 
         <LinearLayout
@@ -264,7 +264,7 @@
         android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
         android:divider="@null"
-        android:dividerHeight="4dp"
+        android:dividerHeight="6dp"
         android:layout_weight="1"
         android:visibility="gone"
         android:horizontalSpacing="1dip">
@@ -285,7 +285,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:dividerHeight="3dp"
+            android:dividerHeight="4dp"
             android:visibility="visible"
             android:horizontalSpacing="1dip">
         </ListView>

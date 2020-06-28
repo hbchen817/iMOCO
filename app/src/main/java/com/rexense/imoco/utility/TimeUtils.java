@@ -13,6 +13,7 @@ public class TimeUtils {
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     public static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH");
+    public static SimpleDateFormat sdfhm = new SimpleDateFormat("HH:mm");
     public static String startDateTime = "2000-01-01 00:00:00";
     public static String startDate = "2000-01-01";
 
@@ -49,6 +50,11 @@ public class TimeUtils {
     public static String getYmdh(long timeStamp){
         Date date = new Date(timeStamp);
         return sdf2.format(date);
+    }
+
+    public static String gethm(long timeStamp){
+        Date date = new Date(timeStamp);
+        return sdfhm.format(date);
     }
 
     public static long getTimeStamp(String ymdStr){

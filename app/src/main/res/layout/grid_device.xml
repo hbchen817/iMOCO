@@ -5,9 +5,9 @@
 
 	<RelativeLayout
 		android:id="@+id/deviceGridRelItem"
-		android:background="@drawable/background_white_corner"
-		android:layout_marginLeft="4dp"
-		android:layout_marginTop="4dp"
+		android:background="@drawable/shape_frame_item"
+		android:layout_marginLeft="6dp"
+		android:layout_marginTop="6dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" >
 
@@ -54,6 +54,52 @@
 			android:layout_marginRight="10dp"
 			android:layout_marginBottom="10dp"
 			android:text="@string/devicelist_status" />
+
+		<TextView
+			android:id="@+id/deviceGridLblState"
+			style="@style/SmallFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/deviceGridLblTime"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="3dp"
+			android:text="@string/devicelist_status" />
+
+		<TextView
+			android:id="@+id/deviceGridLblTime"
+			style="@style/NormalFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@id/deviceGridSpaSpace"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="10dp"
+			android:textStyle="bold"
+			android:alpha="0.5"
+			android:text="13:56" />
+
+		<TextView
+			android:id="@+id/deviceGridLblState1"
+			style="@style/SmallFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/deviceGridLblState2"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="3dp"
+			android:text="@string/devicelist_status" />
+
+		<TextView
+			android:id="@+id/deviceGridLblState2"
+			style="@style/SmallFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@id/deviceGridSpaSpace"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="10dp"
+			android:text="13:56" />
 
 		<Space android:id="@+id/deviceGridSpaSpace"
 			android:layout_alignParentRight="true"

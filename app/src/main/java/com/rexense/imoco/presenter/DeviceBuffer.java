@@ -145,4 +145,13 @@ public class DeviceBuffer {
         }
         return list;
     }
+
+    // 获取设备的Owned
+    public static int getDeviceOwned(String iotId){
+        if(mBuffer.containsKey(iotId)){
+            return mBuffer.get(iotId).owned;
+        } else {
+            return 0;
+        }
+    }
 }

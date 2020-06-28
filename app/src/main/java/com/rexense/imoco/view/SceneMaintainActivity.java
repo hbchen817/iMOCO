@@ -62,7 +62,7 @@ public class SceneMaintainActivity extends BaseActivity {
         TextView operate = (TextView)findViewById(R.id.sceneMaintainLblOperate);
         ImageView icon = (ImageView)findViewById(R.id.sceneMaintainImgIcon);
         this.mLblName = (TextView)findViewById(R.id.sceneMaintainLblName);
-        icon.setBackgroundResource(intent.getIntExtra("sceneModelIcon", 1));
+        icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 
         if(this.mOperateType == CScene.OPERATE_CREATE){
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));

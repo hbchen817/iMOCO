@@ -2,23 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/configproductlistRelItem"
-	android:layout_width="match_parent"
+	android:background="@drawable/shape_frame_item"
+	android:layout_width="wrap_content"
 	android:layout_height="wrap_content" >
 
 	<ImageView
 		android:id="@+id/scanbleLblIcon"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:layout_marginTop="5dp"
+		android:layout_centerVertical="true"
 		android:layout_width="30dp"
 		android:layout_height="30dp"
 		android:layout_marginLeft="10dp"
-		android:layout_marginBottom="5dp"
 		android:src="@drawable/ble"
 		android:contentDescription="@string/contentDescription_null" />
 
 	<TextView android:id="@+id/scanbleLblName"
 		android:layout_width="wrap_content"
+		android:layout_marginTop="8dp"
 		android:layout_alignTop="@+id/scanbleLblIcon"
 		android:layout_height="wrap_content"
 		android:layout_marginLeft="5dp"

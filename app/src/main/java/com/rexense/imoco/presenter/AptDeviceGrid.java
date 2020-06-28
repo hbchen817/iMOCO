@@ -26,7 +26,14 @@ public class AptDeviceGrid extends BaseAdapter {
 		private ImageView icon;
 		private TextView name;
 		private TextView room;
+
 		private TextView status;
+
+		private TextView state;
+		private TextView time;
+
+		private TextView state1;
+		private TextView state2;
 	}
 	private Context mContext;
 	private List<EDevice.deviceEntry> mDeviceList;
@@ -46,6 +53,27 @@ public class AptDeviceGrid extends BaseAdapter {
 	// 清除数据
 	public void clearData() {
 		this.mDeviceList.clear();
+	}
+
+	// 更新数据
+	public void updateData(String iotId, String propertyName, String propertyValue, long timeStamp) {
+		boolean isExist = false;
+		EDevice.deviceEntry deviceEntry = null;
+		if (this.mDeviceList.size() > 0) {
+			for (EDevice.deviceEntry entry : this.mDeviceList) {
+				if (entry.iotId.equalsIgnoreCase(iotId)) {
+					isExist = true;
+					deviceEntry = entry;
+					break;
+				}
+			}
+		}
+		if (!isExist) {
+			return;
+		}
+
+		deviceEntry.processStateTime(this.mContext, propertyName, propertyValue, timeStamp);
+		this.notifyDataSetChanged();
 	}
 
 	// 返回列表条目数量
@@ -76,6 +104,10 @@ public class AptDeviceGrid extends BaseAdapter {
 			viewHolder.name = (TextView) convertView.findViewById(R.id.deviceGridLblName);
 			viewHolder.room = (TextView) convertView.findViewById(R.id.deviceGridLblRoom);
 			viewHolder.status = (TextView) convertView.findViewById(R.id.deviceGridLblStatus);
+			viewHolder.state = (TextView) convertView.findViewById(R.id.deviceGridLblState);
+			viewHolder.time = (TextView) convertView.findViewById(R.id.deviceGridLblTime);
+			viewHolder.state1 = (TextView) convertView.findViewById(R.id.deviceGridLblState1);
+			viewHolder.state2 = (TextView) convertView.findViewById(R.id.deviceGridLblState2);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -86,14 +118,38 @@ public class AptDeviceGrid extends BaseAdapter {
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
 
 		// 如果离线显示为浅灰色
+		viewHolder.state.setVisibility(View.GONE);
+		viewHolder.state1.setVisibility(View.GONE);
+		viewHolder.state2.setVisibility(View.GONE);
+		viewHolder.time.setVisibility(View.GONE);
 		if(this.mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
 			viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
 			viewHolder.room.setTextColor(Color.parseColor("#AAAAAA"));
+			viewHolder.status.setVisibility(View.VISIBLE);
 			viewHolder.status.setTextColor(Color.parseColor("#AAAAAA"));
 		} else {
 			viewHolder.name.setTextColor(Color.parseColor("#464645"));
 			viewHolder.room.setTextColor(Color.parseColor("#464645"));
+			viewHolder.status.setVisibility(View.VISIBLE);
 			viewHolder.status.setTextColor(Color.parseColor("#464645"));
+			// 如果有属性状态则显示属性状态
+			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0){
+				viewHolder.status.setVisibility(View.GONE);
+				// 只有一种状态的处理
+				if(this.mDeviceList.get(position).stateTimes.size() == 1){
+					viewHolder.state.setVisibility(View.VISIBLE);
+					viewHolder.time.setVisibility(View.VISIBLE);
+					viewHolder.state.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+					viewHolder.time.setText(this.mDeviceList.get(position).stateTimes.get(0).time);
+				}
+				// 有多种状态的处理
+				if(this.mDeviceList.get(position).stateTimes.size() >= 2){
+					viewHolder.state1.setVisibility(View.VISIBLE);
+					viewHolder.state2.setVisibility(View.VISIBLE);
+					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
+					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+				}
+			}
 		}
 
 		return convertView;

@@ -10,11 +10,18 @@
 
     <include layout="@layout/include_title" />
 
-    <ImageView
+    <com.rexense.imoco.widget.ComRoundCornerImageView
         android:id="@+id/sceneMaintainImgIcon"
         android:layout_width="match_parent"
-        android:background="@drawable/scene_unmanned_off"
-        android:layout_height="130dp" />
+        android:src="@drawable/scene_unmanned_off"
+        android:layout_height="130dp"
+        android:scaleType="centerCrop"
+        app:left_top_radius="10dp"
+        app:right_top_radius="10dp"
+        app:left_bottom_radius="10dp"
+        app:right_bottom_radius="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -81,7 +88,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/shape_frame_txt">
+        android:background="@drawable/shape_button">
 
         <Space
             android:id="@+id/sceneMaintainSpaNull"

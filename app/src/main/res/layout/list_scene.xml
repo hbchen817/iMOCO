@@ -5,19 +5,18 @@
 
 	<RelativeLayout
 		android:id="@+id/sceneListRelItem"
-		android:background="@drawable/background_white_corner"
-		android:layout_marginTop="2dp"
+		android:background="@drawable/shape_frame_item"
 		android:layout_marginLeft="10dp"
-		android:layout_marginRight="4dp"
+		android:layout_marginRight="10dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content" >
 
 		<ImageView
 			android:id="@+id/sceneListImgIcon"
-			android:layout_marginTop="5dp"
 			android:layout_width="30dp"
 			android:layout_height="30dp"
 			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
 			android:layout_marginLeft="10dp"
 			android:src="@drawable/tab_2_press"
 			android:contentDescription="@string/contentDescription_null"/>
@@ -27,7 +26,7 @@
 			style="@style/NormalFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignTop="@+id/sceneListImgIcon"
+			android:layout_marginTop="5dp"
 			android:layout_toRightOf="@+id/sceneListImgIcon"
 			android:layout_marginLeft="10dp"
 			android:text="@string/scenename" />
@@ -45,7 +44,7 @@
 		<TextView
 			android:id="@+id/sceneListLblDelete"
 			style="@style/NormalFontStyle"
-			android:layout_marginTop="4dp"
+			android:layout_centerVertical="true"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
 			android:gravity="center"
@@ -57,7 +56,6 @@
 
 		<ImageView
 			android:id="@+id/sceneListImgEdit"
-			android:layout_marginTop="4dp"
 			android:layout_width="30dp"
 			android:layout_height="30dp"
 			android:layout_alignParentRight="true"

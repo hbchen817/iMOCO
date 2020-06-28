@@ -53,13 +53,12 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:background="@color/background_main"
+        android:background="@color/appbgcolor"
         android:layout_width="fill_parent"
         android:layout_height="30dp">
 
         <TextView
             android:id="@+id/detailGatewayLblCount"
-            android:background="@drawable/shape_frame"
             android:layout_width="wrap_content"
             android:gravity="center_vertical|left"
             android:layout_height="wrap_content"
@@ -76,19 +75,19 @@
 
     <ListView
         android:id="@+id/detailGatewayLstSubdevice"
-        android:background="@color/background_main"
+        android:background="@color/appbgcolor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:divider="@null"
-        android:dividerHeight="3dp"
+        android:dividerHeight="6dp"
         android:horizontalSpacing="1dip">
     </ListView>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_gravity="center|bottom"
-        android:background="@color/background_main"
+        android:background="@color/appbgcolor"
         android:layout_height="50dp">
 
         <ImageView
@@ -99,7 +98,7 @@
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/shape_add"
+            android:background="@drawable/shape_button"
             android:contentDescription="@string/contentDescription_null" />
 
         <TextView

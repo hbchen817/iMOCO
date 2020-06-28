@@ -1,7 +1,6 @@
 package com.rexense.imoco.view;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,6 +48,7 @@ import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.Utility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,8 +59,6 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -96,19 +94,6 @@ public class IndexFragment1 extends BaseFragment {
     private int mDeviceDisplayType = 1;
 
     private ImageView imgAdd, imgGrid, imgList;
-
-    @Override
-    public void onDestroyView() {
-        // 删除实时数据回调处理器
-        RealtimeDataReceiver.deleteCallbackHandler("MainStatusCallback");
-        RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
-        RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
-        RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
-        // 注销事件总线
-        EventBus.getDefault().unregister(this);
-        mUnbinder.unbind();
-        super.onDestroyView();
-    }
 
     @Override
     protected int setLayout() {
@@ -294,6 +279,19 @@ public class IndexFragment1 extends BaseFragment {
         refreshData();
     }
 
+    @Override
+    public void onDestroyView() {
+        // 删除实时数据回调处理器
+        RealtimeDataReceiver.deleteCallbackHandler("MainStatusCallback");
+        RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
+        RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
+        RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
+        // 注销事件总线
+        EventBus.getDefault().unregister(this);
+        mUnbinder.unbind();
+        super.onDestroyView();
+    }
+
     //刷新数据
     private void refreshData(){
         // 刷新设备数据
@@ -340,9 +338,6 @@ public class IndexFragment1 extends BaseFragment {
                 shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE: View.GONE);
             }
         }
-
-        // 刷新房间列表数据
-        this.syncRoomListData();
     }
 
     // 设置场景水平列表
@@ -721,13 +716,10 @@ public class IndexFragment1 extends BaseFragment {
                     // 处理属性通知
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     if (propertyEntry != null) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("\r\niotId: " + propertyEntry.iotId);
-                        sb.append("\r\nproductKey: " + propertyEntry.productKey);
                         for (String name : propertyEntry.properties.keySet()) {
-                            sb.append("\r\n" + name + ": " + propertyEntry.properties.get(name));
+                            mAptDeviceGrid.updateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
+                            mAptDeviceList.updateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
                         }
-                        Logger.d("收到属性：" + sb.toString());
                     }
                     break;
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
