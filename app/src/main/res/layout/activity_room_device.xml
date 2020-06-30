@@ -25,7 +25,7 @@
             android:id="@+id/recycle_view"
             android:layout_width="match_parent"
             android:divider="@null"
-            android:dividerHeight="4dp"
+            android:dividerHeight="6dp"
             android:layout_height="wrap_content"/>
 
         <com.scwang.smartrefresh.layout.footer.ClassicsFooter

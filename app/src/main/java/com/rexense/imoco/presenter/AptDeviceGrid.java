@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
+import com.rexense.imoco.model.EHomeSpace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +56,8 @@ public class AptDeviceGrid extends BaseAdapter {
 		this.mDeviceList.clear();
 	}
 
-	// 更新数据
-	public void updateData(String iotId, String propertyName, String propertyValue, long timeStamp) {
+	// 更新状态数据
+	public void updateStateData(String iotId, String propertyName, String propertyValue, long timeStamp) {
 		boolean isExist = false;
 		EDevice.deviceEntry deviceEntry = null;
 		if (this.mDeviceList.size() > 0) {
@@ -74,6 +75,24 @@ public class AptDeviceGrid extends BaseAdapter {
 
 		deviceEntry.processStateTime(this.mContext, propertyName, propertyValue, timeStamp);
 		this.notifyDataSetChanged();
+	}
+
+	// 更新房间数据
+	public void updateRoomData(String iotId) {
+		if (this.mDeviceList.size() > 0) {
+			for (EDevice.deviceEntry entry : this.mDeviceList) {
+				if (entry.iotId.equalsIgnoreCase(iotId)) {
+					// 获取房间信息
+					EHomeSpace.roomEntry roomEntry = DeviceBuffer.getDeviceRoomInfo(iotId);
+					if(roomEntry != null){
+						entry.roomId = roomEntry.roomId;
+						entry.roomName = roomEntry.name;
+						this.notifyDataSetChanged();
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	// 返回列表条目数量
@@ -144,6 +163,7 @@ public class AptDeviceGrid extends BaseAdapter {
 				}
 				// 有多种状态的处理
 				if(this.mDeviceList.get(position).stateTimes.size() >= 2){
+					// 目前只显示前两种状态
 					viewHolder.state1.setVisibility(View.VISIBLE);
 					viewHolder.state2.setVisibility(View.VISIBLE);
 					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);

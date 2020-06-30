@@ -27,14 +27,20 @@ public class ItemMsgCenterViewHolder extends BaseViewHolder<ItemMsgCenter> {
         View btn_view = getView(R.id.btn_view);
 
         title.setText(model.getTitle());
-        content.setText(model.getContent());
+        if(title.getText().toString().equals("")){
+            title.setText(model.getContent());
+            content.setVisibility(View.GONE);
+        } else {
+            content.setText(model.getContent());
+        }
         time.setText(model.getTime());
         btn_view.setVisibility(model.isShowBtnView()?View.VISIBLE:View.GONE);
         int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
-        if (imgSrcId!=0){
+        if (imgSrcId != 0){
             msg_img.setImageResource(imgSrcId);
         }else {
-            Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+            //Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+            msg_img.setImageResource(R.drawable.message_default);
         }
 
         agree_btn.setTag(position);

@@ -189,7 +189,8 @@ public class AddRoomDeviceActivity extends BaseActivity {
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
         params.width = getResources().getDimensionPixelOffset(R.dimen.dp_280);
-        dialog.getWindow().setAttributes(params);//这行要放在dialog.show()之后才有效
+        //这行要放在dialog.show()之后才有效
+        dialog.getWindow().setAttributes(params);
 
         View confirmView = view.findViewById(R.id.confirm_btn);
         View cancelView = view.findViewById(R.id.cancel_btn);
@@ -234,5 +235,4 @@ public class AddRoomDeviceActivity extends BaseActivity {
             return false;
         }
     });
-
 }

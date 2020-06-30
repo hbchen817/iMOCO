@@ -31,6 +31,7 @@
     <string name="dialog_unbind">你真的要解绑定当前设备吗？</string>
     <string name="dialog_unbind_ok">当前设备已经解除绑定。</string>
     <string name="dialog_unlogin">系统没有登录，请先登录。</string>
+    <string name="dialog_edit_title">修改标题</string>
 
     <string name="longconnection_disconnected">与服务器连接断开,不能发送命令。</string>
 
@@ -68,6 +69,8 @@
 
     <string name="productguidance_title">添加产品引导</string>
     <string name="productguidance_opearte">配网操作</string>
+    <string name="productguidance_read">我已经阅读</string>
+    <string name="productguidance_hint">请点选我已经阅读然后操作。</string>
 
     <string name="wifi_title">请选择WiFi</string>
     <string name="wifi_name">SSID</string>
@@ -176,7 +179,7 @@
 
     <string name="moredevice_function">功能设置</string>
     <string name="moredevice_normal">通用信息</string>
-    <string name="moredevice_name">备注名称:</string>
+    <string name="moredevice_name">设备名称:</string>
     <string name="moredevice_namehint">请录入备注名称:</string>
     <string name="moredevice_bindtime">绑定时间:</string>
     <string name="moredevice_room">所属房间:</string>
@@ -194,6 +197,7 @@
     <string name="moregateway_bellvolume">门铃音量</string>
     <string name="moregateway_bellmusicid">门铃音乐</string>
     <string name="moregateway_alarmvolume">报警音量</string>
+    <string name="moregateway_editname">修改设备名称</string>
 
     <string name="messagerecord_title">消息记录</string>
     <string name="messagerecord_is">为</string>
@@ -389,7 +393,7 @@
 
     <string name="room_name">房间名称</string>
     <string name="room_name_update">修改房间名称</string>
-    <string name="room_device_add">添加设备</string>
+    <string name="room_device_add">修改</string>
     <string name="room_device_update_success">房间设备更新成功</string>
     <string name="room_name_update_success">房间名称修改成功</string>
     <string name="devices_not_belong_this_room">不在此房间的设备</string>

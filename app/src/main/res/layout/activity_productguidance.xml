@@ -23,17 +23,36 @@
         android:layout_height="wrap_content"
         style="@style/NormalFontStyle"
         android:singleLine="false"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:text="TextView" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <CheckBox android:id="@+id/productGuidanceChbRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/productguidance_read"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:visibility="gone"
+            style="@style/NormalFontStyle"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_gravity="center|bottom"
         android:layout_height="50dp"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="35dp">
+        android:layout_marginRight="20dp">
 
         <ImageView
             android:id="@+id/productGuidanceImgOperate"
@@ -41,7 +60,7 @@
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/shape"
+            android:background="@drawable/shape_button"
             android:contentDescription="@string/contentDescription_null" />
 
         <TextView

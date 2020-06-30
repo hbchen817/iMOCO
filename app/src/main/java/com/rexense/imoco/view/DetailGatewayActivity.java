@@ -229,6 +229,12 @@ public class DetailGatewayActivity extends DetailActivity {
         this.mLblAarmMode.setOnClickListener(this.armModeClick);
         this.mLblAarmModeClick.setOnClickListener(this.armModeClick);
 
+        // 共享网关不能添加子设备
+        if(this.mOwned == 0){
+            RelativeLayout rlAdd = (RelativeLayout)findViewById(R.id.detailGatewayRlAdd);
+            rlAdd.setVisibility(View.GONE);
+        }
+
         // 添加子设备处理
         OnClickListener onAddClickListener = new OnClickListener(){
             @Override

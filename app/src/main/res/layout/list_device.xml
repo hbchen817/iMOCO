@@ -31,6 +31,16 @@
 			android:layout_marginLeft="10dp"
 			android:text="@string/devicelist_name" />
 
+		<TextView android:id="@+id/devicelistLblRoom"
+			android:layout_alignTop="@+id/deviceListLblName"
+			android:layout_width="wrap_content"
+			android:layout_marginTop="3dp"
+			android:layout_marginRight="20dp"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:text="@string/room_livingroom"
+			style="@style/SmallFontStyle"/>
+
 		<TextView android:id="@+id/devicelistLblStatus"
 			android:layout_below="@+id/deviceListLblName"
 			android:layout_width="wrap_content"

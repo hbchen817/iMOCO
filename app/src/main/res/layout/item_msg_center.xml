@@ -10,45 +10,47 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/dp_14"
-        android:paddingHorizontal="@dimen/dp_12">
+        android:paddingVertical="@dimen/dp_7"
+        android:paddingHorizontal="@dimen/dp_6">
+
         <ImageView
             android:id="@+id/msg_img"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:layout_centerVertical="true"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_50"
-            android:layout_marginRight="@dimen/dp_60"
+            android:layout_marginRight="@dimen/dp_10"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sp_16"
-                android:textColor="@color/black"
+                style="@style/NormalFontStyle"
                 android:text="消息标题"/>
+
             <TextView
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_4"
-                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/dp_2"
+                style="@style/SmallFontStyle"
                 android:text="消息内容"/>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_marginTop="@dimen/dp_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="2018-12-12 12:12:12"
+                style="@style/SmallFontStyle"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="@dimen/dp_60"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_centerVertical="true"
-            android:textColor="@color/fontgrey"
-            android:layout_alignParentRight="true"
-            android:text="2018-12-12 12:12:12"
-            android:textSize="@dimen/sp_12"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -86,6 +88,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_0_5"
-        android:layout_marginLeft="@dimen/dp_60"
         android:background="@color/appbgcolor"/>
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class ProductGuidanceActivity extends BaseActivity {
     private TextView mGuidanceCopywriting;
     private TextView mOperateCopywriting;
     private ImageView mOperateIcon;
+    private CheckBox mChbIsRead;
     private int mStepCount, mCurrentStepIndex;
 
     // 数据处理器
@@ -85,6 +87,11 @@ public class ProductGuidanceActivity extends BaseActivity {
 
         // 引导完作后的处理
         if(this.mCurrentStepIndex >= this.mStepCount) {
+            if(!mChbIsRead.isChecked()){
+                Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
+                return;
+            }
+
             if(this.mNodeType == Constant.DEVICETYPE_GATEWAY) {
                 // 选中的是网关则进入扫描蓝牙设备
                 Intent intent = new Intent(ProductGuidanceActivity.this, ScanBLEActivity.class);
@@ -121,6 +128,9 @@ public class ProductGuidanceActivity extends BaseActivity {
         // 加载引导内容
         this.mGuidanceCopywriting.setText(this.mGuidances.get(stepIndex).dnCopywriting);
         this.mOperateCopywriting.setText(this.mGuidances.get(stepIndex).buttonCopywriting);
+        if(this.mCurrentStepIndex == this.mStepCount - 1) {
+            this.mChbIsRead.setVisibility(View.VISIBLE);
+        }
         Glide.with(ProductGuidanceActivity.this).load(this.mGuidances.get(stepIndex).dnGuideIcon).into(this.mGuidanceIcon);
     }
 
@@ -142,6 +152,7 @@ public class ProductGuidanceActivity extends BaseActivity {
         this.mGuidanceIcon = (ImageView)findViewById(R.id.productGuidanceImgIcon);
         this.mGuidanceIcon.setImageResource(ImageProvider.genProductIcon(this.mProductKey));
         this.mGuidanceCopywriting = (TextView)findViewById(R.id.productGuidanceLblCopywriting);
+        this.mChbIsRead = (CheckBox)findViewById(R.id.productGuidanceChbRead);
 
         this.mOperateCopywriting = (TextView)findViewById(R.id.productGuidanceLblOperate);
         this.mOperateIcon = (ImageView)findViewById(R.id.productGuidanceImgOperate);

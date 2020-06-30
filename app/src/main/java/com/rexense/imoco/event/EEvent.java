@@ -6,11 +6,17 @@ package com.rexense.imoco.event;
  * Description: 事件实体
  */
 public class EEvent {
-    // 刷新数据实体
+    // 名称
     public String name;
+    // 参数
+    public String parameter;
 
     // 构造
     public EEvent(String name) {
         this.name = name;
+    }
+    public EEvent(String name, String parameter) {
+        this.name = name;
+        this.parameter = parameter;
     }
 }

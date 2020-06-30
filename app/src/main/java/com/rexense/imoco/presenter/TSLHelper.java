@@ -138,6 +138,7 @@ public class TSLHelper {
                 item = propertyItems.getJSONObject(key);
                 if(item != null){
                     propertyEntry.addProperty(key, item.getString("value"));
+                    propertyEntry.addTime(key, item.getLong("time"));
                 }
             }
         }

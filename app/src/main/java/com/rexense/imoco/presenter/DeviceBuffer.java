@@ -154,4 +154,16 @@ public class DeviceBuffer {
             return 0;
         }
     }
+
+    // 获取设备的房间信息
+    public static EHomeSpace.roomEntry getDeviceRoomInfo(String iotId){
+        if(mBuffer.containsKey(iotId)){
+            EHomeSpace.roomEntry roomEntry = new EHomeSpace.roomEntry();
+            roomEntry.roomId = mBuffer.get(iotId).roomId;
+            roomEntry.name = mBuffer.get(iotId).roomName;
+            return roomEntry;
+        } else {
+            return null;
+        }
+    }
 }

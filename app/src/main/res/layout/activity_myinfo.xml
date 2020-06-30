@@ -34,8 +34,7 @@
         android:id="@+id/nick_name_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
+        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView
@@ -64,8 +63,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
+        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView
@@ -90,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_30"
-        android:background="@color/white"
+        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView
@@ -111,8 +109,7 @@
         android:id="@+id/delete_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_0_5"
-        android:background="@color/white"
+        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView
@@ -135,15 +132,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_30"
-        android:background="@color/white"
+        android:background="@drawable/shape_button"
         android:paddingHorizontal="@dimen/dp_14"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:paddingVertical="@dimen/dp_12">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="@color/red"
-            android:textSize="@dimen/sp_14"
+            style="@style/NormalWhiteFontStyle"
             android:text="退出登录"/>
     </RelativeLayout>
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,6 +47,8 @@ public class RoomDeviceActivity extends BaseActivity {
     ListView mListDevice;
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
+    @BindView(R.id.iv_toolbar_right)
+    ImageView ivToolbarRight;
 
     private HomeSpaceManager homeSpaceManager;
     private int page = 1;
@@ -99,8 +102,8 @@ public class RoomDeviceActivity extends BaseActivity {
         roomId = getIntent().getStringExtra("roomId");
         roomName = getIntent().getStringExtra("roomName");
         tvToolbarTitle.setText(roomName);
-        tvToolbarRight.setText(getString(R.string.room_device_add));
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        ivToolbarRight.setImageResource(R.drawable.more_default);
+        ivToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity,AddRoomDeviceActivity.class);

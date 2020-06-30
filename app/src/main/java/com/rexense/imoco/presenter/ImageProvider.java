@@ -15,7 +15,7 @@ public class ImageProvider {
     // 生成产品图标
     public static int genProductIcon(String productKey) {
         if (productKey == null){
-            return R.drawable.icon_gateway;
+            return 0;
         }
         switch (productKey) {
             case CTSL.PK_GATEWAY:
@@ -41,7 +41,7 @@ public class ImageProvider {
             default:
                 break;
         }
-        return R.drawable.icon_gateway;
+        return 0;
     }
 
     // 生成房间图标

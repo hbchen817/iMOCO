@@ -20,4 +20,10 @@ public class RefreshData {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA);
         EventBus.getDefault().post(event);
     }
+
+    // 刷新设备列表房间数据
+    public static void refreshDeviceListRoomData(String iotId){
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA, iotId);
+        EventBus.getDefault().post(event);
+    }
 }

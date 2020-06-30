@@ -3,14 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/dp_14">
+        android:background="@drawable/shape_frame_item"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:padding="@dimen/dp_7">
         <ImageView
             android:id="@+id/device_img"
             android:layout_width="@dimen/dp_40"
@@ -33,11 +35,11 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/add_device"/>
-    </RelativeLayout>
 
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_0_5"
-        android:background="@color/appbgcolor"/>
+        android:layout_height="@dimen/dp_6"/>
+
 </LinearLayout>

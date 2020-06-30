@@ -85,6 +85,7 @@
     </ListView>
 
     <RelativeLayout
+        android:id="@+id/detailGatewayRlAdd"
         android:layout_width="match_parent"
         android:layout_gravity="center|bottom"
         android:background="@color/appbgcolor"

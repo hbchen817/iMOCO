@@ -486,7 +486,6 @@ public class CloudDataParser {
         if(cloudData == null || cloudData.length() == 0){
             return null;
         }
-        Logger.e(cloudData);
         List<Visitable> msgList = new ArrayList<>();
         JSONObject dataJson = JSONObject.parseObject(cloudData);
         JSONArray dataArr = dataJson.getJSONArray("data");
@@ -519,7 +518,6 @@ public class CloudDataParser {
         if(cloudData == null || cloudData.length() == 0){
             return null;
         }
-        Logger.e(cloudData);
         List<Visitable> msgList = new ArrayList<>();
         JSONObject dataJson = JSONObject.parseObject(cloudData);
         JSONArray dataArr = dataJson.getJSONArray("data");
@@ -551,7 +549,6 @@ public class CloudDataParser {
         if(cloudData == null || cloudData.length() == 0){
             return null;
         }
-        Logger.e(cloudData);
         List<Visitable> logList = new ArrayList<>();
         JSONObject dataJson = JSONObject.parseObject(cloudData);
         JSONArray dataArr = dataJson.getJSONArray("logs");

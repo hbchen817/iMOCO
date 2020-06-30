@@ -14,7 +14,6 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-
 public class CommonAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private TypeFactory typeFactory;
     private List<Visitable> models;
@@ -65,7 +64,6 @@ public class CommonAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
         return models.size();
     }
-
 
     @Override
     public int getItemViewType(int position) {

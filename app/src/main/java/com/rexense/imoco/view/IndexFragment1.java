@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
@@ -44,6 +46,7 @@ import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
+import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
@@ -88,6 +91,8 @@ public class IndexFragment1 extends BaseFragment {
     private AptDeviceList mAptDeviceList = null;
     private AptDeviceGrid mAptDeviceGrid = null;
     private AptRoomList mAptRoomList = null;
+    private int mGetPropertyIndex = 0;
+    private String mCurrentGetPropertyIotId, mCurrentProductKey;
     private final int mScenePageSize = 50;
     private final int mDevicePageSize = 50;
     private final int mRoomPageSize = 20;
@@ -290,6 +295,19 @@ public class IndexFragment1 extends BaseFragment {
         EventBus.getDefault().unregister(this);
         mUnbinder.unbind();
         super.onDestroyView();
+    }
+
+    // 主动获取设备属性
+    private void getDeviceProperty(){
+        if(this.mDeviceList == null || this.mDeviceList.size() == 0){
+            return;
+        }
+        if(this.mGetPropertyIndex >= this.mDeviceList.size()){
+            return;
+        }
+        this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
+        this.mCurrentProductKey = this.mDeviceList.get(this.mGetPropertyIndex).productKey;
+        new TSLHelper(getActivity()).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     //刷新数据
@@ -671,7 +689,34 @@ public class IndexFragment1 extends BaseFragment {
                         } else {
                             // 数据获取完则同步刷新设备列表数据
                             syncDeviceListData();
+                            // 开始主动获取设备属性
+                            mGetPropertyIndex = 0;
+                            getDeviceProperty();
                         }
+                    } else {
+                        // 开始主动获取设备属性
+                        mGetPropertyIndex = 0;
+                        getDeviceProperty();
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_GETTSLPROPERTY:
+                    // 处理获取属性回调
+                    ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                    JSONObject items = JSON.parseObject((String)msg.obj);
+                    if(items != null) {
+                        TSLHelper.parseProperty(mCurrentProductKey, items, propertyEntry);
+                        propertyEntry.iotId = mCurrentGetPropertyIotId;
+                        if (propertyEntry != null) {
+                            for (String name : propertyEntry.properties.keySet()) {
+                                if(propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)){
+                                    mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                                    mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                                }
+                            }
+                        }
+                        // 继续获取
+                        mGetPropertyIndex++;
+                        getDeviceProperty();
                     }
                     break;
                 default:
@@ -717,8 +762,8 @@ public class IndexFragment1 extends BaseFragment {
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     if (propertyEntry != null) {
                         for (String name : propertyEntry.properties.keySet()) {
-                            mAptDeviceGrid.updateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
-                            mAptDeviceList.updateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
+                            mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
+                            mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
                         }
                     }
                     break;
@@ -734,11 +779,17 @@ public class IndexFragment1 extends BaseFragment {
         }
     });
 
-    // 订阅刷新房间列表数据事件
+    // 订阅刷新房间数据事件
     @Subscribe
-    public void onRefreshRoomListData(EEvent eventEntry){
+    public void onRefreshRoomData(EEvent eventEntry){
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)){
             this.syncRoomListData();
+            return;
+        }
+
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA)){
+            this.mAptDeviceGrid.updateRoomData(eventEntry.parameter);
+            this.mAptDeviceList.updateRoomData(eventEntry.parameter);
         }
     }
 

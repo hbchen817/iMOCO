@@ -31,12 +31,14 @@ public class ETSL {
         public String iotId;
         public String productKey;
         public Map<String, String> properties;
+        public Map<String, Long> times;
 
         // 构造
         public propertyEntry() {
             this.iotId = "";
             this.productKey = "";
             this.properties = new HashMap<String, String>();
+            this.times = new HashMap<String, Long>();
         }
 
         // 添加属性
@@ -44,10 +46,24 @@ public class ETSL {
             this.properties.put(name, value);
         }
 
+        // 添加时间
+        public void addTime(String name, Long time) {
+            this.times.put(name, time);
+        }
+
         // 获取属性值
         public String getPropertyValue(String name) {
             if(this.properties.containsKey(name)) {
                 return this.properties.get(name);
+            } else {
+                return null;
+            }
+        }
+
+        // 获取时间
+        public Long getPropertyTime(String name) {
+            if(this.times.containsKey(name)) {
+                return this.times.get(name);
             } else {
                 return null;
             }

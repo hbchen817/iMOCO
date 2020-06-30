@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -70,6 +72,8 @@ public class MoreGatewayActivity extends BaseActivity {
     private String mNewNickName, mNewRoomId, mNewRoomName;
     private TSLHelper mTSLHelper;
     private TextView currentVersionTv;
+    private int mOwned;
+
     // 更新状态
     protected void updateStatus(ETSL.propertyEntry propertyEntry) {
         if(propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
@@ -147,6 +151,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     // 更新设备缓存房间数据
                     DeviceBuffer.updateDeviceRoom(mIOTId, mNewRoomId, mNewRoomName);
                     RefreshData.refreshRoomListData();
+                    RefreshData.refreshDeviceListRoomData(mIOTId);
                     break;
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调
@@ -197,26 +202,41 @@ public class MoreGatewayActivity extends BaseActivity {
     private void setWheelPicker(int type, String initValue) {
         mSetType = type;
         mWheelPickerValue.setText(initValue + "");
+        // 确认处理
         TextView ok = (TextView)findViewById(R.id.oneItemWheelPickerLblOk);
         ok.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWheelPickerLayout.setVisibility(View.GONE);
                 // 设置网关属性
+                String value = mWheelPickerValue.getText().toString();
                 if(mSetType == 1) {
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundID}, new String[]{mWheelPickerValue.getText().toString()});
+                    if(value.equals("")){
+                        value = "1";
+                    }
+                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundID}, new String[]{value});
                 } else if(mSetType == 2) {
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundVolume}, new String[]{mWheelPickerValue.getText().toString()});
+                    if(value.equals("")){
+                        value = "60";
+                    }
+                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundVolume}, new String[]{value});
                 } else if(mSetType == 3) {
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundID}, new String[]{mWheelPickerValue.getText().toString()});
+                    if(value.equals("")){
+                        value = "1";
+                    }
+                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundID}, new String[]{value});
                 } else if(mSetType == 4) {
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundVolume}, new String[]{mWheelPickerValue.getText().toString()});
+                    if(value.equals("")){
+                        value = "90";
+                    }
+                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundVolume}, new String[]{value});
                 } else if(mSetType == 5) {
                     // 设置设备所属房间
                     mHomeSpaceManager.updateRoomDevice(SystemParameter.getInstance().getHomeId(), mNewRoomId, mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
             }
         });
+        // 取消处理
         TextView cancel = (TextView)findViewById(R.id.oneItemWheelPickerLblCancel);
         cancel.setOnClickListener(new OnClickListener() {
             @Override
@@ -256,6 +276,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     n++;
                 }
             }
+            // 滑轮滚动处理
             mWheelPicker.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(WheelPicker picker, Object data, int position) {
@@ -266,6 +287,15 @@ public class MoreGatewayActivity extends BaseActivity {
                     }
                 }
             });
+
+            // 如果房间没有初始值则默认选择第一项
+            if(mSetType == 5 && initValue.equals("")) {
+                initIndex = 0;
+                mNewRoomId = mRoomListEntry.data.get(0).roomId;
+                mNewRoomName = data.get(0);
+                mWheelPickerValue.setText(mNewRoomName);
+            }
+
             // 加载两次数据是为了正确初始选中位置
             for(int i = 0; i < 2; i++) {
                 mWheelPicker.setData(data);
@@ -274,6 +304,47 @@ public class MoreGatewayActivity extends BaseActivity {
             mWheelPicker.invalidate();
             this.mWheelPickerLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    // 显示设备名称修改对话框
+    private void showDeviceNameDialogEdit() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        final View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+        TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
+        titleTv.setText(getString(R.string.moregateway_editname));
+        final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
+        nameEt.setText(this.mLblNewNickName.getText().toString());
+        final android.app.Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = getResources().getDimensionPixelOffset(R.dimen.dp_320);
+        //这行要放在dialog.show()之后才有效
+        dialog.getWindow().setAttributes(params);
+
+        View confirmView = view.findViewById(R.id.dialogEditLblConfirm);
+        View cancelView = view.findViewById(R.id.dialogEditLblCancel);
+        confirmView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameStr = nameEt.getText().toString().trim();
+                if (!nameStr.equals("")){
+                    dialog.dismiss();
+                    mNewNickName = nameEt.getText().toString();
+                    // 设置设备昵称
+                    mUserCenter.setDeviceNickName(mIOTId, mNewNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                }
+            }
+        });
+        cancelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
     }
 
     @Subscribe
@@ -291,8 +362,9 @@ public class MoreGatewayActivity extends BaseActivity {
         this.mProductKey = intent.getStringExtra("productKey");
         this.mName = intent.getStringExtra("name");
 
-        // 分享设备不允许修改房间，故不显示
-        if(intent.getIntExtra("owned", 0) == 0){
+        // 分享设备不允许修改房间,故不显示
+        this.mOwned = intent.getIntExtra("owned", 0);
+        if(this.mOwned == 0){
             RelativeLayout rlRoom = (RelativeLayout)findViewById(R.id.moreGatewayRLRoom);
             rlRoom.setVisibility(View.GONE);
         }
@@ -318,12 +390,18 @@ public class MoreGatewayActivity extends BaseActivity {
                 finish();
             }
         });
+
+        // 分享设备不能进行升级,故不显示
+        if(this.mOwned == 0){
+            RelativeLayout upgrade = (RelativeLayout)findViewById(R.id.upgrade_view);
+            upgrade.setVisibility(View.GONE);
+        }
         this.upgradeView = findViewById(R.id.upgrade_view);
         upgradeView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (hasNewerVersion){
-                    Intent intent1 = new Intent(mActivity,UpgradeFirmwareActivity.class);
+                    Intent intent1 = new Intent(mActivity, UpgradeFirmwareActivity.class);
                     intent1.putExtra("iotId",mIOTId);
                     intent1.putExtra("productKey",mProductKey);
                     intent1.putExtra("currentVersion",currentVersion);
@@ -334,6 +412,7 @@ public class MoreGatewayActivity extends BaseActivity {
                 }
             }
         });
+
         this.mAlarmBellId = (TextView)findViewById(R.id.moreGatewayLblAlarmBellId);
         this.mBellVolume = (TextView)findViewById(R.id.moreGatewayLblBellVolume);
         this.mBellMusicId = (TextView)findViewById(R.id.moreGatewayLblBellMusicId);
@@ -396,36 +475,14 @@ public class MoreGatewayActivity extends BaseActivity {
         ImageView setAlarmVolume = (ImageView) findViewById(R.id.moreGatewayImgAlarmVolume);
         setAlarmVolume.setOnClickListener(setAlarmVolumeListener);
 
-        // 录入备注名称事件处理
+        // 修改设备名称事件处理
         this.mLblNewNickName = (TextView)findViewById(R.id.moreGatewayLblName);
         this.mLblNewNickName.setText(mName);
         ImageView inputNickName = (ImageView) findViewById(R.id.moreGatewayImgName);
         inputNickName.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText mNickName = new EditText(MoreGatewayActivity.this);
-                mNickName.setText(mLblNewNickName.getText().toString());
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(MoreGatewayActivity.this);
-                mDialogBuilder.setTitle(R.string.moredevice_namehint);
-                mDialogBuilder.setIcon(R.drawable.dialog_prompt);
-                mDialogBuilder.setView(mNickName);
-                mDialogBuilder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mNewNickName = mNickName.getText().toString();
-                        // 设置设备昵称
-                        mUserCenter.setDeviceNickName(mIOTId, mNewNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    }
-                });
-                mDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                mDialogBuilder.setCancelable(true);
-                AlertDialog dialog = mDialogBuilder.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
+                showDeviceNameDialogEdit();
             }
         });
 
@@ -496,7 +553,10 @@ public class MoreGatewayActivity extends BaseActivity {
 
         this.mUserCenter = new UserCenter(this);
 
-        OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        // 非共享设备才能去获取版本号信息
+        if(mOwned > 0){
+            OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
     }
 
     @Override
