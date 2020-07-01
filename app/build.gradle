@@ -13,6 +13,13 @@ android {
             keyAlias = 'ray_ni'
             keyPassword '123456'
         }
+        release {
+            v2SigningEnabled false
+            storeFile file('debug.jks')
+            storePassword '123456'
+            keyAlias = 'ray_ni'
+            keyPassword '123456'
+        }
     }
 
     defaultConfig {
