@@ -1,5 +1,6 @@
 package com.rexense.imoco.presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.presenter.ImageProvider;
 
@@ -31,7 +34,7 @@ public class AptConfigProductList extends BaseAdapter {
 	public AptConfigProductList(Context context, List<EProduct.configListEntry> productList) {
 		super();
 		this.mContext = context;
-		this.mProductList = productList;
+        this.mProductList = productList;
 	}
 
 	// 返回列表条目数量
@@ -57,7 +60,7 @@ public class AptConfigProductList extends BaseAdapter {
 		if (convertView == null) {
 			viewHolder = new ViewHolder();
 			LayoutInflater inflater = LayoutInflater.from(this.mContext);
-			convertView = inflater.inflate(R.layout.list_configproduct, null, true);
+			convertView = inflater.inflate(R.layout.grid_configproduct, null, true);
 			viewHolder.icon = (ImageView) convertView.findViewById(R.id.configProductImgIcon);
 			viewHolder.name = (TextView) convertView.findViewById(R.id.configProductName);
 			convertView.setTag(viewHolder);

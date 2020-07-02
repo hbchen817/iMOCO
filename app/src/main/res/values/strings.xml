@@ -61,10 +61,13 @@
     <string name="login_register">注册</string>
     <string name="login_forgetpassword">忘记密码?</string>
 
-    <string name="configproduct_title">请选择要添加的产品</string>
+    <string name="configproduct_title">请选择设备类型</string>
+    <string name="configproduct_device_type_switch">开关</string>
+    <string name="configproduct_device_type_sensor">传感器</string>
+    <string name="configproduct_device_type_gateway">网关</string>
     <string name="configproduct_productname">产品名称</string>
     <string name="configproduct_productkey">产品Key</string>
-    <string name="configproduct_notproducthint">没有可供添加的产品设备，请到管理后台先配置好再执行添加。</string>
+    <string name="configproduct_notproducthint">没有可供添加的设备类型，请到管理后台先配置好再执行添加。</string>
     <string name="configproduct_gateofflinehint">网关不在线，不能添加子设备。</string>
 
     <string name="productguidance_title">添加产品引导</string>

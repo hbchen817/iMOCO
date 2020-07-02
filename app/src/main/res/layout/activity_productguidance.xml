@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/productGuidanceImgIcon"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="300dp"
         android:layout_gravity="center"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"

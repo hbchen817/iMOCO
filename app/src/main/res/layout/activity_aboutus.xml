@@ -30,6 +30,7 @@
             android:src="@drawable/go"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/privacy_policy_view"
         android:layout_width="match_parent"

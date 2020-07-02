@@ -221,6 +221,9 @@ public class CloudDataParser {
             JSONObject item;
             for(int i = 0; i < data.size(); i++){
                 item = data.getJSONObject(i);
+                if(item.getString("strategy") != null && !item.getString("strategy").equalsIgnoreCase("smart config") && !item.getString("strategy").equalsIgnoreCase("zigbee")){
+                    continue;
+                }
                 EProduct.configGuidanceEntry entry = new EProduct.configGuidanceEntry();
                 entry.id = item.getInteger("id");
                 entry.helpTitle = item.getString("helpTitle");

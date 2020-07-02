@@ -30,11 +30,11 @@
 
         <ImageView
             android:id="@+id/configureNetworkImgChoice"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/configureNetworkImgSSID"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="0dp"
             android:layout_marginLeft="3dp"
             android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/go" />

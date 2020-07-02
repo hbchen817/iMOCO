@@ -5,6 +5,7 @@
     android:descendantFocusability="blocksDescendants"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
     android:orientation="vertical" >
 
     <include layout="@layout/include_title" />
@@ -13,11 +14,12 @@
         android:id="@+id/choiceLstItem"
         android:listSelector="@color/background_list_selector"
         android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/background_list"
-        android:divider="@color/background_list_item_divier"
-        android:dividerHeight="1px"
+        android:divider="@null"
+        android:dividerHeight="6dp"
         android:horizontalSpacing="1dip">
     </ListView>
 
@@ -29,7 +31,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
-        android:background="@drawable/shape_frame_txt">
+        android:background="@drawable/shape_button">
 
         <Space
             android:id="@+id/sceneMaintainSpaNull"

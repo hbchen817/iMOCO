@@ -3,31 +3,33 @@
 	android:id="@+id/configproductlistRelItem"
 	android:background="@drawable/shape_frame_item"
 	android:layout_width="wrap_content"
+	android:layout_margin="@dimen/dp_10"
 	android:layout_height="wrap_content" >
 
 	<ImageView
 		android:id="@+id/configProductImgIcon"
 		android:layout_width="40dp"
 		android:layout_height="40dp"
-		android:layout_alignParentLeft="true"
-		android:layout_centerVertical="true"
-		android:layout_marginLeft="10dp"
+		android:layout_centerHorizontal="true"
 		android:src="@drawable/icon_gateway"
+		android:layout_marginTop="@dimen/dp_3"
 		android:contentDescription="@string/contentDescription_null"/>
 
 	<TextView
 		android:id="@+id/configProductName"
 		style="@style/NormalFontStyle"
+		android:layout_marginTop="@dimen/dp_3"
+		android:paddingLeft="@dimen/dp_10"
+		android:paddingRight="@dimen/dp_10"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_centerVertical="true"
-		android:layout_toRightOf="@+id/configProductImgIcon"
-		android:layout_marginLeft="10dp"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@+id/configProductImgIcon"
 		android:text="@string/configproduct_productname" />
 
 	<Space
 		android:layout_alignParentRight="true"
 		android:layout_width="wrap_content"
-		android:layout_height="52dp" />
+		android:layout_height="74dp" />
 
 </RelativeLayout>

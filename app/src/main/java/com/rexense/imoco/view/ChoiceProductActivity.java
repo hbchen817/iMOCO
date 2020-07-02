@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -9,6 +10,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +18,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -28,6 +31,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.event.ShareDeviceSuccessEvent;
 import com.rexense.imoco.presenter.AptConfigProductList;
 import com.rexense.imoco.presenter.CloudDataParser;
@@ -53,11 +57,100 @@ import androidx.core.content.ContextCompat;
  * Description: 支持配网产品
  */
 public class ChoiceProductActivity extends BaseActivity {
+    private List<EProduct.configListEntry> mConfigProductListAll = null;
     private List<EProduct.configListEntry> mConfigProductList = null;
     private String mGatewayIOTId = "";
     private int mGatewayStatus = 0;
     private int mGatewayNumber = 0;
     private ShareDeviceManager shareDeviceManager;
+    private TextView mLblSwitch, mLblSensor, mLblGateway;
+
+    // 产品类型点击处理
+    private void onProductTypeClick(int productType){
+        if(productType == Constant.PRODUCT_TYPE_SWITCH){
+            this.mLblSwitch.setBackgroundColor(Color.WHITE);
+            this.mLblSensor.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblGateway.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSwitch.setTextColor(getResources().getColor(R.color.topic_color1));
+            this.mLblSensor.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblGateway.setTextColor(getResources().getColor(R.color.normal_font_color));
+        } else if(productType == Constant.PRODUCT_TYPE_SENSOR){
+            this.mLblSwitch.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSensor.setBackgroundColor(Color.WHITE);
+            this.mLblGateway.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSwitch.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblSensor.setTextColor(getResources().getColor(R.color.topic_color1));
+            this.mLblGateway.setTextColor(getResources().getColor(R.color.normal_font_color));
+        } else if(productType == Constant.PRODUCT_TYPE_GATEWAY){
+            this.mLblSwitch.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSensor.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblGateway.setBackgroundColor(Color.WHITE);
+            this.mLblSwitch.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblSensor.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblGateway.setTextColor(getResources().getColor(R.color.topic_color1));
+        }
+
+        if(this.mConfigProductListAll == null){
+            return;
+        }
+
+        mConfigProductList = new ArrayList<EProduct.configListEntry>();
+        for(EProduct.configListEntry entry : this.mConfigProductListAll){
+            if(productType == Constant.PRODUCT_TYPE_SWITCH){
+                // 开关处理
+                if(entry.productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_REMOTECONTRILBUTTON)){
+                    this.mConfigProductList.add(entry);
+                }
+
+            } else if(productType == Constant.PRODUCT_TYPE_SENSOR){
+                // 传感器处理
+                if(entry.productKey.equalsIgnoreCase(CTSL.PK_DOORSENSOR) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_SMOKESENSOR) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_GASSENSOR) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_WATERSENSOR) ||
+                        entry.productKey.equalsIgnoreCase(CTSL.PK_TEMHUMSENSOR)){
+                    this.mConfigProductList.add(entry);
+                }
+            } else if(productType == Constant.PRODUCT_TYPE_GATEWAY){
+                // 网关处理
+                if(entry.productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
+                    this.mConfigProductList.add(entry);
+                }
+            }
+        }
+
+        GridView grdProduct = (GridView)findViewById(R.id.choiceProductGrdProduct);
+        AptConfigProductList adapter = new AptConfigProductList(ChoiceProductActivity.this, mConfigProductList);
+        grdProduct.setAdapter(adapter);
+        grdProduct.setOnItemClickListener(onItemClickProduct);
+    }
+
+    // 产品条目点击事件
+    private OnItemClickListener onItemClickProduct = new OnItemClickListener(){
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // 如果是添加子设备
+            if(mConfigProductList.get(position).nodeType != Constant.DEVICETYPE_GATEWAY) {
+                // 如果网关已经选定但是网关不在线则退出处理
+                if(mGatewayIOTId != null && mGatewayIOTId.length() > 0 && mGatewayStatus != Constant.CONNECTION_STATUS_ONLINE) {
+                    Dialog.confirm(ChoiceProductActivity.this, R.string.dialog_title, getString(R.string.configproduct_gateofflinehint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
+                    return;
+                }
+            }
+
+            // 进入产品配网引导
+            Intent intent = new Intent(ChoiceProductActivity.this, ProductGuidanceActivity.class);
+            intent.putExtra("productKey", mConfigProductList.get(position).productKey);
+            intent.putExtra("productName", mConfigProductList.get(position).name);
+            intent.putExtra("nodeType", mConfigProductList.get(position).nodeType);
+            intent.putExtra("gatewayIOTId", mGatewayIOTId);
+            intent.putExtra("gatewayNumber", mGatewayNumber);
+            startActivity(intent);
+        }
+    };
 
     // 数据处理器
     private Handler processDataHandler = new Handler(new Handler.Callback(){
@@ -66,58 +159,18 @@ public class ChoiceProductActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
-                    mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
-
-                    // 按照节点类型降速排序(即网关排在最前)
-                    if(mConfigProductList != null) {
-                        Collections.sort(mConfigProductList, new Comparator<EProduct.configListEntry>() {
-                            @Override
-                            public int compare(EProduct.configListEntry o1, EProduct.configListEntry o2) {
-                                if(o1.nodeType > o2.nodeType) {
-                                    return -1;
-                                } else if(o1.nodeType == o2.nodeType) {
-                                    return 0;
-                                }
-                                return 1;
-                            }
-                        });
-                    }
-
-                    if(mConfigProductList != null) {
-                        // 如果不包含网关
+                    mConfigProductListAll = CloudDataParser.processConfigProcductList((String)msg.obj);
+                    if(mConfigProductListAll != null) {
+                        // 如果网关已经确定则不包含网关
                         if(mGatewayIOTId != null && mGatewayIOTId.length() > 0) {
-                            int count = mConfigProductList.size() - 1;
+                            int count = mConfigProductListAll.size() - 1;
                             for(int i = count; i >= 0; i--) {
-                                if(mConfigProductList.get(i).nodeType == Constant.DEVICETYPE_GATEWAY) {
-                                    mConfigProductList.remove(i);
+                                if(mConfigProductListAll.get(i).nodeType == Constant.DEVICETYPE_GATEWAY) {
+                                    mConfigProductListAll.remove(i);
                                 }
                             }
                         }
-                        ListView lstProduct = (ListView)findViewById(R.id.choiceProductLstProduct);
-                        AptConfigProductList adapter = new AptConfigProductList(ChoiceProductActivity.this, mConfigProductList);
-                        lstProduct.setAdapter(adapter);
-                        lstProduct.setOnItemClickListener(new OnItemClickListener(){
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                // 如果是添加子设备
-                                if(mConfigProductList.get(position).nodeType != Constant.DEVICETYPE_GATEWAY) {
-                                    // 如果网关已经选定但是网关不在线则退出处理
-                                    if(mGatewayIOTId != null && mGatewayIOTId.length() > 0 && mGatewayStatus != Constant.CONNECTION_STATUS_ONLINE) {
-                                        Dialog.confirm(ChoiceProductActivity.this, R.string.dialog_title, getString(R.string.configproduct_gateofflinehint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
-                                        return;
-                                    }
-                                }
-
-                                // 进入产品配网引导
-                                Intent intent = new Intent(ChoiceProductActivity.this, ProductGuidanceActivity.class);
-                                intent.putExtra("productKey", mConfigProductList.get(position).productKey);
-                                intent.putExtra("productName", mConfigProductList.get(position).name);
-                                intent.putExtra("nodeType", mConfigProductList.get(position).nodeType);
-                                intent.putExtra("gatewayIOTId", mGatewayIOTId);
-                                intent.putExtra("gatewayNumber", mGatewayNumber);
-                                startActivity(intent);
-                            }
-                        });
+                        onProductTypeClick(Constant.PRODUCT_TYPE_SWITCH);
                     }
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEGATWAYLIST:
@@ -156,6 +209,34 @@ public class ChoiceProductActivity extends BaseActivity {
             }
         });
 
+        this.mLblSwitch = (TextView)findViewById(R.id.choiceProductTypeSwitch);
+        this.mLblSensor = (TextView)findViewById(R.id.choiceProductTypeSensor);
+        this.mLblGateway = (TextView)findViewById(R.id.choiceProductTypeGateway);
+
+        // 点击开关处理
+        this.mLblSwitch.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProductTypeClick(Constant.PRODUCT_TYPE_SWITCH);
+            }
+        });
+
+        // 点击传感器处理
+        this.mLblSensor.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProductTypeClick(Constant.PRODUCT_TYPE_SENSOR);
+            }
+        });
+
+        // 点击网关处理
+        this.mLblGateway.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProductTypeClick(Constant.PRODUCT_TYPE_GATEWAY);
+            }
+        });
+
         Intent intent = getIntent();
         this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
         this.mGatewayStatus = intent.getIntExtra("gatewayStatus", Constant.CONNECTION_STATUS_UNABLED);
@@ -163,11 +244,13 @@ public class ChoiceProductActivity extends BaseActivity {
         // 获取支持配网产品列表
         new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
-        // 没有指定网关时获取网关
+        // 没有指定网关时获取网关列表以获取网关的数量
         if(this.mGatewayIOTId == null || this.mGatewayIOTId.length() == 0) {
             new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, 50,mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
         } else {
             this.mGatewayNumber = 1;
+            this.mLblGateway.setVisibility(View.GONE);
+            scanImg.setVisibility(View.GONE);
         }
         shareDeviceManager = new ShareDeviceManager(mActivity);
     }

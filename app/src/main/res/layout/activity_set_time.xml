@@ -17,10 +17,8 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle"
+            android:layout_marginTop="20dp">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -46,10 +44,8 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle"
+            android:layout_marginTop="16dp">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -85,10 +81,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -125,10 +118,8 @@
             android:id="@+id/setTimeRllEveryday"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle"
+            android:layout_marginTop="16dp">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -155,10 +146,7 @@
             android:id="@+id/setTimeRllWorkday"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -183,12 +171,9 @@
 
         <RelativeLayout
             android:id="@+id/setTimeRllWeekend"
+            style="@style/InputItemStyle"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            android:layout_height="40dp">
 
             <TextView
                 style="@style/NormalFontStyle"
@@ -215,10 +200,7 @@
             android:id="@+id/setTimeRllSefldefine"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/background_input">
+            style="@style/InputItemStyle">
 
             <TextView
                 android:id="@+id/setTimeLblSefldefineHint"
@@ -266,8 +248,8 @@
         android:layout_width="match_parent"
         android:layout_gravity="center|bottom"
         android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <ImageView
             android:id="@+id/setTimeImgSave"
@@ -275,7 +257,7 @@
             android:layout_height="35dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/shape"
+            android:background="@drawable/shape_button"
             android:contentDescription="@string/contentDescription_null" />
 
         <TextView
