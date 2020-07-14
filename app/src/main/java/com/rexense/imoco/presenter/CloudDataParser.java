@@ -48,6 +48,7 @@ public class CloudDataParser {
                 EProduct.configListEntry entry = new EProduct.configListEntry();
                 entry.productKey = item.getString("productKey");
                 entry.name = item.getString("name");
+                entry.name = ProductHelper.replaceBrand(entry.name);
                 entry.categoryId = item.getInteger("categoryId");
                 entry.categoryKey = item.getString("categoryKey");
                 entry.categoryName = item.getString("categoryName");
@@ -57,6 +58,7 @@ public class CloudDataParser {
                 list.add(entry);
             }
         }
+
         return list;
     }
 
@@ -161,6 +163,7 @@ public class CloudDataParser {
                 device.roomName = item.getString("roomName");
                 device.productKey = item.getString("productKey");
                 device.productName = item.getString("productName");
+                device.productName = ProductHelper.replaceBrand(device.productName);
                 device.productImage = item.getString("productImage");
                 device.productModel = item.getString("productModel");
                 device.categoryKey = item.getString("categoryKey");
@@ -261,8 +264,10 @@ public class CloudDataParser {
                 EUser.deviceEntry subdevice = new EUser.deviceEntry();
                 subdevice.iotId = item.getString("iotId");
                 subdevice.deviceName = item.getString("deviceName");
+                subdevice.deviceName = ProductHelper.replaceBrand(subdevice.deviceName);
                 subdevice.productKey = item.getString("productKey");
                 subdevice.nickName = item.getString("nickName");
+                subdevice.nickName = ProductHelper.replaceBrand(subdevice.nickName);
                 subdevice.image = item.getString("image");
                 subdevice.status = item.getIntValue("status");
                 subdeviceList.addSubdevice(subdevice);
@@ -294,8 +299,10 @@ public class CloudDataParser {
                 EUser.deviceEntry device = new EUser.deviceEntry();
                 device.iotId = item.getString("iotId");
                 device.deviceName = item.getString("deviceName");
+                device.deviceName = ProductHelper.replaceBrand(device.deviceName);
                 device.productKey = item.getString("productKey");
                 device.productName = item.getString("productName");
+                device.productName = ProductHelper.replaceBrand(device.productName);
                 device.nickName = item.getString("nickName");
                 if(device.nickName == null || device.nickName.length() == 0){
                     device.nickName = device.productName;
@@ -496,17 +503,27 @@ public class CloudDataParser {
             for (int i=0;i<dataArr.size();i++){
                 JSONObject msgJson = dataArr.getJSONObject(i);
                 ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
-                itemMsgCenter.setContent(msgJson.getString("body"));
+                String body = msgJson.getString("body");
+                if(body!=null) {
+                    body = ProductHelper.replaceBrand(body);
+                    itemMsgCenter.setContent(body);
+                }
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
 
                 JSONObject extData = msgJson.getJSONObject("extData");
                 if (extData!=null){
                     String nickName = extData.getString("nickName");
                     if (nickName!=null){
+                        nickName = ProductHelper.replaceBrand(nickName);
                         itemMsgCenter.setTitle(nickName);
+                        itemMsgCenter.setContent(body.replace(nickName, ""));
                     }else {
                         String productName = extData.getString("productName");
-                        itemMsgCenter.setTitle(productName);
+                        if(productName!=null) {
+                            productName = ProductHelper.replaceBrand(productName);
+                            itemMsgCenter.setTitle(productName);
+                            itemMsgCenter.setContent(body.replace(productName, ""));
+                        }
                     }
                     itemMsgCenter.setProductKey(extData.getString("productKey"));
                 }
@@ -528,7 +545,10 @@ public class CloudDataParser {
             for (int i=0;i<dataArr.size();i++){
                 JSONObject msgJson = dataArr.getJSONObject(i);
                 ItemMsgCenter itemMsgCenter = new ItemMsgCenter();
-                itemMsgCenter.setContent(msgJson.getString("description"));
+                String description = msgJson.getString("description");
+                if(description != null){
+                    itemMsgCenter.setContent(ProductHelper.replaceBrand(description));
+                }
                 int status = msgJson.getInteger("status");//-1: 初始化0：同意1：拒绝2：取消3：过期4：抢占5：删除6：发起者已解绑99：异常
                 int isReceiver = msgJson.getInteger("isReceiver");//当前用户是否是共享设备接收者 0否1是
                 itemMsgCenter.setStatus(status);
@@ -536,6 +556,7 @@ public class CloudDataParser {
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
 
                 String productName = msgJson.getString("productName");
+                productName = ProductHelper.replaceBrand(productName);
                 itemMsgCenter.setTitle(productName);
                 itemMsgCenter.setProductImg(msgJson.getString("productImage"));
 
@@ -584,11 +605,13 @@ public class CloudDataParser {
                 EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
                 deviceEntry.iotId = jsonObject.getString("iotId");
                 deviceEntry.deviceName = jsonObject.getString("deviceName");
+                deviceEntry.deviceName = ProductHelper.replaceBrand(deviceEntry.deviceName);
                 deviceEntry.nodeType = jsonObject.getString("nodeType");
                 deviceEntry.nickName = jsonObject.getString("nickName");
                 if(TextUtils.isEmpty(deviceEntry.nickName)){
                     deviceEntry.nickName = jsonObject.getString("productName");
                 }
+                deviceEntry.nickName = ProductHelper.replaceBrand(deviceEntry.nickName);
                 deviceEntry.productKey = jsonObject.getString("productKey");
                 deviceEntry.status = jsonObject.getInteger("status");
                 deviceList.add(deviceEntry);

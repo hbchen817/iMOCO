@@ -73,4 +73,13 @@ public class ProductHelper {
         }
         return name;
     }
+
+    // 替换产品品牌
+    public static String replaceBrand(String sourceContent){
+        if(!SystemParameter.getInstance().getBrand().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow())){
+            return  sourceContent.replace(SystemParameter.getInstance().getBrand(), SystemParameter.getInstance().getBrandShow());
+        } else {
+            return sourceContent;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.sdk.TSL;
 
 /**
@@ -41,6 +42,25 @@ public class ImageProvider {
             default:
                 break;
         }
+
+        // 处理携住设备图标
+        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes")) {
+            switch (productKey) {
+                case "1":
+                    return R.drawable.icon_d3_switch_1;
+                case "2":
+                    return R.drawable.icon_d3_switch_2;
+                case "3":
+                    return R.drawable.icon_d3_switch_3;
+                case "4":
+                    return R.drawable.icon_d3_switch_4;
+                case "5":
+                    return R.drawable.icon_d3_plug;
+                default:
+                    break;
+            }
+        }
+
         return 0;
     }
 

@@ -3,6 +3,10 @@
     <string name="contentDescription_null"></string>
     <string name="app_ver">1.0.2</string>
 
+    <string name="app_brand">iMOCO</string>
+    <string name="app_brand_show">iMOCO</string>
+    <string name="app_is_add_xz_device">No</string>
+
     <string name="rb_tab_one_desc">家</string>
     <string name="rb_tab_two_desc">场景</string>
     <string name="rb_tab_three_desc">我</string>
@@ -74,6 +78,7 @@
     <string name="productguidance_opearte">配网操作</string>
     <string name="productguidance_read">我已经阅读</string>
     <string name="productguidance_hint">请点选我已经阅读然后操作。</string>
+    <string name="productguidance_help">长按开关任意按键5s以上，红色指示灯快闪，网关进入配网状态！</string>
 
     <string name="wifi_title">请选择WiFi</string>
     <string name="wifi_name">SSID</string>

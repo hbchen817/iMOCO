@@ -174,7 +174,9 @@ public class ProductGuidanceActivity extends BaseActivity {
             }
         });
 
-        //获取产品配网引导信息
-        new ProductHelper(this).getGuidanceInformation(this.mProductKey, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
+        if(this.mProductKey.length() > 1){
+            //获取产品配网引导信息
+            new ProductHelper(this).getGuidanceInformation(this.mProductKey, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
+        }
     }
 }

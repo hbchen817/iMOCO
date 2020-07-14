@@ -27,7 +27,7 @@ public class MocoApplication extends AApplication {
         Logger.d("The MultiDex installing completed.");
 
         // 系统参数初始化
-        SystemParameter.initProcess();
+        SystemParameter.initProcess(this);
 
         // 初始化SDK
         Initializer.sdkProcess(this);

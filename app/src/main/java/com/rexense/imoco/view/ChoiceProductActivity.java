@@ -122,6 +122,19 @@ public class ChoiceProductActivity extends BaseActivity {
             }
         }
 
+        //添加携住设备在开关类型中
+        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes") &&
+                productType == Constant.PRODUCT_TYPE_SWITCH){
+            String[] productKeys = new String[]{"1", "2", "3", "4", "5"};
+            String[] names = new String[]{"D3单火1键", "D3单火2键", "D3单火3键", "D3单火4键", "D3智能插座"};
+            for(int i = 0; i < productKeys.length; i++){
+                EProduct.configListEntry entry = new EProduct.configListEntry();
+                entry.productKey = productKeys[i];
+                entry.name = names[i];
+                this.mConfigProductList.add(entry);
+            }
+        }
+
         GridView grdProduct = (GridView)findViewById(R.id.choiceProductGrdProduct);
         AptConfigProductList adapter = new AptConfigProductList(ChoiceProductActivity.this, mConfigProductList);
         grdProduct.setAdapter(adapter);
