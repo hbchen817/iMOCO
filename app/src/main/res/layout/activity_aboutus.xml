@@ -8,11 +8,15 @@
 
     <include layout="@layout/layout_common_toolbar" />
 
+    <Space
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp" />
+
     <RelativeLayout
         android:id="@+id/evaluate_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
         style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
         android:visibility="gone"
@@ -37,7 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/InputItemStyle"
-        android:layout_marginTop="@dimen/dp_10"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
         <TextView
@@ -54,6 +57,7 @@
             android:src="@drawable/go"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/user_deal_view"
         android:layout_width="match_parent"
@@ -75,6 +79,7 @@
             android:src="@drawable/go"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/opensourse_deal_view"
         android:layout_width="match_parent"
@@ -123,6 +128,7 @@
             android:layout_marginRight="9dp"
             android:textSize="@dimen/sp_14"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/aboutus_view"
         android:layout_width="match_parent"
@@ -146,4 +152,5 @@
             android:src="@drawable/go"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
+
 </LinearLayout>

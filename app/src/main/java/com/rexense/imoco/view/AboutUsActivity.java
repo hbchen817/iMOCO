@@ -2,10 +2,12 @@ package com.rexense.imoco.view;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.AppUtils;
 
 import butterknife.BindView;
@@ -28,6 +30,14 @@ public class AboutUsActivity extends BaseActivity {
         setContentView(R.layout.activity_aboutus);
         ButterKnife.bind(this);
         tvToolbarTitle.setText(getString(R.string.fragment3_about_us));
+
+        // 携住App处理
+        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes")){
+            RelativeLayout privacy_policy_view = (RelativeLayout)findViewById(R.id.privacy_policy_view);
+            privacy_policy_view.setVisibility(View.GONE);
+            RelativeLayout user_deal_view = (RelativeLayout)findViewById(R.id.user_deal_view);
+            user_deal_view.setVisibility(View.GONE);
+        }
 
         versionTv.setText(AppUtils.getVersionName(mActivity));
     }
