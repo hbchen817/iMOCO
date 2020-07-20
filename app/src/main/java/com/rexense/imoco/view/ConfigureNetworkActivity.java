@@ -12,12 +12,15 @@ import android.os.IBinder;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.presenter.ConfigureNetwork;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.contract.CBLE;
@@ -209,8 +212,8 @@ public class ConfigureNetworkActivity extends BaseActivity {
                 prcessConfigNetworkProgressHandler.sendMessage(message);
                 mConfigNetworkIsSuccess = true;
 
-                // 在系统参数中标记绑定网关以触发数据刷新
-                SystemParameter.getInstance().setIsRefreshData(true);
+                // 发送刷新设备状态事件
+                RefreshData.refreshDeviceStateData();
 
                 // 中断计时线程
                 if(mTimeThread != null) {
@@ -236,6 +239,15 @@ public class ConfigureNetworkActivity extends BaseActivity {
         this.mProductKey = intent.getStringExtra("productKey");
 
         this.mConfigureNetwork = new ConfigureNetwork(this);
+
+        // 处理关闭键盘
+        LinearLayout ll = findViewById(R.id.configureNetworkLl);
+        ll.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeKeyboard();
+            }
+        });
 
         // 注册GATT广播接收器
         registerReceiver(this.mGattUpdateReceiver, this.mGattUpdateIntentFilter());
@@ -268,6 +280,15 @@ public class ConfigureNetworkActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    // 关闭键盘
+    private void closeKeyboard(){
+        final View view = getWindow().peekDecorView();
+        if (view != null && view.getWindowToken() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     // 初始化处理
     private void initProcess() {
         this.mSSID = (EditText) findViewById(R.id.configureNetworkTxtSSID);
@@ -293,6 +314,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
         OnClickListener configOnClickListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
+                closeKeyboard();
                 sendSSIDAndPassword();
             }
         };

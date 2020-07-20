@@ -46,7 +46,9 @@ public abstract class BaseFragment extends Fragment {
                 }
                 Logger.e(sb.toString());
                 String exceptionInfo = commitFailEntry.exception != null ? commitFailEntry.exception.getMessage() : "";
-                Toast.makeText(getActivity(), String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
+                notifyFailureOrError(1);
             }
             return false;
         }
@@ -69,12 +71,18 @@ public abstract class BaseFragment extends Fragment {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                Toast.makeText(getActivity(), String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
+                notifyFailureOrError(2);
             }
             return false;
         }
     });
     public final String TAG = getClass().getSimpleName();
+
+    // 通知提交失败或响应错误
+    protected void notifyFailureOrError(int type){
+    }
 
     /**
      * Fragment所依赖的Activity的上下文

@@ -2,7 +2,6 @@ package com.rexense.imoco.presenter;
 
 import androidx.multidex.MultiDex;
 
-import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIConfigs;
 import com.aliyun.iot.aep.sdk.framework.AApplication;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.login.oa.OALoginAdapter;

@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,6 +70,8 @@ import butterknife.ButterKnife;
  * @date 2018/7/17
  */
 public class IndexFragment1 extends BaseFragment {
+    private ProgressDialog mProgressDialog = null;
+
     private TextView mLblSceneTitle;
     private SceneManager mSceneManager = null;
     private HorizontalScrollView mHscSceneList;
@@ -97,6 +100,7 @@ public class IndexFragment1 extends BaseFragment {
     private final int mDevicePageSize = 50;
     private final int mRoomPageSize = 20;
     private int mDeviceDisplayType = 1;
+    private boolean mIsContinuouslyGetState = true;
 
     private ImageView imgAdd, imgGrid, imgList;
 
@@ -150,6 +154,7 @@ public class IndexFragment1 extends BaseFragment {
             Message msg = new Message();
             msg.what = Constant.MSG_POSTLOGINPORCESS;
             mAPIDataHandler.sendMessage(msg);
+            this.mProgressDialog = ProgressDialog.show(mActivity, getString(R.string.main_init_hint_title), getString(R.string.main_init_hint), true);
         }
         return view;
     }
@@ -279,6 +284,14 @@ public class IndexFragment1 extends BaseFragment {
     }
 
     @Override
+    protected void notifyFailureOrError(int type){
+        super.notifyFailureOrError(type);
+        if(this.mProgressDialog != null){
+            this.mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         refreshData();
@@ -302,9 +315,34 @@ public class IndexFragment1 extends BaseFragment {
         if(this.mDeviceList == null || this.mDeviceList.size() == 0){
             return;
         }
-        if(this.mGetPropertyIndex >= this.mDeviceList.size()){
+        if(this.mGetPropertyIndex < 0 || this.mGetPropertyIndex >= this.mDeviceList.size()){
             return;
         }
+        this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
+        this.mCurrentProductKey = this.mDeviceList.get(this.mGetPropertyIndex).productKey;
+        new TSLHelper(getActivity()).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+    private void getDeviceProperty(String iotId){
+        if(iotId == null || iotId.length() == 0 || this.mDeviceList == null || this.mDeviceList.size() == 0){
+            return;
+        }
+
+        this.mIsContinuouslyGetState = false;
+        int index = 0;
+        boolean isHas = false;
+        for(EDevice.deviceEntry entry : this.mDeviceList){
+            if(entry.iotId.equalsIgnoreCase(iotId)){
+                this.mGetPropertyIndex = index;
+                isHas = true;
+                break;
+            }
+            index++;
+        }
+
+        if(isHas == false || this.mGetPropertyIndex < 0 || this.mGetPropertyIndex >= this.mDeviceList.size()){
+            return;
+        }
+
         this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
         this.mCurrentProductKey = this.mDeviceList.get(this.mGetPropertyIndex).productKey;
         new TSLHelper(getActivity()).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -470,6 +508,9 @@ public class IndexFragment1 extends BaseFragment {
         this.mAptDeviceList.clearData();
         // 获取家设备列表
         this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        try{
+            Thread.sleep(200);
+        }catch (Exception ex){}
         // 获取用户设备列表
         this.mUserCenter.getDeviceList(1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
@@ -691,11 +732,16 @@ public class IndexFragment1 extends BaseFragment {
                             syncDeviceListData();
                             // 开始主动获取设备属性
                             mGetPropertyIndex = 0;
+                            mIsContinuouslyGetState = true;
                             getDeviceProperty();
+                            if(mProgressDialog != null){
+                                mProgressDialog.dismiss();
+                            }
                         }
                     } else {
                         // 开始主动获取设备属性
                         mGetPropertyIndex = 0;
+                        mIsContinuouslyGetState = true;
                         getDeviceProperty();
                     }
                     break;
@@ -715,8 +761,10 @@ public class IndexFragment1 extends BaseFragment {
                             }
                         }
                         // 继续获取
-                        mGetPropertyIndex++;
-                        getDeviceProperty();
+                        if(mIsContinuouslyGetState){
+                            mGetPropertyIndex++;
+                            getDeviceProperty();
+                        }
                     }
                     break;
                 default:
@@ -734,12 +782,14 @@ public class IndexFragment1 extends BaseFragment {
                 case Constant.MSG_CALLBACK_LNSTATUSNOTIFY:
                     // 处理连接状态通知
                     ERealtimeData.deviceConnectionStatusEntry entry = RealtimeDataParser.processConnectStatus((String) msg.obj);
-                    boolean isFound = false;
                     if (entry != null && mAptDeviceList != null && mDeviceList != null && mDeviceList != null) {
                         for (int i = 0; i < mDeviceList.size(); i++) {
-                            if (mDeviceList.get(i).iotId.equals(entry.iotId)) {
+                            if (mDeviceList.get(i).iotId.equalsIgnoreCase(entry.iotId)) {
                                 mDeviceList.get(i).status = entry.status;
-                                isFound = true;
+                                // 如果变为在线则要重新获取状态
+                                if(entry.status == Constant.CONNECTION_STATUS_ONLINE){
+                                    getDeviceProperty(entry.iotId);
+                                }
                                 break;
                             }
                         }
@@ -747,10 +797,6 @@ public class IndexFragment1 extends BaseFragment {
                         mAptDeviceList.notifyDataSetChanged();
                         mAptDeviceGrid.notifyDataSetChanged();
                         deviceCount();
-                    }
-                    if (!isFound) {
-                        // 开始获取设备列表
-                        startGetDeviceList();
                     }
                     break;
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
@@ -779,23 +825,30 @@ public class IndexFragment1 extends BaseFragment {
         }
     });
 
-    // 订阅刷新房间数据事件
+    // 订阅刷新数据事件
     @Subscribe
     public void onRefreshRoomData(EEvent eventEntry){
+        // 处理刷新房间列表数据
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)){
             this.syncRoomListData();
             return;
         }
 
+        // 处理刷新设备列表房间数据
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA)){
             this.mAptDeviceGrid.updateRoomData(eventEntry.parameter);
             this.mAptDeviceList.updateRoomData(eventEntry.parameter);
+            return;
         }
-    }
 
-    // 订阅刷新手动执行场景列表数据事件
-    @Subscribe
-    public void onRefreshSceneListData(EEvent eventEntry){
+        // 处理刷新设备状态数据
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_STATE_DATA)){
+            // 通过开始获取设备列表来触发获取状态
+            this.startGetDeviceList();
+            return;
+        }
+
+        // 处理刷新手动执行场景列表数据
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)){
             this.startGetSceneList();
         }

@@ -39,8 +39,11 @@ public class ItemMsgCenterViewHolder extends BaseViewHolder<ItemMsgCenter> {
         if (imgSrcId != 0){
             msg_img.setImageResource(imgSrcId);
         }else {
-            //Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
-            msg_img.setImageResource(R.drawable.message_default);
+            if(model.getProductImg() != null && model.getProductImg().length() > 0){
+                Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+            } else {
+                msg_img.setImageResource(R.drawable.notify);
+            }
         }
 
         agree_btn.setTag(position);

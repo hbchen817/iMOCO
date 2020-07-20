@@ -151,7 +151,7 @@ public class MsgCenterFragment extends BaseFragment {
         if (type==1){
             msgCenterManager.getShareNoticeList(page, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }else {
-            msgCenterManager.getMsgList(page,msgTypeArr[type], mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            msgCenterManager.getMsgList(page, msgTypeArr[type], mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
     }
 

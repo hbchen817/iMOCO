@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.presenter.ConfigureNetwork;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
@@ -82,6 +83,10 @@ public class PermitJoinActivity extends BaseActivity {
                     prcessPermitJoinProgressHandler.sendMessage(msg1);
                     Toast.makeText(PermitJoinActivity.this, getString(R.string.permitjoin_success), Toast.LENGTH_LONG).show();
                     mIsJoinSuccess = true;
+
+                    // 发送刷新设备状态事件
+                    RefreshData.refreshDeviceStateData();
+
                     // 中断加网线程
                     if(mJoinThread != null) {
                         if(!mJoinThread.isInterrupted()) {

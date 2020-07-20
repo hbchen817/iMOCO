@@ -39,7 +39,9 @@ public class BaseActivity extends FragmentActivity {
                 }
                 Logger.e(sb.toString());
                 String exceptionInfo = commitFailEntry.exception != null ? commitFailEntry.exception.getMessage() : "";
-                Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
+                //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
+                Toast.makeText(BaseActivity.this, getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
+                notifyFailureOrError(1);
             }
             return false;
         }
@@ -62,11 +64,17 @@ public class BaseActivity extends FragmentActivity {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                Toast.makeText(BaseActivity.this, getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
+                notifyFailureOrError(2);
             }
             return false;
         }
     });
+
+    // 通知提交失败或响应错误
+    protected void notifyFailureOrError(int type){
+    }
 
     public Context mActivity;
     @Override

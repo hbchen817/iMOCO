@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,11 +28,7 @@ import com.alibaba.sdk.android.openaccount.ui.widget.MobileInputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.rexense.imoco.R;
 
-
 public class OALoginActivity extends LoginActivity implements View.OnClickListener{
-//
-//    private RegisterSelectorDialogFragment registerSelectorDialogFragment;
-//    private ResetSelectorDialogFragment resetSelectorDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +36,13 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         OpenAccountUIConfigs.AccountPasswordLoginFlow.supportForeignMobileNumbers = false;
         OpenAccountUIConfigs.MobileResetPasswordLoginFlow.supportForeignMobileNumbers = false;
         super.onCreate(savedInstanceState);
-//        findViewById(R.id.btn_facebook).setOnClickListener(this);
         mToolBar.setVisibility(View.GONE);
 
         LayoutMapping.put(InputBoxWithClear.class,R.layout.ali_sdk_openaccount_input_box);
         LayoutMapping.put(MobileInputBoxWithClear.class,R.layout.ali_sdk_openaccount_mobile_input_box);
-//        registerSelectorDialogFragment = new RegisterSelectorDialogFragment();
-//        registerSelectorDialogFragment.setOnClickListener(registerListenr);
-//
-//        resetSelectorDialogFragment = new ResetSelectorDialogFragment();
-//        resetSelectorDialogFragment.setOnClickListener(resetListenr);
-
 
         this.resetPasswordTV = this.findViewById(ResourceUtils.getRId(this, "reset_password"));
         this.resetPasswordTV.setOnClickListener(resetListenr);
-//        if (this.resetPasswordTV != null) {
-//            this.resetPasswordTV.setOnClickListener(v -> resetSelectorDialogFragment.showAllowingStateLoss(getSupportFragmentManager(), ""));
-//        }
         this.registerTV = this.findViewById(ResourceUtils.getRId(this, "register"));
         this.registerTV.setOnClickListener(registerListenr);
 
@@ -67,9 +55,6 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
                 }
             });
         }
-//        if (this.registerTV != null) {
-//            this.registerTV.setOnClickListener(v -> registerSelectorDialogFragment.showAllowingStateLoss(getSupportFragmentManager(), ""));
-//        }
         TextView loginWithSmsCode = this.findViewById(ResourceUtils.getRId(this, "login_with_sms_code"));
         Drawable drawable = getResources().getDrawable(R.drawable.login_sms);
         int sizeDp = getResources().getDimensionPixelSize(R.dimen.dp_40);
@@ -78,8 +63,19 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         // 设置图片的位置，左、上、右、下
         loginWithSmsCode.setCompoundDrawables(null, drawable, null, null);
 
+        // 关闭输入键盘处理
+        ImageView background = (ImageView)findViewById(R.id.loginImgBackground);
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View view = getWindow().peekDecorView();
+                if (view != null && view.getWindowToken() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        });
     }
-
 
     @Override
     public void onClick(View v) {
@@ -112,23 +108,18 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         }
     }
 
-
     private View.OnClickListener registerListenr = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             OpenAccountUIService openAccountUIService = OpenAccountSDK.getService(OpenAccountUIService.class);
-//            openAccountUIService.showRegister(OALoginActivity.this, null);
             openAccountUIService.showRegister(OALoginActivity.this,RegisterActivity.class,null);
-//            registerSelectorDialogFragment.dismissAllowingStateLoss();
         }
     };
-
 
     private View.OnClickListener resetListenr = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             forgetPhonePassword(v);
-//            resetSelectorDialogFragment.dismissAllowingStateLoss();
         }
     };
 
@@ -200,7 +191,6 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         };
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,18 +200,11 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         }
     }
 
-
     protected final void TRANSPARENT() {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                 | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
     }
-
-
-//    @Override
-//    protected void attachBaseContext(Context newBase) {
-//        super.attachBaseContext(OALanguageUtils.attachBaseContext(newBase));
-//    }
 
     @Override
     protected String getLayoutName() {

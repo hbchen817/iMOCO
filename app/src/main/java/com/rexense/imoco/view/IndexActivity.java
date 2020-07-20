@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
 import com.rexense.imoco.utility.ToastUtils;
@@ -155,7 +156,7 @@ public class IndexActivity extends AppCompatActivity {
         indexFragment3 = new IndexFragment3();
 
         // 默认显示OneFragment
-        mFragmentManager.beginTransaction().add(R.id.fl_main_container, indexFragment1,indexFragment1.TAG).commit();
+        mFragmentManager.beginTransaction().add(R.id.fl_main_container, indexFragment1, indexFragment1.TAG).commit();
 
         // 将mOneFragment赋值给当前显示的碎片
         mCurrentFragment = indexFragment1;

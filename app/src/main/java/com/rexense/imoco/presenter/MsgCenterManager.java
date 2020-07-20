@@ -45,7 +45,7 @@ public class MsgCenterManager {
         requestParameterEntry.version = "1.0.0";
         requestParameterEntry.addParameter("nextToken", pageNo);
         requestParameterEntry.addParameter("maxResults", Constant.PAGE_SIZE);
-        requestParameterEntry.addParameter("type", "NOTICE");
+        requestParameterEntry.addParameter("type", "MESSAGE");
         requestParameterEntry.addParameter("messageType", messageType);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_MSGCENTER;
         //提交

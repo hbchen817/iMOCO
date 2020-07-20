@@ -29,7 +29,9 @@ public class RealtimeDataParser {
         entry.productKey = jsonObject.getString("productKey");
         entry.deviceName = jsonObject.getString("deviceName");
         entry.statusLast = jsonObject.getIntValue("statusLast");
-        entry.status = jsonObject.getJSONObject("status").getIntValue("value");
+        if(jsonObject.getJSONObject("status") != null){
+            entry.status = jsonObject.getJSONObject("status").getIntValue("value");
+        }
         entry.ip = jsonObject.getString("ip");
         return entry;
     }

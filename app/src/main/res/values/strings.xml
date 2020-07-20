@@ -13,6 +13,8 @@
     <string name="rb_tab_four_desc">备用</string>
 
     <string name="main_home">我的家</string>
+    <string name="main_init_hint_title">系统提示</string>
+    <string name="main_init_hint">系统正在初始化数据，请稍候...</string>
     <string name="main_home_description">%s共有%d个房间</string>
     <string name="main_device_description">共有%d个设备, 其中%d个在线</string>
     <string name="main_device">设备</string>
@@ -52,7 +54,9 @@
     <string name="homespace_defaulthome">我的家</string>
 
     <string name="api_commitfailure">调用接口[%s]失败! %s</string>
+    <string name="api_commitfailure_hint">提交获取数据请求失败!</string>
     <string name="api_responseerror">调用接口[%s]成功, 但是响应发生错误! %s</string>
+    <string name="api_responseerror_hint">获取数据失败！请重新登录或确保当前账号没有在其它地方登录。</string>
 
     <string name="login_success">登录成功</string>
     <string name="login_failed">登录失败</string>
