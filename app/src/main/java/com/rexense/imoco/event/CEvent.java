@@ -10,4 +10,6 @@ public class CEvent {
     public final static String EVENT_NAME_REFRESH_ROOM_LIST_DATA            = "2";
     public final static String EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA     = "3";
     public final static String EVENT_NAME_REFRESH_DEVICE_STATE_DATA         = "4";
+    public final static String EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA        = "5";
+    public final static String EVENT_NAME_REFRESH_DEVICE_LIST_DATA          = "6";
 }

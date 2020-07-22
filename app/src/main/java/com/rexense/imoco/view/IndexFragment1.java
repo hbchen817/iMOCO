@@ -838,6 +838,7 @@ public class IndexFragment1 extends BaseFragment {
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA)){
             this.mAptDeviceGrid.updateRoomData(eventEntry.parameter);
             this.mAptDeviceList.updateRoomData(eventEntry.parameter);
+            this.deviceCount();
             return;
         }
 
@@ -845,12 +846,18 @@ public class IndexFragment1 extends BaseFragment {
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_STATE_DATA)){
             // 通过开始获取设备列表来触发获取状态
             this.startGetDeviceList();
+            this.deviceCount();
             return;
         }
 
         // 处理刷新手动执行场景列表数据
         if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)){
             this.startGetSceneList();
+        }
+
+        // 处理刷新设备数量数据
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA)){
+            this.deviceCount();
         }
     }
 

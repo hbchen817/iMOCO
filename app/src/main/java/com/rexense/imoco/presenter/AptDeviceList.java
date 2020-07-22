@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.EEvent;
+import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.presenter.CodeMapper;
@@ -45,6 +47,7 @@ public class AptDeviceList extends BaseAdapter {
 	// 设置数据
 	public void setData(List<EDevice.deviceEntry> deviceList) {
 		this.mDeviceList = deviceList;
+		RefreshData.refreshDeviceNumberData();
 	}
 
 	// 清除数据
@@ -71,6 +74,7 @@ public class AptDeviceList extends BaseAdapter {
 
 		deviceEntry.processStateTime(this.mContext, propertyName, propertyValue, timeStamp);
 		this.notifyDataSetChanged();
+		RefreshData.refreshDeviceNumberData();
 	}
 
 	// 更新房间数据
@@ -89,6 +93,7 @@ public class AptDeviceList extends BaseAdapter {
 				}
 			}
 		}
+		RefreshData.refreshDeviceNumberData();
 	}
 
 	// 返回列表条目数量

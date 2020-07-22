@@ -451,6 +451,11 @@ public class ConfigureNetworkActivity extends BaseActivity {
             return;
         }
 
+        // 等待5秒,以确保服务器端处理Token完成。
+        try{
+            Thread.sleep(5 * 1000);
+        }catch (Exception ex){}
+
         // 构造参数
         EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
         parameter.homeId = SystemParameter.getInstance().getHomeId();

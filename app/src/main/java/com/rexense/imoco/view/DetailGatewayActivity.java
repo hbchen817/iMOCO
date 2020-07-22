@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.event.CEvent;
+import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.presenter.ActivityRouter;
 import com.rexense.imoco.presenter.AptDeviceList;
 import com.rexense.imoco.presenter.CloudDataParser;
@@ -34,6 +36,9 @@ import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.ERealtimeData;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.EUser;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Creator: xieshaobing
@@ -254,6 +259,8 @@ public class DetailGatewayActivity extends DetailActivity {
         RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", this.mRealtimeDataHandler);
         // 添加实时数据设备加网回调处理器
         RealtimeDataReceiver.addJoinCallbackHandler("DetailGatewayJoinCallback", this.mRealtimeDataHandler);
+        // 注册事件总线
+        EventBus.getDefault().register(this);
 
         // 开始获取网关子设备列表
         startGetGatewaySubdeive();
@@ -283,9 +290,25 @@ public class DetailGatewayActivity extends DetailActivity {
 
     @Override
     protected void onDestroy() {
+        // 注销事件总线
+        EventBus.getDefault().unregister(this);
         // 删除实时数据属性回调处理器
         RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayStatusCallback");
         RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayJoinCallback");
         super.onDestroy();
+    }
+
+    // 订阅刷新数据事件
+    @Subscribe
+    public void onRefreshRoomData(EEvent eventEntry){
+        // 处理刷新设备数量数据
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA)){
+            this.onlineCount();
+        }
+
+        // 处理刷新设备列表数据
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA)){
+            this.startGetGatewaySubdeive();
+        }
     }
 }

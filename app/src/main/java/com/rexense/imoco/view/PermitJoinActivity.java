@@ -87,6 +87,9 @@ public class PermitJoinActivity extends BaseActivity {
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
 
+                    // 发送刷新设备列表事件
+                    RefreshData.refreshDeviceListData();
+
                     // 中断加网线程
                     if(mJoinThread != null) {
                         if(!mJoinThread.isInterrupted()) {
