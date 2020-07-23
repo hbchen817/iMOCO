@@ -6,8 +6,10 @@ package com.rexense.imoco.contract;
  * Description: 常量
  */
 public class Constant {
-    // APPKEY
+    // 测试环境APPKEY
     public static final String APPKEY                               = "29162669";
+    // 正式环境APPKEY
+    //public static final String APPKEY                             = "29163857";
 
     // 产品类型
     public static final int PRODUCT_TYPE_SWITCH                     = 1;

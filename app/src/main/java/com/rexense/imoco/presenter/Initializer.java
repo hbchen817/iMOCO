@@ -19,6 +19,7 @@ public class Initializer {
         initConfig.setRegionType(IoTSmart.REGION_CHINA_ONLY);
         // 对应控制台上的测试版（PRODUCT_ENV_DEV）和正式版（PRODUCT_ENV_PROD）
         initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_DEV);
+        //initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_PROD);
         // 是否打开日志
         initConfig.setDebug(true);
 

@@ -1077,7 +1077,8 @@ public class SceneManager {
         requestParameterEntry.version = "1.0.2";
         requestParameterEntry.addParameter("pageNo", pageNo);
         requestParameterEntry.addParameter("pageSize", Constant.PAGE_SIZE);
-        requestParameterEntry.addParameter("nowTime", new Date().getTime()-1000*3600*24);
+        //requestParameterEntry.addParameter("nowTime", new Date().getTime()-1000*3600*24);
+        requestParameterEntry.addParameter("nowTime", new Date().getTime());
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETSCENELOG;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

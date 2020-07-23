@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -404,14 +405,15 @@ public class IndexFragment1 extends BaseFragment {
             return;
         }
 
-        //this.mLblSceneTitle.setVisibility(View.VISIBLE);
         this.mHscSceneList.setVisibility(View.VISIBLE);
         int size = list.size();
-        int length = 130;
+        int length = 126;
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         float density = dm.density;
-        int gridViewWidth = (int) (size * (length + 4) * density);
+        // 设置网格宽度(包括所有列宽与列之间的距离)
+        int gridViewWidth = (int) (size * length * density + (size - 1) * 6 * density);
+        // 设置列宽
         int itemWidth = (int) (length * density);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(gridViewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -481,6 +483,7 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(mSceneList != null && mSceneList.size() > 0) {
                 new SceneManager(getActivity()).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                Toast.makeText(getActivity(), String.format(getString(R.string.main_scene_execute_hint), mSceneList.get(position).name), Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -654,6 +657,9 @@ public class IndexFragment1 extends BaseFragment {
                     if (homeList == null || homeList.total == 0 || homeList.data == null || homeList.data.size() == 0) {
                         // 如果没有创建家空间则自动创建我的家
                         mHomeSpaceManager.createHome(getString(R.string.homespace_defaulthome), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        if(mProgressDialog != null){
+                            mProgressDialog.dismiss();
+                        }
                     } else {
                         // 如果没有选择家或只有一个家则默认选择第一个
                         if (SystemParameter.getInstance().getHomeId() == null || SystemParameter.getInstance().getHomeId().length() == 0 || homeList.total == 1) {
@@ -683,6 +689,9 @@ public class IndexFragment1 extends BaseFragment {
                             startGetSceneList();
                             mLblHomeDescription.setText(String.format(getString(R.string.main_home_description), SystemParameter.getInstance().getHomeName(), HomeSpaceManager.getRoomBufferData().size()));
                         }
+                    } else {
+                        // 开始获取场景列表数据
+                        startGetSceneList();
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
@@ -739,6 +748,9 @@ public class IndexFragment1 extends BaseFragment {
                             }
                         }
                     } else {
+                        if(mProgressDialog != null){
+                            mProgressDialog.dismiss();
+                        }
                         // 开始主动获取设备属性
                         mGetPropertyIndex = 0;
                         mIsContinuouslyGetState = true;

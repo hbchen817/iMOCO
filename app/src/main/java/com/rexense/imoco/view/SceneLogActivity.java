@@ -92,7 +92,7 @@ public class SceneLogActivity extends BaseActivity {
     }
 
     private void getData(){
-        sceneManager.getSceneLogList(page,mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        sceneManager.getSceneLogList(page, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     private Handler mAPIDataHandler = new Handler(new Handler.Callback() {

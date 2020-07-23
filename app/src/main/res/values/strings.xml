@@ -22,6 +22,7 @@
     <string name="main_share">分享</string>
     <string name="main_onekeyscene">一键执行场景</string>
     <string name="main_scenename">场景名称</string>
+    <string name="main_scene_execute_hint">执行了%s场景</string>
 
     <string name="scene_scene">场景</string>
     <string name="scene_my">我的</string>

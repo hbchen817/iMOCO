@@ -104,6 +104,7 @@ public class DetailGatewayActivity extends DetailActivity {
                         entry.nickName = e.nickName;
                         entry.productKey = e.productKey;
                         entry.status = e.status;
+                        entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
                         mDeviceList.add(entry);
                     }
                     if(list.data.size() >= list.pageSize) {
