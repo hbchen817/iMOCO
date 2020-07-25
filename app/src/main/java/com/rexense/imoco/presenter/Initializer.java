@@ -3,6 +3,7 @@ package com.rexense.imoco.presenter;
 import android.content.Context;
 
 import com.aliyun.iot.aep.sdk.IoTSmart;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.Logger;
 
 /**
@@ -18,8 +19,13 @@ public class Initializer {
         // REGION_ALL: 支持连接全球多个接入点，如果您只在中国内地出货，请设置为“REGION_CHINA_ONLY”，表示直连中国内地接入点。
         initConfig.setRegionType(IoTSmart.REGION_CHINA_ONLY);
         // 对应控制台上的测试版（PRODUCT_ENV_DEV）和正式版（PRODUCT_ENV_PROD）
-        initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_DEV);
-        //initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_PROD);
+        if(Constant.APPKEY.equalsIgnoreCase("29162669")){
+            // 对应控制台上的测试版（PRODUCT_ENV_DEV）
+            initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_DEV);
+        } else {
+            // 对应控制台上的正式版（PRODUCT_ENV_PROD）
+            initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_PROD);
+        }
         // 是否打开日志
         initConfig.setDebug(true);
 
