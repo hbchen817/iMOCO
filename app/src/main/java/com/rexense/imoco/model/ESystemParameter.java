@@ -20,6 +20,8 @@ public class ESystemParameter {
     private boolean mIsRefreshData;
     // 是否添加携住设备
     private String mIsAddXZDevice;
+    // 是否刷新场景列表
+    private boolean mIsRefreshSceneList;
 
     // 构造
     public ESystemParameter(){
@@ -63,6 +65,11 @@ public class ESystemParameter {
         this.mIsAddXZDevice = isAddXZDevice;
     }
 
+    // 设置是否刷新场景列表
+    public void setIsRefreshSceneList(boolean isRefresh) {
+        this.mIsRefreshSceneList = isRefresh;
+    }
+
     // 获取是否登录
     public boolean getIsLogin() {
         return this.mIsLogin;
@@ -96,6 +103,11 @@ public class ESystemParameter {
     // 获取是否添加携住设备
     public String getIsAddXZDevice(){
         return this.mIsAddXZDevice;
+    }
+
+    // 获取是否刷新场景列表数据
+    public boolean getIsRefreshSceneList() {
+        return this.mIsRefreshSceneList;
     }
 }
 

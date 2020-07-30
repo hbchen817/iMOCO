@@ -31,6 +31,7 @@
             android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
+            android:alpha="1"
             android:layout_centerVertical="true" />
 
         <TextView
@@ -40,12 +41,14 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/detailSensorImgStateIcon"
             android:layout_marginLeft="5dp"
+            android:alpha="1"
             android:layout_centerVertical="true"
             android:text="@string/detailsensor_state" />
 
         <TextView
             android:id="@+id/detailSensorLblStateValue"
             style="@style/StateFontStyle"
+            android:alpha="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -61,12 +64,12 @@
 
         <ImageView
             android:id="@+id/detailSensorImgStateIcon2"
-            android:src="@drawable/state_icon_power"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:src="@drawable/state_icon_power" />
 
         <TextView
             android:id="@+id/detailSensorLblStateName2"
@@ -96,12 +99,12 @@
 
         <ImageView
             android:id="@+id/detailSensorImgPowerIcon"
-            android:src="@drawable/state_icon_power"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:src="@drawable/state_icon_power" />
 
         <TextView
             android:id="@+id/detailSensorLblPowerName"

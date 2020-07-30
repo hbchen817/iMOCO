@@ -8,8 +8,10 @@ package com.rexense.imoco.contract;
 public class Constant {
     // 测试环境APPKEY
     public static final String APPKEY                               = "29162669";
+    public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";
     // 正式环境APPKEY
     //public static final String APPKEY                             = "29163857";
+    //public static final String APPSECRET                          = "be390d30947e8c7ca493a11d2f9746cf";
 
     // 产品类型
     public static final int PRODUCT_TYPE_SWITCH                     = 1;

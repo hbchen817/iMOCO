@@ -24,8 +24,8 @@
     <string name="main_scenename">场景名称</string>
     <string name="main_scene_execute_hint">执行了%s场景</string>
 
-    <string name="scene_scene">场景</string>
-    <string name="scene_my">我的</string>
+    <string name="scene_scene">推荐场景</string>
+    <string name="scene_my">我的场景</string>
     <string name="delete">删除</string>
 
     <string name="dialog_title">系统提示</string>
@@ -221,7 +221,7 @@
 
     <string name="choicecontent_title">请选择消息记录内容</string>
 
-    <string name="scenemodel_recommend">推荐场景</string>
+    <string name="scenemodel_recommend">自动场景</string>
     <string name="scenemodel_name">场景名称</string>
     <string name="scenemodel_description">场景描述</string>
     <string name="scenemodel_night_rise_on">起夜开灯</string>
@@ -242,7 +242,7 @@
     <string name="scenemodel_pir_deploy_alarm_ds">设定时间范围内，网关为布防模式，pir检测到有人触发网关报警。</string>
     <string name="scenemodel_door_deploy_alarm">门磁布防报警</string>
     <string name="scenemodel_door_deploy_alarm_ds">设定时间范围内，网关为布防模式，门窗磁检测到打开触发网关报警。</string>
-    <string name="scenemodel_one_key">一键场景</string>
+    <string name="scenemodel_one_key">手动场景</string>
     <string name="scenemodel_go_home_pattern">回家模式</string>
     <string name="scenemodel_go_home_pattern_ds">网关设置为撤防模式，单火开关打开。</string>
     <string name="scenemodel_leave_home_pattern">离家模式</string>

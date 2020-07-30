@@ -24,9 +24,10 @@ public class PluginHelper {
     }
 
     // 创建场景
-    public static void createScene(Context context, String sceneType){
+    public static void createScene(Context context, String sceneType, String homeId){
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? CScene.TYPE_IFTTT : sceneType);
+        parameters.put("homeId", homeId);
         Plugin.call(context, Constant.PLUGIN_URL_SCENE, parameters);
     }
 

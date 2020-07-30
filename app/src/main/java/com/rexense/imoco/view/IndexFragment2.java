@@ -72,6 +72,16 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // 刷新场景列表数据
+        if(SystemParameter.getInstance().getIsRefreshSceneList()){
+            this.startGetSceneList(CScene.TYPE_AUTOMATIC);
+            SystemParameter.getInstance().setIsRefreshSceneList(false);
+        }
+    }
+
+    @Override
     protected int setLayout() {
         return R.layout.fragment_index2;
     }
@@ -113,11 +123,12 @@ public class IndexFragment2 extends BaseFragment {
         this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT);
+                SystemParameter.getInstance().setIsRefreshSceneList(true);
+                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
             }
         });
 
-        // 场景点击处理
+        // 推荐场景点击处理
         this.mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +142,7 @@ public class IndexFragment2 extends BaseFragment {
             }
         });
 
-        // 我的点击处理
+        // 我的场景点击处理
         this.mLblMy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
