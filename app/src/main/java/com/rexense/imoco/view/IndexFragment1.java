@@ -352,10 +352,10 @@ public class IndexFragment1 extends BaseFragment {
     //刷新数据
     private void refreshData(){
         // 刷新设备数据
-        if(SystemParameter.getInstance().getIsRefreshData()) {
+        if(SystemParameter.getInstance().getIsRefreshDeviceData()) {
             // 如果绑定或解绑定了网关则重新获取设备列表
             this.startGetDeviceList();
-            SystemParameter.getInstance().setIsRefreshData(false);
+            SystemParameter.getInstance().setIsRefreshDeviceData(false);
         } else {
             if(this.mDeviceList != null && this.mDeviceList.size() > 0) {
                 EDevice.deviceEntry bufferEntry, displayEntry;

@@ -19,6 +19,8 @@ public class SystemParameter {
         mSystemParameter.setBrand(context.getString(R.string.app_brand));
         mSystemParameter.setBrandShow(context.getString(R.string.app_brand_show));
         mSystemParameter.setIsAddDemoDevice(context.getString(R.string.app_is_add_xz_device));
+        mSystemParameter.setIsHidePrivacyPolicy(context.getString(R.string.app_is_hide_privacy_policy));
+        mSystemParameter.setIsHideUserDeal(context.getString(R.string.app_is_hide_user_deal));
     }
 
     // 获取系统参数实例

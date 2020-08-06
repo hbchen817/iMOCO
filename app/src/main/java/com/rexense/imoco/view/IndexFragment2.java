@@ -75,9 +75,9 @@ public class IndexFragment2 extends BaseFragment {
     public void onResume() {
         super.onResume();
         // 刷新场景列表数据
-        if(SystemParameter.getInstance().getIsRefreshSceneList()){
+        if(SystemParameter.getInstance().getIsRefreshSceneListData()){
             this.startGetSceneList(CScene.TYPE_AUTOMATIC);
-            SystemParameter.getInstance().setIsRefreshSceneList(false);
+            SystemParameter.getInstance().setIsRefreshSceneListData(false);
         }
     }
 
@@ -123,7 +123,7 @@ public class IndexFragment2 extends BaseFragment {
         this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemParameter.getInstance().setIsRefreshSceneList(true);
+                SystemParameter.getInstance().setIsRefreshSceneListData(true);
                 PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
             }
         });

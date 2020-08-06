@@ -16,18 +16,29 @@ public class ESystemParameter {
     private String mHomeId;
     // 家名称
     private String mHomeName;
-    // 是否刷新数据
-    private boolean mIsRefreshData;
+    // 是否刷新设备数据
+    private boolean mIsRefreshDeviceData;
+    // 是否刷新场景列表数据
+    private boolean mIsRefreshSceneListData;
     // 是否添加携住设备
     private String mIsAddXZDevice;
-    // 是否刷新场景列表
-    private boolean mIsRefreshSceneList;
+    // 是否隐藏隐私政策
+    private String mIsHidePrivacyPolicy;
+    // 是否隐藏用户协议
+    private String mIsHideUserDeal;
 
     // 构造
     public ESystemParameter(){
         this.mIsLogin = false;
+        this.mBrand = "iMOCO";
+        this.mBrandShow = "iMOCO";
         this.mHomeId = "";
-        this.mIsRefreshData = false;
+        this.mHomeName = "";
+        this.mIsRefreshDeviceData = false;
+        this.mIsRefreshSceneListData = false;
+        this.mIsAddXZDevice = "No";
+        this.mIsHidePrivacyPolicy = "No";
+        this.mIsHideUserDeal = "No";
     }
 
     // 设置是否登录
@@ -55,9 +66,14 @@ public class ESystemParameter {
         this.mHomeName = homeName;
     }
 
-    // 设置是否刷新数据
-    public void setIsRefreshData(boolean isRefreshData) {
-        this.mIsRefreshData = isRefreshData;
+    // 设置是否刷新设备数据
+    public void setIsRefreshDeviceData(boolean isRefreshData) {
+        this.mIsRefreshDeviceData = isRefreshData;
+    }
+
+    // 设置是否刷新场景列表数据
+    public void setIsRefreshSceneListData(boolean isRefresh) {
+        this.mIsRefreshSceneListData = isRefresh;
     }
 
     // 设置是否添加携住设备
@@ -65,9 +81,14 @@ public class ESystemParameter {
         this.mIsAddXZDevice = isAddXZDevice;
     }
 
-    // 设置是否刷新场景列表
-    public void setIsRefreshSceneList(boolean isRefresh) {
-        this.mIsRefreshSceneList = isRefresh;
+    // 设置是否隐藏隐私政策
+    public void setIsHidePrivacyPolicy(String isHidePrivacyPolicy){
+        this.mIsHidePrivacyPolicy = isHidePrivacyPolicy;
+    }
+
+    // 设置是否隐藏隐私政策
+    public void setIsHideUserDeal(String isHideUserDeal){
+        this.mIsHideUserDeal = isHideUserDeal;
     }
 
     // 获取是否登录
@@ -95,9 +116,14 @@ public class ESystemParameter {
         return this.mHomeName == null ? "" : this.mHomeName;
     }
 
-    // 获取是否刷新数据
-    public boolean getIsRefreshData() {
-        return this.mIsRefreshData;
+    // 获取是否刷新设备数据
+    public boolean getIsRefreshDeviceData() {
+        return this.mIsRefreshDeviceData;
+    }
+
+    // 获取是否刷新场景列表数据
+    public boolean getIsRefreshSceneListData() {
+        return this.mIsRefreshSceneListData;
     }
 
     // 获取是否添加携住设备
@@ -105,9 +131,14 @@ public class ESystemParameter {
         return this.mIsAddXZDevice;
     }
 
-    // 获取是否刷新场景列表数据
-    public boolean getIsRefreshSceneList() {
-        return this.mIsRefreshSceneList;
+    // 设置是否隐藏隐私政策
+    public String getIsHidePrivacyPolicy(){
+        return this.mIsHidePrivacyPolicy;
+    }
+
+    // 设置是否隐藏隐私政策
+    public String getIsHideUserDeal(){
+        return this.mIsHideUserDeal;
     }
 }
 

@@ -162,7 +162,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     // 处理设备解除绑定回调
                     setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
                     // 设置系统参数解绑网关以触发数据刷新
-                    SystemParameter.getInstance().setIsRefreshData(true);
+                    SystemParameter.getInstance().setIsRefreshDeviceData(true);
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);

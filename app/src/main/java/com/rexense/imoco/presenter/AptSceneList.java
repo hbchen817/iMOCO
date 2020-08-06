@@ -190,7 +190,7 @@ public class AptSceneList extends BaseAdapter {
 				if(sceneModelCode < CScene.SMC_NIGHT_RISE_ON){
 					// 非模板场景处理
 					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
-					SystemParameter.getInstance().setIsRefreshSceneList(true);
+					SystemParameter.getInstance().setIsRefreshSceneListData(true);
 				} else {
 					// 模板场景处理
 					Intent intent = new Intent(mContext, SceneMaintainActivity.class);

@@ -31,10 +31,14 @@ public class AboutUsActivity extends BaseActivity {
         ButterKnife.bind(this);
         tvToolbarTitle.setText(getString(R.string.fragment3_about_us));
 
-        // 携住App处理
-        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes")){
+        // 隐藏隐私政策
+        if(SystemParameter.getInstance().getIsHidePrivacyPolicy().equalsIgnoreCase("Yes")){
             RelativeLayout privacy_policy_view = (RelativeLayout)findViewById(R.id.privacy_policy_view);
             privacy_policy_view.setVisibility(View.GONE);
+        }
+
+        // 隐藏用户协议
+        if(SystemParameter.getInstance().getIsHideUserDeal().equalsIgnoreCase("Yes")){
             RelativeLayout user_deal_view = (RelativeLayout)findViewById(R.id.user_deal_view);
             user_deal_view.setVisibility(View.GONE);
         }
