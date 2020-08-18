@@ -439,6 +439,7 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.addJoinCallbackHandler("MainJoinCallback", this.mRealtimeDataHandler);
         RealtimeDataReceiver.addPropertyCallbackHandler("MainPropertyCallback", this.mRealtimeDataHandler);
         RealtimeDataReceiver.addEventCallbackHandler("MainEventCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addThingEventCallbackHandler("MainEventCallback", this.mRealtimeDataHandler);
     }
 
     // 设备列表点击监听器
@@ -812,6 +813,7 @@ public class IndexFragment1 extends BaseFragment {
                     }
                     break;
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
+                case Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY:
                     // 开始获取设备列表
                     startGetDeviceList();
                     break;

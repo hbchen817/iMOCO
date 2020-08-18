@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class ChoiceActivity extends Activity {
     private List<EChoice.itemEntry> mItems = null;
+    private int mResultCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class ChoiceActivity extends Activity {
         listItem.setAdapter(new AptChoiceList(this, this.mItems, isMultipleSelect));
         RelativeLayout relOk = (RelativeLayout)findViewById(R.id.choiceRelOk);
 
+        this.mResultCode = getIntent().getIntExtra("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
+
         if(!isMultipleSelect){
             // 单选处理
             relOk.setVisibility(View.GONE);
@@ -59,7 +62,7 @@ public class ChoiceActivity extends Activity {
                     // 返回当前选项
                     Intent intent = new Intent();
                     intent.putExtra("value", mItems.get(position).value);
-                    setResult(Constant.RESULTCODE_CALLCHOICEACTIVITY, intent);
+                    setResult(mResultCode, intent);
                     finish();
                 }
             });
@@ -83,7 +86,7 @@ public class ChoiceActivity extends Activity {
 
                     Intent intent = new Intent();
                     intent.putExtra("value", values);
-                    setResult(Constant.RESULTCODE_CALLCHOICEACTIVITY, intent);
+                    setResult(mResultCode, intent);
                     finish();
                 }
             });

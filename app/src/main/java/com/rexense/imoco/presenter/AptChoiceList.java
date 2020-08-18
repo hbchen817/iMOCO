@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
@@ -22,7 +23,8 @@ import com.rexense.imoco.model.EChoice;
 public class AptChoiceList extends BaseAdapter {
 	private class ViewHolder {
 		private TextView name;
-		private CheckBox select;
+		private CheckBox chkSelect;
+		private ImageView imgSelect;
 	}
 	private Context mContext;
 	private List<EChoice.itemEntry> mItems;
@@ -59,17 +61,25 @@ public class AptChoiceList extends BaseAdapter {
 		LayoutInflater inflater = LayoutInflater.from(this.mContext);
 		convertView = inflater.inflate(R.layout.list_choice, null, true);
 		viewHolder.name = (TextView) convertView.findViewById(R.id.choiceLblName);
-		viewHolder.select = (CheckBox)convertView.findViewById(R.id.choiceChbSelect);
+		viewHolder.chkSelect = (CheckBox)convertView.findViewById(R.id.choiceChbSelect);
+		viewHolder.imgSelect = (ImageView) convertView.findViewById(R.id.choiceImgSelect);
 		if(this.mIsMultipleSelect){
-			viewHolder.select.setTag(position);
+			viewHolder.chkSelect.setTag(position);
+			viewHolder.imgSelect.setVisibility(View.GONE);
+			viewHolder.chkSelect.setVisibility(View.VISIBLE);
 		} else {
-			viewHolder.select.setVisibility(View.GONE);
+			viewHolder.chkSelect.setVisibility(View.GONE);
+			if(this.mItems.get(position).isSelected){
+				viewHolder.imgSelect.setVisibility(View.VISIBLE);
+			} else {
+				viewHolder.imgSelect.setVisibility(View.GONE);
+			}
 		}
 		convertView.setTag(viewHolder);
 		viewHolder.name.setText(this.mItems.get(position).name);
 		if(this.mIsMultipleSelect){
-			viewHolder.select.setChecked(this.mItems.get(position).isSelected);
-			viewHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+			viewHolder.chkSelect.setChecked(this.mItems.get(position).isSelected);
+			viewHolder.chkSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					final int index = (Integer)buttonView.getTag();

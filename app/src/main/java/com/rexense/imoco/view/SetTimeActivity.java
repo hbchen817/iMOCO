@@ -281,6 +281,7 @@ public class SetTimeActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString("title", getString(R.string.set_time_seldefine_select));
                 bundle.putBoolean("isMultipleSelect", true);
+                bundle.putInt("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
                 bundle.putSerializable("items", (Serializable)items);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLCHOICEACTIVITY);
@@ -313,7 +314,7 @@ public class SetTimeActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 处理自定义周循环
-        if(requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY){
+        if(requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME){
             Bundle bundle = data.getExtras();
             String values = bundle.getString("value");
             if(values != null && values.length() > 0){

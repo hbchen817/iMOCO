@@ -9,22 +9,21 @@
 	<ImageView
 		android:id="@+id/choiceImgIcon"
 		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
 		android:layout_marginTop="5dp"
-		android:layout_width="30dp"
-		android:layout_height="30dp"
+		android:layout_width="16dp"
+		android:layout_height="16dp"
+		android:layout_centerVertical="true"
 		android:layout_marginLeft="10dp"
-		android:visibility="gone"
+		android:src="@drawable/select_item"
 		android:contentDescription="@string/contentDescription_null" />
 
 	<TextView android:id="@+id/choiceLblName"
 		android:layout_width="wrap_content"
-		android:layout_alignTop="@+id/choiceImgIcon"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="20dp"
+		android:layout_marginLeft="5dp"
 		android:layout_centerVertical="true"
-		android:layout_toRightOf="@+id/wifiListImgIcon"
-		android:text="@string/wifi_name"
+		android:layout_toRightOf="@+id/choiceImgIcon"
+		android:text="Select Item"
 		style="@style/NormalFontStyle"/>
 
 	<CheckBox android:id="@+id/choiceChbSelect"
@@ -34,6 +33,16 @@
 		android:layout_height="wrap_content"
 		android:layout_marginRight="20dp"
 		style="@style/NormalFontStyle"/>
+
+	<ImageView
+		android:id="@+id/choiceImgSelect"
+		android:layout_width="wrap_content"
+		android:layout_height="25dp"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:layout_marginRight="20dp"
+		android:contentDescription="@string/contentDescription_null"
+		android:src="@drawable/select" />
 
 	<Space
 		android:layout_alignParentRight="true"

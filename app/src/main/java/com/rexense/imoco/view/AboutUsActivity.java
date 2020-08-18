@@ -52,10 +52,18 @@ public class AboutUsActivity extends BaseActivity {
             case R.id.evaluate_view:
                 break;
             case R.id.privacy_policy_view:
-                H5Activity.actionStart(mActivity, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+                if(getString(R.string.app_privacy_policy_url).length() == 0){
+                    H5Activity.actionStart(mActivity, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+                } else {
+                    H5Activity.actionStart(mActivity, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
+                }
                 break;
             case R.id.user_deal_view:
-                H5Activity.actionStart(mActivity, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+                if(getString(R.string.app_user_deal_url).length() == 0){
+                    H5Activity.actionStart(mActivity, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+                } else {
+                    H5Activity.actionStart(mActivity, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+                }
                 break;
             case R.id.opensourse_deal_view:
                 break;

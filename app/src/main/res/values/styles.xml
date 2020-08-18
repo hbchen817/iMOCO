@@ -83,6 +83,16 @@
         <item name="android:layout_height">38dp</item>
     </style>
 
+    <!-- 录入条目样式 -->
+    <style name="InputItemStyle_Low">
+        <item name="android:background">@drawable/shape_white_solid</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">35dp</item>
+    </style>
+
     <!-- 状态条目样式 -->
     <style name="StateItemStyle">
         <item name="android:background">@drawable/shape_state_item</item>

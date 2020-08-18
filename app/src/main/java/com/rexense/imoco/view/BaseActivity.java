@@ -64,8 +64,11 @@ public class BaseActivity extends FragmentActivity {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
-                Toast.makeText(BaseActivity.this, getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
+                //非OTA信息查询失败才作提示
+                if(!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)){
+                    //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                    Toast.makeText(BaseActivity.this, getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
+                }
                 notifyFailureOrError(2);
             }
             return false;

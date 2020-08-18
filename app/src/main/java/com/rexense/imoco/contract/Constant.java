@@ -7,11 +7,11 @@ package com.rexense.imoco.contract;
  */
 public class Constant {
     // 测试环境APPKEY
-    public static final String APPKEY                               = "29162669";
-    public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";
+    //public static final String APPKEY                               = "29162669";
+    //public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";
     // 正式环境APPKEY
-    //public static final String APPKEY                               = "29163857";
-    //public static final String APPSECRET                            = "be390d30947e8c7ca493a11d2f9746cf";
+    public static final String APPKEY                               = "29163857";
+    public static final String APPSECRET                            = "be390d30947e8c7ca493a11d2f9746cf";
 
     // 产品类型
     public static final int PRODUCT_TYPE_SWITCH                     = 1;
@@ -55,11 +55,12 @@ public class Constant {
     public static final int REQUESTCODE_CALLSETTIMEACTIVITY         = 5;
 
     // 定义结果码
-    public static final int RESULTCODE_CALLCHOICEACTIVITY           = 1000;
-    public static final int RESULTCODE_CALLMOREACTIVITYUNBIND       = 1001;
-    public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY    = 1002;
-    public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY       = 1003;
-    public static final int RESULTCODE_CALLSETTIMEACTIVITY          = 1004;
+    public static final int RESULTCODE_CALLCHOICEACTIVITY_TIME      = 1000;
+    public static final int RESULTCODE_CALLCHOICEACTIVITY_ENABLE    = 1001;
+    public static final int RESULTCODE_CALLMOREACTIVITYUNBIND       = 1002;
+    public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY    = 1003;
+    public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY       = 1004;
+    public static final int RESULTCODE_CALLSETTIMEACTIVITY          = 1005;
 
     // 定义API PATH常量
     public static final String API_PATH_GETCONFIGPROCDUCTLIST       = "/thing/productInfo/getByAppKey";
@@ -117,9 +118,10 @@ public class Constant {
     // 定义长连接MQTT主题
     public static final String TOPIC_PROPERTYNOTIFY                 = "/thing/properties";
     public static final String TOPIC_EVENTNOTIFY                    = "/thing/events";
+    public static final String TOPIC_THINGEVENTNOTIFY               = "/_thing/event/notify";
     public static final String TOPIC_STATUSNOTIFY                   = "/thing/status";
     public static final String TOPIC_SUBDEVICEJOINNOTIFY            = "/thing/topo/add/status";
-    public static final String TOPIC_OTAUPGRADENOTITY               = "/app/down/ota/device/forward";
+    public static final String TOPIC_OTAUPGRADENOTITY               = "/ota/device/forward";
 
     // 定义一般消息常量
     public static final String API_MESSAGE_SUCCESS                  = "success";
@@ -130,7 +132,7 @@ public class Constant {
     public static final int MSG_PARSE_CONFIGNETWORKFRAME            = 4;
     public static final int MSG_DIALOG_TWOCHOICEONE                 = 5;
 
-    // 定义回调消息常量
+    // 定义API回调消息常量
     public static final int MSG_CALLBACK_APICOMMITFAIL              = 100;
     public static final int MSG_CALLBACK_APIRESPONSEERROR           = 101;
     public static final int MSG_CALLBACK_CREATEHOME                 = 102;
@@ -176,12 +178,15 @@ public class Constant {
     public static final int MSG_CALLBACK_GETDEVICEINROOM            = 141;
     public static final int MSG_CALLBACK_UPGRADEFIRMWARE            = 142;
     public static final int MSG_CALLBACK_UPDATEROOM                 = 143;
+
+    // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
     public static final int MSG_CALLBACK_LNPROPERTYNOTIFY           = 201;
     public static final int MSG_CALLBACK_LNEVENTNOTIFY              = 202;
-    public static final int MSG_CALLBACK_LNSTATUSNOTIFY             = 203;
-    public static final int MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY      = 204;
-    public static final int MSG_CALLBACK_LNOTAUPGRADENOTIFY         = 205;
+    public static final int MSG_CALLBACK_LNTHINGEVENTNOTIFY         = 203;
+    public static final int MSG_CALLBACK_LNSTATUSNOTIFY             = 204;
+    public static final int MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY      = 205;
+    public static final int MSG_CALLBACK_LNOTAUPGRADENOTIFY         = 206;
 
     // 定义配网进度消息常量
     public static final int MSG_CONFIGNETWORK_STEP_START            = 300;

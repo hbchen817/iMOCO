@@ -31,7 +31,7 @@ public class MocoApplication extends AApplication {
         // 初始化SDK
         Initializer.sdkProcess(this);
 
-        //登录页为我们自己的登录页
+        //登录页为自定制的登录页
         OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);

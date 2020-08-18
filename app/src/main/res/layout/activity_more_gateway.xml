@@ -19,13 +19,13 @@
             android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
             android:gravity="center_vertical"
-            android:layout_height="30dp"
+            android:layout_height="25dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
             android:text="@string/moredevice_function"/>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:id="@+id/moreGatewayLblAlarmBellId"
@@ -60,7 +60,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:id="@+id/moreGatewayLblBellVolume"
@@ -95,7 +95,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:id="@+id/moreGatewayLblBellMusicId"
@@ -130,7 +130,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:id="@+id/moreGatewayLblAlarmVolume"
@@ -169,13 +169,13 @@
             android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
             android:gravity="center_vertical"
-            android:layout_height="30dp"
+            android:layout_height="25dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
             android:text="@string/moredevice_normal"/>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -194,7 +194,7 @@
                 android:layout_height="50dp"
                 android:layout_toLeftOf="@+id/moreGatewayImgName"
                 android:layout_marginRight="5dp"
-                android:text="客厅主灯开关"/>
+                android:text="DeviceName"/>
 
             <ImageView
                 android:id="@+id/moreGatewayImgName"
@@ -209,8 +209,32 @@
         </RelativeLayout>
 
         <RelativeLayout
+            style="@style/InputItemStyle_Low">
+
+            <TextView
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                style="@style/NormalFontStyle"
+                android:gravity="center_vertical"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/moredevice_id"/>
+
+            <TextView
+                android:id="@+id/moreGatewayLblId"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                style="@style/NormalFontStyle"
+                android:layout_height="50dp"
+                android:layout_marginRight="35dp"
+                android:text="id"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/moreGatewayRLRoom"
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -244,7 +268,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -268,7 +292,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -292,7 +316,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"
@@ -317,7 +341,7 @@
 
         <RelativeLayout
             android:id="@+id/upgrade_view"
-            style="@style/InputItemStyle">
+            style="@style/InputItemStyle_Low">
 
             <TextView
                 android:layout_alignParentLeft="true"

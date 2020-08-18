@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">莫科智家</string>
     <string name="contentDescription_null"></string>
-    <string name="app_ver">1.0.3</string>
+    <string name="app_ver">1.0.4</string>
 
     <string name="app_brand">iMOCO</string>
     <string name="app_brand_show">iMOCO</string>
     <string name="app_is_add_xz_device">No</string>
     <string name="app_is_hide_privacy_policy">No</string>
     <string name="app_is_hide_user_deal">No</string>
+    <!--<string name="app_privacy_policy_url">http://www.52jzj.com/userAugreement.html</string>
+    <string name="app_user_deal_url">http://www.52jzj.com/policy.html</string>-->
+    <string name="app_privacy_policy_url"></string>
+    <string name="app_user_deal_url"></string>
 
     <string name="rb_tab_one_desc">家</string>
     <string name="rb_tab_two_desc">场景</string>
@@ -195,11 +199,13 @@
     <string name="moredevice_function">功能设置</string>
     <string name="moredevice_normal">通用信息</string>
     <string name="moredevice_name">设备名称:</string>
+    <string name="moredevice_id">设备标识:</string>
     <string name="moredevice_namehint">请录入备注名称:</string>
     <string name="moredevice_bindtime">绑定时间:</string>
     <string name="moredevice_room">所属房间:</string>
     <string name="moredevice_msg">消息记录:</string>
     <string name="moredevice_version">固件版本号:</string>
+    <string name="moredevice_address">MAC地址:</string>
     <string name="moredevice_upgrade">固件升级:</string>
     <string name="moredevice_unbind">解除绑定</string>
 
@@ -262,7 +268,12 @@
 
     <string name="scene_maintain_create">创建</string>
     <string name="scene_maintain_edit">修改</string>
+    <string name="scene_maintain_setenable">请设置使用状态</string>
+    <string name="scene_maintain_startusing">启用</string>
+    <string name="scene_maintain_stopusing">停用</string>
     <string name="scene_maintain_name">场景名称</string>
+    <string name="scene_maintain_name_edit">修改场景名称</string>
+    <string name="scene_maintain_use">使用状态</string>
     <string name="scene_maintain_parametertitle">参数标题</string>
     <string name="scene_maintain_trigger">如果</string>
     <string name="scene_maintain_condition">并且</string>
@@ -399,12 +410,16 @@
     <string name="upgrade_now">立刻升级</string>
     <string name="upgrade_success">升级完成</string>
     <string name="current_version">当前版本</string>
-    <string name="upgrade_result_1">升级失败</string>
-    <string name="upgrade_result_2">下载失败</string>
-    <string name="upgrade_result_3">校验失败</string>
-    <string name="upgrade_result_4">烧写失败</string>
+    <string name="upgrade_step_1">升级失败</string>
+    <string name="upgrade_step_2">下载失败</string>
+    <string name="upgrade_step_3">校验失败</string>
+    <string name="upgrade_step_4">烧写失败</string>
     <string name="new_version">新版本</string>
     <string name="upgrading_please_waiting_here">升级过程中请勿离开此页面</string>
+    <string name="upgrade_status_0">待升级或待确认</string>
+    <string name="upgrade_status_2">升级异常</string>
+    <string name="upgrade_status_3">升级失败</string>
+    <string name="upgrade_status_4">升级完成</string>
 
     <string name="room_name">房间名称</string>
     <string name="room_name_update">修改房间名称</string>

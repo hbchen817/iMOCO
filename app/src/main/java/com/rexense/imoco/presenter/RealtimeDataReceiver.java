@@ -21,6 +21,7 @@ public class RealtimeDataReceiver {
         List<String> receiveTopics = new ArrayList<String>();
         receiveTopics.add(Constant.TOPIC_PROPERTYNOTIFY);
         receiveTopics.add(Constant.TOPIC_EVENTNOTIFY);
+        receiveTopics.add(Constant.TOPIC_THINGEVENTNOTIFY);
         receiveTopics.add(Constant.TOPIC_STATUSNOTIFY);
         receiveTopics.add(Constant.TOPIC_SUBDEVICEJOINNOTIFY);
         receiveTopics.add(Constant.TOPIC_OTAUPGRADENOTITY);
@@ -47,6 +48,13 @@ public class RealtimeDataReceiver {
     public static boolean addEventCallbackHandler(String key, Handler handler) {
         ERealtimeData.callbackHandlerEntry entry = new ERealtimeData.callbackHandlerEntry(handler,
                 Constant.TOPIC_EVENTNOTIFY, Constant.MSG_CALLBACK_LNEVENTNOTIFY);
+        return LongConnection.addCallbackHandler(key, entry);
+    }
+
+    // 添加物模型事件回调处理器（用于处理网关解绑）
+    public static boolean addThingEventCallbackHandler(String key, Handler handler) {
+        ERealtimeData.callbackHandlerEntry entry = new ERealtimeData.callbackHandlerEntry(handler,
+                Constant.TOPIC_THINGEVENTNOTIFY, Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY);
         return LongConnection.addCallbackHandler(key, entry);
     }
 

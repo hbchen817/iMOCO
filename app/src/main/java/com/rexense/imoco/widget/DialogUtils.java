@@ -51,9 +51,22 @@ public class DialogUtils {
     }
 
     /**
-     * 是否撤单Dialog
+     * 确认Dialog
      */
-    public static void showEnsureDialog(final Context context, DialogInterface.OnClickListener onClickListener, String msg,String title) {
+    public static void showConfirmDialog(final Context context, DialogInterface.OnClickListener onClickListener, String msg, String title) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        if (!TextUtils.isEmpty(title)){
+            builder.setTitle(title);
+        }
+        builder.setMessage(msg);
+        builder.setPositiveButton(context.getString(R.string.dialog_ok), onClickListener);
+        builder.show();
+    }
+
+    /**
+     * 选择Dialog
+     */
+    public static void showEnsureDialog(final Context context, DialogInterface.OnClickListener onClickListener, String msg, String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         if (!TextUtils.isEmpty(title)){
             builder.setTitle(title);
@@ -68,13 +81,14 @@ public class DialogUtils {
         builder.setPositiveButton(context.getString(R.string.dialog_ok), onClickListener);
         builder.show();
     }
+
     /**
-     * 提示Dialog
+     * 错误提示Dialog
      */
     public static void showNetErrorDialog(final Context context, String msg) {
         netErrorBuilder = new AlertDialog.Builder(context);
         netErrorBuilder.setMessage(msg);
-        netErrorBuilder.setPositiveButton("我已知晓", new DialogInterface.OnClickListener() {
+        netErrorBuilder.setPositiveButton(context.getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -90,19 +104,19 @@ public class DialogUtils {
             isShow = true;
         }
     }
+
     /**
-     * 提示网络未连接Dialog
+     * 提示Dialog
      */
     public static void showMsgDialog(final Context context, String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(msg);
-        builder.setPositiveButton("我已知晓", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.dialog_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
             }
         });
-//        builder.setPositiveButton("确定", onClickListener);
         builder.show();
     }
 

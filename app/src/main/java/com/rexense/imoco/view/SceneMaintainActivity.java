@@ -1,15 +1,22 @@
 package com.rexense.imoco.view;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -20,6 +27,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshData;
+import com.rexense.imoco.model.EChoice;
 import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.AptSceneParameter;
@@ -39,10 +47,50 @@ public class SceneMaintainActivity extends BaseActivity {
     private SceneManager mSceneManager;
     private String mName, mSceneId;
     private int mOperateType, mSceneModelCode, mSceneNumber;
-    private TextView mLblName;
+    private TextView mLblName, mLblEnable;
     private List<EScene.parameterEntry> mParameterList;
     private AptSceneParameter mAptSceneParameter;
     private int mSetTimeIndex = -1;
+    private boolean mEnable = true;
+
+    // 显示场景名称修改对话框
+    private void showSceneNameDialogEdit() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        final View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+        TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
+        titleTv.setText(getString(R.string.scene_maintain_name_edit));
+        final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
+        nameEt.setText(this.mLblName.getText().toString());
+        final android.app.Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = getResources().getDimensionPixelOffset(R.dimen.dp_320);
+        //这行要放在dialog.show()之后才有效
+        dialog.getWindow().setAttributes(params);
+
+        View confirmView = view.findViewById(R.id.dialogEditLblConfirm);
+        View cancelView = view.findViewById(R.id.dialogEditLblCancel);
+        confirmView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameStr = nameEt.getText().toString().trim();
+                if (!nameStr.equals("")){
+                    dialog.dismiss();
+                    mLblName.setText(nameEt.getText().toString());
+                }
+            }
+        });
+        cancelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,19 +107,20 @@ public class SceneMaintainActivity extends BaseActivity {
         this.mSceneId = intent.getStringExtra("sceneId");
 
         TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        TextView operate = (TextView)findViewById(R.id.sceneMaintainLblOperate);
         ImageView icon = (ImageView)findViewById(R.id.sceneMaintainImgIcon);
         this.mLblName = (TextView)findViewById(R.id.sceneMaintainLblName);
+        this.mLblEnable = (TextView)findViewById(R.id.sceneMaintainLblEnable);
         icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 
+        TextView lblOperate = (TextView)findViewById(R.id.sceneMaintainLblOperate);
         if(this.mOperateType == CScene.OPERATE_CREATE){
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
             this.mLblName.setText(intent.getStringExtra("sceneModelName"));
-            operate.setText(getString(R.string.scene_maintain_create));
+            lblOperate.setText(getString(R.string.scene_maintain_create));
         } else {
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), this.mName));
             this.mLblName.setText(this.mName);
-            operate.setText(getString(R.string.scene_maintain_edit));
+            lblOperate.setText(getString(R.string.scene_maintain_edit));
         }
 
         // 修改场景名称处理
@@ -79,27 +128,26 @@ public class SceneMaintainActivity extends BaseActivity {
         editName.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText mSceneName = new EditText(SceneMaintainActivity.this);
-                mSceneName.setText(mLblName.getText().toString());
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(SceneMaintainActivity.this);
-                mDialogBuilder.setTitle(R.string.moredevice_namehint);
-                mDialogBuilder.setIcon(R.drawable.dialog_prompt);
-                mDialogBuilder.setView(mSceneName);
-                mDialogBuilder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mLblName.setText(mSceneName.getText().toString());
-                    }
-                });
-                mDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                mDialogBuilder.setCancelable(true);
-                AlertDialog dialog = mDialogBuilder.create();
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
+                showSceneNameDialogEdit();
+            }
+        });
+
+        // 设置使用状态处理
+        ImageView setEnable = (ImageView) findViewById(R.id.sceneMaintainImgEnable);
+        setEnable.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<EChoice.itemEntry> items = new ArrayList<EChoice.itemEntry>();
+                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_startusing), "1", mEnable));
+                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable ? true : false));
+                Intent intent = new Intent(SceneMaintainActivity.this, ChoiceActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("title", getString(R.string.scene_maintain_setenable));
+                bundle.putBoolean("isMultipleSelect", false);
+                bundle.putInt("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_ENABLE);
+                bundle.putSerializable("items", (Serializable)items);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, Constant.REQUESTCODE_CALLCHOICEACTIVITY);
             }
         });
 
@@ -116,7 +164,8 @@ public class SceneMaintainActivity extends BaseActivity {
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
                         mSceneModelCode >= CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
-                if(mOperateType == CScene.OPERATE_CREATE){
+                baseInfoEntry.enable = mEnable;
+                if(mOperateType == CScene.OPERATE_CREATE) {
                     // 创建场景
                     mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 } else {
@@ -183,6 +232,12 @@ public class SceneMaintainActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详细信息
                     EScene.processedDetailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
+                    mEnable = detailEntry.rawDetail.isEnable();
+                    if(mEnable){
+                        mLblEnable.setText(getString(R.string.scene_maintain_startusing));
+                    } else {
+                        mLblEnable.setText(getString(R.string.scene_maintain_stopusing));
+                    }
                     // 初始化场景参数
                     mSceneManager.initSceneParameterList(mParameterList, detailEntry);
                     mAptSceneParameter.notifyDataSetChanged();
@@ -232,6 +287,19 @@ public class SceneMaintainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // 处理设置使用状态结果
+        if(requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_ENABLE){
+            Bundle bundle = data.getExtras();
+            String value = bundle.getString("value");
+            if(value.equalsIgnoreCase("1")){
+                mEnable = true;
+                mLblEnable.setText(getString(R.string.scene_maintain_startusing));
+            } else {
+                mEnable = false;
+                mLblEnable.setText(getString(R.string.scene_maintain_stopusing));
+            }
+        }
+
         // 处理设置时间结果
         if(requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY){
             Bundle bundle = data.getExtras();

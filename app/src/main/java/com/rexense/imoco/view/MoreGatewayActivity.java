@@ -23,6 +23,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.event.CEvent;
+import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.event.RefreshFirmwareVersion;
 import com.rexense.imoco.presenter.CloudDataParser;
@@ -168,6 +170,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
                     break;
                 case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
+                    // 处理获取OTA固件信息
                     JSONObject dataJson = JSONObject.parseObject((String)msg.obj);
                     currentVersion = dataJson.getString("currentVersion");
                     theNewVersion = dataJson.getString("version");
@@ -347,9 +350,20 @@ public class MoreGatewayActivity extends BaseActivity {
         });
     }
 
+    // 订阅刷新数据事件
     @Subscribe
-    public void onRefreshFirmWare(RefreshFirmwareVersion refreshFirmwareVersion){
-        OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    public void onRefreshRoomData(EEvent eventEntry) {
+        // 处理刷新网关固件数据
+        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA)){
+            // 获取设备基本信息
+            new TSLHelper(this).getBaseInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+
+            // 非共享设备才能去获取版本号信息
+            if(mOwned > 0){
+                OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+            return;
+        }
     }
 
     @Override
@@ -378,6 +392,9 @@ public class MoreGatewayActivity extends BaseActivity {
             this.mRoomName = deviceEntry.roomName;
             this.mBindTime = deviceEntry.bindTime;
         }
+
+        TextView lblDeviceId = (TextView)findViewById(R.id.moreGatewayLblId);
+        lblDeviceId.setText(deviceEntry.deviceName);
 
         this.mLblTitle = (TextView)findViewById(R.id.includeTitleLblTitle);
         this.mLblTitle.setText(this.mName);
@@ -536,7 +553,6 @@ public class MoreGatewayActivity extends BaseActivity {
         ImageView imgUnbind = (ImageView)findViewById(R.id.moreImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
-
 
         // 获取设备基本信息
         new TSLHelper(this).getBaseInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);

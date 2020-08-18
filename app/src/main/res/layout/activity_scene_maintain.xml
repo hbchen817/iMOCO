@@ -25,7 +25,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp">
@@ -47,10 +47,54 @@
             android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/sceneMaintainImgName"
             android:gravity="center_vertical"
-            android:text="起夜开灯" />
+            android:text="@string/scenename" />
 
         <ImageView
             android:id="@+id/sceneMaintainImgName"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/go" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:background="@color/colorLine"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="1dp" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            style="@style/NormalFontStyle"
+            android:gravity="center_vertical"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:text="@string/scene_maintain_use"/>
+
+        <TextView
+            android:id="@+id/sceneMaintainLblEnable"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/sceneMaintainImgEnable"
+            android:gravity="center_vertical"
+            android:text="@string/scene_maintain_startusing" />
+
+        <ImageView
+            android:id="@+id/sceneMaintainImgEnable"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginRight="10dp"
@@ -98,14 +142,13 @@
 
         <TextView
             android:id="@+id/sceneMaintainLblOperate"
-            android:textAlignment="center"
+            style="@style/NormalFontStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:text="@string/scene_maintain_create"
+            android:textAlignment="center"
             android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            style="@style/NormalFontStyle"
-            android:textColor="#FFFFFF"
-            android:text="@string/scene_maintain_create" />
+            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 

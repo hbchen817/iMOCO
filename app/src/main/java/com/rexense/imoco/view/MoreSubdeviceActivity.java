@@ -42,7 +42,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
     private int mSetType = 0;
     private RelativeLayout mWheelPickerLayout;
     private WheelPicker mWheelPicker;
-    private TextView mLblTitle, mWheelPickerValue, mLblNewNickName, mLblRoomName;
+    private TextView mLblTitle, mWheelPickerValue, mLblNewNickName, mLblRoomName, mLblMACAddress;
     private HomeSpaceManager mHomeSpaceManager;
     private UserCenter mUserCenter;
     private EHomeSpace.roomListEntry mRoomListEntry;
@@ -250,6 +250,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
         this.mLblRoomName = (TextView)findViewById(R.id.moreSubdeviceLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
+        this.mLblMACAddress = (TextView)findViewById(R.id.moreSubdeviceLblMACAddress);
+        this.mLblMACAddress.setText(deviceEntry.deviceName);
         TextView bindTime = (TextView)findViewById(R.id.moreSubdeviceLblBindTime);
         bindTime.setText(this.mBindTime);
 

@@ -44,4 +44,10 @@ public class RefreshData {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA);
         EventBus.getDefault().post(event);
     }
+
+    // 刷新网关固件数据
+    public static void refreshGatewayFirmwareData(){
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA);
+        EventBus.getDefault().post(event);
+    }
 }

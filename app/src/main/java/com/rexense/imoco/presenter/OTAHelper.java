@@ -50,6 +50,7 @@ public class OTAHelper {
         requestParameterEntry.version = "1.0.2";
         requestParameterEntry.addParameter("iotIds", iotIds);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPGRADEFIRMWARE;
+
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

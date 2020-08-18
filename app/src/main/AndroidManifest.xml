@@ -122,26 +122,32 @@
         <activity
             android:name="com.rexense.imoco.view.OALoginActivity"
             android:theme="@style/Login"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.RegisterActivity"
             android:theme="@style/Register"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.LoginWithSmsCodeActivity"
             android:theme="@style/Register"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.ResetPasswordActivity"
             android:theme="@style/Register"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.ResetPasswordFillPasswordActivity"
             android:theme="@style/Register"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.RegisterFillPasswordActivity"
             android:theme="@style/Register"
+            android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.MyInfoActivity"
