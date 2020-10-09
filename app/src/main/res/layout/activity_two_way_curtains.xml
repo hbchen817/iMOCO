@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_detail" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_330">
+
+        <ImageView
+            android:id="@+id/device_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_350"
+            android:background="#71A0F9" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginTop="@dimen/dp_250"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/open_curtains"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/status"
+                android:layout_centerHorizontal="true"
+                android:text="@string/one_curtains"
+                android:textColor="#EAEAEA" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/dp_250"
+            android:layout_marginRight="@dimen/dp_50"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/two_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="打开窗帘"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/status"
+                android:layout_centerHorizontal="true"
+                android:text="@string/two_curtains"
+                android:textColor="#EAEAEA" />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:text="@string/one_curtains"
+        android:textColor="@color/all_3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginHorizontal="@dimen/dp_25"
+        android:background="@drawable/three_switch_background"
+        android:padding="@dimen/dp_4">
+
+        <TextView
+            android:id="@+id/close_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/close_curtains"
+            android:textColor="@color/all_3" />
+
+        <TextView
+            android:id="@+id/open_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/one_switch_background"
+            android:gravity="center"
+            android:text="@string/open_curtains"
+            android:textColor="@color/all_3" />
+
+        <TextView
+            android:id="@+id/stop_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/stop_curtains"
+            android:textColor="@color/all_3" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:text="@string/two_curtains"
+        android:textColor="@color/all_3" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginHorizontal="@dimen/dp_25"
+        android:background="@drawable/three_switch_background"
+        android:padding="@dimen/dp_4">
+
+        <TextView
+            android:id="@+id/two_close_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/close_curtains"
+            android:textColor="@color/all_3" />
+
+        <TextView
+            android:id="@+id/two_open_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/one_switch_background"
+            android:gravity="center"
+            android:text="@string/open_curtains"
+            android:textColor="@color/all_3" />
+
+        <TextView
+            android:id="@+id/two_stop_curtains"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/stop_curtains"
+            android:textColor="@color/all_3" />
+
+    </LinearLayout>
+
+</LinearLayout>

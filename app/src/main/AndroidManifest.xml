@@ -52,6 +52,20 @@
             android:label="@string/app_name">
         </activity>
         <activity
+            android:name="com.rexense.imoco.view.OneWayCurtainsDetailActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity
+            android:name="com.rexense.imoco.view.OneKeySceneDetailActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name="com.rexense.imoco.view.TwoWayCurtainsDetailActivity"
+            android:label="@string/app_name">
+
+        </activity>
+        <activity
             android:name="com.rexense.imoco.view.SetTimeActivity"
             android:label="@string/app_name">
         </activity>

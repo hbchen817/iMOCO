@@ -428,4 +428,32 @@
     <string name="room_name_update_success">房间名称修改成功</string>
     <string name="devices_not_belong_this_room">不在此房间的设备</string>
     <string name="devices_belong_this_room">在此房间的设备</string>
+
+    <string name="curtains">窗帘</string>
+    <string name="one_curtains">一路窗帘</string>
+    <string name="two_curtains">二路窗帘</string>
+    <string name="window_curtains_switch">窗帘开关</string>
+    <string name="close_curtains">关闭窗帘</string>
+    <string name="open_curtains">打开窗帘</string>
+    <string name="stop_curtains">停止窗帘</string>
+    <string name="key_status">按键状态</string>
+    <string name="no_bind_scene">未绑定场景>></string>
+
+    <string name="fan_speed">风速档位</string>
+    <string name="fan_speed_low">低风</string>
+    <string name="lock">锁定</string>
+    <string name="key_lock">按键锁定</string>
+    <string name="sub">一</string>
+    <string name="add">十</string>
+    <string name="centigrade">℃</string>
+    <string name="current_temperature">当前温度</string>
+    <string name="current_humidity">当前湿度</string>
+    <string name="dehumidification">除湿</string>
+    <string name="swing_switch">上下摆风开光</string>
+
+    <string name="power">电量</string>
+    <string name="pm25">pm2.5</string>
+    <string name="tvoc">TVOC</string>
+    <string name="HCHO">甲醛含量</string>
+
 </resources>
