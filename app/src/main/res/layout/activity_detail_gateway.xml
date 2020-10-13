@@ -12,43 +12,57 @@
         android:layout_width="fill_parent"
         android:layout_height="200dp">
 
-        <ImageView
-            android:id="@+id/detailGatewayImgSecurityRound"
-            android:layout_width="190dp"
-            android:layout_height="190dp"
+        <RelativeLayout
+            android:id="@+id/mArmViw"
+            android:visibility="visible"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/contentDescription_null"
-            android:src="@drawable/shape_round" />
-
-        <ImageView
-            android:id="@+id/detailGatewayImgSecurity"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/state_icon_deploy" />
-
-        <TextView
-            android:id="@+id/detailGatewayLblArmMode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/TitleBoldFontStyle"
-            android:textColor="#FFFFFF"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/detailGatewayImgSecurity"
-            android:layout_marginTop="1dp"
-            android:text="@string/detailgateway_armmode_cancel" />
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/detailGatewayImgSecurityRound"
+                android:layout_width="190dp"
+                android:layout_height="190dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/contentDescription_null"
+                android:src="@drawable/shape_round" />
 
-        <TextView
-            android:id="@+id/detailGatewayLblArmModeClick"
+            <ImageView
+                android:id="@+id/detailGatewayImgSecurity"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/state_icon_deploy" />
+
+            <TextView
+                android:id="@+id/detailGatewayLblArmMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TitleBoldFontStyle"
+                android:textColor="#FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/detailGatewayImgSecurity"
+                android:layout_marginTop="1dp"
+                android:text="@string/detailgateway_armmode_cancel" />
+
+            <TextView
+                android:id="@+id/detailGatewayLblArmModeClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/NormalFontStyle"
+                android:textColor="#FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/detailGatewayLblArmMode"
+                android:layout_marginTop="5dp"
+                android:text="@string/detailgateway_armmode_deploy_click" />
+        </RelativeLayout>
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/mGateway4100"
+            android:src="@drawable/icon_gateway_fton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/NormalFontStyle"
-            android:textColor="#FFFFFF"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/detailGatewayLblArmMode"
-            android:layout_marginTop="5dp"
-            android:text="@string/detailgateway_armmode_deploy_click" />
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
 

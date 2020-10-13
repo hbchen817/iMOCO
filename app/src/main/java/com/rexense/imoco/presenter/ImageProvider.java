@@ -21,6 +21,8 @@ public class ImageProvider {
         switch (productKey) {
             case CTSL.PK_GATEWAY:
                 return R.drawable.icon_gateway;
+            case CTSL.PK_GATEWAY_RG4100:
+                return R.drawable.icon_gateway_fton;
             case CTSL.PK_ONEWAYSWITCH:
                 return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
@@ -38,6 +40,8 @@ public class ImageProvider {
             case CTSL.PK_PIRSENSOR:
                 return R.drawable.icon_pirsensor;
             case CTSL.PK_TEMHUMSENSOR:
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_SMART_LOCK:
                 return R.drawable.icon_thsensor;
             default:
                 break;

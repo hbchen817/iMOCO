@@ -14,6 +14,7 @@ public class Constant {
     public static final String APPSECRET                            = "be390d30947e8c7ca493a11d2f9746cf";
 
     // 产品类型
+    public static final int PRODUCT_TYPE_SAFE                       = 0;
     public static final int PRODUCT_TYPE_SWITCH                     = 1;
     public static final int PRODUCT_TYPE_SENSOR                     = 2;
     public static final int PRODUCT_TYPE_GATEWAY                    = 3;
@@ -106,6 +107,10 @@ public class Constant {
     public static final String API_PATH_GETDEVICEINROOM             = "/living/home/room/device/query";
     public static final String API_PATH_UPGRADEFIRMWARE             = "/thing/ota/batchUpgradeByUser";
     public static final String API_PATH_UPDATEROOM                  = "/living/home/room/update";
+    //过滤设备发现接口
+    public static final String API_PATH_FILTER                      = "/awss/enrollee/product/filter";
+    //请求下发Token
+    public static final String API_PATH_GET_TOKEN                   = "/living/awss/token/create";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -178,6 +183,8 @@ public class Constant {
     public static final int MSG_CALLBACK_GETDEVICEINROOM            = 141;
     public static final int MSG_CALLBACK_UPGRADEFIRMWARE            = 142;
     public static final int MSG_CALLBACK_UPDATEROOM                 = 143;
+    public static final int MSG_CALLBACK_FILTER_DEVICE              = 144;
+    public static final int MSG_CALLBACK_GET_TOKEN                  = 145;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

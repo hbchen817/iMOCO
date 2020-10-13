@@ -222,6 +222,13 @@ public class DetailGatewayActivity extends DetailActivity {
         this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
         this.mAptDeviceList = new AptDeviceList(this);
 
+        RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
+        ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
+        if (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)){
+            gateway4100.setVisibility(View.VISIBLE);
+            armView.setVisibility(View.GONE);
+        }
+
         // 获取网关状态
         this.mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
 

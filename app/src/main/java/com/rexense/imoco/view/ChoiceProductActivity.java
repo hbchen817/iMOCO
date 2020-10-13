@@ -63,7 +63,7 @@ public class ChoiceProductActivity extends BaseActivity {
     private int mGatewayStatus = 0;
     private int mGatewayNumber = 0;
     private ShareDeviceManager shareDeviceManager;
-    private TextView mLblSwitch, mLblSensor, mLblGateway;
+    private TextView mLblSafe,mLblSwitch, mLblSensor, mLblGateway;
 
     // 产品类型点击处理
     private void onProductTypeClick(int productType){
@@ -71,6 +71,8 @@ public class ChoiceProductActivity extends BaseActivity {
             this.mLblSwitch.setBackgroundColor(Color.WHITE);
             this.mLblSensor.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
             this.mLblGateway.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblSwitch.setTextColor(getResources().getColor(R.color.topic_color1));
             this.mLblSensor.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblGateway.setTextColor(getResources().getColor(R.color.normal_font_color));
@@ -78,6 +80,8 @@ public class ChoiceProductActivity extends BaseActivity {
             this.mLblSwitch.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
             this.mLblSensor.setBackgroundColor(Color.WHITE);
             this.mLblGateway.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblSwitch.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblSensor.setTextColor(getResources().getColor(R.color.topic_color1));
             this.mLblGateway.setTextColor(getResources().getColor(R.color.normal_font_color));
@@ -85,9 +89,20 @@ public class ChoiceProductActivity extends BaseActivity {
             this.mLblSwitch.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
             this.mLblSensor.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
             this.mLblGateway.setBackgroundColor(Color.WHITE);
+            this.mLblSafe.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblSwitch.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblSensor.setTextColor(getResources().getColor(R.color.normal_font_color));
             this.mLblGateway.setTextColor(getResources().getColor(R.color.topic_color1));
+        }else if(productType == Constant.PRODUCT_TYPE_SAFE){
+            this.mLblSwitch.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSensor.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblGateway.setBackgroundColor(getResources().getColor(R.color.appbgcolor));
+            this.mLblSafe.setBackgroundColor(Color.WHITE);
+            this.mLblSafe.setTextColor(getResources().getColor(R.color.topic_color1));
+            this.mLblSwitch.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblSensor.setTextColor(getResources().getColor(R.color.normal_font_color));
+            this.mLblGateway.setTextColor(getResources().getColor(R.color.normal_font_color));
         }
 
         if(this.mConfigProductListAll == null){
@@ -116,7 +131,12 @@ public class ChoiceProductActivity extends BaseActivity {
                 }
             } else if(productType == Constant.PRODUCT_TYPE_GATEWAY){
                 // 网关处理
-                if(entry.productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
+                if(entry.productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)||entry.productKey.equalsIgnoreCase(CTSL.PK_GATEWAY_RG4100)){
+                    this.mConfigProductList.add(entry);
+                }
+            }else if(productType == Constant.PRODUCT_TYPE_SAFE){
+                //安防处理
+                if (entry.productKey.equalsIgnoreCase(CTSL.PK_SMART_LOCK)){
                     this.mConfigProductList.add(entry);
                 }
             }
@@ -183,7 +203,7 @@ public class ChoiceProductActivity extends BaseActivity {
                                 }
                             }
                         }
-                        onProductTypeClick(Constant.PRODUCT_TYPE_SWITCH);
+                        onProductTypeClick(Constant.PRODUCT_TYPE_SAFE);
                     }
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEGATWAYLIST:
@@ -222,9 +242,18 @@ public class ChoiceProductActivity extends BaseActivity {
             }
         });
 
+        this.mLblSafe = (TextView)findViewById(R.id.choiceProductTypeSafe);
         this.mLblSwitch = (TextView)findViewById(R.id.choiceProductTypeSwitch);
         this.mLblSensor = (TextView)findViewById(R.id.choiceProductTypeSensor);
         this.mLblGateway = (TextView)findViewById(R.id.choiceProductTypeGateway);
+
+        // 点击开关处理
+        this.mLblSafe.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProductTypeClick(Constant.PRODUCT_TYPE_SAFE);
+            }
+        });
 
         // 点击开关处理
         this.mLblSwitch.setOnClickListener(new OnClickListener() {

@@ -77,6 +77,7 @@
     <string name="login_forgetpassword">忘记密码?</string>
 
     <string name="configproduct_title">请选择设备类型</string>
+    <string name="configproduct_device_type_safe">安防</string>
     <string name="configproduct_device_type_switch">开关</string>
     <string name="configproduct_device_type_sensor">传感器</string>
     <string name="configproduct_device_type_gateway">网关</string>
@@ -455,5 +456,16 @@
     <string name="pm25">pm2.5</string>
     <string name="tvoc">TVOC</string>
     <string name="HCHO">甲醛含量</string>
+
+    <string name="gateway_guidance">请确认手机和智能网关处于同一个路由器网络之下</string>
+    <string name="gateway_bind_confirm">确认绑定此设备吗？</string>
+    <string name="gateway_guidance_check">确认以上操作</string>
+    <string name="search_gate_way_device">搜索网关设备</string>
+    <string name="gateway_bind_title">设备绑定</string>
+    <string name="gateway_bind_progress_hint">设备绑定中，请稍候</string>
+    <string name="device_add_success">设备添加成功</string>
+    <string name="current_test">立即体验</string>
+    <string name="edit_device_name">修改设备昵称</string>
+    <string name="bind_result">配网结果</string>
 
 </resources>

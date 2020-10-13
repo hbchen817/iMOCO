@@ -3,7 +3,7 @@
 	android:id="@+id/includeTitleRl"
 	android:layout_width="match_parent"
 	android:layout_height="@dimen/dp_46"
-	android:background="@color/appbgcolor" >
+	android:background="@color/white" >
 
 	<TextView
 		android:id="@+id/includeTitleLblTitle"

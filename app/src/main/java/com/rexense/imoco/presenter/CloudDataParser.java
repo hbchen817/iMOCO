@@ -1,6 +1,7 @@
 package com.rexense.imoco.presenter;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -48,6 +49,7 @@ public class CloudDataParser {
                 EProduct.configListEntry entry = new EProduct.configListEntry();
                 entry.productKey = item.getString("productKey");
                 entry.name = item.getString("name");
+                Log.i("lzm", "json =" + item.toJSONString());
                 entry.name = ProductHelper.replaceBrand(entry.name);
                 entry.categoryId = item.getInteger("categoryId");
                 entry.categoryKey = item.getString("categoryKey");

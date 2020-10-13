@@ -11,6 +11,7 @@ import java.util.Map;
 public class CTSL {
     // 定义设备ProductKey常量
     public static final String PK_GATEWAY                   = "a1GuwJkxdQx";
+    public static final String PK_GATEWAY_RG4100            = "b17wpNLgyIe";
     public static final String PK_ONEWAYSWITCH              = "a1X2BnFW2fx";
     public static final String PK_TWOWAYSWITCH              = "a1C9G2We8Da";
     public static final String PK_GASSENSOR                 = "a1Kwz77cZAu";
@@ -20,6 +21,9 @@ public class CTSL {
     public static final String PK_DOORSENSOR                = "a1q32AasDLg";
     public static final String PK_PIRSENSOR                 = "a1CzbnRNzCR";
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
+    public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
+
+    public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
     // 定义属性类型
     public static enum PTYPE

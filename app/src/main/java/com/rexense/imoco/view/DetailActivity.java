@@ -59,6 +59,9 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_TWOWAYSWITCH:
                 setContentView(R.layout.activity_detail_twoswitch);
                 break;
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
+                setContentView(R.layout.activity_one_way_window_curtains);
+                break;
             default:
                 setContentView(R.layout.activity_detail_gateway);
                 break;
@@ -83,7 +86,7 @@ public class DetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent;
-                if(mProductKey.equals(CTSL.PK_GATEWAY)) {
+                if(mProductKey.equals(CTSL.PK_GATEWAY)||mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
                     intent = new Intent(DetailActivity.this, MoreGatewayActivity.class);
                 } else {
                     intent = new Intent(DetailActivity.this, MoreSubdeviceActivity.class);

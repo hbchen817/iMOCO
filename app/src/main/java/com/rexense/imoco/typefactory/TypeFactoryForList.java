@@ -4,11 +4,13 @@ import android.view.View;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.model.ItemAddRoomDevice;
+import com.rexense.imoco.model.ItemGateway;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 import com.rexense.imoco.viewholder.ItemAddRoomDeviceViewHolder;
+import com.rexense.imoco.viewholder.ItemGatewayViewHolder;
 import com.rexense.imoco.viewholder.ItemMsgCenterViewHolder;
 import com.rexense.imoco.viewholder.ItemSceneLogViewHolder;
 import com.rexense.imoco.viewholder.ItemShareDeviceViewHolder;
@@ -36,6 +38,10 @@ public class TypeFactoryForList implements TypeFactory {
     public int type(ItemAddRoomDevice model) {
         return R.layout.item_add_room_device;
     }
+    @Override
+    public int type(ItemGateway model) {
+        return R.layout.item_gateway;
+    }
 
     @Override
     public BaseViewHolder createViewHolder(int type, View itemView) {
@@ -48,6 +54,8 @@ public class TypeFactoryForList implements TypeFactory {
                     return new ItemSceneLogViewHolder(itemView);
             case R.layout.item_add_room_device:
                     return new ItemAddRoomDeviceViewHolder(itemView);
+            case R.layout.item_gateway:
+                    return new ItemGatewayViewHolder(itemView);
             default:
                     return null;
         }

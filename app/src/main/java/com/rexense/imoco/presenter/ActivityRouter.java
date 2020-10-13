@@ -20,6 +20,7 @@ public class ActivityRouter {
         Intent intent = null;
         switch (productKey) {
             case CTSL.PK_GATEWAY:
+            case CTSL.PK_GATEWAY_RG4100:
                 // 网关处理
                 intent = new Intent(context, DetailGatewayActivity.class);
                 break;

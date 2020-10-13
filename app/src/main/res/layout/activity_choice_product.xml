@@ -28,7 +28,7 @@
             </View>
 
             <TextView
-                android:id="@+id/choiceProductTypeSwitch"
+                android:id="@+id/choiceProductTypeSafe"
                 android:layout_below="@+id/choiceProductViNull"
                 style="@style/NormalFontStyle"
                 android:gravity="center|left"
@@ -37,7 +37,19 @@
                 android:background="@color/white"
                 android:paddingLeft="@dimen/dp_10"
                 android:textColor="@color/topic_color1"
+                android:text="@string/configproduct_device_type_safe" />
+
+            <TextView
+                android:id="@+id/choiceProductTypeSwitch"
+                android:layout_below="@+id/choiceProductTypeSafe"
+                style="@style/NormalFontStyle"
+                android:gravity="center|left"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:background="@color/appbgcolor"
+                android:paddingLeft="@dimen/dp_10"
                 android:text="@string/configproduct_device_type_switch" />
+
 
             <TextView
                 android:id="@+id/choiceProductTypeSensor"

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ImageProvider;
 import com.rexense.imoco.presenter.ProductHelper;
@@ -81,22 +82,26 @@ public class ProductGuidanceActivity extends BaseActivity {
 
     // 配网步骤引导
     public void guidance(int stepIndex) {
-        if(this.mGuidances == null || this.mGuidances.size() == 0) {
+        if ((this.mGuidances == null || this.mGuidances.size() == 0) && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             return;
         }
 
         // 引导完作后的处理
-        if(this.mCurrentStepIndex >= this.mStepCount) {
+        if (this.mCurrentStepIndex >= this.mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             if(!mChbIsRead.isChecked()){
                 Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
                 return;
             }
 
             if(this.mNodeType == Constant.DEVICETYPE_GATEWAY) {
-                // 选中的是网关则进入扫描蓝牙设备
-                Intent intent = new Intent(ProductGuidanceActivity.this, ScanBLEActivity.class);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
+                if (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
+                    ScanGatewayByNetActivity.start(ProductGuidanceActivity.this);
+                } else {
+                    // 选中的是网关则进入扫描蓝牙设备
+                    Intent intent = new Intent(ProductGuidanceActivity.this, ScanBLEActivity.class);
+                    intent.putExtra("productKey", mProductKey);
+                    startActivity(intent);
+                }
                 finish();
             } else {
                 // 选中的是子设备处理
@@ -125,13 +130,15 @@ public class ProductGuidanceActivity extends BaseActivity {
             return;
         }
 
-        // 加载引导内容
-        this.mGuidanceCopywriting.setText(this.mGuidances.get(stepIndex).dnCopywriting);
-        this.mOperateCopywriting.setText(this.mGuidances.get(stepIndex).buttonCopywriting);
-        if(this.mCurrentStepIndex == this.mStepCount - 1) {
-            this.mChbIsRead.setVisibility(View.VISIBLE);
+        if (!mProductKey.equals(CTSL.PK_GATEWAY_RG4100)){
+            // 加载引导内容
+            this.mGuidanceCopywriting.setText(this.mGuidances.get(stepIndex).dnCopywriting);
+            this.mOperateCopywriting.setText(this.mGuidances.get(stepIndex).buttonCopywriting);
+            if(this.mCurrentStepIndex == this.mStepCount - 1) {
+                this.mChbIsRead.setVisibility(View.VISIBLE);
+            }
+            Glide.with(ProductGuidanceActivity.this).load(this.mGuidances.get(stepIndex).dnGuideIcon).into(this.mGuidanceIcon);
         }
-        Glide.with(ProductGuidanceActivity.this).load(this.mGuidances.get(stepIndex).dnGuideIcon).into(this.mGuidanceIcon);
     }
 
     @Override
@@ -174,9 +181,15 @@ public class ProductGuidanceActivity extends BaseActivity {
             }
         });
 
-        if(this.mProductKey.length() > 1){
+        if (this.mProductKey.length() > 1 && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             //获取产品配网引导信息
             new ProductHelper(this).getGuidanceInformation(this.mProductKey, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
+        } else if (this.mProductKey.length() > 1 && mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
+            //RG4100网关
+            mGuidanceCopywriting.setText(R.string.gateway_guidance);
+            mChbIsRead.setVisibility(View.VISIBLE);
+            mOperateCopywriting.setText(R.string.dialog_confirm);
+            Glide.with(ProductGuidanceActivity.this).load(R.drawable.icon_gateway_fton).into(this.mGuidanceIcon);
         }
     }
 }
