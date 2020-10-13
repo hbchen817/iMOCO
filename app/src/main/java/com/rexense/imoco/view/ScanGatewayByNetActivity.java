@@ -76,7 +76,6 @@ public class ScanGatewayByNetActivity extends AppCompatActivity {
     private HashMap<String, DeviceInfo> mDeviceMap = new HashMap<>();
     private ProcessDataHandler mHandler;
     private ResponseErrorHandler mResponseErrorHandler;
-    private String mToken;
     private Disposable mDisposable;
     private ProgressDialog mProgressDialog;
     private String mBindName;
@@ -87,7 +86,6 @@ public class ScanGatewayByNetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scan_gateway_net);
         ButterKnife.bind(this);
         initView();
-        getToken();
         discovery();
     }
 
@@ -224,18 +222,6 @@ public class ScanGatewayByNetActivity extends AppCompatActivity {
         new APIChannel().commit(requestParameterEntry, null, null, mHandler);
     }
 
-    private void getToken() {
-        //设置请求参数
-        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
-        requestParameterEntry.path = Constant.API_PATH_GET_TOKEN;
-        requestParameterEntry.version = "1.0.0";
-        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GET_TOKEN;
-        requestParameterEntry.parameters = new HashMap<>();
-        requestParameterEntry.parameters.put("homeId", SystemParameter.getInstance().getHomeId());
-        //提交
-        new APIChannel().commit(requestParameterEntry, null, null, mHandler);
-    }
-
     private JSONArray parseFilterListToJsonArray(List<FilterDevice> list) {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < list.size(); i++) {
@@ -302,10 +288,6 @@ public class ScanGatewayByNetActivity extends AppCompatActivity {
                         activity.mList.add(itemGateway);
                         activity.mAdapter.notifyDataSetChanged();
                     }
-                    break;
-                case Constant.MSG_CALLBACK_GET_TOKEN:
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    activity.mToken = jsonObject.getString("token");
                     break;
                 case Constant.MSG_CALLBACK_BINDEVICE:
                     if (activity.mDisposable != null && !activity.mDisposable.isDisposed()) {

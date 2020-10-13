@@ -7,6 +7,7 @@ import com.rexense.imoco.model.ItemGateway;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
+import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 
 
@@ -20,6 +21,7 @@ public interface TypeFactory {
     int type(ItemSceneLog item);
     int type(ItemAddRoomDevice item);
     int type(ItemGateway item);
+    int type(ItemUser item);
 
     BaseViewHolder createViewHolder(int type, View itemView);
 }

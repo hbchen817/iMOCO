@@ -54,13 +54,25 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.rexense.imoco.view.SceneMaintainActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.rexense.imoco.view.ScanGatewayByNetActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
         <activity
             android:name="com.rexense.imoco.view.BindSuccessActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
+        <activity
+            android:name="com.rexense.imoco.view.LockDetailActivity"
+            android:label="@string/app_name"/>
+        <activity
+            android:name="com.rexense.imoco.view.UserManagerActivity"
+            android:label="@string/app_name"/>
+        <activity
+            android:name="com.rexense.imoco.view.CreateUserActivity"
+            android:label="@string/app_name"/>
+        <activity
+            android:name="com.rexense.imoco.view.EditUserActivity"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.rexense.imoco.view.OneWayCurtainsDetailActivity"
             android:label="@string/app_name">

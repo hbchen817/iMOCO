@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_common_toolbar" />
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="@dimen/sp_20"
+            android:textColor="#676C6F"
+            android:text="@string/create_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textSize="@dimen/sp_16"
+            android:textColor="#D9DADB"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:text="@string/create_user_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="@dimen/sp_16"
+            android:textColor="#676C6F"
+            android:text="@string/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/mNameEditText"
+            android:textSize="@dimen/sp_16"
+            android:textColor="#D9DADB"
+            android:layout_marginLeft="@dimen/dp_50"
+            android:hint="@string/create_user_name_hint"
+            android:layout_width="wrap_content"
+            android:background="@null"
+            android:textColorHint="#D9DADB"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

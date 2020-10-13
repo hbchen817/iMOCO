@@ -5,11 +5,5 @@
         android:type="linear"
         android:startColor="@color/topic_color2"
         android:endColor="@color/topic_color1"
-        android:angle="0" />
-    <corners android:radius="10dip"/>
-    <padding
-        android:bottom="3dp"
-        android:top="2dp"
-        android:left="10dp"
-        android:right="10dp"/>
+        android:angle="270" />
 </shape>

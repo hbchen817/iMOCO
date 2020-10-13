@@ -2,9 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/detailGatewayLlMain"
     android:layout_width="match_parent"
-    android:background="@color/topic_color1"
     android:layout_height="match_parent"
+    android:background="@color/topic_color1"
     android:orientation="vertical">
+
+    <View
+        android:id="@+id/fake_statusbar_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/statusbar_view_height"
+        android:background="@color/topic_color1" />
 
     <include layout="@layout/include_detail" />
 
@@ -14,10 +20,11 @@
 
         <RelativeLayout
             android:id="@+id/mArmViw"
-            android:visibility="visible"
-            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible">
+
             <ImageView
                 android:id="@+id/detailGatewayImgSecurityRound"
                 android:layout_width="190dp"
@@ -36,83 +43,82 @@
 
             <TextView
                 android:id="@+id/detailGatewayLblArmMode"
+                style="@style/TitleBoldFontStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/TitleBoldFontStyle"
-                android:textColor="#FFFFFF"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/detailGatewayImgSecurity"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="1dp"
-                android:text="@string/detailgateway_armmode_cancel" />
+                android:text="@string/detailgateway_armmode_cancel"
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:id="@+id/detailGatewayLblArmModeClick"
+                style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/NormalFontStyle"
-                android:textColor="#FFFFFF"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/detailGatewayLblArmMode"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
-                android:text="@string/detailgateway_armmode_deploy_click" />
+                android:text="@string/detailgateway_armmode_deploy_click"
+                android:textColor="#FFFFFF" />
         </RelativeLayout>
 
         <ImageView
-            android:visibility="gone"
             android:id="@+id/mGateway4100"
-            android:src="@drawable/icon_gateway_fton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_gateway_fton"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:background="@color/appbgcolor"
         android:layout_width="fill_parent"
-        android:layout_height="30dp">
+        android:layout_height="30dp"
+        android:background="@color/appbgcolor">
 
         <TextView
             android:id="@+id/detailGatewayLblCount"
+            style="@style/SmallFontStyle"
             android:layout_width="wrap_content"
-            android:gravity="center_vertical|left"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginLeft="5dp"
             android:layout_marginBottom="5dp"
+            android:gravity="center_vertical|left"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            style="@style/SmallFontStyle"
             android:text="@string/detailgateway_count" />
 
     </RelativeLayout>
 
     <ListView
         android:id="@+id/detailGatewayLstSubdevice"
-        android:background="@color/appbgcolor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:background="@color/appbgcolor"
         android:divider="@null"
         android:dividerHeight="6dp"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:horizontalSpacing="1dip"></ListView>
 
     <RelativeLayout
         android:id="@+id/detailGatewayRlAdd"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_gravity="center|bottom"
-        android:background="@color/appbgcolor"
-        android:layout_height="50dp">
+        android:background="@color/appbgcolor">
 
         <ImageView
             android:id="@+id/detailGatewayImgAdd"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/shape_button"
             android:contentDescription="@string/contentDescription_null" />
 
@@ -121,8 +127,8 @@
             style="@style/NormalWhiteFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="@string/detailgateway_add"
             android:textColor="#ffffff" />
 

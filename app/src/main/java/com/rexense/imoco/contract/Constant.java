@@ -109,8 +109,13 @@ public class Constant {
     public static final String API_PATH_UPDATEROOM                  = "/living/home/room/update";
     //过滤设备发现接口
     public static final String API_PATH_FILTER                      = "/awss/enrollee/product/filter";
-    //请求下发Token
-    public static final String API_PATH_GET_TOKEN                   = "/living/awss/token/create";
+    //创建虚拟用户
+    public static final String API_PATH_CREATE_USER                  = "/uc/virtual/user/create";
+    //查询账户下的虚拟用户列表
+    public static final String API_PATH_QUERY_USER_IN_ACCOUNT        = "/uc/virtual/user/list";
+    //更新用户
+    public static final String API_PATH_UPDATE_USER                  = "/uc/virtual/user/update";
+
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -184,7 +189,9 @@ public class Constant {
     public static final int MSG_CALLBACK_UPGRADEFIRMWARE            = 142;
     public static final int MSG_CALLBACK_UPDATEROOM                 = 143;
     public static final int MSG_CALLBACK_FILTER_DEVICE              = 144;
-    public static final int MSG_CALLBACK_GET_TOKEN                  = 145;
+    public static final int MSG_CALLBACK_CREATE_USER                = 145;
+    public static final int MSG_CALLBACK_QUERY_USER_IN_ACCOUNT      = 146;
+    public static final int MSG_CALLBACK_UPDATE_USER                = 147;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

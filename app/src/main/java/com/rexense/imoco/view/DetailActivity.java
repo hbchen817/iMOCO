@@ -19,6 +19,7 @@ import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.ETSL;
+import com.rexense.imoco.utility.StatusBarUtils;
 
 /**
  * Creator: xieshaobing
@@ -62,8 +63,15 @@ public class DetailActivity extends BaseActivity {
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;
+            case CTSL.PK_SMART_LOCK:
+                StatusBarUtils.getStatusBarHeight(this);
+                setContentView(R.layout.activity_detail_lock);
+                StatusBarUtils.setStatusBar(this, false, false);
+                break;
             default:
+                StatusBarUtils.getStatusBarHeight(this);
                 setContentView(R.layout.activity_detail_gateway);
+                StatusBarUtils.setStatusBar(this, false, false);
                 break;
         }
 

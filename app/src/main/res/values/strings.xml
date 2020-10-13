@@ -468,4 +468,17 @@
     <string name="edit_device_name">修改设备昵称</string>
     <string name="bind_result">配网结果</string>
 
+    <string name="lock_user_manager">用户管理</string>
+    <string name="lock_short_time_password">临时密码</string>
+    <string name="lock_key_manager">钥匙管理</string>
+    <string name="open_record">开锁记录</string>
+    <string name="read_all_record">查看全部记录</string>
+    <string name="create_user">创建用户</string>
+    <string name="edit_user">编辑用户</string>
+    <string name="create_user_hint">请下面输入用户信息</string>
+    <string name="create_user_name_hint">请输入用户昵称</string>
+    <string name="nickname">昵称</string>
+    <string name="cancel">取消</string>
+    <string name="choice_password_time">选择密码生效时间</string>
+
 </resources>
