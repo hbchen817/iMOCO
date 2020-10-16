@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.rexense.imoco.model.ItemAddRoomDevice;
 import com.rexense.imoco.model.ItemGateway;
+import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
@@ -22,6 +23,7 @@ public interface TypeFactory {
     int type(ItemAddRoomDevice item);
     int type(ItemGateway item);
     int type(ItemUser item);
+    int type(ItemHistoryMsg item);
 
     BaseViewHolder createViewHolder(int type, View itemView);
 }

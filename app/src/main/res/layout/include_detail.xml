@@ -26,7 +26,6 @@
 		android:layout_marginRight="5dp"
 		android:visibility="gone"
 		android:layout_toLeftOf="@id/includeDetailImgMore"
-		android:layout_alignParentRight="true"
 		android:src="@drawable/setting" />
 
 	<ImageView

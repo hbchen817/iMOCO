@@ -5,6 +5,7 @@ import android.view.View;
 import com.rexense.imoco.R;
 import com.rexense.imoco.model.ItemAddRoomDevice;
 import com.rexense.imoco.model.ItemGateway;
+import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
@@ -12,6 +13,7 @@ import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 import com.rexense.imoco.viewholder.ItemAddRoomDeviceViewHolder;
 import com.rexense.imoco.viewholder.ItemGatewayViewHolder;
+import com.rexense.imoco.viewholder.ItemHistoryViewHolder;
 import com.rexense.imoco.viewholder.ItemMsgCenterViewHolder;
 import com.rexense.imoco.viewholder.ItemSceneLogViewHolder;
 import com.rexense.imoco.viewholder.ItemShareDeviceViewHolder;
@@ -48,6 +50,10 @@ public class TypeFactoryForList implements TypeFactory {
     public int type(ItemUser model) {
         return R.layout.item_user;
     }
+    @Override
+    public int type(ItemHistoryMsg model) {
+        return R.layout.item_history;
+    }
 
     @Override
     public BaseViewHolder createViewHolder(int type, View itemView) {
@@ -64,6 +70,8 @@ public class TypeFactoryForList implements TypeFactory {
                     return new ItemGatewayViewHolder(itemView);
             case R.layout.item_user:
                     return new ItemUserViewHolder(itemView);
+            case R.layout.item_history:
+                    return new ItemHistoryViewHolder(itemView);
             default:
                     return null;
         }

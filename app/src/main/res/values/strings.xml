@@ -479,6 +479,15 @@
     <string name="create_user_name_hint">请输入用户昵称</string>
     <string name="nickname">昵称</string>
     <string name="cancel">取消</string>
+    <string name="sure">确定</string>
+    <string name="complete">完成</string>
     <string name="choice_password_time">选择密码生效时间</string>
+    <string name="short_key_get">临时密码已生成</string>
+    <string name="temporary_key_time_format">该密码从yyyy-MM-dd HH:mm起，5分钟内有效</string>
+    <string name="copy">点击复制到剪贴板</string>
+    <string name="bind_key">归属钥匙</string>
+    <string name="history_record">历史记录</string>
+    <string name="belong_to">归属</string>
+    <string name="no_belong_to">未归属</string>
 
 </resources>

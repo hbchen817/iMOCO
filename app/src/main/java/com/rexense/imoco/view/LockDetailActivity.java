@@ -1,13 +1,45 @@
 package com.rexense.imoco.view;
 
+import android.app.ActionBar;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.datepicker.CustomDatePicker;
+import com.rexense.imoco.datepicker.DateFormatUtils;
+import com.rexense.imoco.datepicker.PickerView;
+import com.rexense.imoco.presenter.LockManager;
+import com.rexense.imoco.presenter.RealtimeDataReceiver;
+import com.rexense.imoco.utility.TimeUtils;
+
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,10 +59,170 @@ public class LockDetailActivity extends DetailActivity {
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
 
+    private CustomDatePicker mStartTimerPicker;
+    private String mTemporaryKey;
+    private long mKeyTime;
+    private LockHandler mHandler;
+    private String mSelectedUserName;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        mHandler = new LockHandler(this);
+        RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", mHandler);
+        includeDetailImgSetting.setVisibility(View.VISIBLE);
+
+    }
+
+    private void initTimerPicker() {
+        String beginTime = TimeUtils.getDatePickerNowTime();
+        String endTime = TimeUtils.getDatePickerEndTime();
+
+        // 通过日期字符串初始化日期，格式请用：yyyy-MM-dd HH:mm
+        mStartTimerPicker = new CustomDatePicker(this, new CustomDatePicker.Callback() {
+            @Override
+            public void onTimeSelected(long timestamp) {
+                String randomKey = getRandomKey();
+                mTemporaryKey = randomKey;
+                mKeyTime = timestamp;
+                String startTime = DateFormatUtils.long2Str(timestamp, true);
+                String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
+                LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, null, null, mHandler);
+                //todo 上传临时密码
+            }
+        }, beginTime, endTime, true);
+        // 允许点击屏幕或物理返回键关闭
+        mStartTimerPicker.setCancelable(true);
+        // 显示时和分
+        mStartTimerPicker.setCanShowPreciseTime(true);
+        // 允许循环滚动
+        mStartTimerPicker.setScrollLoop(true);
+        // 允许滚动动画
+        mStartTimerPicker.setCanShowAnim(true);
+    }
+
+    /**
+     * 随机一个6位密码
+     *
+     * @return 密码
+     */
+    private String getRandomKey() {
+        String source = "0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            sb.append(source.charAt(random.nextInt(9)));
+        }
+        return sb.toString();
+    }
+
+    private void showTemporaryKeyDialog(String key, long start) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        final View view = LayoutInflater.from(mActivity).inflate(R.layout.dialog_temporary_key, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+
+        TextView completeBtn = view.findViewById(R.id.mCompleteBtn);
+        TextView temporaryKeyText = view.findViewById(R.id.mTemporaryKeyText);
+        TextView timeHintText = view.findViewById(R.id.mTimeHintText);
+        TextView copyBtn = view.findViewById(R.id.mCopyBtn);
+
+        final Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.transparent_color);
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.height = getResources().getDimensionPixelOffset(R.dimen.dp_230);
+        params.width = ActionBar.LayoutParams.MATCH_PARENT;
+        params.gravity = Gravity.BOTTOM;
+        dialog.getWindow().setAttributes(params);//这行要放在dialog.show()之后才有效
+
+        temporaryKeyText.setText(key);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getString(R.string.temporary_key_time_format));
+        String format = simpleDateFormat.format(new Date(start));
+        timeHintText.setText(format);
+        completeBtn.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        copyBtn.setOnClickListener(v1 -> {
+            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            // 创建普通字符型ClipData
+            ClipData mClipData = ClipData.newPlainText("Label", key);
+            // 将ClipData内容放到系统剪贴板里。
+            cm.setPrimaryClip(mClipData);
+            Toast.makeText(mActivity, "复制成功", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showBindKeyDialog(String keyName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        final View view = LayoutInflater.from(mActivity).inflate(R.layout.dialog_key_bind_user, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+
+        TextView key_name_text = view.findViewById(R.id.key_name_text);
+        TextView btn_sure = view.findViewById(R.id.btn_sure);
+        TextView btn_cancel = view.findViewById(R.id.btn_cancel);
+        LinearLayout dialogOneView = view.findViewById(R.id.dialog_one);
+        LinearLayout dialogTwoView = view.findViewById(R.id.dialog_two);
+        TextView btn_sure_two = view.findViewById(R.id.btn_sure_two);
+        TextView btn_cancel_two = view.findViewById(R.id.btn_cancel_two);
+        LinearLayout belongView = view.findViewById(R.id.belong_view);
+        TextView belongUserName = view.findViewById(R.id.user_name);
+        PickerView picker = view.findViewById(R.id.picker);
+
+        final Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(R.color.transparent_color);
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        //params.height = getResources().getDimensionPixelOffset(R.dimen.dp_100);
+        params.width = getResources().getDimensionPixelOffset(R.dimen.dp_280);
+        params.gravity = Gravity.CENTER;
+        dialog.getWindow().setAttributes(params);//这行要放在dialog.show()之后才有效
+
+
+        key_name_text.setText(keyName);
+        btn_cancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        btn_sure.setOnClickListener(v1 -> {
+
+        });
+        belongView.setOnClickListener(v2 -> {
+            dialogOneView.setVisibility(View.GONE);
+            dialogTwoView.setVisibility(View.VISIBLE);
+        });
+        btn_cancel_two.setOnClickListener(v2 -> {
+            dialogOneView.setVisibility(View.VISIBLE);
+            dialogTwoView.setVisibility(View.GONE);
+        });
+        btn_sure_two.setOnClickListener(v3 -> {
+            if (picker.getSelectedIndex() == 0){
+                CreateUserActivity.start(this);
+            }else {
+                belongUserName.setText(mSelectedUserName);
+                dialogOneView.setVisibility(View.VISIBLE);
+                dialogTwoView.setVisibility(View.GONE);
+            }
+        });
+        List<String> data = new ArrayList<>();
+        data.add("创建新用户");
+        for (int i = 0; i < 10; i++) {
+            data.add("name" + i);
+        }
+        picker.setDataList(data);
+        picker.setCanScrollLoop(false);
+        picker.setSelected(1);
+        picker.setOnSelectListener(new PickerView.OnSelectListener() {
+            @Override
+            public void onSelect(View view, String selected) {
+                Log.i("lzm", "picker selected" + selected + ", index = " + picker.getSelectedIndex());
+                mSelectedUserName = selected;
+
+            }
+        });
     }
 
     @OnClick({R.id.includeDetailImgBack, R.id.all_record_btn, R.id.includeDetailImgSetting, R.id.includeDetailImgMore, R.id.mUserManagerView, R.id.mShortTimePasswordView, R.id.mKeyManagerView})
@@ -40,6 +232,7 @@ public class LockDetailActivity extends DetailActivity {
                 finish();
                 break;
             case R.id.includeDetailImgSetting:
+                showBindKeyDialog("指纹钥匙1");
                 break;
             case R.id.includeDetailImgMore:
                 break;
@@ -47,6 +240,9 @@ public class LockDetailActivity extends DetailActivity {
 
                 break;
             case R.id.mShortTimePasswordView:
+                mStartTimerPicker = null;
+                initTimerPicker();
+                mStartTimerPicker.show(System.currentTimeMillis());
                 break;
             case R.id.mKeyManagerView:
                 break;
@@ -54,6 +250,84 @@ public class LockDetailActivity extends DetailActivity {
                 break;
             default:
                 break;
+        }
+    }
+
+    private static class LockHandler extends Handler {
+        final WeakReference<LockDetailActivity> mWeakReference;
+
+        public LockHandler(LockDetailActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            LockDetailActivity activity = mWeakReference.get();
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject params = jsonObject.getJSONObject("params");
+                    JSONObject value = params.getJSONObject("value");
+                    String identifier = params.getString("identifier");
+                    switch (identifier) {
+                        case "KeyAddedNotification"://添加钥匙
+                            switch (value.getString("LockType")) {//开锁方式
+                                case "5"://临时钥匙
+                                    if (value.getIntValue("Status") == 0) {
+                                        activity.showTemporaryKeyDialog(activity.mTemporaryKey, activity.mKeyTime);
+                                    } else {
+                                        Toast.makeText(activity, "创建临时密码失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                    break;
+                                default://其他钥匙 指纹 密码 卡 机械钥匙
+                                    LockManager.filterUnbindKey(activity.mIOTId, value.getString("KeyID"), value.getString("LockType"), value.getString("UserLimit"), null, null, this);
+                                    break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    if (identifier.equalsIgnoreCase("KeyAddedNotification") &&
+                            value.getString("LockType").equalsIgnoreCase("5")) {
+                        if (value.getIntValue("Status") == 0) {
+                            activity.showTemporaryKeyDialog(activity.mTemporaryKey, activity.mKeyTime);
+                        } else {
+                            Toast.makeText(activity, "创建临时密码失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_FILTER_UNBIND_KEY:
+                    JSONArray array = JSON.parseArray((String) msg.obj);
+                    JSONObject data = array.getJSONObject(0);
+                    String iotId = data.getString("iotId");
+                    if (iotId.equalsIgnoreCase(activity.mIOTId)) {
+                        int lockUserPermType = data.getIntValue("lockUserPermType");//1 普通 2 管理 3 胁迫
+                        if (lockUserPermType == 0) {//未绑定
+                            StringBuffer name = new StringBuffer();
+                            switch (data.getIntValue("lockUserType")) {
+                                case 1:
+                                    name.append("指纹钥匙");
+                                    break;
+                                case 2:
+                                    name.append("密码钥匙");
+                                    break;
+                                case 3:
+                                    name.append("卡钥匙");
+                                    break;
+                                case 4:
+                                    name.append("机械钥匙");
+                                    break;
+                                default:
+                                    break;
+                            }
+                            activity.showBindKeyDialog(name.append(data.getString("lockUserId")).toString());
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

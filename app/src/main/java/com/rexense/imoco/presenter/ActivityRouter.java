@@ -8,6 +8,7 @@ import com.rexense.imoco.view.DetailGatewayActivity;
 import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
 import com.rexense.imoco.view.DetailTwoSwitchActivity;
+import com.rexense.imoco.view.LockDetailActivity;
 
 /**
  * Creator: xieshaobing
@@ -22,7 +23,7 @@ public class ActivityRouter {
             case CTSL.PK_GATEWAY:
             case CTSL.PK_GATEWAY_RG4100:
                 // 网关处理
-                intent = new Intent(context, DetailGatewayActivity.class);
+                intent = new Intent(context, LockDetailActivity.class);
                 break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
@@ -51,6 +52,9 @@ public class ActivityRouter {
                 if(!productKey.equals(CTSL.PK_GASSENSOR)) {
                     intent.putExtra("isHasPowerSource", true);
                 }
+                break;
+            case CTSL.PK_SMART_LOCK:
+                intent = new Intent(context, LockDetailActivity.class);
                 break;
             default:
                 break;

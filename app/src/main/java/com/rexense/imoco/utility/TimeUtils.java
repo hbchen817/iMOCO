@@ -1,5 +1,7 @@
 package com.rexense.imoco.utility;
 
+import com.rexense.imoco.datepicker.DateFormatUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,6 +85,19 @@ public class TimeUtils {
     public static String getTodayEndTime(){
         String ymdStr = sdf.format(new Date());
         return ymdStr+" 23:59:59";
+    }
+
+    public static String getDatePickerBeginTime(){
+        String beginTime = DateFormatUtils.long2Str(System.currentTimeMillis()-1000*3600*24*365l, true);
+        return beginTime;
+    }
+    public static String getDatePickerEndTime(){
+        String endTime = DateFormatUtils.long2Str(System.currentTimeMillis()+1000*3600*24*365l, true);
+        return endTime;
+    }
+    public static String getDatePickerNowTime(){
+        String endTime = DateFormatUtils.long2Str(System.currentTimeMillis(), true);
+        return endTime;
     }
 
 }

@@ -110,17 +110,27 @@ public class Constant {
     //过滤设备发现接口
     public static final String API_PATH_FILTER                      = "/awss/enrollee/product/filter";
     //创建虚拟用户
-    public static final String API_PATH_CREATE_USER                  = "/uc/virtual/user/create";
+    public static final String API_PATH_CREATE_USER                 = "/uc/virtual/user/create";
     //查询账户下的虚拟用户列表
-    public static final String API_PATH_QUERY_USER_IN_ACCOUNT        = "/uc/virtual/user/list";
+    public static final String API_PATH_QUERY_USER_IN_ACCOUNT       = "/uc/virtual/user/list";
     //更新用户
-    public static final String API_PATH_UPDATE_USER                  = "/uc/virtual/user/update";
+    public static final String API_PATH_UPDATE_USER                 = "/uc/virtual/user/update";
+    //查询历史记录
+    public static final String API_PATH_QUERY_HISTORY               = "/lock/event/history/query";
+    //查询钥匙对应的用户
+    public static final String API_PATH_KEY_USER_GET                = "/lock/key/virtual/user/get";
+    //设置临时密码
+    public static final String API_PATH_TEMPORARY_KEY               = "/thing/service/invoke";
+    //过滤未绑定用户钥匙
+    public static final String API_PATH_FILTER_UNBIND_KEY           = "/lock/key/user/unbind/filter";
+    //钥匙与用户绑定
+    public static final String API_PATH_KEY_USER_BIND               = "/lock/key/user/bind";
 
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
     public static final String PLUGIN_URL_SCENE                     ="link://router/scene";
-    public static final String PLUGIN_URL_ADVICE                     ="link://router/feedback";
+    public static final String PLUGIN_URL_ADVICE                    ="link://router/feedback";
 
     // 定义API返加代码常量
     public static final int API_CODE_SUCCESS                        = 200;
@@ -192,6 +202,9 @@ public class Constant {
     public static final int MSG_CALLBACK_CREATE_USER                = 145;
     public static final int MSG_CALLBACK_QUERY_USER_IN_ACCOUNT      = 146;
     public static final int MSG_CALLBACK_UPDATE_USER                = 147;
+    public static final int MSG_CALLBACK_QUERY_HISTORY              = 148;
+    public static final int MSG_CALLBACK_FILTER_UNBIND_KEY          = 149;
+    public static final int MSG_CALLBACK_KEY_USER_BIND              = 150;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

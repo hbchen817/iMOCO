@@ -70,7 +70,7 @@ public class DetailActivity extends BaseActivity {
                 break;
             default:
                 StatusBarUtils.getStatusBarHeight(this);
-                setContentView(R.layout.activity_detail_gateway);
+                setContentView(R.layout.activity_detail_lock);
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
         }
