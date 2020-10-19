@@ -159,6 +159,27 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    /**
+     * 查询设备下的虚拟用户列表
+     */
+    public static void queryVirtualUserListInDevice(String iotId,
+                                         Handler commitFailureHandler,
+                                         Handler responseErrorHandler,
+                                         Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_QUERY_USER_IN_DEVICE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_USER_IN_DEVICE;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
     /**
      * 编辑用户

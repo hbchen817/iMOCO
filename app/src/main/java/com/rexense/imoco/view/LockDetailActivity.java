@@ -30,8 +30,11 @@ import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.datepicker.CustomDatePicker;
 import com.rexense.imoco.datepicker.DateFormatUtils;
 import com.rexense.imoco.datepicker.PickerView;
+import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.presenter.LockManager;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
+import com.rexense.imoco.presenter.UserCenter;
+import com.rexense.imoco.utility.SrlUtils;
 import com.rexense.imoco.utility.TimeUtils;
 
 import java.lang.ref.WeakReference;
@@ -40,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +67,9 @@ public class LockDetailActivity extends DetailActivity {
     private String mTemporaryKey;
     private long mKeyTime;
     private LockHandler mHandler;
-    private String mSelectedUserName;
+    private ItemUser mSelectedUser;
+    private List<ItemUser> mUserList;
+    private UnbindKey mCurrentUnBindUser;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +78,7 @@ public class LockDetailActivity extends DetailActivity {
         mHandler = new LockHandler(this);
         RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", mHandler);
         includeDetailImgSetting.setVisibility(View.VISIBLE);
-
+        getUserList();
     }
 
     private void initTimerPicker() {
@@ -103,6 +109,13 @@ public class LockDetailActivity extends DetailActivity {
     }
 
     /**
+     * 获取虚拟用户列表
+     */
+    private void getUserList() {
+        UserCenter.queryVirtualUserListInDevice(mIOTId, null, null, mHandler);
+    }
+
+    /**
      * 随机一个6位密码
      *
      * @return 密码
@@ -117,6 +130,12 @@ public class LockDetailActivity extends DetailActivity {
         return sb.toString();
     }
 
+    /**
+     * 临时密码DiaLog
+     *
+     * @param key
+     * @param start
+     */
     private void showTemporaryKeyDialog(String key, long start) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         final View view = LayoutInflater.from(mActivity).inflate(R.layout.dialog_temporary_key, null);
@@ -155,6 +174,11 @@ public class LockDetailActivity extends DetailActivity {
         });
     }
 
+    /**
+     * 绑定钥匙Dialog
+     *
+     * @param keyName
+     */
     private void showBindKeyDialog(String keyName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         final View view = LayoutInflater.from(mActivity).inflate(R.layout.dialog_key_bind_user, null);
@@ -188,7 +212,9 @@ public class LockDetailActivity extends DetailActivity {
             dialog.dismiss();
         });
         btn_sure.setOnClickListener(v1 -> {
-
+            if (mSelectedUser != null && mCurrentUnBindUser != null) {
+                LockManager.bindUserKey(mSelectedUser.getID(), mCurrentUnBindUser.keyId, mCurrentUnBindUser.keyType, mCurrentUnBindUser.keyPermission, mIOTId, null, null, mHandler);
+            }
         });
         belongView.setOnClickListener(v2 -> {
             dialogOneView.setVisibility(View.GONE);
@@ -199,18 +225,18 @@ public class LockDetailActivity extends DetailActivity {
             dialogTwoView.setVisibility(View.GONE);
         });
         btn_sure_two.setOnClickListener(v3 -> {
-            if (picker.getSelectedIndex() == 0){
+            if (picker.getSelectedIndex() == 0) {
                 CreateUserActivity.start(this);
-            }else {
-                belongUserName.setText(mSelectedUserName);
+            } else {
+                belongUserName.setText(mSelectedUser.getName());
                 dialogOneView.setVisibility(View.VISIBLE);
                 dialogTwoView.setVisibility(View.GONE);
             }
         });
         List<String> data = new ArrayList<>();
-        data.add("创建新用户");
-        for (int i = 0; i < 10; i++) {
-            data.add("name" + i);
+        data.add("创建新用户");//这里加入了一个默认的新建选项 index要-1
+        for (int i = 0; i < mUserList.size(); i++) {
+            data.add(mUserList.get(i).getName());
         }
         picker.setDataList(data);
         picker.setCanScrollLoop(false);
@@ -218,9 +244,7 @@ public class LockDetailActivity extends DetailActivity {
         picker.setOnSelectListener(new PickerView.OnSelectListener() {
             @Override
             public void onSelect(View view, String selected) {
-                Log.i("lzm", "picker selected" + selected + ", index = " + picker.getSelectedIndex());
-                mSelectedUserName = selected;
-
+                mSelectedUser = mUserList.get(picker.getSelectedIndex() - 1);
             }
         });
     }
@@ -237,7 +261,7 @@ public class LockDetailActivity extends DetailActivity {
             case R.id.includeDetailImgMore:
                 break;
             case R.id.mUserManagerView:
-
+                UserManagerActivity.start(this, mIOTId);
                 break;
             case R.id.mShortTimePasswordView:
                 mStartTimerPicker = null;
@@ -245,6 +269,7 @@ public class LockDetailActivity extends DetailActivity {
                 mStartTimerPicker.show(System.currentTimeMillis());
                 break;
             case R.id.mKeyManagerView:
+                KeyManagerActivity.start(this, mIOTId);
                 break;
             case R.id.all_record_btn:
                 break;
@@ -321,13 +346,64 @@ public class LockDetailActivity extends DetailActivity {
                                 default:
                                     break;
                             }
+                            activity.mCurrentUnBindUser = new UnbindKey();
+                            activity.mCurrentUnBindUser.keyId = data.getString("lockUserId");
+                            activity.mCurrentUnBindUser.keyType = data.getIntValue("lockUserType");
+                            activity.mCurrentUnBindUser.keyPermission = data.getIntValue("lockUserPermType");
                             activity.showBindKeyDialog(name.append(data.getString("lockUserId")).toString());
                         }
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_QUERY_USER_IN_ACCOUNT:
+                    JSONObject result = JSON.parseObject((String) msg.obj);
+                    long total = result.getLongValue("total");
+                    int pageNo = result.getIntValue("pageNo");
+                    int pageSize = result.getIntValue("pageSize");
+                    if (pageNo == 1 && pageSize < total) {
+                        while (pageNo * pageSize < total) {
+                            pageNo += 1;
+                            UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, null, null, this);
+
+                        }
+                    }
+                    JSONArray users = result.getJSONArray("data");
+                    int size = users.size();
+                    for (int i = 0; i < size; i++) {
+                        JSONObject user = users.getJSONObject(i);
+                        ItemUser itemUser = new ItemUser();
+                        itemUser.setID(user.getString("userId"));
+                        JSONArray attrList = user.getJSONArray("attrList");
+                        itemUser.setName(attrList.getJSONObject(0).getString("attrValue"));
+                        activity.mUserList.add(itemUser);
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_QUERY_USER_IN_DEVICE:
+                    JSONArray userArray = JSON.parseArray((String) msg.obj);
+                    int size1 = userArray.size();
+                    for (int i = 0; i < size1; i++) {
+                        JSONObject user = userArray.getJSONObject(i);
+                        ItemUser itemUser = new ItemUser();
+                        itemUser.setID(user.getString("userId"));
+                        JSONArray attrList = user.getJSONArray("attrList");
+                        for (int j = 0; j < attrList.size(); j++) {
+                            JSONObject attr = attrList.getJSONObject(i);
+                            if (attr.getString("attrKey").equalsIgnoreCase("name")){
+                                itemUser.setName(attr.getString("attrValue"));
+                                break;
+                            }
+                        }
+                        activity.mUserList.add(itemUser);
                     }
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    public static class UnbindKey {
+        public String keyId;
+        public int keyType;
+        public int keyPermission;
     }
 }

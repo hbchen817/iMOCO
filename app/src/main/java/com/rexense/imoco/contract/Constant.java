@@ -125,6 +125,10 @@ public class Constant {
     public static final String API_PATH_FILTER_UNBIND_KEY           = "/lock/key/user/unbind/filter";
     //钥匙与用户绑定
     public static final String API_PATH_KEY_USER_BIND               = "/lock/key/user/bind";
+    //查询设备下虚拟用户列表
+    public static final String API_PATH_QUERY_USER_IN_DEVICE        = "/lock/dev/virtual/user/get";
+    //查询虚拟用户绑定的钥匙列表
+    public static final String API_PATH_QUERY_KEY_BY_USER           = "/lock/key/user/bindlist/get";
 
 
     // 定义插件URL常量
@@ -205,6 +209,8 @@ public class Constant {
     public static final int MSG_CALLBACK_QUERY_HISTORY              = 148;
     public static final int MSG_CALLBACK_FILTER_UNBIND_KEY          = 149;
     public static final int MSG_CALLBACK_KEY_USER_BIND              = 150;
+    public static final int MSG_CALLBACK_QUERY_USER_IN_DEVICE       = 151;
+    public static final int MSG_CALLBACK_QUERY_KEY_BY_USER          = 152;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

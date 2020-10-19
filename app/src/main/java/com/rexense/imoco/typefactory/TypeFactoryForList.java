@@ -10,6 +10,7 @@ import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
 import com.rexense.imoco.model.ItemUser;
+import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 import com.rexense.imoco.viewholder.ItemAddRoomDeviceViewHolder;
 import com.rexense.imoco.viewholder.ItemGatewayViewHolder;
@@ -17,6 +18,7 @@ import com.rexense.imoco.viewholder.ItemHistoryViewHolder;
 import com.rexense.imoco.viewholder.ItemMsgCenterViewHolder;
 import com.rexense.imoco.viewholder.ItemSceneLogViewHolder;
 import com.rexense.imoco.viewholder.ItemShareDeviceViewHolder;
+import com.rexense.imoco.viewholder.ItemUserKeyViewHolder;
 import com.rexense.imoco.viewholder.ItemUserViewHolder;
 
 
@@ -54,6 +56,10 @@ public class TypeFactoryForList implements TypeFactory {
     public int type(ItemHistoryMsg model) {
         return R.layout.item_history;
     }
+    @Override
+    public int type(ItemUserKey model) {
+        return R.layout.item_user_key;
+    }
 
     @Override
     public BaseViewHolder createViewHolder(int type, View itemView) {
@@ -72,6 +78,8 @@ public class TypeFactoryForList implements TypeFactory {
                     return new ItemUserViewHolder(itemView);
             case R.layout.item_history:
                     return new ItemHistoryViewHolder(itemView);
+            case R.layout.item_user_key:
+                    return new ItemUserKeyViewHolder(itemView);
             default:
                     return null;
         }

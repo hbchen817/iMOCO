@@ -9,6 +9,7 @@ import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemSceneLog;
 import com.rexense.imoco.model.ItemShareDevice;
 import com.rexense.imoco.model.ItemUser;
+import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 
 
@@ -24,6 +25,7 @@ public interface TypeFactory {
     int type(ItemGateway item);
     int type(ItemUser item);
     int type(ItemHistoryMsg item);
+    int type(ItemUserKey item);
 
     BaseViewHolder createViewHolder(int type, View itemView);
 }

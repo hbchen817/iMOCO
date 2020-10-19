@@ -47,49 +47,52 @@ import butterknife.OnClick;
 
 public class UserManagerActivity extends AppCompatActivity {
 
+    private static final String IOTID = "IOTID";
+
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
     @BindView(R.id.iv_toolbar_right)
     ImageView ivToolbarRight;
     @BindView(R.id.recycle_view)
     RecyclerView mRecycleView;
-    @BindView(R.id.srl_fragment_me)
-    SmartRefreshLayout mSrlFragmentMe;
+//    @BindView(R.id.srl_fragment_me)
+//    SmartRefreshLayout mSrlFragmentMe;
 
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private ProcessDataHandler mHandler;
-    private int mPageNo = 1;
-    private int mPageSize = 20;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
-        @Override
-        public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            mList.clear();
-            mPageNo = 1;
-            getData();
-        }
-    };
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
-        @Override
-        public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-            mPageNo++;
-            getData();
-        }
-    };
+    private String mIotId;
 
-    @Subscribe
-    public void refresh(RefreshUserEvent event) {
-        mList.clear();
-        mPageNo = 1;
-        getData();
-    }
+//    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+//        @Override
+//        public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+//            mList.clear();
+//            mPageNo = 1;
+//            getData();
+//        }
+//    };
+//    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+//        @Override
+//        public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//            mPageNo++;
+//            getData();
+//        }
+//    };
+//
+//    @Subscribe
+//    public void refresh(RefreshUserEvent event) {
+//        mList.clear();
+//        mPageNo = 1;
+//        getData();
+//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_manager);
         ButterKnife.bind(this);
+        mIotId = getIntent().getStringExtra(IOTID);
         initView();
         getData();
     }
@@ -101,8 +104,8 @@ public class UserManagerActivity extends AppCompatActivity {
         mAdapter = new CommonAdapter(mList, this);
         mRecycleView.setLayoutManager(layoutManager);
         mRecycleView.setAdapter(mAdapter);
-        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
-        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
+//        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
+//        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
         mAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +118,7 @@ public class UserManagerActivity extends AppCompatActivity {
 
     private void getData() {
         mHandler = new ProcessDataHandler(this);
-        UserCenter.queryVirtualUserListInAccount(mPageNo, mPageSize, null, null, mHandler);
+        UserCenter.queryVirtualUserListInDevice(mIotId, null, null, mHandler);
     }
 
     @OnClick({R.id.iv_toolbar_left, R.id.iv_toolbar_right})
@@ -130,8 +133,9 @@ public class UserManagerActivity extends AppCompatActivity {
         }
     }
 
-    public static void start(Context context) {
+    public static void start(Context context, String iotId) {
         Intent intent = new Intent(context, UserManagerActivity.class);
+        intent.putExtra(IOTID, iotId);
         context.startActivity(intent);
     }
 
@@ -167,7 +171,6 @@ public class UserManagerActivity extends AppCompatActivity {
                         activity.mList.add(itemUser);
                     }
                     activity.mAdapter.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
                     break;
                 default:
                     break;

@@ -98,15 +98,10 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_FILTER_UNBIND_KEY;
         requestParameterEntry.version = "1.0.2";
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("iotId",iotId);
-        jsonObject.put("lockUserId", keyID);
-        jsonObject.put("lockUserType", keyType);
-        jsonObject.put("lockUserPermType", lockUserPermType);
-        JSONArray array = new JSONArray();
-        array.add(jsonObject);
-        requestParameterEntry.addParameter("originalLockUsers", array);
-
+        requestParameterEntry.addParameter("iotId",iotId);
+        requestParameterEntry.addParameter("lockUserId", keyID);
+        requestParameterEntry.addParameter("lockUserType", keyType);
+        requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_FILTER_UNBIND_KEY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
@@ -134,20 +129,34 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_KEY_USER_BIND;
         requestParameterEntry.version = "1.0.1";
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("iotId",iotId);
-        jsonObject.put("virtualUserId", virtualUserId);
-        jsonObject.put("lockUserId", lockUserId);
-        jsonObject.put("lockUserType", lockUserType);
-        jsonObject.put("lockUserPermType", lockUserPermType);
+        requestParameterEntry.addParameter("iotId",iotId);
+        requestParameterEntry.addParameter("virtualUserId", virtualUserId);
+        requestParameterEntry.addParameter("lockUserId", lockUserId);
+        requestParameterEntry.addParameter("lockUserType", lockUserType);
+        requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
         JSONArray array = new JSONArray();
-        array.add(jsonObject);
-        requestParameterEntry.addParameter("originalLockUsers", array);
 
-        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_FILTER_UNBIND_KEY;
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_KEY_USER_BIND;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
 
     }
+
+    public static void queryKeyByUser(String virtualUserId,
+                                   Handler commitFailureHandler,
+                                   Handler responseErrorHandler,
+                                   @NonNull Handler processDataHandler){
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_QUERY_KEY_BY_USER;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("virtualUserId", virtualUserId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_KEY_BY_USER;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+
 
 }
