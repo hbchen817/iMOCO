@@ -1,5 +1,6 @@
 package com.rexense.imoco.viewholder;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,9 +9,16 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.model.ItemGateway;
 import com.rexense.imoco.model.ItemHistoryMsg;
 
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
 public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
+
+    private final List<String> TYPE_ALARM = Arrays.asList("HijackingAlarm", "TamperAlarm", "DoorUnlockedAlarm", "ArmDoorOpenAlarm", "LockedAlarm");
+    private final List<String> TYPE_OPEN = Arrays.asList("DoorOpenNotification", "RemoteUnlockNotification");
+    private final List<String> TYPE_INFO = Arrays.asList("KeyDeletedNotification", "KeyAddedNotification", "LowElectricityAlarm", "ReportReset");
+
     public ItemHistoryViewHolder(View itemView) {
         super(itemView);
     }
@@ -22,13 +30,83 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
         ImageView icon = (ImageView) getView(R.id.icon);
         TextView time = (TextView) getView(R.id.time);
 
-        name.setText(model.getContent());
         time.setText(model.getTime());
-        switch (model.getType()) {
 
-            default:
-                icon.setImageResource(R.drawable.icon_gateway_fton);
-                break;
+        String eventCode = model.getEvent_code();
+        String keyNameStr;
+        if (TextUtils.isEmpty(model.getUserName())) {
+            StringBuffer keyName = new StringBuffer();
+            switch (model.getLockType()) {
+                case 1:
+                    keyName.append("指纹钥匙");
+                    break;
+                case 2:
+                    keyName.append("密码钥匙");
+                    break;
+                case 3:
+                    keyName.append("卡钥匙");
+                    break;
+                case 4:
+                    keyName.append("机械钥匙");
+                    break;
+                default:
+                    break;
+            }
+            keyNameStr = keyName.append(model.getKeyID()).toString();
+        } else {
+            keyNameStr = model.getUserName();
+        }
+        if (TYPE_ALARM.contains(eventCode)) {//报警记录
+            icon.setImageResource(R.drawable.history_alarm);
+            switch (eventCode) {
+                case "HijackingAlarm":
+                    name.setText(keyNameStr + "被挟持");
+                    break;
+                case "TamperAlarm":
+                    name.setText(keyNameStr + "被篡改");
+                    break;
+                case "DoorUnlockedAlarm":
+                    name.setText(keyNameStr + "未锁门警告");
+                    break;
+                case "ArmDoorOpenAlarm":
+                    name.setText(keyNameStr + "暴力破门警告");
+                    break;
+                case "LockedAlarm":
+                    name.setText(keyNameStr + "卡塞告警");
+                    break;
+                default:
+                    break;
+            }
+        } else if (TYPE_OPEN.contains(eventCode)) {//开门记录
+            icon.setImageResource(R.drawable.user_default);
+            switch (eventCode) {
+                case "DoorOpenNotification":
+                    name.setText(keyNameStr + "开门");
+                    break;
+                case "RemoteUnlockNotification":
+                    name.setText(keyNameStr + "远程开门");
+                    break;
+                default:
+                    break;
+            }
+        } else if (TYPE_INFO.contains(eventCode)) {//信息记录
+            icon.setImageResource(R.drawable.history_info);
+            switch (eventCode) {
+                case "KeyDeletedNotification":
+                    name.setText("删除" + keyNameStr);
+                    break;
+                case "KeyAddedNotification":
+                    name.setText("增加" + keyNameStr);
+                    break;
+                case "LowElectricityAlarm":
+                    name.setText("门锁电量低");
+                    break;
+                case "ReportReset":
+                    name.setText("门锁重置");
+                    break;
+                default:
+                    break;
+            }
         }
 
         root_view.setTag(position);

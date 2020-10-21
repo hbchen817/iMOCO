@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/choiceProductLl"
-    android:background="@color/appbgcolor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
     android:orientation="vertical">
 
     <include layout="@layout/layout_common_toolbar" />
@@ -22,67 +22,129 @@
 
             <View
                 android:id="@+id/choiceProductViNull"
-                android:background="@color/appbgcolor"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_40">
-            </View>
+                android:layout_height="@dimen/dp_40"
+                android:background="@color/appbgcolor"></View>
+
+            <TextView
+                android:id="@+id/choiceProductTypeLight"
+                style="@style/NormalFontStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:visibility="gone"
+                android:layout_below="@+id/choiceProductViNull"
+                android:background="@color/white"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="@string/configproduct_device_type_light"
+                android:textColor="@color/topic_color1" />
+
+            <TextView
+                android:id="@+id/choiceProductTypeElectric"
+                style="@style/NormalFontStyle"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeLight"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="@string/configproduct_device_type_electric" />
 
             <TextView
                 android:id="@+id/choiceProductTypeSafe"
-                android:layout_below="@+id/choiceProductViNull"
                 style="@style/NormalFontStyle"
-                android:gravity="center|left"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
-                android:background="@color/white"
+                android:layout_below="@+id/choiceProductTypeElectric"
+                android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:textColor="@color/topic_color1"
                 android:text="@string/configproduct_device_type_safe" />
 
             <TextView
-                android:id="@+id/choiceProductTypeSwitch"
-                android:layout_below="@+id/choiceProductTypeSafe"
+                android:id="@+id/choiceProductTypeHome"
                 style="@style/NormalFontStyle"
-                android:gravity="center|left"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeSafe"
                 android:background="@color/appbgcolor"
+                android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_switch" />
-
+                android:text="@string/configproduct_device_type_home" />
 
             <TextView
                 android:id="@+id/choiceProductTypeSensor"
+                android:visibility="gone"
                 style="@style/NormalFontStyle"
-                android:layout_below="@+id/choiceProductTypeSwitch"
-                android:gravity="center|left"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeHome"
                 android:background="@color/appbgcolor"
+                android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
                 android:text="@string/configproduct_device_type_sensor" />
 
             <TextView
-                android:id="@+id/choiceProductTypeGateway"
+                android:id="@+id/choiceProductTypeEnvironmental"
+                android:visibility="gone"
                 style="@style/NormalFontStyle"
-                android:layout_below="@+id/choiceProductTypeSensor"
-                android:gravity="center|left"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeSensor"
                 android:background="@color/appbgcolor"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="@string/configproduct_device_type_environmental" />
+
+
+            <TextView
+                android:id="@+id/choiceProductTypeLiving"
+                android:visibility="gone"
+                style="@style/NormalFontStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeEnvironmental"
+                android:background="@color/appbgcolor"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="@string/configproduct_device_type_living" />
+
+
+            <TextView
+                android:id="@+id/choiceProductTypeGateway"
+                android:visibility="gone"
+                style="@style/NormalFontStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeLiving"
+                android:background="@color/appbgcolor"
+                android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
                 android:text="@string/configproduct_device_type_gateway" />
+
+            <TextView
+                android:id="@+id/choiceProductTypeOther"
+                android:visibility="gone"
+                style="@style/NormalFontStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_below="@+id/choiceProductTypeGateway"
+                android:background="@color/appbgcolor"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/dp_10"
+                android:text="@string/configproduct_device_type_other" />
 
         </RelativeLayout>
 
         <GridView
             android:id="@+id/choiceProductGrdProduct"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@color/white"
-            android:verticalSpacing="@dimen/dp_10"
-            android:numColumns="2"/>
+            android:numColumns="2"
+            android:verticalSpacing="@dimen/dp_10" />
 
     </LinearLayout>
 

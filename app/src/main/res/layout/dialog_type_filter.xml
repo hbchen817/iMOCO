@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_radius_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/all_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_10"
+        android:text="@string/all_record"
+        android:textColor="#116CEB"
+        android:textSize="@dimen/sp_18" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/all_c" />
+
+    <TextView
+        android:id="@+id/alarm_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_10"
+        android:text="@string/alarm_record"
+        android:textColor="#116CEB"
+        android:textSize="@dimen/sp_18" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/all_c" />
+
+    <TextView
+        android:id="@+id/open_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_10"
+        android:text="@string/open_record"
+        android:textColor="#116CEB"
+        android:textSize="@dimen/sp_18" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:background="@color/all_c" />
+
+    <TextView
+        android:id="@+id/info_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_10"
+        android:text="@string/info_record"
+        android:textColor="#116CEB"
+        android:textSize="@dimen/sp_18" />
+
+
+</LinearLayout>

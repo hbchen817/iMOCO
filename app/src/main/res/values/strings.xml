@@ -1,10 +1,17 @@
 <resources>
+    <string name="icon_ok">&#xe600;</string>
+    <string name="icon_lock">&#xe78a;</string>
+    <string name="icon_user_manager">&#xe6ab;</string>
+    <string name="icon_temporary_password">&#xe618;</string>
+    <string name="icon_key_manager">&#xe62a;</string>
+    <string name="icon_remote_open">&#xe734;</string>
+
     <string name="app_name">莫克智家</string>
     <string name="contentDescription_null"></string>
     <string name="app_ver">1.0.4</string>
 
     <string name="app_brand">iMOCO</string>
-    <string name="app_brand_show">iMOCO</string>
+    <string name="app_brand_show"></string>
     <string name="app_is_add_xz_device">No</string>
     <string name="app_is_hide_privacy_policy">No</string>
     <string name="app_is_hide_user_deal">No</string>
@@ -77,10 +84,15 @@
     <string name="login_forgetpassword">忘记密码?</string>
 
     <string name="configproduct_title">请选择设备类型</string>
+    <string name="configproduct_device_type_light">照明</string>
+    <string name="configproduct_device_type_electric">电工</string>
     <string name="configproduct_device_type_safe">安防</string>
-    <string name="configproduct_device_type_switch">开关</string>
+    <string name="configproduct_device_type_home">家居</string>
     <string name="configproduct_device_type_sensor">传感器</string>
+    <string name="configproduct_device_type_environmental">环境电器</string>
+    <string name="configproduct_device_type_living">生活电器</string>
     <string name="configproduct_device_type_gateway">网关</string>
+    <string name="configproduct_device_type_other">其它</string>
     <string name="configproduct_productname">产品名称</string>
     <string name="configproduct_productkey">产品Key</string>
     <string name="configproduct_notproducthint">没有可供添加的设备类型，请到管理后台先配置好再执行添加。</string>
@@ -284,6 +296,7 @@
     <string name="scene_maintain_select">选择</string>
     <string name="scene_maintain_nohas">无设备</string>
     <string name="scene_maintain_save">保存</string>
+    <string name="create_scene">创建场景</string>
     <string name="scene_maintain_maxnumber_hint">你已经创建了%d个场景，不能再创建场景了。</string>
     <string name="scene_maintain_trigger_hint">[如果]中的触发状态至少要选中一个，否则不能创建场景。</string>
     <string name="scene_maintain_trigger_maxnumber_hint">[如果]中的触发状态选中数量已经超过最大数%d，请减少到%d个，否则不能创建场景。</string>
@@ -438,10 +451,20 @@
     <string name="open_curtains">打开窗帘</string>
     <string name="stop_curtains">停止窗帘</string>
     <string name="key_status">按键状态</string>
-    <string name="no_bind_scene">未绑定场景>></string>
+    <string name="key_one_status">按键一状态</string>
+    <string name="key_two_status">按键二状态</string>
+    <string name="key_three_status">按键三状态</string>
+    <string name="switch_one_status">开关一状态</string>
+    <string name="switch_two_status">开关二状态</string>
+    <string name="no_bind_scene">未绑定场景</string>
+    <string name="small_small">>></string>
+    <string name="current_bind_scene">当前绑定场景</string>
+    <string name="unbind_scene">解绑</string>
 
     <string name="fan_speed">风速档位</string>
     <string name="fan_speed_low">低风</string>
+    <string name="fan_speed_mid">中风</string>
+    <string name="fan_speed_high">高风</string>
     <string name="lock">锁定</string>
     <string name="key_lock">按键锁定</string>
     <string name="sub">一</string>
@@ -468,6 +491,7 @@
     <string name="edit_device_name">修改设备昵称</string>
     <string name="bind_result">配网结果</string>
 
+    <string name="lock_remote_open">远程开门</string>
     <string name="lock_user_manager">用户管理</string>
     <string name="lock_short_time_password">临时密码</string>
     <string name="lock_key_manager">钥匙管理</string>
@@ -489,5 +513,18 @@
     <string name="history_record">历史记录</string>
     <string name="belong_to">归属</string>
     <string name="no_belong_to">未归属</string>
+    <string name="all_time">全部时间</string>
+    <string name="last_week">最近一周</string>
+    <string name="last_month">近一个月</string>
+    <string name="last_three_month">近三个月</string>
+    <string name="last_half_year">近半年</string>
+    <string name="all_record">全部记录</string>
+    <string name="alarm_record">报警记录</string>
+    <string name="open_door_record">开门记录</string>
+    <string name="info_record">信息记录</string>
+    <string name="lightness">亮度</string>
+    <string name="color_temperature">色温</string>
+    <string name="on_off">开关</string>
+    <string name="floor_heating">地暖</string>
 
 </resources>

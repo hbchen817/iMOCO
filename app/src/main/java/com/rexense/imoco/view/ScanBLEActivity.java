@@ -91,6 +91,7 @@ public class ScanBLEActivity extends Activity {
                 // 进入所选设备配网处理
                 Intent intent = new Intent(ScanBLEActivity.this, ConfigureNetworkActivity.class);
                 intent.putExtra("address", mDevices.get(position).getAddress());
+                intent.putExtra("name", mDevices.get(position).getName());
                 intent.putExtra("productKey", mProductKey);
                 startActivity(intent);
             }

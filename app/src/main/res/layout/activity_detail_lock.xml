@@ -30,11 +30,13 @@
                 android:layout_marginTop="@dimen/dp_10"
                 android:background="@drawable/white_round">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/back_lock" />
+                    android:text="@string/icon_lock"
+                    android:textColor="@color/topic_color2"
+                    android:textSize="@dimen/dp_80" />
             </RelativeLayout>
 
             <LinearLayout
@@ -66,6 +68,34 @@
 
 
             <LinearLayout
+                android:id="@+id/mRemoteOpenView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:background="@drawable/lock_function_background"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/dp_10"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="@dimen/dp_35"
+                    android:layout_height="@dimen/dp_35"
+                    android:textSize="@dimen/dp_35"
+                    android:textColor="@color/topic_color2"
+                    android:text="@string/icon_remote_open"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@string/lock_remote_open"
+                    android:textColor="#C3651F"
+                    android:textSize="@dimen/sp_18" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/mUserManagerView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -76,10 +106,12 @@
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/dp_10">
 
-                <ImageView
+                <TextView
                     android:layout_width="@dimen/dp_35"
                     android:layout_height="@dimen/dp_35"
-                    android:src="@drawable/back_lock" />
+                    android:text="@string/icon_user_manager"
+                    android:textColor="@color/topic_color2"
+                    android:textSize="@dimen/dp_35" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,10 +133,12 @@
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/dp_10">
 
-                <ImageView
+                <TextView
                     android:layout_width="@dimen/dp_35"
                     android:layout_height="@dimen/dp_35"
-                    android:src="@drawable/back_lock" />
+                    android:text="@string/icon_temporary_password"
+                    android:textColor="@color/topic_color2"
+                    android:textSize="@dimen/dp_35" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -127,10 +161,12 @@
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/dp_10">
 
-                <ImageView
+                <TextView
                     android:layout_width="@dimen/dp_35"
                     android:layout_height="@dimen/dp_35"
-                    android:src="@drawable/back_lock" />
+                    android:text="@string/icon_key_manager"
+                    android:textColor="@color/topic_color2"
+                    android:textSize="@dimen/dp_35" />
 
                 <TextView
                     android:layout_width="wrap_content"

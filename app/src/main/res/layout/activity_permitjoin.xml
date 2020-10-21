@@ -8,6 +8,8 @@
     android:paddingTop="10dp"
     android:paddingBottom="5dp">
 
+    <include layout="@layout/layout_common_toolbar"/>
+
     <TextView
         android:id="@+id/permitJoinLblHint"
         style="@style/NormalFontStyle"

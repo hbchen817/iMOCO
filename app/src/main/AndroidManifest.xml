@@ -12,7 +12,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
@@ -22,225 +27,228 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name="com.rexense.imoco.presenter.MocoApplication"
+        android:name=".presenter.MocoApplication"
         android:allowBackup="false"
+        android:appComponentFactory="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
-        tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory"
-        android:appComponentFactory="@string/app_name">
+        tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
+        <service
+            android:name=".service.DeleteKeyService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <activity
-            android:name="com.rexense.imoco.view.StartActivity"
+            android:name=".view.StartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".view.OneWayWindowCurtainsActivity"
+        <activity
+            android:name=".view.OneWayWindowCurtainsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="com.rexense.imoco.view.IndexActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:name=".view.IndexActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.rexense.imoco.view.SceneMaintainActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.SceneMaintainActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.ScanGatewayByNetActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.ScanGatewayByNetActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.BindSuccessActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.BindSuccessActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.LockDetailActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.LockDetailActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.UserManagerActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.OneKeySceneActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.CreateUserActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.EditSceneBindActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.EditUserActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.ColorLightDetailActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.HistoryActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.FloorHeatingDetailActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.KeyManagerActivity"
-            android:label="@string/app_name"/>
+            android:name=".view.FreshAirDetailActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.OneWayCurtainsDetailActivity"
-            android:label="@string/app_name">
-
-        </activity>
+            android:name=".view.BindSceneActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.OneKeySceneDetailActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.UserManagerActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.TwoWayCurtainsDetailActivity"
-            android:label="@string/app_name">
-
-        </activity>
+            android:name=".view.CreateUserActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.SetTimeActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.EditUserActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.ChoiceActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.HistoryActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.ChoiceProductActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.KeyManagerActivity"
+            android:label="@string/app_name" />
         <activity
-            android:name="com.rexense.imoco.view.ScanBLEActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.OneWayCurtainsDetailActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.ChoiceWiFiActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.OneKeySceneDetailActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.ConfigureNetworkActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.TwoWayCurtainsDetailActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.ChoiceGatewayActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.SetTimeActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.ProductGuidanceActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ChoiceActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.PermitJoinActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ChoiceProductActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.DetailOneSwitchActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ScanBLEActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.DetailTwoSwitchActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ChoiceWiFiActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.DetailGatewayActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ConfigureNetworkActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.DetailSensorActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ChoiceGatewayActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.MoreGatewayActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.EditKeyActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.MoreSubdeviceActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.ProductGuidanceActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.MessageRecordActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.PermitJoinActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.ChoiceContentActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:name=".view.DetailOneSwitchActivity"
+            android:label="@string/app_name"></activity>
         <activity
-            android:name="com.rexense.imoco.view.OALoginActivity"
+            android:name=".view.DetailTwoSwitchActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.DetailGatewayActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.DetailSensorActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.MoreGatewayActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.MoreSubdeviceActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.MessageRecordActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.ChoiceContentActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name=".view.OALoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Login"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.RegisterActivity"
+            android:name=".view.RegisterActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Register"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.LoginWithSmsCodeActivity"
+            android:name=".view.LoginWithSmsCodeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Register"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.ResetPasswordActivity"
+            android:name=".view.ResetPasswordActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Register"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.ResetPasswordFillPasswordActivity"
+            android:name=".view.ResetPasswordFillPasswordActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Register"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.RegisterFillPasswordActivity"
+            android:name=".view.RegisterFillPasswordActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Register"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.rexense.imoco.view.MyInfoActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.MyInfoActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.DeleteAccountActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.DeleteAccountActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.NickNameActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.NickNameActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.MsgCenterActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.MsgCenterActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.ShareDeviceActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.ShareDeviceActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.DeviceQrcodeActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.DeviceQrcodeActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.SceneLogActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.SceneLogActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.MoreServiceActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.MoreServiceActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.AboutUsActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.AboutUsActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.TmallSpiritActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".view.TmallSpiritActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.TmallSpiritActivity1"
-            android:screenOrientation="portrait"/>
+            android:name=".view.TmallSpiritActivity1"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.H5Activity"
+            android:name=".view.H5Activity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.RoomDeviceActivity"
+            android:name=".view.RoomDeviceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.UpgradeFirmwareActivity"
+            android:name=".view.UpgradeFirmwareActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.rexense.imoco.view.AddRoomDeviceActivity"
+            android:name=".view.AddRoomDeviceActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name="com.rexense.imoco.utility.BLEService" android:enabled="true"/>
-
-        <!-- 消息接收监听器 （用户可自主扩展） -->
+        <service
+            android:name=".utility.BLEService"
+            android:enabled="true" /> <!-- 消息接收监听器 （用户可自主扩展） -->
         <receiver
             android:name=".sdk.MyMessageReceiver"
             android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
@@ -254,7 +262,6 @@
                 <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

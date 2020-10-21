@@ -9,189 +9,279 @@
 
     <include layout="@layout/include_detail" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_350">
+        android:layout_height="wrap_content"
+        android:background="#F5F6F7"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/device_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_350"
-            android:background="#71A0F9" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_70">
+
+            <com.rexense.imoco.view.AlignTextView
+                android:id="@+id/temperature_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_48"
+                android:textStyle="bold"
+                tools:text="25" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_toRightOf="@id/temperature_value"
+                android:text="@string/centigrade"
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/temperature_value"
+                android:layout_centerHorizontal="true"
+                android:text="@string/floor_heating"
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_14" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_80"
+            android:layout_marginBottom="@dimen/dp_40">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前温度 "
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="25"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/centigrade"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_20"
+                android:text="当前湿度 "
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="30"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="%"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_60">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/floor_heating"
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_14"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginRight="@dimen/dp_10"
+                android:text="|" />
+
+            <TextView
+                android:id="@+id/temperature2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/centigrade"
+                android:textColor="#FE5A2F"
+                android:textSize="@dimen/sp_14" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/dp_80"
-            android:layout_marginTop="@dimen/dp_100"
-            android:gravity="center_vertical">
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_30">
 
-            <ImageView
-                android:src="@drawable/sub"
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30" />
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal">
+                android:layout_marginLeft="@dimen/dp_20"
+                android:text="16"
+                android:textColor="#7A94B5"
+                android:textSize="@dimen/sp_14" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/all_3"
-                    android:textSize="@dimen/sp_34"
-                    tools:text="24" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/centigrade"
-                    android:textColor="@color/all_3" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:src="@drawable/add"
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30" />
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp_20"
+                android:text="32"
+                android:textColor="#7A94B5"
+                android:textSize="@dimen/sp_14" />
         </LinearLayout>
 
+        <SeekBar
+            android:id="@+id/temperatureSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_40"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:max="16"
+            android:progress="8"
+            android:progressDrawable="@drawable/floor_heating_progress"
+            android:thumb="@null" />
 
-        <LinearLayout
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_marginBottom="@dimen/dp_40"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="温度 "
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/temperature"
-                android:text="25"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="@string/centigrade"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="   |  湿度 "
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/humidity"
-                android:text="30"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="%"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="   |  "
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="水机"
-                android:layout_width="wrap_content"
-                android:textSize="@dimen/sp_14"
-                android:textColor="@color/all_3"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_1"
-        android:layout_marginTop="@dimen/dp_1"
-        android:background="#B3B3B4" />
+    </LinearLayout>
 
     <LinearLayout
-        android:layout_marginTop="@dimen/dp_50"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/fan_speed"
-            android:layout_width="@dimen/dp_60"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_20"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/dp_10">
-
-            <ImageView
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:src="@drawable/cloud_timer" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="@string/detail_state_timer"
-                android:textColor="@color/all_3"
-                android:textSize="@dimen/sp_14" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/dp_10">
-
-            <ImageView
-                android:layout_width="@dimen/dp_80"
-                android:layout_height="@dimen/dp_80"
-                android:src="@drawable/cloud_timer" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/lock"
-            android:layout_width="@dimen/dp_60"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/dp_20"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/dp_30"
+            android:background="@drawable/only_stroke"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/dp_10">
+            android:orientation="vertical">
 
             <ImageView
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
-                android:src="@drawable/cloud_timer" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_10"
+                android:src="@drawable/lock_orange" />
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:text="@string/lock"
+                android:textColor="@color/all_3" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/mSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/only_stroke"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/dp_30"
+                android:layout_height="@dimen/dp_30"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/dp_50"
+                android:layout_marginTop="@dimen/dp_40"
+                android:src="@drawable/switch_orange" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
-                android:text="@string/key_lock"
-                android:textColor="@color/all_3"
-                android:textSize="@dimen/sp_14" />
+                android:layout_marginBottom="@dimen/dp_40"
+                android:text="@string/on_off"
+                android:textColor="@color/all_3" />
         </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dp_30"
+            android:background="@drawable/only_stroke"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/dp_30"
+                android:layout_height="@dimen/dp_30"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginTop="@dimen/dp_10"
+                android:src="@drawable/clock_orange" />
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:text="@string/detail_state_timer"
+                android:textColor="@color/all_3" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

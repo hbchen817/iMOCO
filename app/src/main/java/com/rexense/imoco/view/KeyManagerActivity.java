@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,12 +18,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
-import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.LockManager;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.viewholder.CommonAdapter;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author Gary
@@ -57,12 +61,25 @@ public class KeyManagerActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mIotId = getIntent().getStringExtra(IOTID);
         mHandler = new MyHandler(this);
+        EventBus.getDefault().register(this);
         initView();
         getData();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
     private void getData() {
         UserCenter.queryVirtualUserListInDevice(mIotId, null, null, mHandler);
+    }
+
+    @Subscribe
+    public void refresh(RefreshKeyListEvent event) {
+        mList.clear();
+        getData();
     }
 
     private void initView() {
@@ -70,12 +87,28 @@ public class KeyManagerActivity extends AppCompatActivity {
         recycleView.setLayoutManager(layoutManager);
         mAdapter = new CommonAdapter(mList, this);
         recycleView.setAdapter(mAdapter);
+        mAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = (int) view.getTag();
+                EditKeyActivity.start(KeyManagerActivity.this, (ItemUserKey) mList.get(index), mIotId);
+            }
+        });
     }
 
     public static void start(Context context, String iotId) {
         Intent intent = new Intent(context, KeyManagerActivity.class);
         intent.putExtra(IOTID, iotId);
         context.startActivity(intent);
+    }
+
+    @OnClick({R.id.iv_toolbar_left})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_toolbar_left:
+                finish();
+                break;
+        }
     }
 
     private static class MyHandler extends Handler {
@@ -127,5 +160,9 @@ public class KeyManagerActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    public static class RefreshKeyListEvent {
+
     }
 }

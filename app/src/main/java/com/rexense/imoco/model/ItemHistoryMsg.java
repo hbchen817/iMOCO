@@ -7,11 +7,13 @@ import com.rexense.imoco.typefactory.TypeFactory;
  * @time 2020/10/15 17:08
  */
 
-public class ItemHistoryMsg implements Visitable{
+public class ItemHistoryMsg implements Visitable {
 
     private String time;
-    private String type;
-    private String content;
+    private String event_code;
+    private String keyID;
+    private int lockType;
+    private String userName;
 
     public String getTime() {
         return time;
@@ -21,20 +23,36 @@ public class ItemHistoryMsg implements Visitable{
         this.time = time;
     }
 
-    public String getType() {
-        return type;
+    public String getEvent_code() {
+        return event_code;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setEvent_code(String event_code) {
+        this.event_code = event_code;
     }
 
-    public String getContent() {
-        return content;
+    public String getKeyID() {
+        return keyID;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setKeyID(String keyID) {
+        this.keyID = keyID;
+    }
+
+    public int getLockType() {
+        return lockType;
+    }
+
+    public void setLockType(int lockType) {
+        this.lockType = lockType;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

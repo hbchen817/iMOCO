@@ -10,6 +10,8 @@ import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.sdk.APIChannel;
 
+import java.util.Arrays;
+
 /**
  * @author Gary
  * @time 2020/10/14 9:32
@@ -41,7 +43,9 @@ public class LockManager {
         requestParameterEntry.addParameter("iotid", iotId);
         requestParameterEntry.addParameter("start", start);
         requestParameterEntry.addParameter("end", end);
-        requestParameterEntry.addParameter("events", type);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.addAll(Arrays.asList(type));
+        requestParameterEntry.addParameter("events", jsonArray);
         requestParameterEntry.addParameter("pageNo", pageNo);
         requestParameterEntry.addParameter("pageSize", pageSize);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_HISTORY;
@@ -74,18 +78,17 @@ public class LockManager {
         requestParameterEntry.addParameter("iotid", iotId);
         requestParameterEntry.addParameter("identifier", "AddOTP");
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("OTP",key);
+        jsonObject.put("OTP", key);
         jsonObject.put("StartDate", start);
         jsonObject.put("EndDate", end);
         jsonObject.put("ValidCount", 1);
         requestParameterEntry.addParameter("args", jsonObject);
-
+        //fixme 这个callback应该不对
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_HISTORY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
-    //todo 过滤未绑定用户钥匙
     public static void filterUnbindKey(String iotId,
                                        String keyID,
                                        String keyType,
@@ -98,7 +101,7 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_FILTER_UNBIND_KEY;
         requestParameterEntry.version = "1.0.2";
-        requestParameterEntry.addParameter("iotId",iotId);
+        requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.addParameter("lockUserId", keyID);
         requestParameterEntry.addParameter("lockUserType", keyType);
         requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
@@ -110,11 +113,12 @@ public class LockManager {
 
     /**
      * 钥匙与虚拟用户绑定
-     * @param virtualUserId 虚拟用户ID
-     * @param lockUserId 钥匙ID
-     * @param lockUserType 钥匙类型
+     *
+     * @param virtualUserId    虚拟用户ID
+     * @param lockUserId       钥匙ID
+     * @param lockUserType     钥匙类型
      * @param lockUserPermType 钥匙权限
-     * @param iotId 设备ID
+     * @param iotId            设备ID
      */
     public static void bindUserKey(String virtualUserId,
                                    String lockUserId,
@@ -123,29 +127,32 @@ public class LockManager {
                                    String iotId,
                                    Handler commitFailureHandler,
                                    Handler responseErrorHandler,
-                                   @NonNull Handler processDataHandler){
+                                   @NonNull Handler processDataHandler) {
 
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_KEY_USER_BIND;
         requestParameterEntry.version = "1.0.1";
-        requestParameterEntry.addParameter("iotId",iotId);
+        requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.addParameter("virtualUserId", virtualUserId);
         requestParameterEntry.addParameter("lockUserId", lockUserId);
         requestParameterEntry.addParameter("lockUserType", lockUserType);
         requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
-        JSONArray array = new JSONArray();
-
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_KEY_USER_BIND;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
 
     }
 
+    /**
+     * 查询虚拟用户绑定的key
+     *
+     * @param virtualUserId 虚拟用户ID
+     */
     public static void queryKeyByUser(String virtualUserId,
-                                   Handler commitFailureHandler,
-                                   Handler responseErrorHandler,
-                                   @NonNull Handler processDataHandler){
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      @NonNull Handler processDataHandler) {
 
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
@@ -157,6 +164,81 @@ public class LockManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    /**
+     * 删除设备的钥匙信息
+     *
+     * @param lockUserId   钥匙Id
+     * @param lockUserType 钥匙类型
+     * @param iotId        iotid
+     */
+    public static void deleteKey(String lockUserId,
+                                 int lockUserType,
+                                 String iotId,
+                                 Handler commitFailureHandler,
+                                 Handler responseErrorHandler,
+                                 @NonNull Handler processDataHandler) {
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_DELETE_KEY;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("lockUserId", lockUserId);
+        requestParameterEntry.addParameter("lockUserType", lockUserType);
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DELETE_KEY;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    /**
+     * 查询钥匙对应的用户
+     *
+     * @param lockUserId   钥匙Id
+     * @param lockUserType 钥匙类型
+     * @param iotId        iotid
+     */
+    public static void getUserByKey(String lockUserId,
+                                    int lockUserType,
+                                    String iotId,
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    @NonNull Handler processDataHandler) {
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_KEY_USER_GET;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("lockUserId", lockUserId);
+        requestParameterEntry.addParameter("lockUserType", lockUserType);
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_KEY_USER_GET;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    /**
+     * 解绑用户-钥匙
+     */
+    public static void userKeyUnbind(String virtualUserId,
+                                     String lockUserId,
+                                     int lockUserType,
+                                     String iotId,
+                                     Handler commitFailureHandler,
+                                     Handler responseErrorHandler,
+                                     @NonNull Handler processDataHandler) {
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_USER_KEY_UNBIND;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("virtualUserId", virtualUserId);
+        requestParameterEntry.addParameter("lockUserId", lockUserId);
+        requestParameterEntry.addParameter("lockUserType", lockUserType);
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_KEY_USER_UNBIND;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
 
 }

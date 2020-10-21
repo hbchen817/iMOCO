@@ -2,12 +2,14 @@ package com.rexense.imoco.model;
 
 import com.rexense.imoco.typefactory.TypeFactory;
 
+import java.io.Serializable;
+
 /**
  * @author Gary
  * @time 2020/10/19 10:10
  */
 
-public class ItemUserKey implements Visitable{
+public class ItemUserKey implements Visitable , Serializable {
 
     private boolean haveHeader;
 

@@ -14,10 +14,15 @@ public class Constant {
     public static final String APPSECRET                            = "be390d30947e8c7ca493a11d2f9746cf";
 
     // 产品类型
-    public static final int PRODUCT_TYPE_SAFE                       = 0;
-    public static final int PRODUCT_TYPE_SWITCH                     = 1;
-    public static final int PRODUCT_TYPE_SENSOR                     = 2;
-    public static final int PRODUCT_TYPE_GATEWAY                    = 3;
+    public static final int PRODUCT_TYPE_LIGHT                      = 0;
+    public static final int PRODUCT_TYPE_ELECTRIC                   = 1;
+    public static final int PRODUCT_TYPE_SAFE                       = 2;
+    public static final int PRODUCT_TYPE_HOME                       = 3;
+    public static final int PRODUCT_TYPE_SENSOR                     = 4;
+    public static final int PRODUCT_TYPE_ENVIRONMENTAL              = 5;
+    public static final int PRODUCT_TYPE_LIVING                     = 6;
+    public static final int PRODUCT_TYPE_GATEWAY                    = 7;
+    public static final int PRODUCT_TYPE_OUTHOR                     = 8;
 
     // 淘宝回调地址,用户协议,隐私政策
     public static final String TAOBAOREDIRECTURI                    = "http://www.rexense.com/imoco";
@@ -129,6 +134,10 @@ public class Constant {
     public static final String API_PATH_QUERY_USER_IN_DEVICE        = "/lock/dev/virtual/user/get";
     //查询虚拟用户绑定的钥匙列表
     public static final String API_PATH_QUERY_KEY_BY_USER           = "/lock/key/user/bindlist/get";
+    //删除设备的钥匙信息
+    public static final String API_PATH_DELETE_KEY                  = "/lock/key/user/delete";
+    //删除设备的钥匙信息
+    public static final String API_PATH_USER_KEY_UNBIND             = "/lock/key/user/unbind";
 
 
     // 定义插件URL常量
@@ -211,6 +220,9 @@ public class Constant {
     public static final int MSG_CALLBACK_KEY_USER_BIND              = 150;
     public static final int MSG_CALLBACK_QUERY_USER_IN_DEVICE       = 151;
     public static final int MSG_CALLBACK_QUERY_KEY_BY_USER          = 152;
+    public static final int MSG_CALLBACK_DELETE_KEY                 = 153;
+    public static final int MSG_CALLBACK_KEY_USER_GET               = 154;
+    public static final int MSG_CALLBACK_KEY_USER_UNBIND               = 155;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

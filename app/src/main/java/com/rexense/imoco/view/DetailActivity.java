@@ -69,8 +69,10 @@ public class DetailActivity extends BaseActivity {
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
             default:
+                //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);
                 setContentView(R.layout.activity_detail_lock);
+                //setContentView(R.layout.activity_detail_gateway);
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
         }

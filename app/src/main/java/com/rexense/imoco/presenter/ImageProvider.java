@@ -18,6 +18,23 @@ public class ImageProvider {
         if (productKey == null){
             return 0;
         }
+        // 处理携住设备图标
+        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes")) {
+            switch (productKey) {
+                case "1":
+                    return R.drawable.icon_d3_switch_1;
+                case "2":
+                    return R.drawable.icon_d3_switch_2;
+                case "3":
+                    return R.drawable.icon_d3_switch_3;
+                case "4":
+                    return R.drawable.icon_d3_switch_4;
+                case "5":
+                    return R.drawable.icon_d3_plug;
+                default:
+                    break;
+            }
+        }
         switch (productKey) {
             case CTSL.PK_GATEWAY:
                 return R.drawable.icon_gateway;
@@ -44,28 +61,8 @@ public class ImageProvider {
             case CTSL.PK_SMART_LOCK:
                 return R.drawable.icon_thsensor;
             default:
-                break;
+                return R.drawable.icon_thsensor;
         }
-
-        // 处理携住设备图标
-        if(SystemParameter.getInstance().getIsAddXZDevice().equalsIgnoreCase("Yes")) {
-            switch (productKey) {
-                case "1":
-                    return R.drawable.icon_d3_switch_1;
-                case "2":
-                    return R.drawable.icon_d3_switch_2;
-                case "3":
-                    return R.drawable.icon_d3_switch_3;
-                case "4":
-                    return R.drawable.icon_d3_switch_4;
-                case "5":
-                    return R.drawable.icon_d3_plug;
-                default:
-                    break;
-            }
-        }
-
-        return 0;
     }
 
     // 生成房间图标

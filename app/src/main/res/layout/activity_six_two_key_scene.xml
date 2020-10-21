@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECECEC"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_detail" />
+
+    <RelativeLayout
+        android:layout_width="@dimen/dp_270"
+        android:layout_height="@dimen/dp_300"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_40">
+
+        <ImageView
+            android:id="@+id/device_image_view"
+            android:layout_width="@dimen/dp_270"
+            android:layout_height="@dimen/dp_300"
+            android:layout_centerInParent="true"
+            android:background="#71A0F9" />
+
+        <TextView
+            android:id="@+id/mSceneContentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_10"
+            android:paddingVertical="@dimen/dp_20"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353"
+            android:textSize="@dimen/sp_10" />
+
+        <TextView
+            android:id="@+id/mSceneContentText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:paddingVertical="@dimen/dp_20"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353"
+            android:textSize="@dimen/sp_10" />
+
+        <TextView
+            android:id="@+id/mSceneContentText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:paddingVertical="@dimen/dp_20"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353"
+            android:textSize="@dimen/sp_10" />
+
+        <TextView
+            android:id="@+id/mSceneContentText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:paddingVertical="@dimen/dp_20"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353"
+            android:textSize="@dimen/sp_10" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_30"
+        android:background="@drawable/key_status_background"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/switch_one_status"
+            android:textColor="#565353" />
+
+
+        <TextView
+            android:id="@+id/mKeyStatusText"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/twoswitch_state_on"
+            android:textColor="#565353" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/key_status_background"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/switch_two_status"
+            android:textColor="#565353" />
+
+
+        <TextView
+            android:id="@+id/mKeyStatusText1"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/twoswitch_state_off"
+            android:textColor="#565353" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.presenter.ConfigureNetwork;
@@ -109,7 +111,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
     };
 
     // 处理蓝牙响应数据
-    private Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback(){
+    private Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg){
             if(Constant.MSG_PARSE_CONFIGNETWORKFRAME == msg.what) {
@@ -222,8 +224,10 @@ public class ConfigureNetworkActivity extends BaseActivity {
                     }
                     mTimeThread = null;
                 }
-
-                Dialog.confirm(ConfigureNetworkActivity.this, R.string.dialog_title, getString(R.string.confignetwork_success), R.drawable.dialog_ok, R.string.dialog_confirm, true);
+                JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                BindSuccessActivity.start(ConfigureNetworkActivity.this, jsonObject.getString("iotId"), getIntent().getStringExtra("name"));
+                finish();
+                //Dialog.confirm(ConfigureNetworkActivity.this, R.string.dialog_title, getString(R.string.confignetwork_success), R.drawable.dialog_ok, R.string.dialog_confirm, true);
             }
             return false;
         }

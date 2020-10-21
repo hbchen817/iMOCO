@@ -87,7 +87,6 @@ public class AppUtils {
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
             versionCode = info.versionCode;
         } catch (NameNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return versionCode;

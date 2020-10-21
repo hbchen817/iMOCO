@@ -3,6 +3,7 @@ package com.rexense.imoco.typefactory;
 import android.view.View;
 
 import com.rexense.imoco.model.ItemAddRoomDevice;
+import com.rexense.imoco.model.ItemColorLightScene;
 import com.rexense.imoco.model.ItemGateway;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemMsgCenter;
@@ -26,6 +27,7 @@ public interface TypeFactory {
     int type(ItemUser item);
     int type(ItemHistoryMsg item);
     int type(ItemUserKey item);
+    int type(ItemColorLightScene item);
 
     BaseViewHolder createViewHolder(int type, View itemView);
 }

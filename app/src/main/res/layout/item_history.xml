@@ -10,12 +10,13 @@
         android:id="@+id/icon"
         android:layout_width="@dimen/dp_30"
         android:layout_height="@dimen/dp_30"
+        android:scaleType="fitXY"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_10"
         android:contentDescription="@string/contentDescription_null"
-        android:src="@drawable/ble" />
+        android:src="@drawable/history_info" />
 
     <TextView
         android:id="@+id/name"

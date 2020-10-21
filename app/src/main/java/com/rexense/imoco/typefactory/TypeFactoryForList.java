@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.model.ItemAddRoomDevice;
+import com.rexense.imoco.model.ItemColorLightScene;
 import com.rexense.imoco.model.ItemGateway;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemMsgCenter;
@@ -13,6 +14,7 @@ import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.viewholder.BaseViewHolder;
 import com.rexense.imoco.viewholder.ItemAddRoomDeviceViewHolder;
+import com.rexense.imoco.viewholder.ItemColorLightSceneViewHolder;
 import com.rexense.imoco.viewholder.ItemGatewayViewHolder;
 import com.rexense.imoco.viewholder.ItemHistoryViewHolder;
 import com.rexense.imoco.viewholder.ItemMsgCenterViewHolder;
@@ -60,6 +62,10 @@ public class TypeFactoryForList implements TypeFactory {
     public int type(ItemUserKey model) {
         return R.layout.item_user_key;
     }
+    @Override
+    public int type(ItemColorLightScene model) {
+        return R.layout.item_color_light_scene;
+    }
 
     @Override
     public BaseViewHolder createViewHolder(int type, View itemView) {
@@ -80,6 +86,8 @@ public class TypeFactoryForList implements TypeFactory {
                     return new ItemHistoryViewHolder(itemView);
             case R.layout.item_user_key:
                     return new ItemUserKeyViewHolder(itemView);
+            case R.layout.item_color_light_scene:
+                    return new ItemColorLightSceneViewHolder(itemView);
             default:
                     return null;
         }

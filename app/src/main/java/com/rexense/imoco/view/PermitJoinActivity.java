@@ -44,23 +44,23 @@ public class PermitJoinActivity extends BaseActivity {
     private Thread mJoinThread = null;
 
     // 处理允许入网进度
-    private Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback(){
+    private Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
-            if(Constant.MSG_PERMITJOIN_STEP_START == msg.what) {
+        public boolean handleMessage(Message msg) {
+            if (Constant.MSG_PERMITJOIN_STEP_START == msg.what) {
                 // 开始处理
                 mPermit.setVisibility(View.GONE);
                 mComCircularProgress.setMaxProgress(mTimeoutSecond * 1000 / mIntervalMS);
                 mComCircularProgress.setProgress(0);
-            } else if(Constant.MSG_PERMITJOIN_REMAIN_SECOND == msg.what) {
+            } else if (Constant.MSG_PERMITJOIN_REMAIN_SECOND == msg.what) {
                 // 剩余秒数处理
                 int progress = msg.arg1;
-                if(0 == ((progress * mIntervalMS) % 1000)) {
+                if (0 == ((progress * mIntervalMS) % 1000)) {
                     int remain = ((mTimeoutSecond * 1000) - (progress * mIntervalMS)) / 1000;
                     mReaminSecond.setText("剩余" + remain + "秒");
                 }
                 mComCircularProgress.setProgress(progress);
-            } else if(Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
+            } else if (Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
                 // 超时处理
                 Dialog.confirm(PermitJoinActivity.this, R.string.dialog_title, getString(R.string.permitjoin_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
                 mPermit.setVisibility(View.VISIBLE);
@@ -70,12 +70,12 @@ public class PermitJoinActivity extends BaseActivity {
     });
 
     // API数据处理器
-    private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
-            if(Constant.MSG_CALLBACK_BINDSUBDEVICE == msg.what) {
+        public boolean handleMessage(Message msg) {
+            if (Constant.MSG_CALLBACK_BINDSUBDEVICE == msg.what) {
                 // 绑定子设备回调
-                if(msg.obj != null && ((String)msg.obj).length() > 0) {
+                if (msg.obj != null && ((String) msg.obj).length() > 0) {
                     // 发送拒绝入网
                     sendPermitJoinCommand(1);
                     Message msg1 = new Message();
@@ -91,8 +91,8 @@ public class PermitJoinActivity extends BaseActivity {
                     RefreshData.refreshDeviceListData();
 
                     // 中断加网线程
-                    if(mJoinThread != null) {
-                        if(!mJoinThread.isInterrupted()) {
+                    if (mJoinThread != null) {
+                        if (!mJoinThread.isInterrupted()) {
                             mJoinThread.interrupt();
                         }
                         mJoinThread = null;
@@ -111,13 +111,13 @@ public class PermitJoinActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
-                    ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String)msg.obj);
-                    if(joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
+                    ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
+                    if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
                             joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
                         Logger.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
                                 joinResultEntry.subDeviceName, joinResultEntry.subProductKey));
                         // 绑定子设备
-                        if(joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
+                        if (joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
                             mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                         }
                     }
@@ -150,8 +150,8 @@ public class PermitJoinActivity extends BaseActivity {
         RealtimeDataReceiver.deleteCallbackHandler("PermitJoinJoinCallback");
 
         // 中断加网线程
-        if(this.mJoinThread != null) {
-            if(!this.mJoinThread.isInterrupted()) {
+        if (this.mJoinThread != null) {
+            if (!this.mJoinThread.isInterrupted()) {
                 this.mJoinThread.interrupt();
             }
             this.mJoinThread = null;
@@ -162,12 +162,12 @@ public class PermitJoinActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mComCircularProgress = (ComCircularProgress)findViewById(R.id.permitJoinCPProgress);
-        this.mReaminSecond = (TextView)findViewById(R.id.permitJoinLblRemainSecond);
+        this.mComCircularProgress = (ComCircularProgress) findViewById(R.id.permitJoinCPProgress);
+        this.mReaminSecond = (TextView) findViewById(R.id.permitJoinLblRemainSecond);
 
         TextView lblHint = (TextView) findViewById(R.id.permitJoinLblHint);
         lblHint.setText(String.format(getString(R.string.permitjoin_hint), this.mProductName));
-        this.mPermit = (RelativeLayout)findViewById(R.id.permitJoinRLPermit);
+        this.mPermit = (RelativeLayout) findViewById(R.id.permitJoinRLPermit);
 
         // 允许入网事件处理
         OnClickListener permitOnClickListener = new OnClickListener() {
@@ -207,23 +207,23 @@ public class PermitJoinActivity extends BaseActivity {
     private void sendPermitJoinCommand(int duration) {
         // 发送命令
         this.mConfigNetwork.permitJoinSubDevice(mGatewayIOTId, mProductKey, duration, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-        if(duration == 1) {
+        if (duration == 1) {
             return;
         }
 
         // 创建并启动允许入网计时线程
-        this.mJoinThread = new Thread(){
+        this.mJoinThread = new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 Message msg1 = new Message();
                 msg1.what = Constant.MSG_PERMITJOIN_STEP_START;
                 prcessPermitJoinProgressHandler.sendMessage(msg1);
                 int count = 1;
                 while (count <= (mTimeoutSecond * 1000 / mIntervalMS) && !Thread.interrupted()) {
-                    if(mIsProhibit){
+                    if (mIsProhibit) {
                         break;
                     }
-                    if(mIsJoinSuccess){
+                    if (mIsJoinSuccess) {
                         break;
                     }
 
@@ -237,7 +237,7 @@ public class PermitJoinActivity extends BaseActivity {
                     prcessPermitJoinProgressHandler.sendMessage(msg2);
                 }
 
-                if(!mIsProhibit && !mIsJoinSuccess) {
+                if (!mIsProhibit && !mIsJoinSuccess) {
                     Message msg3 = new Message();
                     msg3.what = Constant.MSG_PERMITJOIN_TIMEOUT;
                     prcessPermitJoinProgressHandler.sendMessage(msg3);

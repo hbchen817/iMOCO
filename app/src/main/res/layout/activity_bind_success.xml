@@ -8,10 +8,12 @@
 
     <include layout="@layout/layout_common_toolbar"/>
 
-    <ImageView
-        android:src="@drawable/dialog_ok"
+    <TextView
+        android:id="@+id/ok"
         android:layout_width="@dimen/dp_200"
-        android:scaleType="fitXY"
+        android:text="@string/icon_ok"
+        android:textSize="@dimen/dp_200"
+        android:textColor="#32A952"
         android:layout_marginTop="@dimen/dp_50"
         android:layout_height="@dimen/dp_200"/>
 

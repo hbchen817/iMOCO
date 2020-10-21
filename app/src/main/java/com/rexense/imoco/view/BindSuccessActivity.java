@@ -2,6 +2,7 @@ package com.rexense.imoco.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +37,8 @@ public class BindSuccessActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_toolbar_title)
     TextView mTitle;
+    @BindView(R.id.ok)
+    TextView mOkView;
 
     private String mIotId;
     private UserCenter mUserCenter;
@@ -54,8 +57,10 @@ public class BindSuccessActivity extends AppCompatActivity {
         mIotId = getIntent().getStringExtra(EXTRA_IOT_ID);
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mUserCenter = new UserCenter(this);
-        TSLHelper helper = new TSLHelper(this);
-        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mOkView.setTypeface(iconfont);
+//        TSLHelper helper = new TSLHelper(this);
+//        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
     }
 
     // 显示设备名称修改对话框

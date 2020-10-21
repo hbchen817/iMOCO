@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECECEC"
+    android:orientation="vertical">
+
+    <include layout="@layout/include_detail" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_350">
+
+        <ImageView
+            android:id="@+id/device_image_view"
+            android:layout_width="@dimen/dp_200"
+            android:layout_centerInParent="true"
+            android:layout_height="@dimen/dp_200"
+            android:background="#71A0F9" />
+
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:background="@drawable/key_status_background"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/key_one_status"
+            android:textColor="#565353" />
+
+
+        <TextView
+            android:id="@+id/mSceneContentText"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/key_status_background"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/key_two_status"
+            android:textColor="#565353" />
+
+
+        <TextView
+            android:id="@+id/mSceneContentText1"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/key_status_background"
+        android:paddingHorizontal="@dimen/dp_20">
+
+        <TextView
+            android:layout_width="0dp"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/key_three_status"
+            android:textColor="#565353" />
+
+
+        <TextView
+            android:id="@+id/mSceneContentText2"
+            android:paddingVertical="@dimen/dp_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_bind_scene"
+            android:textColor="#565353" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

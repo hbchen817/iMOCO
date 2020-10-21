@@ -62,13 +62,15 @@ public class LockDetailActivity extends DetailActivity {
     TextView mElectricityValue;
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
+    @BindView(R.id.mRemoteOpenView)
+    View mRemoteOpenView;
 
     private CustomDatePicker mStartTimerPicker;
     private String mTemporaryKey;
     private long mKeyTime;
     private LockHandler mHandler;
     private ItemUser mSelectedUser;
-    private List<ItemUser> mUserList;
+    private List<ItemUser> mUserList = new ArrayList<>();
     private UnbindKey mCurrentUnBindUser;
 
     @Override
@@ -95,7 +97,6 @@ public class LockDetailActivity extends DetailActivity {
                 String startTime = DateFormatUtils.long2Str(timestamp, true);
                 String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
                 LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, null, null, mHandler);
-                //todo 上传临时密码
             }
         }, beginTime, endTime, true);
         // 允许点击屏幕或物理返回键关闭
@@ -244,12 +245,14 @@ public class LockDetailActivity extends DetailActivity {
         picker.setOnSelectListener(new PickerView.OnSelectListener() {
             @Override
             public void onSelect(View view, String selected) {
-                mSelectedUser = mUserList.get(picker.getSelectedIndex() - 1);
+                if (picker.getSelectedIndex() > 0) {
+                    mSelectedUser = mUserList.get(picker.getSelectedIndex() - 1);
+                }
             }
         });
     }
 
-    @OnClick({R.id.includeDetailImgBack, R.id.all_record_btn, R.id.includeDetailImgSetting, R.id.includeDetailImgMore, R.id.mUserManagerView, R.id.mShortTimePasswordView, R.id.mKeyManagerView})
+    @OnClick({R.id.includeDetailImgBack, R.id.all_record_btn, R.id.includeDetailImgSetting, R.id.mUserManagerView, R.id.mShortTimePasswordView, R.id.mKeyManagerView, R.id.mRemoteOpenView})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.includeDetailImgBack:
@@ -257,8 +260,6 @@ public class LockDetailActivity extends DetailActivity {
                 break;
             case R.id.includeDetailImgSetting:
                 showBindKeyDialog("指纹钥匙1");
-                break;
-            case R.id.includeDetailImgMore:
                 break;
             case R.id.mUserManagerView:
                 UserManagerActivity.start(this, mIOTId);
@@ -272,6 +273,10 @@ public class LockDetailActivity extends DetailActivity {
                 KeyManagerActivity.start(this, mIOTId);
                 break;
             case R.id.all_record_btn:
+                HistoryActivity.start(this, mIOTId);
+                break;
+            case R.id.mRemoteOpenView:
+                //todo 远程开门 部分PK由此功能
                 break;
             default:
                 break;
@@ -387,7 +392,7 @@ public class LockDetailActivity extends DetailActivity {
                         JSONArray attrList = user.getJSONArray("attrList");
                         for (int j = 0; j < attrList.size(); j++) {
                             JSONObject attr = attrList.getJSONObject(i);
-                            if (attr.getString("attrKey").equalsIgnoreCase("name")){
+                            if (attr.getString("attrKey").equalsIgnoreCase("name")) {
                                 itemUser.setName(attr.getString("attrValue"));
                                 break;
                             }

@@ -2,6 +2,7 @@ package com.rexense.imoco.view;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -50,6 +51,7 @@ import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.presenter.UserCenter;
+import com.rexense.imoco.service.DeleteKeyService;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
@@ -641,6 +643,12 @@ public class IndexFragment1 extends BaseFragment {
                     RealtimeDataReceiver.initProcess();
                     // 设置实时数据处理
                     setRealtimeDataProcess();
+                    Intent intent = new Intent(mActivity, DeleteKeyService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        mActivity.startForegroundService(intent);
+                    } else {
+                        mActivity.startService(intent);
+                    }
                     // 获取家列表
                     mHomeSpaceManager.getHomeList(1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     break;
