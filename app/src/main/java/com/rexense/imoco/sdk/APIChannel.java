@@ -14,7 +14,9 @@ import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequestBuilder;
 import com.aliyun.iot.aep.sdk.apiclient.emuns.Scheme;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EAPIChannel;
+import com.rexense.imoco.presenter.MocoApplication;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.widget.DialogUtils;
 
 /**
  * Creator: xieshaobing
@@ -35,6 +37,7 @@ public class APIChannel {
             Logger.e("The parameter[path] of APIChannel is not null!");
             return;
         }
+        DialogUtils.showLoadingDialog(MocoApplication.sContext);
 
         Handler mCommitFailureHandler = commitFailureHandler;
         Handler mResponseErrorHandler = responseErrorHandler;
@@ -71,6 +74,7 @@ public class APIChannel {
         ioTAPIClient.send(request, new IoTCallback() {
             @Override
             public void onFailure(IoTRequest request, Exception e) {
+                DialogUtils.dismissLoadingDialog();
                 Logger.e("Failed to submit the interface of API channel!\r\n");
                 printfRequestInfo(request, "API channel failed callback returns request information", 3);
                 Logger.e("The reason for the failure is:\r\n    Exception: " + e.toString());
@@ -98,7 +102,7 @@ public class APIChannel {
             @Override
             public void onResponse(IoTRequest request, IoTResponse response) {
                 Logger.i("Successfully submitted the interface of API channel and got response.");
-
+                DialogUtils.dismissLoadingDialog();
                 // 返回失败数据处理
                 if(Constant.API_CODE_SUCCESS != response.getCode()){
                     printfRequestInfo(request, "API channel response callback returns request information", 2);

@@ -15,6 +15,7 @@ import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
+import com.rexense.imoco.service.BaseService;
 import com.rexense.imoco.viewholder.CommonAdapter;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BindSceneActivity extends AppCompatActivity {
+public class BindSceneActivity extends BaseActivity {
 
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;

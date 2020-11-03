@@ -20,13 +20,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
+            android:textSize="@dimen/sp_18"
             android:text="15288888888"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/user_account"
-            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginTop="@dimen/dp_8"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_12"
             android:text="@string/fragment3_edit_myinfo"/>

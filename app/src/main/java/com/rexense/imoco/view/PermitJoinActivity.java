@@ -4,25 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.sdk.android.openaccount.util.JSONUtils;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshData;
+import com.rexense.imoco.model.ERealtimeData;
 import com.rexense.imoco.presenter.ConfigureNetwork;
+import com.rexense.imoco.presenter.LockManager;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.SystemParameter;
-import com.rexense.imoco.contract.Constant;
-import com.rexense.imoco.model.ERealtimeData;
-import com.rexense.imoco.widget.ComCircularProgress;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.Utility;
+import com.rexense.imoco.widget.ComCircularProgress;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Creator: xieshaobing
@@ -30,18 +37,23 @@ import com.rexense.imoco.utility.Utility;
  * Description: 允许子设备入网
  */
 public class PermitJoinActivity extends BaseActivity {
+    @BindView(R.id.tv_toolbar_title)
+    TextView tvToolbarTitle;
+    @BindView(R.id.permitJoinCPProgress)
+    ComCircularProgress mProgressBar;
     private String mGatewayIOTId;
     private String mProductKey;
     private String mProductName;
     private boolean mIsProhibit = false;
     private boolean mIsJoinSuccess = false;
-    private ComCircularProgress mComCircularProgress;
-    private RelativeLayout mPermit;
     private TextView mReaminSecond;
     private ConfigureNetwork mConfigNetwork;
     private final int mTimeoutSecond = 120;
     private final int mIntervalMS = 100;
     private Thread mJoinThread = null;
+
+    private String mSubDeviceName;
+    private String mSubDeviceIotId;
 
     // 处理允许入网进度
     private Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
@@ -49,21 +61,19 @@ public class PermitJoinActivity extends BaseActivity {
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_PERMITJOIN_STEP_START == msg.what) {
                 // 开始处理
-                mPermit.setVisibility(View.GONE);
-                mComCircularProgress.setMaxProgress(mTimeoutSecond * 1000 / mIntervalMS);
-                mComCircularProgress.setProgress(0);
+                mReaminSecond.setText("0");
+                mProgressBar.setProgress(0);
             } else if (Constant.MSG_PERMITJOIN_REMAIN_SECOND == msg.what) {
                 // 剩余秒数处理
                 int progress = msg.arg1;
                 if (0 == ((progress * mIntervalMS) % 1000)) {
-                    int remain = ((mTimeoutSecond * 1000) - (progress * mIntervalMS)) / 1000;
-                    mReaminSecond.setText("剩余" + remain + "秒");
+                    int process = (progress * mIntervalMS) / (mTimeoutSecond * 10);
+                    mReaminSecond.setText(process + "");
+                    mProgressBar.setProgress(process);
                 }
-                mComCircularProgress.setProgress(progress);
             } else if (Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
                 // 超时处理
-                Dialog.confirm(PermitJoinActivity.this, R.string.dialog_title, getString(R.string.permitjoin_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-                mPermit.setVisibility(View.VISIBLE);
+                Dialog.confirm(PermitJoinActivity.this, R.string.dialog_title, getString(R.string.permitjoin_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, true);
             }
             return false;
         }
@@ -83,9 +93,9 @@ public class PermitJoinActivity extends BaseActivity {
                     prcessPermitJoinProgressHandler.sendMessage(msg1);
                     Toast.makeText(PermitJoinActivity.this, getString(R.string.permitjoin_success), Toast.LENGTH_LONG).show();
                     mIsJoinSuccess = true;
-
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
+                    BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
                     RefreshData.refreshDeviceListData();
@@ -111,7 +121,10 @@ public class PermitJoinActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
+                    Log.i("lzm", "(String) msg.obj"+(String) msg.obj);
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
+                    mSubDeviceName = joinResultEntry.subDeviceName;
+                    mSubDeviceIotId = joinResultEntry.subIotId;
                     if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
                             joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
                         Logger.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
@@ -133,6 +146,7 @@ public class PermitJoinActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permitjoin);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
@@ -140,7 +154,7 @@ public class PermitJoinActivity extends BaseActivity {
         this.mProductName = intent.getStringExtra("productName");
 
         this.mConfigNetwork = new ConfigureNetwork(this);
-
+        tvToolbarTitle.setText("添加设备");
         this.initProcess();
     }
 
@@ -162,12 +176,8 @@ public class PermitJoinActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mComCircularProgress = (ComCircularProgress) findViewById(R.id.permitJoinCPProgress);
         this.mReaminSecond = (TextView) findViewById(R.id.permitJoinLblRemainSecond);
 
-        TextView lblHint = (TextView) findViewById(R.id.permitJoinLblHint);
-        lblHint.setText(String.format(getString(R.string.permitjoin_hint), this.mProductName));
-        this.mPermit = (RelativeLayout) findViewById(R.id.permitJoinRLPermit);
 
         // 允许入网事件处理
         OnClickListener permitOnClickListener = new OnClickListener() {
@@ -177,24 +187,6 @@ public class PermitJoinActivity extends BaseActivity {
                 sendPermitJoinCommand(mTimeoutSecond);
             }
         };
-        TextView lblPermit = (TextView) findViewById(R.id.permitJoinLblPermit);
-        ImageView imgPermit = (ImageView) findViewById(R.id.permitJoinImgPermit);
-        lblPermit.setOnClickListener(permitOnClickListener);
-        imgPermit.setOnClickListener(permitOnClickListener);
-
-        // 拒绝入网事件处理
-        OnClickListener cannelOnClickListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mIsProhibit = true;
-                sendPermitJoinCommand(1);
-                finish();
-            }
-        };
-        TextView lblProhibit = (TextView) findViewById(R.id.permitJoinLblProhibit);
-        ImageView imgProhibit = (ImageView) findViewById(R.id.permitJoinImgProhibit);
-        lblProhibit.setOnClickListener(cannelOnClickListener);
-        imgProhibit.setOnClickListener(cannelOnClickListener);
 
         // 追加长连接实时数据子设备入网回调处理器
         RealtimeDataReceiver.addJoinCallbackHandler("PermitJoinJoinCallback", this.mRealtimeDataHandler);
@@ -247,5 +239,12 @@ public class PermitJoinActivity extends BaseActivity {
             }
         };
         this.mJoinThread.start();
+    }
+
+    @OnClick(R.id.iv_toolbar_left)
+    public void onViewClicked() {
+        mIsProhibit = true;
+        sendPermitJoinCommand(1);
+        finish();
     }
 }

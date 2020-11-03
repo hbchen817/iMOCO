@@ -1,27 +1,17 @@
 package com.rexense.imoco.view;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aliyun.iot.aep.component.router.Router;
-import com.aliyun.iot.ilop.page.scan.ScanActivity;
-import com.google.zxing.qrcode.encoder.QRCode;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.AppUtils;
-import com.rexense.imoco.utility.ToastUtils;
 
-import org.greenrobot.eventbus.EventBus;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.OnClick;
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,8 +72,8 @@ public class DetailActivity extends BaseActivity {
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);
-                setContentView(R.layout.activity_detail_lock);
-                //setContentView(R.layout.activity_detail_gateway);
+                //setContentView(R.layout.activity_detail_lock);
+                setContentView(R.layout.activity_detail_gateway);
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
         }
@@ -80,6 +81,7 @@ public class DetailActivity extends BaseActivity {
         // 标题处理
         TextView title = (TextView)findViewById(R.id.includeDetailLblTitle);
         title.setText(this.mName);
+        Log.i("lzm", "this.mName"+ this.mName);
 
         // 回退处理
         ImageView imgBack = (ImageView)findViewById(R.id.includeDetailImgBack);
@@ -104,6 +106,7 @@ public class DetailActivity extends BaseActivity {
                 intent.putExtra("iotId", mIOTId);
                 intent.putExtra("productKey", mProductKey);
                 intent.putExtra("name", mName);
+                Log.i("lzm", "this.mName2"+ mName);
                 intent.putExtra("owned", mOwned);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
             }
@@ -127,6 +130,7 @@ public class DetailActivity extends BaseActivity {
                 title = (TextView)findViewById(R.id.includeTitleLblTitle);
             }
             title.setText(deviceEntry.nickName);
+            mName = deviceEntry.nickName;
         }
     }
 

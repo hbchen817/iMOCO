@@ -29,7 +29,7 @@ import com.rexense.imoco.view.LockDetailActivity;
 
 import java.lang.ref.WeakReference;
 
-public class DeleteKeyService extends Service {
+public class DeleteKeyService extends BaseService {
     public DeleteKeyService() {
     }
 
@@ -49,7 +49,7 @@ public class DeleteKeyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", new LockHandler());
+        RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", new LockHandler(this));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -61,34 +61,43 @@ public class DeleteKeyService extends Service {
 
     private static class LockHandler extends Handler {
 
+        private WeakReference<DeleteKeyService> weakReference;
+
         private String mLockUserId;
         private int mLockType;
         private String mIotId;
 
+        public LockHandler(DeleteKeyService service) {
+            weakReference = new WeakReference<>(service);
+        }
+
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            DeleteKeyService service = weakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     JSONObject params = jsonObject.getJSONObject("params");
-                    JSONObject value = params.getJSONObject("value");
-                    String identifier = params.getString("identifier");
-                    switch (identifier) {
-                        case "KeyDeletedNotification":
-                            mLockUserId = value.getString("KeyID");
-                            mLockType = value.getIntValue("LockType");
-                            mIotId = value.getString("iotId");
-                            LockManager.getUserByKey(mLockUserId, mLockType, mIotId, null, null, this);
-                            break;
-                        default:
-                            break;
+                    if (params != null) {
+                        JSONObject value = params.getJSONObject("value");
+                        String identifier = params.getString("identifier");
+                        switch (identifier) {
+                            case "KeyDeletedNotification":
+                                mLockUserId = value.getString("KeyID");
+                                mLockType = value.getIntValue("LockType");
+                                mIotId = value.getString("iotId");
+                                LockManager.getUserByKey(mLockUserId, mLockType, mIotId, service.mCommitFailureHandler, service.mResponseErrorHandler, this);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     break;
                 case Constant.MSG_CALLBACK_KEY_USER_GET:
                     if (!TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject user = JSON.parseObject((String) msg.obj);
-                        LockManager.userKeyUnbind(user.getString("userId"), mLockUserId, mLockType, mIotId, null, null, this);
+                        LockManager.userKeyUnbind(user.getString("userId"), mLockUserId, mLockType, mIotId, service.mCommitFailureHandler, service.mResponseErrorHandler, this);
                     }
                     break;
                 default:

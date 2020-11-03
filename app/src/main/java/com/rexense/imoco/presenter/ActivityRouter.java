@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.view.DetailGatewayActivity;
 import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
 import com.rexense.imoco.view.DetailTwoSwitchActivity;
@@ -25,8 +26,8 @@ public class ActivityRouter {
             case CTSL.PK_GATEWAY:
             case CTSL.PK_GATEWAY_RG4100:
                 // 网关处理
-                intent = new Intent(context, LockDetailActivity.class);
-                //intent = new Intent(context, DetailGatewayActivity.class);
+                //intent = new Intent(context, LockDetailActivity.class);
+                intent = new Intent(context, DetailGatewayActivity.class);
                 break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理

@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
@@ -30,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class BindSuccessActivity extends AppCompatActivity {
+public class BindSuccessActivity extends BaseActivity {
 
     private static final String EXTRA_IOT_ID = "EXTRA_IOT_ID";
     private static final String EXTRA_NICKNAME = "EXTRA_NICKNAME";
@@ -57,10 +59,16 @@ public class BindSuccessActivity extends AppCompatActivity {
         mIotId = getIntent().getStringExtra(EXTRA_IOT_ID);
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mUserCenter = new UserCenter(this);
+        Log.i("lzm", "nickName" + mNickName);
+        if (mNickName.contains(getString(R.string.app_brand))){
+            mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+            mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
         mOkView.setTypeface(iconfont);
-//        TSLHelper helper = new TSLHelper(this);
-//        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
+        TSLHelper helper = new TSLHelper(this);
+        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
+        mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // 显示设备名称修改对话框
@@ -92,7 +100,7 @@ public class BindSuccessActivity extends AppCompatActivity {
                     dialog.dismiss();
                     // 设置设备昵称
                     mNewNickName = nameStr;
-                    mUserCenter.setDeviceNickName(mIotId, nameStr, null, null, mAPIDataHandler);
+                    mUserCenter.setDeviceNickName(mIotId, nameStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     mNickName = mNewNickName;
                 }
             }
@@ -111,8 +119,18 @@ public class BindSuccessActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg){
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
+                    Log.i("lzm", "nickname change success "+ (String)msg.obj);
                     // 更新设备缓存备注名称
-                    DeviceBuffer.updateDeviceNickName(mIotId, mNewNickName);
+                    DeviceBuffer.updateDeviceNickName(mIotId, mNickName);
+                    break;
+                case Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV:
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    Log.i("lzm", "MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV"+ msg.obj);
+                    mNickName = jsonObject.getString("productName");
+                    if (mNickName.contains(getString(R.string.app_brand))){
+                        mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                        mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
                     break;
                 default:
                     break;

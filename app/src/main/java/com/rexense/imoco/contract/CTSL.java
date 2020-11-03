@@ -22,6 +22,7 @@ public class CTSL {
     public static final String PK_PIRSENSOR                 = "a1CzbnRNzCR";
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
     public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
+    public static final String PK_SIX_SCENE_SWITCH          = "a1zf8jfGzTX";
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 

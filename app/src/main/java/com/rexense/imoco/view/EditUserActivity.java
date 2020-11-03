@@ -31,7 +31,7 @@ import butterknife.OnClick;
  * @time 2020/10/13 15:42
  */
 
-public class EditUserActivity extends AppCompatActivity {
+public class EditUserActivity extends BaseActivity {
 
     private static final String ID = "ID";
     private static final String NAME = "NAME";
@@ -77,7 +77,7 @@ public class EditUserActivity extends AppCompatActivity {
                     ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
                     return;
                 }
-                UserCenter.updateVirtualUser(mUserId, name, null, null, mHandler);
+                UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 break;
         }
     }

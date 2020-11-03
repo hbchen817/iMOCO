@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -513,7 +514,7 @@ public class SceneManager {
             Logger.e("The processDataHandler is not null!");
             return;
         }
-
+        Log.i("lzm", "param sid = "+sceneId +",catalogId"+catalogId);
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_QUERYSCENEDETAIL;

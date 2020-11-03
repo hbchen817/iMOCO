@@ -91,6 +91,25 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    //查询设备与用户的关系
+    public void getByAccountAndDev(String iotId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GET_BY_ACCOUNT_AND_DEV;
+        requestParameterEntry.version = "1.0.6";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
     // 解绑用户和设备
     public void unbindDevice(String deviceId,

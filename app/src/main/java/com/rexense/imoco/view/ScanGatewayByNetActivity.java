@@ -56,7 +56,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
-public class ScanGatewayByNetActivity extends AppCompatActivity {
+public class ScanGatewayByNetActivity extends BaseActivity {
 
     @BindView(R.id.includeTitleLblTitle)
     TextView includeTitleLblTitle;

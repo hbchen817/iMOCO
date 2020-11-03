@@ -4,7 +4,7 @@
     android:id="@+id/rl_common_toolbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_46"
-    android:background="@color/appbgcolor">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/iv_toolbar_left"

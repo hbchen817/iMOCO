@@ -99,6 +99,7 @@ public class LongConnection {
         MobileChannel.getInstance().registerDownstreamListener(true, mDownstreamListener);
         MobileChannel.getInstance().registerConnectListener(true, mConnectListener);
         Logger.d("Started receiving data from long connection");
+        mIsConnected = true;
     }
 
     // 添加回调处理器

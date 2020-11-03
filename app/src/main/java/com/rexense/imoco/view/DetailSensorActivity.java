@@ -97,7 +97,9 @@ public class DetailSensorActivity extends DetailActivity {
 
         // 初始化设备状态图标
         mIcon.setImageResource(ImageProvider.genProductIcon(mProductKey));
-        mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, ""));
+        if (mProductKey.equalsIgnoreCase(CTSL.PK_TEMHUMSENSOR)){
+            mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentTemperature));
+        }
 
         this.mIsHasPowerSource = getIntent().getBooleanExtra("isHasPowerSource", false);
         // 如果没有电池电源则不显示
@@ -118,6 +120,7 @@ public class DetailSensorActivity extends DetailActivity {
         if(mProductKey.equals(CTSL.PK_TEMHUMSENSOR)) {
             mLayoutState2.setVisibility(View.VISIBLE);
             mStateIcon2 = (ImageView) findViewById(R.id.detailSensorImgStateIcon2);
+            mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));
             mStateName2 = (TextView) findViewById(R.id.detailSensorLblStateName2);
             mStateValue2 = (TextView) findViewById(R.id.detailSensorLblStateValue2);
         }

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.widget.Toast;
 
 import com.rexense.imoco.model.EBLE;
 import com.rexense.imoco.contract.IBLE;
@@ -80,6 +81,8 @@ public class BLEScanner {
 				Logger.d("BLE started discovering device.");
 			} else {
 				Logger.e("BLE failed to start discovering device!");
+				//todo 权限申请
+				Toast.makeText(mContext, "无蓝牙权限，请在应用程序信息中为应用开通权限", Toast.LENGTH_SHORT).show();
 			}
 			return r;
 		}

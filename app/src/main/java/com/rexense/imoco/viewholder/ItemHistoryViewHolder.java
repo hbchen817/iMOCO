@@ -1,5 +1,6 @@
 package com.rexense.imoco.viewholder;
 
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,11 +28,12 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
     public void setUpView(ItemHistoryMsg model, int position, CommonAdapter adapter, List<Integer> payloads) {
         View root_view = getView(R.id.root_view);
         TextView name = (TextView) getView(R.id.name);
-        ImageView icon = (ImageView) getView(R.id.icon);
+        TextView icon = (TextView) getView(R.id.icon);
         TextView time = (TextView) getView(R.id.time);
 
         time.setText(model.getTime());
-
+        Typeface iconfont = Typeface.createFromAsset(root_view.getContext().getAssets(), "iconfont/jk/iconfont.ttf");
+        icon.setTypeface(iconfont);
         String eventCode = model.getEvent_code();
         String keyNameStr;
         if (TextUtils.isEmpty(model.getUserName())) {
@@ -57,7 +59,8 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
             keyNameStr = model.getUserName();
         }
         if (TYPE_ALARM.contains(eventCode)) {//报警记录
-            icon.setImageResource(R.drawable.history_alarm);
+            icon.setText(R.string.icon_history_alarm);
+            icon.setTextColor(0xffDD4946);
             switch (eventCode) {
                 case "HijackingAlarm":
                     name.setText(keyNameStr + "被挟持");
@@ -78,7 +81,8 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     break;
             }
         } else if (TYPE_OPEN.contains(eventCode)) {//开门记录
-            icon.setImageResource(R.drawable.user_default);
+            icon.setText(R.string.icon_history_open);
+            icon.setTextColor(0xffE4E5E6);
             switch (eventCode) {
                 case "DoorOpenNotification":
                     name.setText(keyNameStr + "开门");
@@ -90,7 +94,8 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     break;
             }
         } else if (TYPE_INFO.contains(eventCode)) {//信息记录
-            icon.setImageResource(R.drawable.history_info);
+            icon.setText(R.string.icon_history_info);
+            icon.setTextColor(0xff3BBC5F);
             switch (eventCode) {
                 case "KeyDeletedNotification":
                     name.setText("删除" + keyNameStr);

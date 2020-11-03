@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
-import com.alibaba.sdk.android.openaccount.OpenAccountService;
 import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;

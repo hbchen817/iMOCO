@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 
 import com.alibaba.sdk.android.openaccount.ConfigManager;
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
@@ -32,6 +34,7 @@ import com.alibaba.sdk.android.openaccount.util.OpenAccountUtils;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.alibaba.sdk.android.openaccount.util.RpcUtils;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.rexense.imoco.R;
 
 import org.json.JSONObject;
 
@@ -48,6 +51,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
     public LoginWithSmsCodeActivity() {
     }
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mToolBar.setVisibility(View.GONE);
@@ -97,6 +101,22 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+        Log.i("lzm", "0");
+        // 关闭输入键盘处理
+        ImageView background = this.findViewById(ResourceUtils.getRId(this,"loginImgBackground"));
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("lzm", "1");
+                final View view = getWindow().peekDecorView();
+                if (view != null && view.getWindowToken() != null) {
+                    Log.i("lzm", "2");
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    boolean b = imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    Log.i("lzm", "3 b = " + b);
+                }
             }
         });
 

@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-public class EditKeyActivity extends AppCompatActivity {
+public class EditKeyActivity extends BaseActivity {
 
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
@@ -107,7 +107,7 @@ public class EditKeyActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.delete_key:
-                LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, null, null, mHandler);
+                LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 break;
         }
     }

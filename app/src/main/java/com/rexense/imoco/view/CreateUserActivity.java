@@ -31,7 +31,7 @@ import butterknife.OnClick;
  * @time 2020/10/13 15:42
  */
 
-public class CreateUserActivity extends AppCompatActivity {
+public class CreateUserActivity extends BaseActivity {
 
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
@@ -69,7 +69,7 @@ public class CreateUserActivity extends AppCompatActivity {
                     ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
                     return;
                 }
-                UserCenter.createVirtualUser(name, null, null, mHandler);
+                UserCenter.createVirtualUser(name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 break;
         }
     }

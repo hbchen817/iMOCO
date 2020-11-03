@@ -5,105 +5,88 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     android:paddingTop="10dp"
     android:paddingBottom="5dp">
 
-    <include layout="@layout/layout_common_toolbar"/>
+    <include layout="@layout/layout_common_toolbar" />
 
-    <TextView
-        android:id="@+id/permitJoinLblHint"
-        style="@style/NormalFontStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:text="@string/permitjoin_permit" />
+<!--    <TextView-->
+<!--        android:id="@+id/permitJoinLblHint"-->
+<!--        style="@style/NormalFontStyle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginLeft="30dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginRight="30dp"-->
+<!--        android:text="@string/permitjoin_permit" />-->
 
     <FrameLayout
         android:id="@+id/permitJoinFLProgress"
         android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="@dimen/dp_50">
 
         <com.rexense.imoco.widget.ComCircularProgress
             android:id="@+id/permitJoinCPProgress"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:padding="30dp"
             android:layout_gravity="center"
-            app:backColor="@color/colorPrimary"
+            app:backColor="@color/topic_color2"
             app:backWidth="3dp"
-            app:progStartColor="#B0E0E6"
-            app:progFirstColor="@color/colorAccent"
+            app:progStartColor="#FFD495"
+            app:progFirstColor="@color/topic_color2"
             app:progWidth="10dp"
-            app:maxProgress="1200"
-            app:progress="600" />
+            app:maxProgress="100"
+            app:progress="50" />
 
-        <TextView
-            android:id="@+id/permitJoinLblRemainSecond"
+        <ImageView
+            android:layout_width="230dp"
+            android:layout_height="230dp"
             android:layout_gravity="center"
-            android:textSize="14sp"
+            android:background="@drawable/orange_round" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/permitJoinLblRemainSecond"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_30" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="%"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_30" />
+        </LinearLayout>
+
 
     </FrameLayout>
-
-    <RelativeLayout
-        android:id="@+id/permitJoinRLPermit"
-        android:layout_width="260dp"
-        android:layout_gravity="center|bottom"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        android:layout_marginTop="10dp">
-
-        <ImageView
-            android:id="@+id/permitJoinImgPermit"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/shape"
-            android:contentDescription="@string/contentDescription_null" />
-
-        <TextView
-            android:id="@+id/permitJoinLblPermit"
-            style="@style/NormalWhiteFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/permitjoin_permit" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="260dp"
-        android:layout_gravity="center|bottom"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp">
-
-        <ImageView
-            android:id="@+id/permitJoinImgProhibit"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/shape_button"
-            android:contentDescription="@string/contentDescription_null" />
-
-        <TextView
-            android:id="@+id/permitJoinLblProhibit"
-            style="@style/NormalWhiteFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/permitjoin_prohibit" />
-
-    </RelativeLayout>
+    <TextView
+        android:text="设备连接中"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/all_3"
+        android:layout_marginTop="@dimen/dp_30"
+        android:textSize="@dimen/sp_22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:text="设备配对中,请避免设备断电。"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/all_3"
+        android:layout_marginTop="@dimen/dp_30"
+        android:textSize="@dimen/sp_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

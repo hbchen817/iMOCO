@@ -8,12 +8,16 @@
     android:paddingTop="10dp"
     android:paddingBottom="5dp">
 
+    <include layout="@layout/layout_common_toolbar" />
+
     <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/password_layout"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:gravity="center|center_horizontal|center_vertical"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp" >
+        android:layout_marginTop="100dp"
+        android:gravity="center|center_horizontal|center_vertical">
 
         <ImageView
             android:id="@+id/configureNetworkImgSSID"
@@ -32,10 +36,10 @@
             android:id="@+id/configureNetworkImgChoice"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/configureNetworkImgSSID"
-            android:layout_marginTop="0dp"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="3dp"
+            android:layout_marginTop="0dp"
             android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/go" />
 
@@ -43,31 +47,32 @@
             android:id="@+id/configureNetworkImgPassword"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="13dp"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="13dp"
+            android:layout_marginLeft="13dp"
             android:layout_marginTop="56dp"
             android:contentDescription="@string/contentDescription_null"
-            android:src="@drawable/pwd"
-            android:layout_alignParentStart="true" />
+            android:src="@drawable/pwd" />
 
         <EditText
             android:id="@+id/configureNetworkTxtSSID"
             style="@style/NormalFontStyle"
             android:layout_width="180dp"
             android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="50dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginTop="2dp"
+            android:autofillHints=""
             android:background="@null"
-            android:hint="@string/confignetwork_ssid"
             android:drawableBottom="@drawable/line"
-            android:inputType="text"
-            android:autofillHints="">
+            android:hint="@string/confignetwork_ssid"
+            android:inputType="text">
+
             <requestFocus />
         </EditText>
 
@@ -76,18 +81,17 @@
             style="@style/NormalFontStyle"
             android:layout_width="180dp"
             android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="50dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="46dp"
-            android:drawableBottom="@drawable/line"
-            android:background="@null"
-            android:hint="@string/confignetwork_pwd"
-            android:inputType="text"
             android:layout_alignParentStart="true"
-            android:autofillHints="">
-        </EditText>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="46dp"
+            android:autofillHints=""
+            android:background="@null"
+            android:drawableBottom="@drawable/line"
+            android:hint="@string/confignetwork_pwd"
+            android:inputType="text"></EditText>
 
         <RelativeLayout
             android:layout_width="100dp"
@@ -99,11 +103,11 @@
 
             <ImageView
                 android:id="@+id/configNetworkImgConfig"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/dp_80"
                 android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/login"
+                android:background="@drawable/theme_fill"
                 android:contentDescription="@string/contentDescription_null" />
 
             <TextView
@@ -119,19 +123,19 @@
 
         <RelativeLayout
             android:layout_width="100dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
             android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
             android:layout_marginTop="90dp"
-            android:layout_gravity="center" >
+            android:layout_marginRight="20dp">
 
             <ImageView
                 android:id="@+id/configureNetworkImgCancel"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/dp_80"
                 android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/register"
+                android:background="@drawable/theme_stroke"
                 android:contentDescription="@string/contentDescription_null" />
 
             <TextView
@@ -139,43 +143,90 @@
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#00ffff"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="@string/confignetwork_cancel" />
+                android:text="@string/confignetwork_cancel"
+                android:textColor="@color/topic_color2" />
 
         </RelativeLayout>
 
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/configureNetworkFLProgress"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/process_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.rexense.imoco.widget.ComCircularProgress
-            android:id="@+id/configureNetworkCPProgress"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
-            android:padding="30dp"
-            android:layout_gravity="center"
-            app:backColor="@color/colorPrimary"
-            app:backWidth="3dp"
-            app:progStartColor="#B0E0E6"
-            app:progFirstColor="@color/colorAccent"
-            app:progWidth="10dp"
-            app:maxProgress="1200"
-            app:progress="600" />
-
-        <TextView
-            android:id="@+id/configureNetworkLblRemainSecond"
-            android:layout_gravity="center"
-            android:textSize="14sp"
+        <FrameLayout
+            android:id="@+id/permitJoinFLProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_50">
 
-    </FrameLayout>
+            <com.rexense.imoco.widget.ComCircularProgress
+                android:id="@+id/permitJoinCPProgress"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:padding="30dp"
+                android:layout_gravity="center"
+                app:backColor="@color/topic_color2"
+                app:backWidth="3dp"
+                app:progStartColor="#FFD495"
+                app:progFirstColor="@color/topic_color2"
+                app:progWidth="10dp"
+                app:maxProgress="100"
+                app:progress="50" />
+
+            <ImageView
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_gravity="center"
+                android:background="@drawable/orange_round" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/permitJoinLblRemainSecond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_30" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_30" />
+            </LinearLayout>
+
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="设备连接中"
+            android:textColor="@color/all_3"
+            android:textSize="@dimen/sp_22" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="设备配对中,请避免设备断电。"
+            android:textColor="@color/all_3"
+            android:textSize="@dimen/sp_14" />
+    </LinearLayout>
 
 </LinearLayout>

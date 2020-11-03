@@ -5,8 +5,15 @@
     <string name="icon_temporary_password">&#xe618;</string>
     <string name="icon_key_manager">&#xe62a;</string>
     <string name="icon_remote_open">&#xe734;</string>
+    <string name="icon_no_data">&#xe642;</string>
+    <string name="icon_history_alarm">&#xe613;</string>
+    <string name="icon_history_info">&#xe612;</string>
+    <string name="icon_history_open">&#xe603;</string>
+    <string name="icon_locking">&#xe638;</string>
+    <string name="icon_switch">&#xe628;</string>
+    <string name="icon_timer">&#xe638;</string>
 
-    <string name="app_name">莫克智家</string>
+    <string name="app_name">莫科智家</string>
     <string name="contentDescription_null"></string>
     <string name="app_ver">1.0.4</string>
 
@@ -49,6 +56,7 @@
     <string name="dialog_no">否</string>
     <string name="dialog_cancel">取消</string>
     <string name="dialog_unbind">你真的要解绑定当前设备吗？</string>
+    <string name="dialog_ota">当前网关有固件更新可升级，是否现在升级？</string>
     <string name="dialog_unbind_ok">当前设备已经解除绑定。</string>
     <string name="dialog_unlogin">系统没有登录，请先登录。</string>
     <string name="dialog_edit_title">修改标题</string>
@@ -526,5 +534,6 @@
     <string name="color_temperature">色温</string>
     <string name="on_off">开关</string>
     <string name="floor_heating">地暖</string>
+    <string name="account_other_device_login">当前帐户在其他设备登录，请重新登陆</string>
 
 </resources>

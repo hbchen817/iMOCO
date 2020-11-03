@@ -1,12 +1,20 @@
 package com.rexense.imoco.view;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +33,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshRoomDevice;
 import com.rexense.imoco.event.RefreshRoomName;
@@ -45,6 +54,7 @@ import com.rexense.imoco.presenter.AptSceneGrid;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
+import com.rexense.imoco.presenter.MocoApplication;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.SceneManager;
@@ -61,11 +71,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+
 import butterknife.ButterKnife;
 
 /**
@@ -197,6 +210,8 @@ public class IndexFragment1 extends BaseFragment {
 
                 Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
                 startActivity(intent);
+//                ActivityRouter.toDetail(getActivity(), "", CTSL.PK_SMART_LOCK,
+//                        1, "测试", 1);
             }
         });
 
@@ -486,7 +501,6 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(mSceneList != null && mSceneList.size() > 0) {
                 new SceneManager(getActivity()).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                Toast.makeText(getActivity(), String.format(getString(R.string.main_scene_execute_hint), mSceneList.get(position).name), Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -770,6 +784,7 @@ public class IndexFragment1 extends BaseFragment {
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
                     JSONObject items = JSON.parseObject((String)msg.obj);
+                    Log.i("lzm", "PROPERTY" + (String) msg.obj);
                     if(items != null) {
                         TSLHelper.parseProperty(mCurrentProductKey, items, propertyEntry);
                         propertyEntry.iotId = mCurrentGetPropertyIotId;
@@ -785,6 +800,16 @@ public class IndexFragment1 extends BaseFragment {
                         if(mIsContinuouslyGetState){
                             mGetPropertyIndex++;
                             getDeviceProperty();
+                        }
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_EXECUTESCENE:
+                    String sceneId = (String)msg.obj;
+                    for (int i = 0; i < mSceneList.size(); i++) {
+                        EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
+                        if (itemEntry.id.equalsIgnoreCase(sceneId)){
+                            Toast.makeText(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name), Toast.LENGTH_LONG).show();
+                            break;
                         }
                     }
                     break;

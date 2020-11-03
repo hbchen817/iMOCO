@@ -29,6 +29,7 @@
 			android:layout_marginTop="5dp"
 			android:layout_toRightOf="@+id/sceneListImgIcon"
 			android:layout_marginLeft="10dp"
+			android:layout_marginRight="@dimen/dp_40"
 			android:text="@string/scenename" />
 
 		<TextView android:id="@+id/sceneListLblType"
@@ -56,11 +57,11 @@
 
 		<ImageView
 			android:id="@+id/sceneListImgEdit"
-			android:layout_width="30dp"
-			android:layout_height="30dp"
+			android:layout_width="@dimen/dp_30"
+			android:layout_height="@dimen/dp_30"
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
-			android:layout_marginRight="10dp"
+			android:layout_marginRight="@dimen/dp_10"
 			android:src="@drawable/go"
 			android:contentDescription="@string/contentDescription_null"/>
 

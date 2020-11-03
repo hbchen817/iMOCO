@@ -45,7 +45,7 @@ import butterknife.OnClick;
  * @time 2020/10/13 13:54
  */
 
-public class UserManagerActivity extends AppCompatActivity {
+public class UserManagerActivity extends BaseActivity {
 
     private static final String IOTID = "IOTID";
 
@@ -118,7 +118,7 @@ public class UserManagerActivity extends AppCompatActivity {
 
     private void getData() {
         mHandler = new ProcessDataHandler(this);
-        UserCenter.queryVirtualUserListInDevice(mIotId, null, null, mHandler);
+        UserCenter.queryVirtualUserListInDevice(mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     @OnClick({R.id.iv_toolbar_left, R.id.iv_toolbar_right})

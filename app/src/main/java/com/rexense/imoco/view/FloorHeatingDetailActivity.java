@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
@@ -27,6 +28,12 @@ public class FloorHeatingDetailActivity extends AppCompatActivity {
     TextView mTemperatureSmall;
     @BindView(R.id.temperatureSeekBar)
     SeekBar mTemperatureProgressBar;
+    @BindView(R.id.icon_lock)
+    TextView iconLock;
+    @BindView(R.id.icon_switch)
+    TextView iconSwitch;
+    @BindView(R.id.icon_timer)
+    TextView iconTimer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +44,10 @@ public class FloorHeatingDetailActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        iconLock.setTypeface(typeface);
+        iconSwitch.setTypeface(typeface);
+        iconTimer.setTypeface(typeface);
         mTemperatureProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {

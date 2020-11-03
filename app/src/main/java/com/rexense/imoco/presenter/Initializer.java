@@ -1,8 +1,12 @@
 package com.rexense.imoco.presenter;
 
 import android.content.Context;
+import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.iot.aep.sdk.IoTSmart;
+import com.aliyun.iot.aep.sdk.apiclient.emuns.Env;
+import com.aliyun.iot.aep.sdk.framework.config.GlobalConfig;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.Logger;
 
@@ -53,7 +57,7 @@ public class Initializer {
 
         // 初始化（App须继承自AApplication，否则会报错）
         IoTSmart.init((MocoApplication)context.getApplicationContext(), initConfig);
-
+        //IoTSmart.setProductScope(IoTSmart.PRODUCT_SCOPE_PUBLISHED);
         Logger.d("The SDK initialization completed.");
     }
 }

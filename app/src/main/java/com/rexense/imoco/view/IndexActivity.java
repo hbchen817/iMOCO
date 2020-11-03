@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
+import com.rexense.imoco.utility.PermissionUtil;
 import com.rexense.imoco.utility.ToastUtils;
 
 import java.util.ArrayList;
@@ -24,8 +25,11 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,7 +37,7 @@ import butterknife.ButterKnife;
  * @author imjackzhao@gmail.com
  * @date 2018/5/15
  */
-public class IndexActivity extends AppCompatActivity {
+public class IndexActivity extends BaseActivity {
 
     @BindView(R.id.fl_main_container)
     FrameLayout mFlMainContainer;
@@ -55,7 +59,7 @@ public class IndexActivity extends AppCompatActivity {
     private IndexFragment2 indexFragment2;
     private IndexFragment3 indexFragment3;
 
-    private String[] tagArr = {"IndexFragment1","IndexFragment2","IndexFragment3"};
+    private String[] tagArr = {"IndexFragment1", "IndexFragment2", "IndexFragment3"};
     /**
      * 第一次按返回键的时间, 默认为0
      */
@@ -70,7 +74,7 @@ public class IndexActivity extends AppCompatActivity {
     public static IndexActivity mainActivity;
 
     public static void start(Context context) {
-        ToastUtils.showToastCentrally(context,context.getString(R.string.login_success));
+        ToastUtils.showToastCentrally(context, context.getString(R.string.login_success));
         Intent starter = new Intent(context, IndexActivity.class);
         context.startActivity(starter);
     }
@@ -104,7 +108,7 @@ public class IndexActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 设置布局文件
         setContentView(R.layout.activity_index);
@@ -112,32 +116,32 @@ public class IndexActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mFragmentManager = getSupportFragmentManager();
 
-        if (savedInstanceState!=null){
+        if (savedInstanceState != null) {
             indexFragment1 = (IndexFragment1) mFragmentManager.findFragmentByTag("IndexFragment1");
             indexFragment2 = (IndexFragment2) mFragmentManager.findFragmentByTag("IndexFragment2");
             indexFragment3 = (IndexFragment3) mFragmentManager.findFragmentByTag("IndexFragment3");
 
-            if (indexFragment1==null){
+            if (indexFragment1 == null) {
                 indexFragment1 = new IndexFragment1();
-            }else {
+            } else {
                 mFragmentManager.beginTransaction().hide(indexFragment1);
             }
-            if (indexFragment2==null){
+            if (indexFragment2 == null) {
                 indexFragment2 = new IndexFragment2();
-            }else {
+            } else {
                 mFragmentManager.beginTransaction().hide(indexFragment2);
             }
-            if (indexFragment3==null){
+            if (indexFragment3 == null) {
                 indexFragment3 = new IndexFragment3();
-            }else {
+            } else {
                 mFragmentManager.beginTransaction().hide(indexFragment3);
             }
-            Fragment[] fragmentsArr = {indexFragment1,indexFragment2,indexFragment3};
+            Fragment[] fragmentsArr = {indexFragment1, indexFragment2, indexFragment3};
 
             initListener();
             int tag = savedInstanceState.getInt("TAG");
             mCurrentFragment = fragmentsArr[tag];
-        }else {
+        } else {
             init();
         }
     }
@@ -145,8 +149,78 @@ public class IndexActivity extends AppCompatActivity {
     private void init() {
         mainActivity = this;
         // 没有需要处理的运行时权限, 继续执行
-        initView();
-        initListener();
+        // 处理运行时权限
+        initPermissions();
+
+        if (!mPermissionList.isEmpty()) {
+            // 如果有需要处理的运行时权限, 就先处理运行时权限
+            String[] permissions = mPermissionList.toArray(new String[mPermissionList.size()]);
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        } else {
+            // 没有需要处理的运行时权限, 继续执行
+            initView();
+            initListener();
+        }
+    }
+
+    /**
+     * 处理运行时权限
+     */
+    private void initPermissions() {
+
+        mPermissionList = new ArrayList<>();
+
+        // 如果手机系统大于等于6.0, 去申请运行时权限
+        // 读写内存卡的权限
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        // 开启摄像头的权限
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.CAMERA);
+        }
+
+
+        // 位置的权限 蓝牙搜索相关
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
+                            finish();
+                            PermissionUtil.getAppDetailSettingIntent1(this);
+                            return;
+                        }
+                    }
+
+                    // 已经同意了运行时权限, 执行正常逻辑
+                    initView();
+                    initListener();
+                } else {
+                    ToastUtils.showToastCentrally(this, "发生未知错误");
+                }
+                break;
+            default:
+        }
     }
 
     private void initView() {
@@ -179,14 +253,16 @@ public class IndexActivity extends AppCompatActivity {
                 mFragmentManager.beginTransaction().hide(mCurrentFragment).show(fragment).commit();
             } else {
                 // 如果没有添加过, 就把当前的Fragment隐藏, 把切换的Fragment添加上
-                mFragmentManager.beginTransaction().hide(mCurrentFragment).add(R.id.fl_main_container, fragment,tagArr[TAG]).commit();
+                mFragmentManager.beginTransaction().hide(mCurrentFragment).add(R.id.fl_main_container, fragment, tagArr[TAG]).commit();
             }
 
             // 把切换后的Fragment赋值给mCurrentFragment
             mCurrentFragment = fragment;
         }
     }
+
     private int TAG;
+
     /*
      * 保存TAB选中状态
      * */
@@ -196,7 +272,7 @@ public class IndexActivity extends AppCompatActivity {
         //总是执行这句代码来调用父类去保存视图层的状态
         //保存tab选中的状态;
         super.onSaveInstanceState(outState);
-        outState.putInt("TAG",TAG);
+        outState.putInt("TAG", TAG);
     }
 
     @Override
@@ -232,12 +308,13 @@ public class IndexActivity extends AppCompatActivity {
         }
     }
 
-    public void back(View view){
+    public void back(View view) {
         finish();
     }
 
     /**
      * 防止快速点击
+     *
      * @param ev
      * @return
      */
@@ -251,8 +328,9 @@ public class IndexActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    private long lastClickTime= System.currentTimeMillis();
-    private  boolean isFastDoubleClick() {
+    private long lastClickTime = System.currentTimeMillis();
+
+    private boolean isFastDoubleClick() {
         long time = System.currentTimeMillis();
         long timeD = time - lastClickTime;
         if (timeD >= 0 && timeD <= 400) {

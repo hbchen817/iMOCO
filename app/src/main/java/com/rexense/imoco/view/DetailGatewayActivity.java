@@ -3,11 +3,14 @@ package com.rexense.imoco.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -17,6 +20,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.event.CEvent;
@@ -27,6 +31,7 @@ import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.CodeMapper;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.ImageProvider;
+import com.rexense.imoco.presenter.OTAHelper;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.TSLHelper;
@@ -98,7 +103,7 @@ public class DetailGatewayActivity extends DetailActivity {
             if(Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST == msg.what) {
                 EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String)msg.obj);
                 if(list != null && list.data != null) {
-                    for(EUser.deviceEntry e: list.data) {
+                    for (EUser.deviceEntry e : list.data) {
                         EDevice.deviceEntry entry = new EDevice.deviceEntry();
                         entry.iotId = e.iotId;
                         entry.nickName = e.nickName;
@@ -107,12 +112,12 @@ public class DetailGatewayActivity extends DetailActivity {
                         entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
                         mDeviceList.add(entry);
                     }
-                    if(list.data.size() >= list.pageSize) {
+                    if (list.data.size() >= list.pageSize) {
                         // 数据没有获取完则获取下一页数据
                         new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, mPageSize, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
                     } else {
                         // 数据获取完则加载显示
-                        ListView subdeviceList = (ListView)findViewById(R.id.detailGatewayLstSubdevice);
+                        ListView subdeviceList = (ListView) findViewById(R.id.detailGatewayLstSubdevice);
                         mAptDeviceList.setData(mDeviceList);
                         subdeviceList.setAdapter(mAptDeviceList);
                         subdeviceList.setOnItemClickListener(deviceListOnItemClickListener);
@@ -120,9 +125,45 @@ public class DetailGatewayActivity extends DetailActivity {
                     }
                 }
             }
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
+                    // 处理获取OTA固件信息
+                    JSONObject dataJson = JSONObject.parseObject((String) msg.obj);
+                    String currentVersion = dataJson.getString("currentVersion");
+                    String theNewVersion = dataJson.getString("version");
+                    Log.i("lzm", "currentVersion = " + currentVersion + "theNewVersion = " + theNewVersion);
+                    if (!currentVersion.equals(theNewVersion)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(DetailGatewayActivity.this);
+                        builder.setIcon(R.drawable.dialog_quest);
+                        builder.setTitle(R.string.upgrade_firmware);
+                        builder.setMessage(R.string.dialog_ota);
+                        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent intent = new Intent(mActivity, UpgradeFirmwareActivity.class);
+                                intent.putExtra("iotId",mIOTId);
+                                intent.putExtra("productKey",mProductKey);
+                                intent.putExtra("currentVersion",currentVersion);
+                                intent.putExtra("theNewVersion",theNewVersion);
+                                startActivity(intent);
+                            }
+                        });
+                        builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        });
+                        builder.create().show();
+                    }
+                    break;
+                default:
+                    break;
+            }
             return false;
         }
     });
+
+
 
     // 实时数据处理器
     private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
@@ -272,6 +313,10 @@ public class DetailGatewayActivity extends DetailActivity {
 
         // 开始获取网关子设备列表
         startGetGatewaySubdeive();
+        // 非共享设备才能去获取版本号信息
+        if (mOwned > 0) {
+            OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
+        }
     }
 
     @Override

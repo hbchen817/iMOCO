@@ -50,7 +50,7 @@ import butterknife.OnClick;
  * @time 2020/10/15 13:13
  */
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends BaseActivity {
 
     public static final String IOTID = "IOTID";
     private static final String[] TYPE_ALL = new String[]{};
@@ -118,7 +118,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        LockManager.getLockHistory(mIotID, mStartTime, System.currentTimeMillis(), mCurrentType, mPageNo, mPageSize, null, null, mHandler);
+        LockManager.getLockHistory(mIotID, mStartTime, System.currentTimeMillis(), mCurrentType, mPageNo, mPageSize, mCommitFailureHandler, mResponseErrorHandler, mHandler);
 
     }
 

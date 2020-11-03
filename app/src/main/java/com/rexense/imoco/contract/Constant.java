@@ -138,6 +138,8 @@ public class Constant {
     public static final String API_PATH_DELETE_KEY                  = "/lock/key/user/delete";
     //删除设备的钥匙信息
     public static final String API_PATH_USER_KEY_UNBIND             = "/lock/key/user/unbind";
+    //查询用户和设备的关系
+    public static final String API_PATH_GET_BY_ACCOUNT_AND_DEV      = "/uc/getByAccountAndDev";
 
 
     // 定义插件URL常量
@@ -222,7 +224,8 @@ public class Constant {
     public static final int MSG_CALLBACK_QUERY_KEY_BY_USER          = 152;
     public static final int MSG_CALLBACK_DELETE_KEY                 = 153;
     public static final int MSG_CALLBACK_KEY_USER_GET               = 154;
-    public static final int MSG_CALLBACK_KEY_USER_UNBIND               = 155;
+    public static final int MSG_CALLBACK_KEY_USER_UNBIND            = 155;
+    public static final int MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV     = 156;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

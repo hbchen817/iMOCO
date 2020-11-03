@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import java.util.ArrayList;
@@ -78,5 +79,14 @@ public class WiFiHelper {
 			Logger.e("SSID list is null");
 			return null;
 		}
+	}
+
+	/**
+	 * 获取当前连接的wifi名称
+	 * @return ssid
+	 */
+	public String getWIFIName() {
+		WifiInfo info = mWifi.getConnectionInfo();
+		return info != null ? info.getSSID().replace("\"", "") : "";
 	}
 }

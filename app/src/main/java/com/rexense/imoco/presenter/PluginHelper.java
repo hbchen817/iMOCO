@@ -28,6 +28,7 @@ public class PluginHelper {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("sceneType", sceneType == null || sceneType.length() == 0 ? CScene.TYPE_IFTTT : sceneType);
         parameters.put("homeId", homeId);
+        parameters.put("catalogId", 1);
         Plugin.call(context, Constant.PLUGIN_URL_SCENE, parameters);
     }
 

@@ -41,7 +41,7 @@ import butterknife.OnClick;
  * @time 2020/10/19 10:12
  */
 
-public class KeyManagerActivity extends AppCompatActivity {
+public class KeyManagerActivity extends BaseActivity {
 
     private static final String IOTID = "IOTID";
 
@@ -73,7 +73,7 @@ public class KeyManagerActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        UserCenter.queryVirtualUserListInDevice(mIotId, null, null, mHandler);
+        UserCenter.queryVirtualUserListInDevice(mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     @Subscribe
@@ -136,7 +136,7 @@ public class KeyManagerActivity extends AppCompatActivity {
                                 break;
                             }
                         }
-                        LockManager.queryKeyByUser(user.getString("userId"), null, null, this);
+                        LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_KEY_BY_USER:

@@ -200,13 +200,16 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/icon_lock"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_20"
                 android:layout_marginTop="@dimen/dp_10"
-                android:src="@drawable/lock_orange" />
+                android:textSize="@dimen/dp_30"
+                android:textColor="#F45D31"
+                android:text="@string/icon_locking" />
 
             <TextView
 
@@ -232,13 +235,16 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/icon_switch"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_50"
                 android:layout_marginTop="@dimen/dp_40"
-                android:src="@drawable/switch_orange" />
+                android:textSize="@dimen/dp_30"
+                android:textColor="#F45D31"
+                android:text="@string/icon_switch"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -264,13 +270,16 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageView
+            <TextView
+                android:id="@+id/icon_timer"
                 android:layout_width="@dimen/dp_30"
                 android:layout_height="@dimen/dp_30"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_20"
                 android:layout_marginTop="@dimen/dp_10"
-                android:src="@drawable/clock_orange" />
+                android:textSize="@dimen/dp_30"
+                android:textColor="#F45D31"
+                android:text="@string/icon_timer" />
 
             <TextView
 

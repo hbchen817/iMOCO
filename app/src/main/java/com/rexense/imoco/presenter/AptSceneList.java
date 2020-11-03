@@ -113,6 +113,14 @@ public class AptSceneList extends BaseAdapter {
 		this.notifyDataSetChanged();
 	}
 
+	public void hideDeleteButton() {
+		// 将删除隐藏掉
+		for(deleteTag tag : mDeleteList){
+			tag.isDeleted = false;
+		}
+		notifyDataSetChanged();
+	}
+
 	// 返回列表条目数量
 	@Override
 	public int getCount() {
@@ -174,36 +182,36 @@ public class AptSceneList extends BaseAdapter {
 		} else {
 			viewHolder.delete.setVisibility(View.GONE);
 		}
-		viewHolder.edit.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				final int index = Integer.parseInt(v.getTag().toString());
-
-				// 将删除隐藏掉
-				for(deleteTag tag : mDeleteList){
-					tag.isDeleted = false;
-				}
-				notifyDataSetChanged();
-
-				// 获取场景模板代码
-				int sceneModelCode = new SceneManager(mContext).getSceneModelCode(mSceneList.get(position).description);
-				if(sceneModelCode < CScene.SMC_NIGHT_RISE_ON){
-					// 非模板场景处理
-					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
-					SystemParameter.getInstance().setIsRefreshSceneListData(true);
-				} else {
-					// 模板场景处理
-					Intent intent = new Intent(mContext, SceneMaintainActivity.class);
-					intent.putExtra("operateType", CScene.OPERATE_UPDATE);
-					intent.putExtra("sceneId", mSceneList.get(index).id);
-					intent.putExtra("name", mSceneList.get(index).name);
-					intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
-					intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mContext, mSceneList.get(index).description));
-					intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
-					mContext.startActivity(intent);
-				}
-			}
-		});
+//		viewHolder.edit.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				final int index = Integer.parseInt(v.getTag().toString());
+//
+//				// 将删除隐藏掉
+//				for(deleteTag tag : mDeleteList){
+//					tag.isDeleted = false;
+//				}
+//				notifyDataSetChanged();
+//
+//				// 获取场景模板代码
+//				int sceneModelCode = new SceneManager(mContext).getSceneModelCode(mSceneList.get(position).description);
+//				if(sceneModelCode < CScene.SMC_NIGHT_RISE_ON){
+//					// 非模板场景处理
+//					PluginHelper.editScene(mContext, CScene.TYPE_IFTTT, mSceneList.get(index).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(index).id);
+//					SystemParameter.getInstance().setIsRefreshSceneListData(true);
+//				} else {
+//					// 模板场景处理
+//					Intent intent = new Intent(mContext, SceneMaintainActivity.class);
+//					intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+//					intent.putExtra("sceneId", mSceneList.get(index).id);
+//					intent.putExtra("name", mSceneList.get(index).name);
+//					intent.putExtra("sceneModelCode", new SceneManager(mContext).getSceneModelCode(mSceneList.get(index).description));
+//					intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mContext, mSceneList.get(index).description));
+//					intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+//					mContext.startActivity(intent);
+//				}
+//			}
+//		});
 
 
 		return convertView;

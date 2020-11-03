@@ -34,7 +34,11 @@ public class DialogUtils {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
         mLoadingDialog = dialog;
-        mLoadingDialog.show();
+        try {
+            mLoadingDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -162,7 +163,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 }
 
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                        mSceneModelCode >= CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
+                        mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
                 baseInfoEntry.enable = mEnable;
                 if(mOperateType == CScene.OPERATE_CREATE) {
@@ -226,12 +227,14 @@ public class SceneMaintainActivity extends BaseActivity {
                     genSceneParameterList(mConfigProductList);
                     if(mOperateType == CScene.OPERATE_UPDATE){
                         // 获取场景详细信息
+                        Log.i("lzm", "mSceneModelCode =" + mSceneModelCode);
                         mSceneManager.querySceneDetail(mSceneId, mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详细信息
                     EScene.processedDetailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
+                    Log.i("lzm", "Detail" + (String)msg.obj);
                     mEnable = detailEntry.rawDetail.isEnable();
                     if(mEnable){
                         mLblEnable.setText(getString(R.string.scene_maintain_startusing));
