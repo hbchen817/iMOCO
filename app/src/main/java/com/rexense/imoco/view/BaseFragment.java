@@ -77,7 +77,7 @@ public abstract class BaseFragment extends Fragment {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                if (responseErrorEntry.code == 401) {//检查用户是否登录了其他App
+                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
 //                    if (!LoginBusiness.isLogin()) {
 //                        Logger.e("LoginBusiness.isLogin() = false");

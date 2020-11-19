@@ -6,6 +6,7 @@ import com.aliyun.alink.linksdk.channel.mobile.api.IMobileConnectListener;
 import com.aliyun.alink.linksdk.channel.mobile.api.IMobileDownstreamListener;
 import com.aliyun.alink.linksdk.channel.mobile.api.MobileChannel;
 import com.aliyun.alink.linksdk.channel.mobile.api.MobileConnectState;
+import com.gary.hi.library.log.HiLog;
 import com.rexense.imoco.model.ERealtimeData;
 import com.rexense.imoco.utility.Logger;
 
@@ -69,6 +70,7 @@ public class LongConnection {
     private static IMobileConnectListener mConnectListener = new IMobileConnectListener() {
         @Override
         public void onConnectStateChange(MobileConnectState mobileConnectState) {
+            HiLog.i("长连接通道连接状态"+ mobileConnectState);
             if (MobileConnectState.CONNECTED == mobileConnectState) {
                 mIsConnected = true;
             } else if (MobileConnectState.DISCONNECTED == mobileConnectState) {

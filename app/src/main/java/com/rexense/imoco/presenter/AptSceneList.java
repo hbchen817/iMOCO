@@ -143,10 +143,10 @@ public class AptSceneList extends BaseAdapter {
 		ViewHolder viewHolder = new ViewHolder();
 		LayoutInflater inflater = LayoutInflater.from(this.mContext);
 		convertView = inflater.inflate(R.layout.list_scene, null, true);
-		viewHolder.name = (TextView) convertView.findViewById(R.id.sceneListLblName);
-		viewHolder.type = (TextView) convertView.findViewById(R.id.sceneListLblType);
-		viewHolder.delete = (TextView)convertView.findViewById(R.id.sceneListLblDelete);
-		viewHolder.edit = (ImageView) convertView.findViewById(R.id.sceneListImgEdit);
+		viewHolder.name = convertView.findViewById(R.id.sceneListLblName);
+		viewHolder.type = convertView.findViewById(R.id.sceneListLblType);
+		viewHolder.delete = convertView.findViewById(R.id.sceneListLblDelete);
+		viewHolder.edit = convertView.findViewById(R.id.sceneListImgEdit);
 		viewHolder.delete.setTag(position);
 		viewHolder.edit.setTag(position);
 		convertView.setTag(viewHolder);

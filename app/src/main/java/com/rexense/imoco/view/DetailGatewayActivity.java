@@ -201,10 +201,10 @@ public class DetailGatewayActivity extends DetailActivity {
                         }
                     }
                     break;
-                case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
-                    // 开始获取网关子设备列表以刷新数据
-                    startGetGatewaySubdeive();
-                    break;
+//                case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
+//                    // 开始获取网关子设备列表以刷新数据
+//                    startGetGatewaySubdeive();
+//                    break;
                 default:
                     break;
             }

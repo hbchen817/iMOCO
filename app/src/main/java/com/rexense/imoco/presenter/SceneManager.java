@@ -44,6 +44,9 @@ public class SceneManager {
             Dialog.confirm(this.mContext, R.string.dialog_title, String.format(this.mContext.getString(R.string.scene_maintain_maxnumber_hint), CScene.RULE_MAX_NUMBER), R.drawable.dialog_fail, R.string.dialog_ok, false);
             return false;
         }
+        if (parameters == null){
+            return false;
+        }
 
         int triggerNumber = 0, conditionNumber = 0, actionNumber = 0;
         for(EScene.parameterEntry para : parameters){

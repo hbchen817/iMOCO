@@ -1,4 +1,5 @@
 package com.rexense.imoco.view;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ public class SceneMaintainActivity extends BaseActivity {
     private AptSceneParameter mAptSceneParameter;
     private int mSetTimeIndex = -1;
     private boolean mEnable = true;
+    private long mClickTime = 0;
 
     // 显示场景名称修改对话框
     private void showSceneNameDialogEdit() {
@@ -79,7 +81,7 @@ public class SceneMaintainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String nameStr = nameEt.getText().toString().trim();
-                if (!nameStr.equals("")){
+                if (!nameStr.equals("")) {
                     dialog.dismiss();
                     mLblName.setText(nameEt.getText().toString());
                 }
@@ -107,14 +109,14 @@ public class SceneMaintainActivity extends BaseActivity {
         this.mName = intent.getStringExtra("name");
         this.mSceneId = intent.getStringExtra("sceneId");
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        ImageView icon = (ImageView)findViewById(R.id.sceneMaintainImgIcon);
-        this.mLblName = (TextView)findViewById(R.id.sceneMaintainLblName);
-        this.mLblEnable = (TextView)findViewById(R.id.sceneMaintainLblEnable);
+        TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
+        ImageView icon = (ImageView) findViewById(R.id.sceneMaintainImgIcon);
+        this.mLblName = (TextView) findViewById(R.id.sceneMaintainLblName);
+        this.mLblEnable = (TextView) findViewById(R.id.sceneMaintainLblEnable);
         icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 
-        TextView lblOperate = (TextView)findViewById(R.id.sceneMaintainLblOperate);
-        if(this.mOperateType == CScene.OPERATE_CREATE){
+        TextView lblOperate = (TextView) findViewById(R.id.sceneMaintainLblOperate);
+        if (this.mOperateType == CScene.OPERATE_CREATE) {
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
             this.mLblName.setText(intent.getStringExtra("sceneModelName"));
             lblOperate.setText(getString(R.string.scene_maintain_create));
@@ -146,19 +148,23 @@ public class SceneMaintainActivity extends BaseActivity {
                 bundle.putString("title", getString(R.string.scene_maintain_setenable));
                 bundle.putBoolean("isMultipleSelect", false);
                 bundle.putInt("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_ENABLE);
-                bundle.putSerializable("items", (Serializable)items);
+                bundle.putSerializable("items", (Serializable) items);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLCHOICEACTIVITY);
             }
         });
 
         // 操作处理
-        RelativeLayout rlOperate = (RelativeLayout)findViewById(R.id.sceneMaintainRlOperate);
+        RelativeLayout rlOperate = (RelativeLayout) findViewById(R.id.sceneMaintainRlOperate);
         rlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (System.currentTimeMillis() - mClickTime < 3000) {
+                    mClickTime = System.currentTimeMillis();
+                    return;
+                }
                 // 检查参数
-                if(!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)){
+                if (!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)) {
                     return;
                 }
 
@@ -166,7 +172,7 @@ public class SceneMaintainActivity extends BaseActivity {
                         mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
                 baseInfoEntry.enable = mEnable;
-                if(mOperateType == CScene.OPERATE_CREATE) {
+                if (mOperateType == CScene.OPERATE_CREATE) {
                     // 创建场景
                     mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 } else {
@@ -178,8 +184,8 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 返回处理
-        ImageView back = (ImageView)findViewById(R.id.includeTitleImgBack);
-        back.setOnClickListener(new OnClickListener(){
+        ImageView back = (ImageView) findViewById(R.id.includeTitleImgBack);
+        back.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -191,20 +197,20 @@ public class SceneMaintainActivity extends BaseActivity {
     }
 
     // 生成场景参数列表
-    private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList){
+    private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
         this.mParameterList = this.mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
         mAptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
         mAptSceneParameter.setData(this.mParameterList);
-        ListView lstParameter = (ListView)findViewById(R.id.sceneMaintainLstParameter);
+        ListView lstParameter = (ListView) findViewById(R.id.sceneMaintainLstParameter);
         lstParameter.setAdapter(mAptSceneParameter);
 
         // 列表点击事件处理
-        lstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        lstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mSetTimeIndex = -1;
                 // 设置时间
-                if(mParameterList.get(position).type == CScene.SPT_CONDITION_TIME){
+                if (mParameterList.get(position).type == CScene.SPT_CONDITION_TIME) {
                     mSetTimeIndex = position;
                     Intent intent = new Intent(SceneMaintainActivity.this, SetTimeActivity.class);
                     String cron = mParameterList.get(position).conditionTimeEntry.genCronString();
@@ -216,16 +222,16 @@ public class SceneMaintainActivity extends BaseActivity {
     }
 
     // 数据处理器
-    private Handler processDataHandler = new Handler(new Handler.Callback(){
+    private Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
-                    List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String)msg.obj);
+                    List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String) msg.obj);
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
-                    if(mOperateType == CScene.OPERATE_UPDATE){
+                    if (mOperateType == CScene.OPERATE_UPDATE) {
                         // 获取场景详细信息
                         Log.i("lzm", "mSceneModelCode =" + mSceneModelCode);
                         mSceneManager.querySceneDetail(mSceneId, mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
@@ -233,10 +239,10 @@ public class SceneMaintainActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详细信息
-                    EScene.processedDetailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String)msg.obj);
-                    Log.i("lzm", "Detail" + (String)msg.obj);
+                    EScene.processedDetailEntry detailEntry = CloudDataParser.processSceneDetailInformation((String) msg.obj);
+                    Log.i("lzm", "Detail" + (String) msg.obj);
                     mEnable = detailEntry.rawDetail.isEnable();
-                    if(mEnable){
+                    if (mEnable) {
                         mLblEnable.setText(getString(R.string.scene_maintain_startusing));
                     } else {
                         mLblEnable.setText(getString(R.string.scene_maintain_stopusing));
@@ -291,10 +297,10 @@ public class SceneMaintainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 处理设置使用状态结果
-        if(requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_ENABLE){
+        if (requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_ENABLE) {
             Bundle bundle = data.getExtras();
             String value = bundle.getString("value");
-            if(value.equalsIgnoreCase("1")){
+            if (value.equalsIgnoreCase("1")) {
                 mEnable = true;
                 mLblEnable.setText(getString(R.string.scene_maintain_startusing));
             } else {
@@ -304,10 +310,10 @@ public class SceneMaintainActivity extends BaseActivity {
         }
 
         // 处理设置时间结果
-        if(requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY){
+        if (requestCode == Constant.REQUESTCODE_CALLSETTIMEACTIVITY && resultCode == Constant.RESULTCODE_CALLSETTIMEACTIVITY) {
             Bundle bundle = data.getExtras();
             EScene.conditionTimeEntry conditionTime = new EScene.conditionTimeEntry(bundle.getString("cron"));
-            if(mSetTimeIndex >= 0){
+            if (mSetTimeIndex >= 0) {
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry.isSelected = true;
                 mAptSceneParameter.notifyDataSetChanged();

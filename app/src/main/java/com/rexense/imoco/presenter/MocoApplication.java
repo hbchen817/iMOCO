@@ -17,6 +17,11 @@ import com.aliyun.iot.aep.sdk.framework.AApplication;
 import com.aliyun.iot.aep.sdk.log.ALog;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.login.oa.OALoginAdapter;
+import com.gary.hi.library.log.HiConsolePrinter;
+import com.gary.hi.library.log.HiFilePrinter;
+import com.gary.hi.library.log.HiLogConfig;
+import com.gary.hi.library.log.HiLogManager;
+import com.gary.hi.library.log.HiLogPrinter;
 import com.rexense.imoco.utility.CrashHandler;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.view.OALoginActivity;
@@ -29,6 +34,7 @@ import com.rexense.imoco.view.OALoginActivity;
 public class MocoApplication extends AApplication {
 
     public static Context sContext;
+    public static final boolean IS_DEBUG = false;
 
     @Override
     public void onCreate() {
@@ -54,7 +60,7 @@ public class MocoApplication extends AApplication {
         }
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
-
+        initLog();
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
 //            final String TAG = "APIGatewaySDKDele";
@@ -116,4 +122,37 @@ public class MocoApplication extends AApplication {
 //        });
     }
 
+    private void initLog(){
+        HiLogManager.init(new HiLogConfig() {
+            @Override
+            public JsonParser injectJsonParser() {
+                return new JsonParser() {
+                    @Override
+                    public String toJson(Object o) {
+                        return JSON.toJSONString(o);
+                    }
+                };
+            }
+
+            @Override
+            public String getGlobalTag() {
+                return "LZM";
+            }
+
+            @Override
+            public boolean enable() {
+                return IS_DEBUG;
+            }
+
+            @Override
+            public boolean includeThread() {
+                return false;
+            }
+
+            @Override
+            public int stackTraceDepth() {
+                return 0;
+            }
+        },new HiConsolePrinter(), HiFilePrinter.getInstance( getFilesDir().getPath()+"/HiLog", 7 * 24 * 60 * 60 * 1000));
+    }
 }

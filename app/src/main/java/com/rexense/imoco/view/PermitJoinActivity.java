@@ -99,6 +99,7 @@ public class PermitJoinActivity extends BaseActivity {
 
                     // 发送刷新设备列表事件
                     RefreshData.refreshDeviceListData();
+                    SystemParameter.getInstance().setIsRefreshDeviceData(true);
 
                     // 中断加网线程
                     if (mJoinThread != null) {

@@ -59,7 +59,7 @@ public class BaseService extends Service {
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
-                if (responseErrorEntry.code == 401) {//检查用户是否登录了其他App
+                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
 //                    LoginBusiness.refreshSession(true, new IRefreshSessionCallback() {
 //                        @Override

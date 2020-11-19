@@ -38,10 +38,6 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <service
-            android:name=".service.DeleteKeyService"
-            android:enabled="true"
-            android:exported="true"></service>
 
         <activity
             android:name=".view.StartActivity"
