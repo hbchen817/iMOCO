@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never" />
+
+    <com.xiezhu.jzj.widget.IndicatorView
+        android:id="@+id/page_indicator"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/dp_50"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_10"
+        app:indicator_icon="@drawable/new_indicator_select"
+        app:indicator_margin="3dp" />
+
+</RelativeLayout>

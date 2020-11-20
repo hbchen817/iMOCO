@@ -166,7 +166,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/dp_50">
 
-            <com.rexense.imoco.widget.ComCircularProgress
+            <com.xiezhu.jzj.widget.ComCircularProgress
                 android:id="@+id/permitJoinCPProgress"
                 android:layout_width="300dp"
                 android:layout_height="300dp"

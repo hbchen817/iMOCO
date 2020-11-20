@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.rexense.imoco">
+    package="com.xiezhu.jzj">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,12 +27,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name=".presenter.MocoApplication"
+        android:name="com.xiezhu.jzj.presenter.MocoApplication"
         android:allowBackup="false"
         android:appComponentFactory="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -40,9 +40,15 @@
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
 
         <activity
-            android:name=".view.StartActivity"
+            android:name="com.xiezhu.jzj.view.StartActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name="com.xiezhu.jzj.view.NewActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,203 +57,203 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.OneWayWindowCurtainsActivity"
+            android:name="com.xiezhu.jzj.view.OneWayWindowCurtainsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".view.IndexActivity"
+            android:name="com.xiezhu.jzj.view.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.SceneMaintainActivity"
+            android:name="com.xiezhu.jzj.view.SceneMaintainActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.ScanGatewayByNetActivity"
+            android:name="com.xiezhu.jzj.view.ScanGatewayByNetActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.BindSuccessActivity"
+            android:name="com.xiezhu.jzj.view.BindSuccessActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.LockDetailActivity"
+            android:name="com.xiezhu.jzj.view.LockDetailActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.OneKeySceneActivity"
+            android:name="com.xiezhu.jzj.view.OneKeySceneActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.EditSceneBindActivity"
+            android:name="com.xiezhu.jzj.view.EditSceneBindActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.ColorLightDetailActivity"
+            android:name="com.xiezhu.jzj.view.ColorLightDetailActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.FloorHeatingDetailActivity"
+            android:name="com.xiezhu.jzj.view.FloorHeatingDetailActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.FreshAirDetailActivity"
+            android:name="com.xiezhu.jzj.view.FreshAirDetailActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.BindSceneActivity"
+            android:name="com.xiezhu.jzj.view.BindSceneActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.UserManagerActivity"
+            android:name="com.xiezhu.jzj.view.UserManagerActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.CreateUserActivity"
+            android:name="com.xiezhu.jzj.view.CreateUserActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.EditUserActivity"
+            android:name="com.xiezhu.jzj.view.EditUserActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.HistoryActivity"
+            android:name="com.xiezhu.jzj.view.HistoryActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.KeyManagerActivity"
+            android:name="com.xiezhu.jzj.view.KeyManagerActivity"
             android:label="@string/app_name" />
         <activity
-            android:name=".view.OneWayCurtainsDetailActivity"
+            android:name="com.xiezhu.jzj.view.OneWayCurtainsDetailActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.OneKeySceneDetailActivity"
+            android:name="com.xiezhu.jzj.view.OneKeySceneDetailActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.TwoWayCurtainsDetailActivity"
+            android:name="com.xiezhu.jzj.view.TwoWayCurtainsDetailActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.SetTimeActivity"
+            android:name="com.xiezhu.jzj.view.SetTimeActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ChoiceActivity"
+            android:name="com.xiezhu.jzj.view.ChoiceActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ChoiceProductActivity"
+            android:name="com.xiezhu.jzj.view.ChoiceProductActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ScanBLEActivity"
+            android:name="com.xiezhu.jzj.view.ScanBLEActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ChoiceWiFiActivity"
+            android:name="com.xiezhu.jzj.view.ChoiceWiFiActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ConfigureNetworkActivity"
+            android:name="com.xiezhu.jzj.view.ConfigureNetworkActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ChoiceGatewayActivity"
+            android:name="com.xiezhu.jzj.view.ChoiceGatewayActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.EditKeyActivity"
+            android:name="com.xiezhu.jzj.view.EditKeyActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ProductGuidanceActivity"
+            android:name="com.xiezhu.jzj.view.ProductGuidanceActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.PermitJoinActivity"
+            android:name="com.xiezhu.jzj.view.PermitJoinActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.DetailOneSwitchActivity"
+            android:name="com.xiezhu.jzj.view.DetailOneSwitchActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.DetailTwoSwitchActivity"
+            android:name="com.xiezhu.jzj.view.DetailTwoSwitchActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.DetailGatewayActivity"
+            android:name="com.xiezhu.jzj.view.DetailGatewayActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.DetailSensorActivity"
+            android:name="com.xiezhu.jzj.view.DetailSensorActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.MoreGatewayActivity"
+            android:name="com.xiezhu.jzj.view.MoreGatewayActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.MoreSubdeviceActivity"
+            android:name="com.xiezhu.jzj.view.MoreSubdeviceActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.MessageRecordActivity"
+            android:name="com.xiezhu.jzj.view.MessageRecordActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.ChoiceContentActivity"
+            android:name="com.xiezhu.jzj.view.ChoiceContentActivity"
             android:label="@string/app_name"></activity>
         <activity
-            android:name=".view.OALoginActivity"
+            android:name="com.xiezhu.jzj.view.OALoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Login"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name="com.xiezhu.jzj.view.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.LoginWithSmsCodeActivity"
+            android:name="com.xiezhu.jzj.view.LoginWithSmsCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.ResetPasswordActivity"
+            android:name="com.xiezhu.jzj.view.ResetPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.ResetPasswordFillPasswordActivity"
+            android:name="com.xiezhu.jzj.view.ResetPasswordFillPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.RegisterFillPasswordActivity"
+            android:name="com.xiezhu.jzj.view.RegisterFillPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.MyInfoActivity"
+            android:name="com.xiezhu.jzj.view.MyInfoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DeleteAccountActivity"
+            android:name="com.xiezhu.jzj.view.DeleteAccountActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NickNameActivity"
+            android:name="com.xiezhu.jzj.view.NickNameActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MsgCenterActivity"
+            android:name="com.xiezhu.jzj.view.MsgCenterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ShareDeviceActivity"
+            android:name="com.xiezhu.jzj.view.ShareDeviceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DeviceQrcodeActivity"
+            android:name="com.xiezhu.jzj.view.DeviceQrcodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SceneLogActivity"
+            android:name="com.xiezhu.jzj.view.SceneLogActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MoreServiceActivity"
+            android:name="com.xiezhu.jzj.view.MoreServiceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AboutUsActivity"
+            android:name="com.xiezhu.jzj.view.AboutUsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TmallSpiritActivity"
+            android:name="com.xiezhu.jzj.view.TmallSpiritActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TmallSpiritActivity1"
+            android:name="com.xiezhu.jzj.view.TmallSpiritActivity1"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.H5Activity"
+            android:name="com.xiezhu.jzj.view.H5Activity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.RoomDeviceActivity"
+            android:name="com.xiezhu.jzj.view.RoomDeviceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.UpgradeFirmwareActivity"
+            android:name="com.xiezhu.jzj.view.UpgradeFirmwareActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AddRoomDeviceActivity"
+            android:name="com.xiezhu.jzj.view.AddRoomDeviceActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".utility.BLEService"
+            android:name="com.xiezhu.jzj.utility.BLEService"
             android:enabled="true" /> <!-- 消息接收监听器 （用户可自主扩展） -->
         <receiver
-            android:name=".sdk.MyMessageReceiver"
+            android:name="com.xiezhu.jzj.sdk.MyMessageReceiver"
             android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
             <intent-filter>
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />

@@ -28,4 +28,5 @@
 
 -keep class com.aliyun.alink.linksdk.channel.**{*;}
 # API-Client.end
-
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

@@ -29,5 +29,10 @@
             <enum name="right" value="2"/>
         </attr>
     </declare-styleable>
+    <declare-styleable name="IndicatorView">
+        <attr name="indicator_icon" format="integer"/>
+        <attr name="indicator_margin" format="dimension"/>
+        <attr name="indicator_smooth" format="boolean"/>
 
+    </declare-styleable>
 </resources>
