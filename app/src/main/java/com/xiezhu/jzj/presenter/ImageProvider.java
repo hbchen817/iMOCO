@@ -72,6 +72,8 @@ public class ImageProvider {
                 return R.drawable.icon_four_switch;
             case CTSL.PK_BLACK_USB:
                 return R.drawable.icon_usb;
+            case CTSL.PK_WHITE_THREE_SWITCH:
+                return R.drawable.icon_three_switch_white;
             default:
                 return R.drawable.icon_thsensor;
         }

@@ -29,6 +29,7 @@ public class CTSL {
     public static final String PK_BLACK_ONE_SWITCH               = "a1VK0kgweyU";
     public static final String PK_BLACK_TWO_SWITCH               = "a1Hi1QQEGPm";
     public static final String PK_BLACK_THREE_SWITCH               = "a1uAwpNGcI7";
+    public static final String PK_WHITE_THREE_SWITCH               = "a1UpoJjIjCn";
     public static final String PK_BLACK_FOUR_SWITCH               = "a1lX2ZUOTzE";
     public static final String PK_BLACK_USB               = "a1OLiwq8qSv";
 

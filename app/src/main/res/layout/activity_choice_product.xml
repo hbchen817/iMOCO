@@ -37,7 +37,7 @@
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
                 android:text="@string/configproduct_device_type_light"
-                android:textColor="@color/topic_color1" />
+                android:textColor="@color/topic_color2" />
 
             <TextView
                 android:id="@+id/choiceProductTypeElectric"

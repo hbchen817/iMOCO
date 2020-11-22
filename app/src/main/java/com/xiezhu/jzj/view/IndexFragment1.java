@@ -214,7 +214,7 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblDevice.setTextColor(getResources().getColor(R.color.topic_color1));
+                mLblDevice.setTextColor(getResources().getColor(R.color.topic_color2));
                 mLblDeviceDL.setVisibility(View.VISIBLE);
                 mLblRoom.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblRoomDL.setVisibility(View.INVISIBLE);
@@ -241,7 +241,7 @@ public class IndexFragment1 extends BaseFragment {
             public void onClick(View v) {
                 mLblDevice.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblDeviceDL.setVisibility(View.INVISIBLE);
-                mLblRoom.setTextColor(getResources().getColor(R.color.topic_color1));
+                mLblRoom.setTextColor(getResources().getColor(R.color.topic_color2));
                 mLblRoomDL.setVisibility(View.VISIBLE);
                 mLblShare.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblShareDL.setVisibility(View.INVISIBLE);
@@ -261,7 +261,7 @@ public class IndexFragment1 extends BaseFragment {
                 mLblDeviceDL.setVisibility(View.INVISIBLE);
                 mLblRoom.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblRoomDL.setVisibility(View.INVISIBLE);
-                mLblShare.setTextColor(getResources().getColor(R.color.topic_color1));
+                mLblShare.setTextColor(getResources().getColor(R.color.topic_color2));
                 mLblShareDL.setVisibility(View.VISIBLE);
 
                 mRlDevice.setVisibility(View.GONE);
