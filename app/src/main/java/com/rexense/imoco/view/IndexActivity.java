@@ -206,9 +206,7 @@ public class IndexActivity extends BaseActivity {
                     for (int result : grantResults) {
                         if (result != PackageManager.PERMISSION_GRANTED) {
                             ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
-                            finish();
                             PermissionUtil.getAppDetailSettingIntent1(this);
-                            return;
                         }
                     }
 

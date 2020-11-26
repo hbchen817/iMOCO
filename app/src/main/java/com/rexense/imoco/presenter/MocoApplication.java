@@ -25,6 +25,7 @@ import com.gary.hi.library.log.HiLogPrinter;
 import com.rexense.imoco.utility.CrashHandler;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.view.OALoginActivity;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Creator: xieshaobing
@@ -42,6 +43,7 @@ public class MocoApplication extends AApplication {
         sContext = getApplicationContext();
         //设置日志级别
         Logger.setLogLevel(2);
+        CrashReport.initCrashReport(getApplicationContext(), "32e9d238a3", true);
 
         //安装MultiDex
         MultiDex.install(this);

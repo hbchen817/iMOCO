@@ -144,6 +144,45 @@
                         android:text="@string/login_by_sms"
                         android:textSize="@dimen/sp_13" />
 
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/dp_20" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="注册即表示同意极智家"
+                            android:textSize="@dimen/sp_14" />
+
+                        <TextView
+                            android:id="@+id/yonghuxieyi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="用户协议"
+                            android:textColor="@color/appfontcolor"
+                            android:textSize="@dimen/sp_14" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="和"
+                            android:textSize="@dimen/sp_14" />
+
+                        <TextView
+                            android:id="@+id/yinsi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="隐私政策"
+                            android:textColor="@color/appfontcolor"
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

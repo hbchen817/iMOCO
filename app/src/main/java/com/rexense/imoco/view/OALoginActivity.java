@@ -27,6 +27,7 @@ import com.alibaba.sdk.android.openaccount.ui.widget.InputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.ui.widget.MobileInputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
 
 public class OALoginActivity extends LoginActivity implements View.OnClickListener{
 
@@ -73,6 +74,22 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
                     InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
+            }
+        });
+        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this,"yonghuxieyi"));
+        yonghuxieyi.setOnClickListener(v->{
+            if(getString(R.string.app_user_deal_url).length() == 0){
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+            }
+        });
+        TextView yinsi = this.findViewById(ResourceUtils.getRId(this,"yinsi"));
+        yinsi.setOnClickListener(v->{
+            if(getString(R.string.app_privacy_policy_url).length() == 0){
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
             }
         });
     }
