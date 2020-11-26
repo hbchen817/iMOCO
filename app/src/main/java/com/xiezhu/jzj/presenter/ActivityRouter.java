@@ -10,6 +10,7 @@ import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.view.DetailGatewayActivity;
 import com.xiezhu.jzj.view.DetailOneSwitchActivity;
 import com.xiezhu.jzj.view.DetailSensorActivity;
+import com.xiezhu.jzj.view.DetailThreeSwitchActivity;
 import com.xiezhu.jzj.view.DetailTwoSwitchActivity;
 import com.xiezhu.jzj.view.LockDetailActivity;
 
@@ -36,6 +37,10 @@ public class ActivityRouter {
             case CTSL.PK_TWOWAYSWITCH:
                 // 两键开关处理
                 intent = new Intent(context, DetailTwoSwitchActivity.class);
+                break;
+            case CTSL.PK_WHITE_THREE_SWITCH:
+                // 三键开关处理
+                intent = new Intent(context, DetailThreeSwitchActivity.class);
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理

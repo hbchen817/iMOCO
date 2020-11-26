@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alibaba.sdk.android.openaccount.ConfigManager;
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
@@ -33,6 +34,8 @@ import com.alibaba.sdk.android.openaccount.ui.widget.NetworkCheckOnClickListener
 import com.alibaba.sdk.android.openaccount.util.OpenAccountUtils;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.alibaba.sdk.android.openaccount.util.RpcUtils;
+import com.xiezhu.jzj.R;
+import com.xiezhu.jzj.contract.Constant;
 
 import org.json.JSONObject;
 
@@ -115,6 +118,22 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                     boolean b = imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     Log.i("lzm", "3 b = " + b);
                 }
+            }
+        });
+        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this,"yonghuxieyi"));
+        yonghuxieyi.setOnClickListener(v->{
+            if(getString(R.string.app_user_deal_url).length() == 0){
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+            }
+        });
+        TextView yinsi = this.findViewById(ResourceUtils.getRId(this,"yinsi"));
+        yinsi.setOnClickListener(v->{
+            if(getString(R.string.app_privacy_policy_url).length() == 0){
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
             }
         });
 

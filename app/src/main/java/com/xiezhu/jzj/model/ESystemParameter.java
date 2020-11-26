@@ -10,6 +10,8 @@ public class ESystemParameter {
     private boolean mIsLogin;
     // 品牌
     private String mBrand;
+    private String mBrand2;
+    private String mBrand3;
     // 显示品牌
     private String mBrandShow;
     // 家Id
@@ -31,6 +33,8 @@ public class ESystemParameter {
     public ESystemParameter(){
         this.mIsLogin = false;
         this.mBrand = "iMOCO";
+        this.mBrand2 = "iMOCO";
+        this.mBrand3 = "iMOCO";
         this.mBrandShow = "iMOCO";
         this.mHomeId = "";
         this.mHomeName = "";
@@ -49,6 +53,22 @@ public class ESystemParameter {
     // 设置品牌
     public void setBrand(String brand){
         this.mBrand = brand;
+    }
+
+    public String getmBrand2() {
+        return mBrand2;
+    }
+
+    public void setmBrand2(String mBrand2) {
+        this.mBrand2 = mBrand2;
+    }
+
+    public String getmBrand3() {
+        return mBrand3;
+    }
+
+    public void setmBrand3(String mBrand3) {
+        this.mBrand3 = mBrand3;
     }
 
     // 设置显示品牌

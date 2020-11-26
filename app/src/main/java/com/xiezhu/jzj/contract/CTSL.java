@@ -26,12 +26,12 @@ public class CTSL {
 
     public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
     public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
-    public static final String PK_BLACK_ONE_SWITCH               = "a1VK0kgweyU";
-    public static final String PK_BLACK_TWO_SWITCH               = "a1Hi1QQEGPm";
-    public static final String PK_BLACK_THREE_SWITCH               = "a1uAwpNGcI7";
-    public static final String PK_WHITE_THREE_SWITCH               = "a1UpoJjIjCn";
-    public static final String PK_BLACK_FOUR_SWITCH               = "a1lX2ZUOTzE";
-    public static final String PK_BLACK_USB               = "a1OLiwq8qSv";
+    public static final String PK_BLACK_ONE_SWITCH          = "a1VK0kgweyU";
+    public static final String PK_BLACK_TWO_SWITCH          = "a1Hi1QQEGPm";
+    public static final String PK_BLACK_THREE_SWITCH        = "a1uAwpNGcI7";
+    public static final String PK_WHITE_THREE_SWITCH        = "a1UpoJjIjCn";
+    public static final String PK_BLACK_FOUR_SWITCH         = "a1lX2ZUOTzE";
+    public static final String PK_BLACK_USB                 = "a1OLiwq8qSv";
 
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
@@ -91,6 +91,20 @@ public class CTSL {
             put(TWS_P_PowerSwitch_2, PTYPE.t_bool);
         }
     };
+
+    // 定义两键开关属性常量
+    public static final String THS_P_PowerSwitch_1          = "PowerSwitch_1";
+    public static final String THS_P_PowerSwitch_2          = "PowerSwitch_2";
+    public static final String THS_P_PowerSwitch_3          = "PowerSwitch_3";
+    public static final Map<String, PTYPE> THRS_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(THS_P_PowerSwitch_1, PTYPE.t_bool);
+            put(THS_P_PowerSwitch_2, PTYPE.t_bool);
+            put(THS_P_PowerSwitch_3, PTYPE.t_bool);
+        }
+    };
+
+
 
     // 定义遥控按钮属性常量
     public static final String RCB_P_EmergencyAlarm         = "EmergencyAlarm";
@@ -170,6 +184,7 @@ public class CTSL {
             put(PK_GATEWAY, GW_Properties);
             put(PK_ONEWAYSWITCH, OWS_Properties);
             put(PK_TWOWAYSWITCH, TWS_Properties);
+            put(PK_WHITE_THREE_SWITCH, THRS_Properties);
             put(PK_GASSENSOR, GS_Properties);
             put(PK_SMOKESENSOR, SS_Properties);
             put(PK_TEMHUMSENSOR, THS_Properties);

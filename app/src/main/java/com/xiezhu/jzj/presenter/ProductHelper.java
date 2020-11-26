@@ -27,9 +27,9 @@ public class ProductHelper {
 
     // 获取支持配网产品列表
     public void getConfigureList(Handler commitFailureHandler,
-                              Handler responseErrorHandler,
-                              Handler processDataHandler) {
-        if(processDataHandler == null){
+                                 Handler responseErrorHandler,
+                                 Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler!");
             return;
         }
@@ -45,9 +45,9 @@ public class ProductHelper {
 
     // 获取配网引导信息
     public void getGuidanceInformation(String productKey, Handler commitFailureHandler,
-                              Handler responseErrorHandler,
-                              Handler processDataHandler) {
-        if(processDataHandler == null){
+                                       Handler responseErrorHandler,
+                                       Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler!");
             return;
         }
@@ -63,10 +63,10 @@ public class ProductHelper {
     }
 
     // 获取产品名称
-    public static String getProductName(String productKey, List<EProduct.configListEntry> productList){
+    public static String getProductName(String productKey, List<EProduct.configListEntry> productList) {
         String name = "";
-        for(EProduct.configListEntry product : productList){
-            if(product.productKey.equalsIgnoreCase(productKey)){
+        for (EProduct.configListEntry product : productList) {
+            if (product.productKey.equalsIgnoreCase(productKey)) {
                 name = product.name;
                 break;
             }
@@ -75,9 +75,13 @@ public class ProductHelper {
     }
 
     // 替换产品品牌
-    public static String replaceBrand(String sourceContent){
-        if(!SystemParameter.getInstance().getBrand().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow())){
-            return  sourceContent.replace(SystemParameter.getInstance().getBrand(), SystemParameter.getInstance().getBrandShow());
+    public static String replaceBrand(String sourceContent) {
+        if (!SystemParameter.getInstance().getBrand().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow()) ||
+                !SystemParameter.getInstance().getmBrand2().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow())||
+                !SystemParameter.getInstance().getmBrand3().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow())) {
+            return sourceContent.replace(SystemParameter.getInstance().getBrand(), SystemParameter.getInstance().getBrandShow()).
+                    replace(SystemParameter.getInstance().getmBrand2(), SystemParameter.getInstance().getBrandShow()).
+                            replace(SystemParameter.getInstance().getmBrand3(), SystemParameter.getInstance().getBrandShow());
         } else {
             return sourceContent;
         }

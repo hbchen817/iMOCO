@@ -25,9 +25,9 @@ public class Constant {
     public static final int PRODUCT_TYPE_OUTHOR                     = 8;
 
     // 淘宝回调地址,用户协议,隐私政策
-    public static final String TAOBAOREDIRECTURI                    = "http://www.rexense.com/imoco";
-    public static final String USER_PROTOCOL_URL                    = "http://www.rexense.cn/nd.jsp?id=71#_np=127_530";
-    public static final String PRIVACY_POLICY_URL                   = "http://www.rexense.cn/nd.jsp?id=70#_np=127_530";
+    public static final String TAOBAOREDIRECTURI                    = "http://www.xiezhuwang.com/jzj";
+    public static final String USER_PROTOCOL_URL                    = "http://www.52jzj.com/policy.html";
+    public static final String PRIVACY_POLICY_URL                   = "http://www.52jzj.com/userAugreement.html";
 
     //分页时每页的数量
     public static final int PAGE_SIZE                                = 20;

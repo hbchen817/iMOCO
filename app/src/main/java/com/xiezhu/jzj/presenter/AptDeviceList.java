@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +125,8 @@ public class AptDeviceList extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
-		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
+		Log.i("lzm", this.mDeviceList.get(position).nickName);
+		viewHolder.name.setText(ProductHelper.replaceBrand(this.mDeviceList.get(position).nickName));
 		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
 
@@ -146,8 +148,15 @@ public class AptDeviceList extends BaseAdapter {
 				// 有多种状态的处理
 				if(this.mDeviceList.get(position).stateTimes.size() >= 2){
 					// 目前只显示前两种状态
-					String state = this.mDeviceList.get(position).stateTimes.get(0).time + " " + this.mDeviceList.get(position).stateTimes.get(0).value + "  /  " +
-							this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value;
+					String state;
+					if (this.mDeviceList.get(position).stateTimes.size() == 2){
+						state = this.mDeviceList.get(position).stateTimes.get(0).time + " " + this.mDeviceList.get(position).stateTimes.get(0).value + "  /  " +
+								this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value;
+					}else {
+						state = this.mDeviceList.get(position).stateTimes.get(0).time + " " + this.mDeviceList.get(position).stateTimes.get(0).value + "  /  " +
+								this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value + "  /  " +
+								this.mDeviceList.get(position).stateTimes.get(2).time + " " + this.mDeviceList.get(position).stateTimes.get(2).value;
+					}
 					viewHolder.status.setText(state);
 				}
 			}

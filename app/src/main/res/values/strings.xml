@@ -19,6 +19,9 @@
 
     <string name="app_brand">iMOCO</string>
     <string name="app_brand_show">jzj</string>
+    <string name="app_brand_1">瑞瀛</string>
+    <string name="app_brand_2">rexense</string>
+    <string name="app_brand_show_1">jzj</string>
     <string name="app_is_add_xz_device">No</string>
     <string name="app_is_hide_privacy_policy">No</string>
     <string name="app_is_hide_user_deal">No</string>
@@ -182,10 +185,13 @@
 
     <string name="twoswitch_state_1">第1路状态</string>
     <string name="twoswitch_state_2">第2路状态</string>
+    <string name="twoswitch_state_3">第3路状态</string>
     <string name="twoswitch_state_1_on">第1路打开</string>
     <string name="twoswitch_state_2_on">第2路打开</string>
+    <string name="twoswitch_state_3_on">第3路打开</string>
     <string name="twoswitch_state_1_off">第1路关闭</string>
     <string name="twoswitch_state_2_off">第2路关闭</string>
+    <string name="twoswitch_state_3_off">第3路关闭</string>
     <string name="twoswitch_state_on">打开</string>
     <string name="twoswitch_state_off">关闭</string>
 

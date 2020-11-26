@@ -17,6 +17,8 @@ public class SystemParameter {
     public static void initProcess(Context context) {
         mSystemParameter = new ESystemParameter();
         mSystemParameter.setBrand(context.getString(R.string.app_brand));
+        mSystemParameter.setmBrand2(context.getString(R.string.app_brand_1));
+        mSystemParameter.setmBrand3(context.getString(R.string.app_brand_2));
         mSystemParameter.setBrandShow(context.getString(R.string.app_brand_show));
         mSystemParameter.setIsAddDemoDevice(context.getString(R.string.app_is_add_xz_device));
         mSystemParameter.setIsHidePrivacyPolicy(context.getString(R.string.app_is_hide_privacy_policy));

@@ -95,6 +95,17 @@
 			style="@style/SmallFontStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_above="@id/deviceGridLblState3"
+			android:layout_alignBottom="@id/deviceGridSpaSpace"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="10dp"
+			android:text="13:56" />
+		<TextView
+			android:id="@+id/deviceGridLblState3"
+			style="@style/SmallFontStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/deviceGridSpaSpace"
 			android:layout_alignParentRight="true"
 			android:layout_marginRight="10dp"

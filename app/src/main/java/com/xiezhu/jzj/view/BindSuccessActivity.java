@@ -59,8 +59,9 @@ public class BindSuccessActivity extends BaseActivity {
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mUserCenter = new UserCenter(this);
         Log.i("lzm", "nickName" + mNickName);
-        if (mNickName.contains(getString(R.string.app_brand))){
+        if (mNickName.contains(getString(R.string.app_brand)) || mNickName.contains(getString(R.string.app_brand_1))){
             mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+            mNickName =  mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
             mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
@@ -126,8 +127,9 @@ public class BindSuccessActivity extends BaseActivity {
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     Log.i("lzm", "MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV"+ msg.obj);
                     mNickName = jsonObject.getString("productName");
-                    if (mNickName.contains(getString(R.string.app_brand))){
+                    if (mNickName.contains(getString(R.string.app_brand))|| mNickName.contains(getString(R.string.app_brand_1))){
                         mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                        mNickName =  mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
                         mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
                     break;

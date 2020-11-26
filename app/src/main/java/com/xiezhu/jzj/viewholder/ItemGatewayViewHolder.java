@@ -21,7 +21,7 @@ public class ItemGatewayViewHolder extends BaseViewHolder<ItemGateway> {
         ImageView icon = (ImageView) getView(R.id.icon);
         TextView right_img = (TextView) getView(R.id.mac);
 
-        device_name.setText("瑞瀛智能家居网关RG4100");
+        device_name.setText("jzj智能家居网关RG4100");
         right_img.setText("Mac:" + model.getMac());
         icon.setImageResource(R.drawable.icon_gateway_fton);
 
