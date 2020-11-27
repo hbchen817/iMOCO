@@ -7,7 +7,9 @@ import android.net.Uri.Builder;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.sdk.android.openaccount.annotation.ExtensionPoint;
 import com.alibaba.sdk.android.openaccount.callback.LoginCallback;
@@ -28,9 +30,11 @@ import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.alibaba.sdk.android.openaccount.util.RpcUtils;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.widget.NextStepButton;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.json.JSONObject;
 
 @ExtensionPoint
@@ -45,12 +49,17 @@ public class RegisterActivity extends SendSmsCodeActivity {
         super.onCreate(savedInstanceState);
         mToolBar.setVisibility(View.GONE);
         if (savedInstanceState != null) {
-            this.clientVerifyData = (String)savedInstanceState.get("clientVerifyData");
+            this.clientVerifyData = (String) savedInstanceState.get("clientVerifyData");
         }
+        CheckBox checkbox = this.findViewById(ResourceUtils.getRId(this, "checkbox"));
 
         this.next.setOnClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
-                RegisterActivity.this.goSetPwd((String)null, (String)null, (String)null);
+                if (checkbox.isChecked()) {
+                    RegisterActivity.this.goSetPwd((String) null, (String) null, (String) null);
+                } else {
+                    Toast.makeText(RegisterActivity.this, "请确认同意极智家用户协议和隐私政策", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -61,20 +70,20 @@ public class RegisterActivity extends SendSmsCodeActivity {
                 finish();
             }
         });
-        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this,"yonghuxieyi"));
-        yonghuxieyi.setOnClickListener(v->{
-            if(getString(R.string.app_user_deal_url).length() == 0){
-                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this, "yonghuxieyi"));
+        yonghuxieyi.setOnClickListener(v -> {
+            if (getString(R.string.app_user_deal_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL, getString(R.string.aboutus_user_deal));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url), getString(R.string.aboutus_user_deal));
             }
         });
-        TextView yinsi = this.findViewById(ResourceUtils.getRId(this,"yinsi"));
-        yinsi.setOnClickListener(v->{
-            if(getString(R.string.app_privacy_policy_url).length() == 0){
-                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+        TextView yinsi = this.findViewById(ResourceUtils.getRId(this, "yinsi"));
+        yinsi.setOnClickListener(v -> {
+            if (getString(R.string.app_privacy_policy_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url), getString(R.string.aboutus_privacy_policy));
             }
         });
         this.addSendListener();
@@ -184,7 +193,7 @@ public class RegisterActivity extends SendSmsCodeActivity {
         }
 
         protected Result<CheckSmsCodeForRegisterResult> parseJsonResult(Result<JSONObject> result) {
-            return result.data == null ? Result.result(result.code, result.message) : Result.result(result.code, result.message, this.parseData((JSONObject)result.data));
+            return result.data == null ? Result.result(result.code, result.message) : Result.result(result.code, result.message, this.parseData((JSONObject) result.data));
         }
 
         protected CheckSmsCodeForRegisterResult parseData(JSONObject jsonObject) {
@@ -205,18 +214,18 @@ public class RegisterActivity extends SendSmsCodeActivity {
                     return;
                 }
 
-                switch(result.code) {
+                switch (result.code) {
                     case 1:
-                        if (result.data != null && !TextUtils.isEmpty(((CheckSmsCodeForRegisterResult)result.data).token)) {
+                        if (result.data != null && !TextUtils.isEmpty(((CheckSmsCodeForRegisterResult) result.data).token)) {
                             Intent intent = new Intent(RegisterActivity.this, RegisterFillPasswordActivity.class);
-                            intent.putExtra("token", ((CheckSmsCodeForRegisterResult)result.data).token);
+                            intent.putExtra("token", ((CheckSmsCodeForRegisterResult) result.data).token);
                             intent.putExtra("loginId", RegisterActivity.this.mobileInputBox.getEditTextContent());
                             RegisterActivity.this.startActivityForResult(intent, 1);
                         }
                         break;
                     case 26053:
-                        if (result.data != null && !TextUtils.isEmpty(((CheckSmsCodeForRegisterResult)result.data).clientVerifyData)) {
-                            Builder builder = Uri.parse(((CheckSmsCodeForRegisterResult)result.data).clientVerifyData).buildUpon();
+                        if (result.data != null && !TextUtils.isEmpty(((CheckSmsCodeForRegisterResult) result.data).clientVerifyData)) {
+                            Builder builder = Uri.parse(((CheckSmsCodeForRegisterResult) result.data).clientVerifyData).buildUpon();
                             builder.appendQueryParameter("callback", "https://www.alipay.com/webviewbridge");
                             Intent h5Intent = new Intent(RegisterActivity.this, LoginDoubleCheckWebActivity.class);
                             h5Intent.putExtra("url", builder.toString());
@@ -269,7 +278,7 @@ public class RegisterActivity extends SendSmsCodeActivity {
 
         protected void doFailAfterToast(Result<SendSmsCodeForRegisterResult> result) {
             if (result.code == 26053) {
-                RegisterActivity.this.clientVerifyData = ((SendSmsCodeForRegisterResult)result.data).clientVerifyData;
+                RegisterActivity.this.clientVerifyData = ((SendSmsCodeForRegisterResult) result.data).clientVerifyData;
                 RegisterActivity.this.smsCodeInputBox.startTimer(RegisterActivity.this);
             }
 
