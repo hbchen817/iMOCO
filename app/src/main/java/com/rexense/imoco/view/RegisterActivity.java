@@ -7,7 +7,9 @@ import android.net.Uri.Builder;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.sdk.android.openaccount.annotation.ExtensionPoint;
 import com.alibaba.sdk.android.openaccount.callback.LoginCallback;
@@ -48,10 +50,14 @@ public class RegisterActivity extends SendSmsCodeActivity {
         if (savedInstanceState != null) {
             this.clientVerifyData = (String)savedInstanceState.get("clientVerifyData");
         }
-
+        CheckBox checkbox = this.findViewById(ResourceUtils.getRId(this, "checkbox"));
         this.next.setOnClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
-                RegisterActivity.this.goSetPwd((String)null, (String)null, (String)null);
+                if (checkbox.isChecked()) {
+                    RegisterActivity.this.goSetPwd((String) null, (String) null, (String) null);
+                } else {
+                    Toast.makeText(RegisterActivity.this, "请确认同意莫科智家用户协议和隐私政策", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
