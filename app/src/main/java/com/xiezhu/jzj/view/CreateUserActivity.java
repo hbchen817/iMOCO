@@ -52,7 +52,7 @@ public class CreateUserActivity extends BaseActivity {
     private void initView() {
         tvToolbarTitle.setText(R.string.create_user);
         tvToolbarRight.setText(R.string.nick_name_save);
-        tvToolbarRight.setTextColor(0xFFD5A035);
+        tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
     }
 

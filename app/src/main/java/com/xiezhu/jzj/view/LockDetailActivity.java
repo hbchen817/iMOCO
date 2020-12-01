@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,12 +75,16 @@ public class LockDetailActivity extends DetailActivity {
     TextView mIconRemoteOpen;
     @BindView(R.id.icon_user_manager)
     TextView mIconUserManager;
+    @BindView(R.id.icon_one_key_open)
+    TextView mOneKeyOpen;
     @BindView(R.id.icon_temporary_password)
     TextView mIconTemporaryPassword;
     @BindView(R.id.icon_key_manager)
     TextView mIconKeyManager;
     @BindView(R.id.icon_lock)
     TextView mIconLock;
+    @BindView(R.id.battery)
+    TextView battery;
 
     private CustomDatePicker mStartTimerPicker;
     private String mTemporaryKey;
@@ -108,9 +113,11 @@ public class LockDetailActivity extends DetailActivity {
 
     private void getOpenRecord() {
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        battery.setTypeface(iconfont);
         mNoRecordHint.setTypeface(iconfont);
         mIconRemoteOpen.setTypeface(iconfont);
         mIconUserManager.setTypeface(iconfont);
+        mOneKeyOpen.setTypeface(iconfont);
         mIconTemporaryPassword.setTypeface(iconfont);
         mIconKeyManager.setTypeface(iconfont);
         mIconLock.setTypeface(iconfont);
@@ -293,7 +300,7 @@ public class LockDetailActivity extends DetailActivity {
                 finish();
                 break;
             case R.id.includeDetailImgSetting:
-                showBindKeyDialog("指纹钥匙1");
+
                 break;
             case R.id.mUserManagerView:
                 UserManagerActivity.start(this, mIOTId);
@@ -435,21 +442,24 @@ public class LockDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    JSONArray historyArray = JSON.parseArray((String) msg.obj);
-                    int historySize = historyArray.size();
-                    for (int i = 0; i < historySize; i++) {
-                        JSONObject jo = historyArray.getJSONObject(i);
-                        ItemHistoryMsg item = new ItemHistoryMsg();
-                        item.setTime(jo.getString("client_date"));
-                        item.setEvent_code(jo.getString("event_code"));
-                        item.setKeyID(jo.getString("keyID"));
-                        item.setLockType(jo.getIntValue("lockType"));
-                        activity.mHistoryList.add(item);
+                    if (!TextUtils.isEmpty((String) msg.obj)) {
+                        JSONObject js = JSON.parseObject((String) msg.obj);
+                        JSONArray historyArray = js.getJSONArray("data");
+                        int historySize = historyArray.size();
+                        for (int i = 0; i < historySize; i++) {
+                            JSONObject jo = historyArray.getJSONObject(i);
+                            ItemHistoryMsg item = new ItemHistoryMsg();
+                            item.setTime(jo.getString("client_date"));
+                            item.setEvent_code(jo.getString("event_code"));
+                            item.setKeyID(jo.getString("KeyID"));
+                            item.setLockType(jo.getIntValue("LockType"));
+                            activity.mHistoryList.add(item);
+                        }
+                        if (activity.mHistoryList.size() > 0) {
+                            activity.mNoRecordHint.setVisibility(View.GONE);
+                        }
+                        activity.mAdapter.notifyDataSetChanged();
                     }
-                    if (activity.mHistoryList.size() > 0) {
-                        activity.mNoRecordHint.setVisibility(View.GONE);
-                    }
-                    activity.mAdapter.notifyDataSetChanged();
                     break;
                 default:
                     break;

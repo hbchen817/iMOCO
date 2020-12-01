@@ -42,7 +42,7 @@
 
     <ImageView
         android:id="@+id/iv_toolbar_right"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_50"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:padding="@dimen/dp_12"

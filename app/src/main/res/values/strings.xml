@@ -12,6 +12,12 @@
     <string name="icon_locking">&#xe638;</string>
     <string name="icon_switch">&#xe628;</string>
     <string name="icon_timer">&#xe638;</string>
+    <string name="icon_one_key_open">&#xe629;</string>
+    <string name="icon_battery_recharge">&#xe692;</string>
+    <string name="icon_battery_empty">&#xe693;</string>
+    <string name="icon_battery_low">&#xe694;</string>
+    <string name="icon_battery_high">&#xe697;</string>
+    <string name="icon_battery_full">&#xe698;</string>
 
     <string name="app_name">极智家APP</string>
     <string name="contentDescription_null"></string>
@@ -506,6 +512,7 @@
     <string name="bind_result">配网结果</string>
 
     <string name="lock_remote_open">远程开门</string>
+    <string name="one_key_open">一键开锁</string>
     <string name="lock_user_manager">用户管理</string>
     <string name="lock_short_time_password">临时密码</string>
     <string name="lock_key_manager">钥匙管理</string>

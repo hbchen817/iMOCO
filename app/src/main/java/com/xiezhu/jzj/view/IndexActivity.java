@@ -199,8 +199,8 @@ public class IndexActivity extends BaseActivity {
                 if (grantResults.length > 0) {
                     for (int result : grantResults) {
                         if (result != PackageManager.PERMISSION_GRANTED) {
-                            ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
-                            PermissionUtil.getAppDetailSettingIntent1(this);
+//                            ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
+//                            PermissionUtil.getAppDetailSettingIntent1(this);
                         }
                     }
 
