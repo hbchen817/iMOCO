@@ -24,6 +24,16 @@ public class CTSL {
     public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
     public static final String PK_SIX_SCENE_SWITCH          = "a1zf8jfGzTX";
 
+    public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
+    public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
+    public static final String PK_BLACK_ONE_SWITCH          = "a1VK0kgweyU";
+    public static final String PK_BLACK_TWO_SWITCH          = "a1Hi1QQEGPm";
+    public static final String PK_BLACK_THREE_SWITCH        = "a1uAwpNGcI7";
+    public static final String PK_WHITE_THREE_SWITCH        = "a1UpoJjIjCn";
+    public static final String PK_BLACK_FOUR_SWITCH         = "a1lX2ZUOTzE";
+    public static final String PK_BLACK_USB                 = "a1OLiwq8qSv";
+
+
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
     // 定义属性类型

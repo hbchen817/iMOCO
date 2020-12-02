@@ -59,7 +59,23 @@ public class ImageProvider {
             case CTSL.PK_TEMHUMSENSOR:
                 return R.drawable.icon_thsensor;
             case CTSL.PK_SMART_LOCK:
-                return R.drawable.icon_thsensor;
+                return R.drawable.icon_smart_lock;
+            case CTSL.PK_WSD_ELE:
+                return R.drawable.icon_dianji;
+            case CTSL.PK_CONTROL_LIGHT:
+                return R.drawable.icon_control_light;
+            case CTSL.PK_BLACK_ONE_SWITCH:
+                return R.drawable.icon_one_switch;
+            case CTSL.PK_BLACK_TWO_SWITCH:
+                return R.drawable.icon_two_switch;
+            case CTSL.PK_BLACK_THREE_SWITCH:
+                return R.drawable.icon_three_switch;
+            case CTSL.PK_BLACK_FOUR_SWITCH:
+                return R.drawable.icon_four_switch;
+            case CTSL.PK_BLACK_USB:
+                return R.drawable.icon_usb;
+            case CTSL.PK_WHITE_THREE_SWITCH:
+                return R.drawable.icon_three_switch_white;
             default:
                 return R.drawable.icon_thsensor;
         }
