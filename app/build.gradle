@@ -9,7 +9,7 @@ android {
         debug {
             v1SigningEnabled true
             v2SigningEnabled true
-            storeFile file('debug.jks')
+            storeFile file('jzj.jks')
             storePassword '123456'
             keyAlias = 'ray_ni'
             keyPassword '123456'
@@ -17,12 +17,14 @@ android {
         release {
             v1SigningEnabled true
             v2SigningEnabled true
-            storeFile file('debug.jks')
+            storeFile file('jzj.jks')
             storePassword '123456'
             keyAlias = 'ray_ni'
             keyPassword '123456'
         }
     }
+    //keytool -genkey -alias ray_ni -keypass 123456 -keyalg RSA -keysize 2048 -validity 36500 -keystore D:\StudioProjects\iMOCO\app\appkey_jzj.jks -storepass 123456
+    // CN=ry, OU=ry, O=ry, L=hz, ST=hz, C=cn
 
     defaultConfig {
         applicationId "com.xiezhu.jzj"
