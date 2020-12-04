@@ -53,7 +53,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_0_5"
+        android:layout_height="@dimen/dp_6"
         android:background="@color/appbgcolor"/>
 
 </LinearLayout>
