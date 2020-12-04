@@ -11,16 +11,19 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/white">
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
                 <ImageView
                     android:id="@+id/loginImgBackground"
@@ -114,12 +117,13 @@
                     <com.xiezhu.jzj.widget.NextStepButton
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/dp_30"
+                        android:layout_marginVertical="@dimen/dp_10"
                         android:text="@string/ali_sdk_openaccount_text_login" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:gravity="center_vertical">
 
                         <View
@@ -150,15 +154,17 @@
                         android:text="@string/login_by_sms"
                         android:textAlignment="center"
                         android:textSize="@dimen/sp_13"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
                     <View
                         android:layout_width="wrap_content"
+                        android:visibility="gone"
                         android:layout_height="@dimen/dp_20" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_marginBottom="@dimen/dp_10"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:gravity="center">
 
                         <TextView
