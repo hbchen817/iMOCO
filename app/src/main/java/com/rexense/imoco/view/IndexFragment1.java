@@ -27,6 +27,7 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.gary.hi.library.log.HiLog;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshRoomDevice;
 import com.rexense.imoco.event.RefreshRoomName;
@@ -202,11 +203,11 @@ public class IndexFragment1 extends BaseFragment {
                     Dialog.confirmLogin(getActivity(), R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
                     return;
                 }
-
-                Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
-                startActivity(intent);
-//                ActivityRouter.toDetail(getActivity(), "", CTSL.PK_SMART_LOCK,
-//                        1, "测试", 1);
+//
+//                Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
+//                startActivity(intent);
+                ActivityRouter.toDetail(getActivity(), "", CTSL.PK_LIGHT,
+                        1, "测试", 1);
             }
         });
 

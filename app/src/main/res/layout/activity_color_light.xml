@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include layout="@layout/include_detail" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -145,6 +145,7 @@
         android:progressDrawable="@drawable/color_light_progress" />
 
     <LinearLayout
+        android:id="@+id/temperatureLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_50"
         android:layout_marginHorizontal="@dimen/dp_10"
@@ -168,6 +169,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/colorTemperature"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -183,7 +185,7 @@
             android:textColor="#3A6293"
             android:textSize="@dimen/sp_14"
             android:textStyle="bold"
-            tools:text="K" />
+            android:text="K" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -203,8 +205,14 @@
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_30" />
 
+    <View
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="0dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/dp_20"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -276,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
-                android:text="@string/detail_state_timer"
+                android:text="@string/on_off"
                 android:textColor="#3A6293"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>

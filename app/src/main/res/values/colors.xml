@@ -62,4 +62,5 @@
     <color name="all_8">#888888</color>
     <color name="all_5">#555555</color>
     <color name="all_9">#999999</color>
+    <color name="divider">#69d1d2d6</color>
 </resources>

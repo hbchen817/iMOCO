@@ -62,6 +62,18 @@
             android:name=".view.SceneMaintainActivity"
             android:label="@string/app_name" />
         <activity
+            android:name=".view.ColorTemperatureChoiceActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightSceneActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightSceneListActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightActionChoiceActivity"
+            android:label="@string/app_name" />
+        <activity
             android:name=".view.ScanGatewayByNetActivity"
             android:label="@string/app_name" />
         <activity

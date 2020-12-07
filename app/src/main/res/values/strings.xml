@@ -12,6 +12,8 @@
     <string name="icon_locking">&#xe638;</string>
     <string name="icon_switch">&#xe628;</string>
     <string name="icon_timer">&#xe638;</string>
+    <string name="icon_right_arrow">&#xe64c;</string>
+    <string name="icon_add">&#xe652;</string>
 
     <string name="app_name">莫科智家</string>
     <string name="contentDescription_null"></string>

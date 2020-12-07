@@ -23,6 +23,7 @@ public class CTSL {
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
     public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
     public static final String PK_SIX_SCENE_SWITCH          = "a1zf8jfGzTX";
+    public static final String PK_LIGHT                     = "a1SdpzGgZCa";
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
@@ -79,6 +80,18 @@ public class CTSL {
         {
             put(TWS_P_PowerSwitch_1, PTYPE.t_bool);
             put(TWS_P_PowerSwitch_2, PTYPE.t_bool);
+        }
+    };
+
+    //定义调光调色属性常量
+    public static final String LIGHT_P_POWER                = "PowerSwitch";
+    public static final String LIGHT_P_BRIGHTNESS           = "brightness";
+    public static final String LIGHT_P_COLOR_TEMPERATURE    = "colorTemperature";
+    public static final Map<String, PTYPE> LIGHT_Properties = new HashMap<String, PTYPE>(){
+        {
+            put(LIGHT_P_POWER, PTYPE.t_int32);
+            put(LIGHT_P_BRIGHTNESS, PTYPE.t_int32);
+            put(LIGHT_P_COLOR_TEMPERATURE, PTYPE.t_int32);
         }
     };
 
@@ -167,6 +180,7 @@ public class CTSL {
             put(PK_DOORSENSOR, DS_Properties);
             put(PK_PIRSENSOR, PIR_Properties);
             put(PK_REMOTECONTRILBUTTON, RCB_Properties);
+            put(PK_LIGHT, LIGHT_Properties);
         }
     };
 

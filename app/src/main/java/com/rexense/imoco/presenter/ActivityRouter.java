@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.view.ColorLightDetailActivity;
 import com.rexense.imoco.view.DetailGatewayActivity;
 import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
@@ -59,6 +60,9 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_SMART_LOCK:
                 intent = new Intent(context, LockDetailActivity.class);
+                break;
+            case CTSL.PK_LIGHT:
+                intent = new Intent(context, ColorLightDetailActivity.class);
                 break;
             default:
                 String code = "link://router/" + productKey;
