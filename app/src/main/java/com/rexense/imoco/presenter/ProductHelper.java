@@ -77,6 +77,8 @@ public class ProductHelper {
     // 替换产品品牌
     public static String replaceBrand(String sourceContent){
         if(!SystemParameter.getInstance().getBrand().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow())){
+            if (sourceContent.indexOf(SystemParameter.getInstance().getBrand()+"-") == 0)
+                return sourceContent.replace(SystemParameter.getInstance().getBrand() + "-", SystemParameter.getInstance().getBrandShow());
             return  sourceContent.replace(SystemParameter.getInstance().getBrand(), SystemParameter.getInstance().getBrandShow());
         } else {
             return sourceContent;

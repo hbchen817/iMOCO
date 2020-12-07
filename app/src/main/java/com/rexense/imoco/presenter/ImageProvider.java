@@ -76,6 +76,18 @@ public class ImageProvider {
                 return R.drawable.icon_usb;
             case CTSL.PK_WHITE_THREE_SWITCH:
                 return R.drawable.icon_three_switch_white;
+            case CTSL.PK_RGB_COLOR_LIGHT_STRIP:// RGB彩色灯带
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_HSL_COLOR_LIGHT:// HSL彩色灯
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_HSL_COLOR_LIGHT_STRIP:// HSL彩色灯带
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_CONTROL_COLOR_TEMP_LIGHT:// 调光色温灯
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_CONTROL_COLOR_LIGHT:// 调光灯
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
+                return R.drawable.icon_thsensor;
             default:
                 return R.drawable.icon_thsensor;
         }

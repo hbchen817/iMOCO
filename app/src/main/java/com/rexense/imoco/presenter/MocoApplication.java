@@ -1,8 +1,12 @@
 package com.rexense.imoco.presenter;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import androidx.multidex.MultiDex;
 
@@ -22,10 +26,13 @@ import com.gary.hi.library.log.HiFilePrinter;
 import com.gary.hi.library.log.HiLogConfig;
 import com.gary.hi.library.log.HiLogManager;
 import com.gary.hi.library.log.HiLogPrinter;
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.utility.CrashHandler;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.view.OALoginActivity;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.vise.log.ViseLog;
+import com.vise.log.inner.LogcatTree;
 
 /**
  * Creator: xieshaobing
@@ -122,6 +129,13 @@ public class MocoApplication extends AApplication {
 //                        .append("data:").append(null == response.getData() ? "" : response.getData().toString()).append("\r\n").toString();
 //            }
 //        });
+
+        ViseLog.getLogConfig()
+                .configAllowLog(BuildConfig.DEBUG)
+                .configShowBorders(true)
+                .configTagPrefix("wyy")
+                .configLevel(Log.VERBOSE);
+        ViseLog.plant(new LogcatTree());
     }
 
     private void initLog(){
@@ -156,5 +170,19 @@ public class MocoApplication extends AApplication {
                 return 0;
             }
         },new HiConsolePrinter(), HiFilePrinter.getInstance( getFilesDir().getPath()+"/HiLog", 7 * 24 * 60 * 60 * 1000));
+    }
+
+    // 根据屏幕大小获取场景水平列表的列宽
+    public int getSceneItemWidth() {
+        float scale = getResources().getDisplayMetrics().density;
+        int ten10 = (int) (scale * 10 + 0.5f);// 网格组件左右margin值
+        int six6 = (int) (scale * 6 + 0.5f);// 每一个item直接间隔宽度
+
+        WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Point p = new Point();
+        Display display = manager.getDefaultDisplay();
+        display.getSize(p);
+
+        return (p.x - 2 * ten10 - six6) / 2;// 屏幕上展示两个item
     }
 }

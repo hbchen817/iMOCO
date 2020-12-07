@@ -33,6 +33,15 @@ public class CTSL {
     public static final String PK_BLACK_FOUR_SWITCH         = "a1lX2ZUOTzE";
     public static final String PK_BLACK_USB                 = "a1OLiwq8qSv";
 
+    public static final String PK_RGB_COLOR_LIGHT_STRIP     = "a1yzxlzMyR0";// RGB彩色灯带
+    public static final String PK_HSL_COLOR_LIGHT           = "a11jimE2TIi";// HSL彩色灯
+    public static final String PK_HSL_COLOR_LIGHT_STRIP     = "a1yARva6fVG";// HSL彩色灯带
+    public static final String PK_CONTROL_COLOR_TEMP_LIGHT  = "a1uXFxg1cAL";// 调光色温灯
+    public static final String PK_CONTROL_COLOR_LIGHT       = "a1mSlpQen3w";// 调光灯
+    public static final String PK_RGB_COLOR_LIGHT           = "a1MAzhopgCh";// RGB彩色灯
+
+    public static final String PK_FOURWAYSWITCH              = "a1pOIRmMTGF";// 四键开关
+
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
@@ -89,6 +98,20 @@ public class CTSL {
         {
             put(TWS_P_PowerSwitch_1, PTYPE.t_bool);
             put(TWS_P_PowerSwitch_2, PTYPE.t_bool);
+        }
+    };
+
+    // 定义四键开关属性常量
+    public static final String FWS_P_PowerSwitch_1          = "PowerSwitch_1";
+    public static final String FWS_P_PowerSwitch_2          = "PowerSwitch_2";
+    public static final String FWS_P_PowerSwitch_3          = "PowerSwitch_3";
+    public static final String FWS_P_PowerSwitch_4          = "PowerSwitch_4";
+    public static final Map<String, PTYPE> FWS_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(FWS_P_PowerSwitch_1, PTYPE.t_bool);
+            put(FWS_P_PowerSwitch_2, PTYPE.t_bool);
+            put(FWS_P_PowerSwitch_3, PTYPE.t_bool);
+            put(FWS_P_PowerSwitch_4, PTYPE.t_bool);
         }
     };
 
@@ -164,6 +187,24 @@ public class CTSL {
     public static final String PIR_P_MotionAlarmState_Has   = "1";
     public static final String PIR_P_MotionAlarmState_NoHas = "0";
 
+    // 定义RGB彩色灯带属性常量
+    public static final String RGBLS_brightness = "brightness";
+    public static final String RGBLS_powerstate = "powerstate";
+    public static final String RGBLS_LightType = "LightType";
+    public static final String RGBLS_mode = "mode";
+    public static final String RGBLS_colorTemperatureInKelvin = "colorTemperatureInKelvin";
+    public static final String RGBLS_LightMode = "LightMode";
+    public static final Map<String, PTYPE> RGBLS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(RGBLS_brightness, PTYPE.t_int32);
+            put(RGBLS_powerstate, PTYPE.t_bool);
+            put(RGBLS_LightType, PTYPE.t_enum);
+            put(RGBLS_mode, PTYPE.t_enum);
+            put(RGBLS_colorTemperatureInKelvin, PTYPE.t_int32);
+            put(RGBLS_LightMode, PTYPE.t_enum);
+        }
+    };
+
     // 定义属性配置文件
     public static final Map<String, Map<String, PTYPE>> propertyProfile = new HashMap<String, Map<String, PTYPE>>() {
         {
@@ -177,6 +218,8 @@ public class CTSL {
             put(PK_DOORSENSOR, DS_Properties);
             put(PK_PIRSENSOR, PIR_Properties);
             put(PK_REMOTECONTRILBUTTON, RCB_Properties);
+            put(PK_RGB_COLOR_LIGHT_STRIP, RGBLS_Properties);
+            put(PK_FOURWAYSWITCH, FWS_Properties);
         }
     };
 

@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.view.DetailFourSwitchActivity;
 import com.rexense.imoco.view.DetailGatewayActivity;
 import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
@@ -36,6 +37,10 @@ public class ActivityRouter {
             case CTSL.PK_TWOWAYSWITCH:
                 // 两键开关处理
                 intent = new Intent(context, DetailTwoSwitchActivity.class);
+                break;
+            case CTSL.PK_FOURWAYSWITCH:
+                // 四键开关处理
+                intent = new Intent(context, DetailFourSwitchActivity.class);
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
