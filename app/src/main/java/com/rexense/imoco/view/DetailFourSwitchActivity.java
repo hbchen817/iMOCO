@@ -27,6 +27,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
     private int mState4 = 0;
     private ImageView mImgOperate1;
     private ImageView mImgOperate2;
+    private ImageView mImgOperate3;
+    private ImageView mImgOperate4;
     private TextView mStateName1;
     private TextView mStateValue1;
     private TextView mStateName2;
@@ -65,7 +67,7 @@ public class DetailFourSwitchActivity extends DetailActivity {
         }
         if(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3) != null && propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3).length() > 0) {
             mState3 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3));
-            // mImgOperate3.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.FWS_P_PowerSwitch_3, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3)));
+            mImgOperate3.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.FWS_P_PowerSwitch_3, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3)));
             ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.FWS_P_PowerSwitch_3, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_3));
             if(stateEntry != null) {
                 mStateName3.setText(stateEntry.name + ":");
@@ -73,8 +75,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
             }
         }
         if(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4) != null && propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4).length() > 0) {
-            mState3 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4));
-            // mImgOperate4.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.FWS_P_PowerSwitch_4, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4)));
+            mState4 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4));
+            mImgOperate4.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.FWS_P_PowerSwitch_4, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4)));
             ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.FWS_P_PowerSwitch_4, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_4));
             if(stateEntry != null) {
                 mStateName4.setText(stateEntry.name + ":");
@@ -139,6 +141,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
+        this.mImgOperate3 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate3);
+        this.mImgOperate3.setOnClickListener(operateOnClickListener3);
 
         // 键4操作事件处理
         OnClickListener operateOnClickListener4 = new OnClickListener() {
@@ -151,6 +155,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
+        this.mImgOperate4 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate4);
+        this.mImgOperate4.setOnClickListener(operateOnClickListener4);
 
         // 云端定时处理
         RelativeLayout timer = (RelativeLayout)findViewById(R.id.detailTwoSwitchRLTimer);
