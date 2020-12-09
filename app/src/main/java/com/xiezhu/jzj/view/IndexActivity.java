@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.utility.PermissionUtil;
+import com.xiezhu.jzj.utility.SpUtils;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.util.ArrayList;
@@ -145,6 +146,7 @@ public class IndexActivity extends BaseActivity {
         // 没有需要处理的运行时权限, 继续执行
         // 处理运行时权限
         initPermissions();
+        SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", true);
 
         if (!mPermissionList.isEmpty()) {
             // 如果有需要处理的运行时权限, 就先处理运行时权限

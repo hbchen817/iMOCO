@@ -4,6 +4,7 @@
     <!--<color name="appbgcolor">#E0E0E0</color>-->
     <color name="topic_color1">#1B78C4</color>hx
     <color name="topic_color2">#23CAE9</color>
+    <color name="light_topic_color2">#6623CAE9</color>
     <color name="normal_font_color">#464645</color>
     <color name="background_list">#FFFFFF</color>
     <color name="background_list_selector">#FFE9D6</color>
