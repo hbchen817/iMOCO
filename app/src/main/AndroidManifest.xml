@@ -59,122 +59,159 @@
         <activity
             android:name="com.xiezhu.jzj.view.OneWayWindowCurtainsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name="com.xiezhu.jzj.view.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.xiezhu.jzj.view.SceneMaintainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.ScanGatewayByNetActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.BindSuccessActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.LockDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.OneKeySceneActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.EditSceneBindActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.ColorLightDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.FloorHeatingDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.FreshAirDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.BindSceneActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.UserManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.CreateUserActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.EditUserActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.HistoryActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.KeyManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name="com.xiezhu.jzj.view.OneWayCurtainsDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.OneKeySceneDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.TwoWayCurtainsDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.SetTimeActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ChoiceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ChoiceProductActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ScanBLEActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ChoiceWiFiActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ConfigureNetworkActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ChoiceGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.EditKeyActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ProductGuidanceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.PermitJoinActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.DetailOneSwitchActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.DetailTwoSwitchActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.DetailThreeSwitchActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.DetailGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.DetailSensorActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.MoreGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.MoreSubdeviceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.MessageRecordActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.ChoiceContentActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name="com.xiezhu.jzj.view.OALoginActivity"
             android:screenOrientation="portrait"

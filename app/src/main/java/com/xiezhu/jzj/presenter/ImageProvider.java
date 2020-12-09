@@ -74,6 +74,20 @@ public class ImageProvider {
                 return R.drawable.icon_usb;
             case CTSL.PK_WHITE_THREE_SWITCH:
                 return R.drawable.icon_three_switch_white;
+            case CTSL.PK_RGB_COLOR_LIGHT_STRIP:// RGB彩色灯带
+                return R.drawable.icon_color_light;
+            case CTSL.PK_HSL_COLOR_LIGHT:// HSL彩色灯
+                return R.drawable.icon_color_light;
+            case CTSL.PK_HSL_COLOR_LIGHT_STRIP:// HSL彩色灯带
+                return R.drawable.icon_color_light;
+            case CTSL.PK_CONTROL_COLOR_TEMP_LIGHT:// 调光色温灯
+                return R.drawable.icon_color_light;
+            case CTSL.PK_CONTROL_COLOR_LIGHT:// 调光灯
+                return R.drawable.icon_color_light;
+            case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
+                return R.drawable.icon_color_light;
+            case CTSL.PK_FOURWAYSWITCH:// 四键开关
+                return R.drawable.icon_four_switch_white;
             default:
                 return R.drawable.icon_thsensor;
         }
@@ -190,6 +204,37 @@ public class ImageProvider {
                         return R.drawable.device_switch_three_right_open;
                     } else {
                         return R.drawable.device_switch_three_right_close;
+                    }
+                }
+				case CTSL.PK_FOURWAYSWITCH:
+                // 四键开关处理
+                if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {
+                    // 第一路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_fourswitch_1_on;
+                    } else {
+                        return R.drawable.state_fourswitch_1_off;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_2)) {
+                    // 第二路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_fourswitch_2_on;
+                    } else {
+                        return R.drawable.state_fourswitch_2_off;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_3)) {
+                    // 第三路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_fourswitch_3_on;
+                    } else {
+                        return R.drawable.state_fourswitch_3_off;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_4)) {
+                    // 第四路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_fourswitch_4_on;
+                    } else {
+                        return R.drawable.state_fourswitch_4_off;
                     }
                 }
             case CTSL.PK_DOORSENSOR:

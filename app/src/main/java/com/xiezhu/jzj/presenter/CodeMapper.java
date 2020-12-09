@@ -147,6 +147,34 @@ public class CodeMapper {
                     }
                 }
                 break;
+			case CTSL.PK_FOURWAYSWITCH:
+                // 四路开关状态
+                if (propertyName.equals(CTSL.FWS_P_PowerSwitch_1)) {
+                    mapName = context.getString(R.string.twoswitch_state_1);
+                    mapValue = context.getString(R.string.twoswitch_state_1_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.twoswitch_state_1_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_2)) {
+                    mapName = context.getString(R.string.twoswitch_state_2);
+                    mapValue = context.getString(R.string.twoswitch_state_2_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.twoswitch_state_2_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_3)) {
+                    mapName = context.getString(R.string.fourswitch_state_3);
+                    mapValue = context.getString(R.string.fourswitch_state_3_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.fourswitch_state_3_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_4)) {
+                    mapName = context.getString(R.string.fourswitch_state_4);
+                    mapValue = context.getString(R.string.fourswitch_state_4_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.fourswitch_state_4_on);
+                    }
+                }
+                break;
             case CTSL.PK_DOORSENSOR:
                 // 处理门磁传感器状态
                 if (propertyName.equals(CTSL.DS_P_ContactState)) {
@@ -350,6 +378,20 @@ public class CodeMapper {
                     list.add(stateEntry1);
                     list.add(stateEntry2);
                     list.add(stateEntry3);
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_FOURWAYSWITCH)) {
+                    // 处理四键开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1),
+                            CTSL.FWS_P_PowerSwitch_1, context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2),
+                            CTSL.FWS_P_PowerSwitch_2, context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry3 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_3),
+                            CTSL.FWS_P_PowerSwitch_3, context.getString(R.string.fourswitch_state_3_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry4 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_4),
+                            CTSL.FWS_P_PowerSwitch_4, context.getString(R.string.fourswitch_state_4_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                    list.add(stateEntry3);
+                    list.add(stateEntry4);
                 }
                 break;
             // 无人关灯处理
@@ -378,6 +420,20 @@ public class CodeMapper {
                     list.add(stateEntry1);
                     list.add(stateEntry2);
                     list.add(stateEntry3);
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_FOURWAYSWITCH)) {
+                    // 处理四键开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1),
+                            CTSL.FWS_P_PowerSwitch_1, context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2),
+                            CTSL.FWS_P_PowerSwitch_2, context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry3 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_3),
+                            CTSL.FWS_P_PowerSwitch_3, context.getString(R.string.fourswitch_state_3_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry4 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_4),
+                            CTSL.FWS_P_PowerSwitch_4, context.getString(R.string.fourswitch_state_4_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                    list.add(stateEntry3);
+                    list.add(stateEntry4);
                 }
                 break;
             // 回家模式处理
@@ -406,6 +462,20 @@ public class CodeMapper {
                     list.add(stateEntry1);
                     list.add(stateEntry2);
                     list.add(stateEntry3);
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_FOURWAYSWITCH)) {
+                    // 处理四键开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.FWS_P_PowerSwitch_1,
+                            context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2), CTSL.FWS_P_PowerSwitch_2,
+                            context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry3 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_3), CTSL.FWS_P_PowerSwitch_3,
+                            context.getString(R.string.fourswitch_state_3_on), CTSL.S_P_PowerSwitch_On);
+                    ETSL.stateEntry stateEntry4 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_4), CTSL.FWS_P_PowerSwitch_4,
+                            context.getString(R.string.fourswitch_state_4_on), CTSL.S_P_PowerSwitch_On);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                    list.add(stateEntry3);
+                    list.add(stateEntry4);
                 } else if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
                     // 处理网关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,
@@ -440,6 +510,20 @@ public class CodeMapper {
                     list.add(stateEntry1);
                     list.add(stateEntry2);
                     list.add(stateEntry3);
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_FOURWAYSWITCH)) {
+                    // 处理四键开关
+                    ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1),
+                            CTSL.FWS_P_PowerSwitch_1, context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry2 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_2),
+                            CTSL.FWS_P_PowerSwitch_2, context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry3 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_3),
+                            CTSL.FWS_P_PowerSwitch_3, context.getString(R.string.fourswitch_state_3_off), CTSL.S_P_PowerSwitch_Off);
+                    ETSL.stateEntry stateEntry4 = new ETSL.stateEntry(context.getString(R.string.fourswitch_state_4),
+                            CTSL.FWS_P_PowerSwitch_4, context.getString(R.string.fourswitch_state_4_off), CTSL.S_P_PowerSwitch_Off);
+                    list.add(stateEntry1);
+                    list.add(stateEntry2);
+                    list.add(stateEntry3);
+                    list.add(stateEntry4);
                 } else if(productKey.equalsIgnoreCase(CTSL.PK_GATEWAY)){
                     // 处理网关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.gateway_armmode), CTSL.GW_P_ArmMode,

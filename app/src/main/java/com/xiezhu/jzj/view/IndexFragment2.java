@@ -121,6 +121,8 @@ public class IndexFragment2 extends BaseFragment {
         this.mListSceneModel.setAdapter(aptSceneModel);
         this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
 
+        mListMy.setAdapter(mAptSceneList);
+
         // 添加点击处理
         this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,7 +257,7 @@ public class IndexFragment2 extends BaseFragment {
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
                                 mAptSceneList.setData(mSceneList);
-                                mListMy.setAdapter(mAptSceneList);
+                                //mListMy.setAdapter(mAptSceneList);
                                 mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
                                 mListMy.setOnItemClickListener(sceneListOnItemClickListener);
                             }

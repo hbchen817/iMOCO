@@ -64,6 +64,9 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_WHITE_THREE_SWITCH:
                 setContentView(R.layout.activity_detail_threeswitch);
                 break;
+			case CTSL.PK_FOURWAYSWITCH:
+                setContentView(R.layout.activity_detail_fourswitch);
+                break;
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;

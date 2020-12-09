@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.xiezhu.jzj.contract.CTSL;
+import com.xiezhu.jzj.view.DetailFourSwitchActivity;
 import com.xiezhu.jzj.view.DetailGatewayActivity;
 import com.xiezhu.jzj.view.DetailOneSwitchActivity;
 import com.xiezhu.jzj.view.DetailSensorActivity;
@@ -41,6 +42,10 @@ public class ActivityRouter {
             case CTSL.PK_WHITE_THREE_SWITCH:
                 // 三键开关处理
                 intent = new Intent(context, DetailThreeSwitchActivity.class);
+                break;
+				case CTSL.PK_FOURWAYSWITCH:
+                // 四键开关处理
+                intent = new Intent(context, DetailFourSwitchActivity.class);
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
