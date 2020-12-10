@@ -162,12 +162,21 @@ public class AptDeviceGrid extends BaseAdapter {
 					viewHolder.time.setText(this.mDeviceList.get(position).stateTimes.get(0).time);
 				}
 				// 有多种状态的处理
-				if(this.mDeviceList.get(position).stateTimes.size() >= 2){
-					// 目前只显示前两种状态
+				// 目前只显示前两种状态
+				int stateTimesCount = this.mDeviceList.get(position).stateTimes.size();
+				if (stateTimesCount >= 2) {
 					viewHolder.state1.setVisibility(View.VISIBLE);
 					viewHolder.state2.setVisibility(View.VISIBLE);
-					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+					if (stateTimesCount == 2) {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+					} else if (stateTimesCount == 3) {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+					} else {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);
+					}
 				}
 			}
 		}

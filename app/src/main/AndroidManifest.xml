@@ -53,131 +53,175 @@
         <activity
             android:name=".view.OneWayWindowCurtainsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".view.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.SceneMaintainActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.ColorTemperatureChoiceActivity"
+	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.LightSceneActivity"
+	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.LightSceneListActivity"
+	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.LightActionChoiceActivity"
+	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.ScanGatewayByNetActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.BindSuccessActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.LockDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.OneKeySceneActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.EditSceneBindActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.ColorLightDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.FloorHeatingDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.FreshAirDetailActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.BindSceneActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.UserManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.CreateUserActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.EditUserActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.HistoryActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.KeyManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
             android:name=".view.OneWayCurtainsDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.OneKeySceneDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.TwoWayCurtainsDetailActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.SetTimeActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ChoiceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ChoiceProductActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ScanBLEActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ChoiceWiFiActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ConfigureNetworkActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ChoiceGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.EditKeyActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ProductGuidanceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.PermitJoinActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.DetailOneSwitchActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.DetailTwoSwitchActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
+        <activity
+            android:name=".view.DetailFourSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.DetailGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.DetailSensorActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.MoreGatewayActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.MoreSubdeviceActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.MessageRecordActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.ChoiceContentActivity"
-            android:label="@string/app_name"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/app_name"/>
         <activity
             android:name=".view.OALoginActivity"
             android:screenOrientation="portrait"

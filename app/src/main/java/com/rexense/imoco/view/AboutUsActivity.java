@@ -1,7 +1,6 @@
 package com.rexense.imoco.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ public class AboutUsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aboutus);
         ButterKnife.bind(this);
-        Log.d("wyy", "onCreate: ");
         tvToolbarTitle.setText(getString(R.string.fragment3_about_us));
 
         // 隐藏隐私政策

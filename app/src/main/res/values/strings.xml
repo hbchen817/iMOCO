@@ -184,10 +184,16 @@
 
     <string name="twoswitch_state_1">第1路状态</string>
     <string name="twoswitch_state_2">第2路状态</string>
+    <string name="fourswitch_state_3">第3路状态</string>
+    <string name="fourswitch_state_4">第4路状态</string>
     <string name="twoswitch_state_1_on">第1路打开</string>
     <string name="twoswitch_state_2_on">第2路打开</string>
+    <string name="fourswitch_state_3_on">第3路打开</string>
+    <string name="fourswitch_state_4_on">第4路打开</string>
     <string name="twoswitch_state_1_off">第1路关闭</string>
     <string name="twoswitch_state_2_off">第2路关闭</string>
+    <string name="fourswitch_state_3_off">第3路关闭</string>
+    <string name="fourswitch_state_4_off">第4路关闭</string>
     <string name="twoswitch_state_on">打开</string>
     <string name="twoswitch_state_off">关闭</string>
 
@@ -538,4 +544,9 @@
     <string name="floor_heating">地暖</string>
     <string name="account_other_device_login">当前帐户在其他设备登录，请重新登陆</string>
 
+    <string name="privacy_policy_dialog_title">欢迎来到莫科智家</string>
+    <string name="privacy_policy_dialog_content">为向您提供安全、便捷的服务，我们需要在必要范围内申请设备状态等手机权限以及处理您的信息</string>
+    <string name="privacy_policy_dialog_check_tip">详情请查阅</string>
+    <string name="privacy_policy_dialog_link">《莫科智家隐私权政策》</string>
+    <string name="privacy_policy_dialog_get">知道了</string>
 </resources>

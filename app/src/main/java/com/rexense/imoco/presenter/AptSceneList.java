@@ -31,6 +31,7 @@ public class AptSceneList extends BaseAdapter {
 		private TextView type;
 		private TextView delete;
 		private ImageView edit;
+		private View dividerBottom;
 	}
 	private class deleteTag{
 		private Boolean isDeleted;
@@ -54,12 +55,18 @@ public class AptSceneList extends BaseAdapter {
 
 	// 设置数据
 	public void setData(List<EScene.sceneListItemEntry> sceneList) {
-		this.mSceneList = sceneList;
-		for(int i = 0; i < sceneList.size(); i++){
-			deleteTag d = new deleteTag();
-			d.isDeleted = false;
-			mDeleteList.add(d);
+		// this.mSceneList = sceneList;
+		if (sceneList != null) {
+			this.mSceneList.clear();
+			this.mSceneList.addAll(sceneList);
+
+			for (int i = 0; i < sceneList.size(); i++) {
+				deleteTag d = new deleteTag();
+				d.isDeleted = false;
+				mDeleteList.add(d);
+			}
 		}
+		this.notifyDataSetChanged();
 	}
 
 	// 清除数据
@@ -147,6 +154,10 @@ public class AptSceneList extends BaseAdapter {
 		viewHolder.type = convertView.findViewById(R.id.sceneListLblType);
 		viewHolder.delete = convertView.findViewById(R.id.sceneListLblDelete);
 		viewHolder.edit = convertView.findViewById(R.id.sceneListImgEdit);
+		viewHolder.dividerBottom = convertView.findViewById(R.id.divider_bottom);
+		if (position == this.mSceneList.size()-1)
+			viewHolder.dividerBottom.setVisibility(View.VISIBLE);
+		else viewHolder.dividerBottom.setVisibility(View.GONE);
 		viewHolder.delete.setTag(position);
 		viewHolder.edit.setTag(position);
 		convertView.setTag(viewHolder);
