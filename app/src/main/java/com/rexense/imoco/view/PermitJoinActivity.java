@@ -87,7 +87,12 @@ public class PermitJoinActivity extends BaseActivity {
                 // 绑定子设备回调
                 if (msg.obj != null && ((String) msg.obj).length() > 0) {
                     // 发送拒绝入网
-                    sendPermitJoinCommand(1);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendPermitJoinCommand(1);
+                        }
+                    }, 5000);
                     Message msg1 = new Message();
                     msg1.what = Constant.MSG_PERMITJOIN_STEP_END;
                     prcessPermitJoinProgressHandler.sendMessage(msg1);

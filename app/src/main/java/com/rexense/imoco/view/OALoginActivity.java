@@ -1,9 +1,11 @@
 package com.rexense.imoco.view;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,6 +30,7 @@ import com.alibaba.sdk.android.openaccount.ui.widget.MobileInputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.utility.SpUtils;
 
 public class OALoginActivity extends LoginActivity implements View.OnClickListener{
 
@@ -92,6 +95,34 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
                 H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
             }
         });
+        boolean isFirst = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", false);
+        if (!isFirst) {
+            showPrivacyPolicyDialog();
+            SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", true);
+        }
+    }
+
+    private void showPrivacyPolicyDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_policy, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+
+        TextView linkTV = (TextView) view.findViewById(R.id.policy_link);
+        TextView doTV = (TextView) view.findViewById(R.id.do_tv);
+
+        linkTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                H5Activity.actionStart(OALoginActivity.this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
+            }
+        });
+        doTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

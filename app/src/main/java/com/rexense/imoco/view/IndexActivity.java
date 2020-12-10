@@ -18,6 +18,7 @@ import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
 import com.rexense.imoco.utility.PermissionUtil;
+import com.rexense.imoco.utility.SpUtils;
 import com.rexense.imoco.utility.ToastUtils;
 
 import java.util.ArrayList;
@@ -151,6 +152,7 @@ public class IndexActivity extends BaseActivity {
         // 没有需要处理的运行时权限, 继续执行
         // 处理运行时权限
         initPermissions();
+        SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", true);
 
         if (!mPermissionList.isEmpty()) {
             // 如果有需要处理的运行时权限, 就先处理运行时权限

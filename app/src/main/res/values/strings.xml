@@ -542,4 +542,9 @@
     <string name="floor_heating">地暖</string>
     <string name="account_other_device_login">当前帐户在其他设备登录，请重新登陆</string>
 
+    <string name="privacy_policy_dialog_title">欢迎来到莫科智家</string>
+    <string name="privacy_policy_dialog_content">为向您提供安全、便捷的服务，我们需要在必要范围内申请设备状态等手机权限以及处理您的信息</string>
+    <string name="privacy_policy_dialog_check_tip">详情请查阅</string>
+    <string name="privacy_policy_dialog_link">《莫科智家隐私权政策》</string>
+    <string name="privacy_policy_dialog_get">知道了</string>
 </resources>
