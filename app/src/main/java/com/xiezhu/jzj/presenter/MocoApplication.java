@@ -120,13 +120,14 @@ public class MocoApplication extends AApplication {
 //            }
 //        });
 
-
         ViseLog.getLogConfig()
                 .configAllowLog(BuildConfig.DEBUG)
                 .configShowBorders(true)
                 .configTagPrefix("wyy")
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
+
+        SystemParameter.getInstance().setSceneItemWidth(/*getSceneItemWidth()*/0);
     }
 
     private void initLog(){
