@@ -204,10 +204,10 @@ public class IndexFragment1 extends BaseFragment {
                     return;
                 }
 //
-//                Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
-//                startActivity(intent);
-                ActivityRouter.toDetail(getActivity(), "", CTSL.PK_LIGHT,
-                        1, "测试", 1);
+                Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
+                startActivity(intent);
+//                ActivityRouter.toDetail(getActivity(), "单场景开关测试", CTSL.PK_ONE_SCENE_SWITCH,
+//                        1, "测试", 1);
             }
         });
 
