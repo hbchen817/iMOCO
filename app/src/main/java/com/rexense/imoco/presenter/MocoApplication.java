@@ -137,7 +137,7 @@ public class MocoApplication extends AApplication {
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
 
-        SystemParameter.getInstance().setSceneItemWidth(/*getSceneItemWidth()*/0);
+        SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
     }
 
     private void initLog(){
@@ -185,6 +185,6 @@ public class MocoApplication extends AApplication {
         Display display = manager.getDefaultDisplay();
         display.getSize(p);
 
-        return (p.x - 2 * ten10 - 2 * six6) / 3;// 屏幕上展示两个item
+        return (p.x - 2 * ten10 - six6) / 2;// 屏幕上展示两个item
     }
 }
