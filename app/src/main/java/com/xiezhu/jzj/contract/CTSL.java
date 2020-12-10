@@ -23,6 +23,7 @@ public class CTSL {
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
     public static final String PK_SMART_LOCK                = "a19ONFPQn0u";//智能锁pk
     public static final String PK_SIX_SCENE_SWITCH          = "a1zf8jfGzTX";
+	public static final String PK_LIGHT                     = "a1SdpzGgZCa";
 
     public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
     public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
@@ -101,6 +102,18 @@ public class CTSL {
         }
     };
 
+//定义调光调色属性常量
+    public static final String LIGHT_P_POWER                = "PowerSwitch";
+    public static final String LIGHT_P_BRIGHTNESS           = "brightness";
+    public static final String LIGHT_P_COLOR_TEMPERATURE    = "colorTemperature";
+    public static final Map<String, PTYPE> LIGHT_Properties = new HashMap<String, PTYPE>(){
+        {
+            put(LIGHT_P_POWER, PTYPE.t_int32);
+            put(LIGHT_P_BRIGHTNESS, PTYPE.t_int32);
+            put(LIGHT_P_COLOR_TEMPERATURE, PTYPE.t_int32);
+        }
+    };
+	
     // 定义两键开关属性常量
     public static final String THS_P_PowerSwitch_1          = "PowerSwitch_1";
     public static final String THS_P_PowerSwitch_2          = "PowerSwitch_2";
@@ -231,6 +244,7 @@ public class CTSL {
             put(PK_DOORSENSOR, DS_Properties);
             put(PK_PIRSENSOR, PIR_Properties);
             put(PK_REMOTECONTRILBUTTON, RCB_Properties);
+			put(PK_LIGHT, LIGHT_Properties);
             put(PK_RGB_COLOR_LIGHT_STRIP, RGBLS_Properties);
             put(PK_FOURWAYSWITCH, FWS_Properties);
         }

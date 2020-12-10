@@ -252,6 +252,11 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.RCB_P_EmergencyAlarm, this.mContext.getString(R.string.sensorstate_buttonstate), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
+            case CTSL.PK_LIGHT:
+                // 调光调色处理
+                list.add(new ETSL.messageRecordContentEntry(CTSL.LIGHT_P_BRIGHTNESS, this.mContext.getString(R.string.lightness), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.LIGHT_P_COLOR_TEMPERATURE, this.mContext.getString(R.string.color_temperature), Constant.CONTENTTYPE_PROPERTY));
+                break;
             default:
                 return null;
         }

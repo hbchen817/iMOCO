@@ -4,9 +4,26 @@ import com.xiezhu.jzj.typefactory.TypeFactory;
 
 public class ItemColorLightScene implements Visitable {
 
+    private String id;
     private String sceneName;
     private int lightness;
     private int k;
+
+    public ItemColorLightScene() {
+    }
+
+    public ItemColorLightScene(String id, String sceneName) {
+        this.id = id;
+        this.sceneName = sceneName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getSceneName() {
         return sceneName;

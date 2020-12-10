@@ -5,9 +5,11 @@ import android.content.Context;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class EScene {
     }
 
     // 场景列表列表条目实体
-    public static class sceneListItemEntry {
+    public static class sceneListItemEntry implements Serializable {
         public String id;
         public Boolean enable;
         public String name;
