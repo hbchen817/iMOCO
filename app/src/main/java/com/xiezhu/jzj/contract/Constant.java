@@ -10,8 +10,8 @@ public class Constant {
     //public static final String APPKEY                               = "29162669";
     //public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";
     // 正式环境APPKEY
-    public static final String APPKEY                               = "30925097";
-    public static final String APPSECRET                            = "3af84519cb79263ce1764cbd45c930c9";
+    public static final String APPKEY                               = "30902779";
+    public static final String APPSECRET                            = "9759cd1154364afcd4a4be74274b653b";
 
     // 产品类型
     public static final int PRODUCT_TYPE_LIGHT                      = 0;
