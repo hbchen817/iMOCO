@@ -72,6 +72,9 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_detail_lock);
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
+            case CTSL.PK_LIGHT:
+                setContentView(R.layout.activity_color_light);
+                break;
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);

@@ -62,6 +62,22 @@
             android:name=".view.SceneMaintainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name" />
+	<activity
+            android:name=".view.ColorTemperatureChoiceActivity"
+	    android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+	<activity
+            android:name=".view.LightSceneActivity"
+	    android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightSceneListActivity"
+	    android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightActionChoiceActivity"
+	    android:screenOrientation="portrait"
+            android:label="@string/app_name" />
         <activity
             android:name=".view.ScanGatewayByNetActivity"
             android:screenOrientation="portrait"
