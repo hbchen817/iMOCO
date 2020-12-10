@@ -136,6 +136,8 @@ public class MocoApplication extends AApplication {
                 .configTagPrefix("wyy")
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
+
+        SystemParameter.getInstance().setSceneItemWidth(/*getSceneItemWidth()*/0);
     }
 
     private void initLog(){
@@ -176,13 +178,13 @@ public class MocoApplication extends AApplication {
     public int getSceneItemWidth() {
         float scale = getResources().getDisplayMetrics().density;
         int ten10 = (int) (scale * 10 + 0.5f);// 网格组件左右margin值
-        int six6 = (int) (scale * 6 + 0.5f);// 每一个item直接间隔宽度
+        int six6 = (int) (scale * 6 + 0.5f);// 两个item之间间隔宽度
 
         WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Point p = new Point();
         Display display = manager.getDefaultDisplay();
         display.getSize(p);
 
-        return (p.x - 2 * ten10 - six6) / 2;// 屏幕上展示两个item
+        return (p.x - 2 * ten10 - 2 * six6) / 3;// 屏幕上展示两个item
     }
 }

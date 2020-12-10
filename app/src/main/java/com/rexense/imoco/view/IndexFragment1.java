@@ -424,9 +424,12 @@ public class IndexFragment1 extends BaseFragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         float density = dm.density;
         // 设置网格宽度(包括所有列宽与列之间的距离)
-        int gridViewWidth = (int) (size * length * density + (size - 1) * 6 * density);
+        float lengthDensity = length * density;
+        if (SystemParameter.getInstance().getSceneItemWidth() != 0)
+            lengthDensity = SystemParameter.getInstance().getSceneItemWidth();
+        int gridViewWidth = (int) (size * lengthDensity + (size - 1) * 6 * density);
         // 设置列宽
-        int itemWidth = (int) (length * density);
+        int itemWidth = (int) lengthDensity;
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(gridViewWidth, LinearLayout.LayoutParams.MATCH_PARENT);
         // 设置GirdView布局参数(横向布局的关键)
