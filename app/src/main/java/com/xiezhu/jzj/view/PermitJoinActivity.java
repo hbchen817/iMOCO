@@ -88,7 +88,7 @@ public class PermitJoinActivity extends BaseActivity {
                         public void run() {
                             sendPermitJoinCommand(1);
                         }
-                    }, 5000);
+                    }, 3000);
                     Message msg1 = new Message();
                     msg1.what = Constant.MSG_PERMITJOIN_STEP_END;
                     prcessPermitJoinProgressHandler.sendMessage(msg1);

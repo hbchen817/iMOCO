@@ -31,6 +31,7 @@
         android:layout_marginRight="10dp">
 
         <TextView
+            android:id="@+id/scene_name_tv"
             android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
@@ -39,15 +40,23 @@
             android:layout_marginLeft="10dp"
             android:text="@string/scene_maintain_name"/>
 
-        <TextView
-            android:id="@+id/sceneMaintainLblName"
-            style="@style/NormalFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/sceneMaintainImgName"
-            android:gravity="center_vertical"
-            android:text="@string/scenename" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_toStartOf="@+id/sceneMaintainImgName"
+            android:layout_toEndOf="@id/scene_name_tv">
+
+            <TextView
+                android:id="@+id/sceneMaintainLblName"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:scrollbars="vertical"
+                android:text="@string/scenename" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/sceneMaintainImgName"

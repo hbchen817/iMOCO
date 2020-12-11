@@ -10,8 +10,11 @@
 		style="@style/TitleBarFontStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginHorizontal="30dp"
 		android:layout_centerHorizontal="true"
 		android:layout_centerVertical="true"
+		android:maxLines="1"
+		android:ellipsize="end"
 		android:text="@string/include_title" />
 
 	<ImageView

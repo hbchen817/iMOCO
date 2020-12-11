@@ -24,6 +24,8 @@
 		android:layout_toRightOf="@+id/sceneImgIcon"
 		android:layout_marginLeft="3dp"
 		android:gravity="center_vertical|left"
+		android:maxLines="3"
+		android:ellipsize="end"
 		android:text="@string/main_scenename" />
 
 </RelativeLayout>

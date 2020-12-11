@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,6 +107,7 @@ public class SceneMaintainActivity extends BaseActivity {
         TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
         ImageView icon = (ImageView) findViewById(R.id.sceneMaintainImgIcon);
         this.mLblName = (TextView) findViewById(R.id.sceneMaintainLblName);
+        this.mLblName.setMovementMethod(ScrollingMovementMethod.getInstance());
         this.mLblEnable = (TextView) findViewById(R.id.sceneMaintainLblEnable);
         icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 

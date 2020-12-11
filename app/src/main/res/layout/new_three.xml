@@ -2,7 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/new_three">
+    android:background="@android:color/white">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/new_three"
+        android:scaleType="fitCenter"/>
 
     <TextView
         android:id="@+id/open"
@@ -10,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/dp_150"
+        android:layout_marginBottom="@dimen/dp_100"
         android:background="@drawable/new_bg"
         android:gravity="center"
         android:textColor="#0088C8"

@@ -127,7 +127,7 @@ public class MocoApplication extends AApplication {
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
 
-        SystemParameter.getInstance().setSceneItemWidth(/*getSceneItemWidth()*/0);
+        SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
     }
 
     private void initLog(){
