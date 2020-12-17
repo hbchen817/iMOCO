@@ -14,13 +14,18 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.sdk.android.openaccount.util.JSONUtils;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.ERealtimeData;
+import com.rexense.imoco.model.EScene;
+import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ConfigureNetwork;
 import com.rexense.imoco.presenter.LockManager;
 import com.rexense.imoco.presenter.RealtimeDataParser;
 import com.rexense.imoco.presenter.RealtimeDataReceiver;
+import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
@@ -83,6 +88,7 @@ public class PermitJoinActivity extends BaseActivity {
     private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            SceneManager mSceneManager = new SceneManager(mActivity);
             if (Constant.MSG_CALLBACK_BINDSUBDEVICE == msg.what) {
                 // 绑定子设备回调
                 if (msg.obj != null && ((String) msg.obj).length() > 0) {
@@ -100,6 +106,9 @@ public class PermitJoinActivity extends BaseActivity {
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
+                    if (mProductKey.equals(CTSL.PK_LIGHT)) {
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                    }
                     BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
@@ -115,6 +124,20 @@ public class PermitJoinActivity extends BaseActivity {
                     }
                     finish();
                 }
+            } else if (Constant.MSG_CALLBACK_QUERYSCENELIST == msg.what) {
+                // 处理获取场景列表数据
+                EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                if (sceneList != null && sceneList.scenes != null) {
+                    for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                        if (item.description.equals(mSubDeviceIotId)) {
+                            mSceneManager.deleteScene(item.id, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                        }
+                    }
+                    if (sceneList.scenes.size() >= sceneList.pageSize) {
+                        // 数据没有获取完则获取下一页数据
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                    }
+                }
             }
             return false;
         }
@@ -127,7 +150,7 @@ public class PermitJoinActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
-                    Log.i("lzm", "(String) msg.obj"+(String) msg.obj);
+                    Log.i("lzm", "(String) msg.obj" + (String) msg.obj);
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
                     mSubDeviceName = joinResultEntry.subDeviceName;
                     mSubDeviceIotId = joinResultEntry.subIotId;

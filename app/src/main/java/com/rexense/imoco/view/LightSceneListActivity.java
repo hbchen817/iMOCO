@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,11 +18,16 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.CEvent;
+import com.rexense.imoco.event.EEvent;
+import com.rexense.imoco.event.RefreshSceneListEvent;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -48,13 +54,31 @@ public class LightSceneListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_scene_list);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mTitle.setText("场景列表");
         mIotId = getIntent().getStringExtra("extra");
         this.mSceneManager = new SceneManager(this);
         initAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         getList();
+    }
+
+
+    @Subscribe
+    public void refreshSceneList(EEvent eventEntry) {
+        // 处理刷新手动执行场景列表数据
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
+            mList.clear();
+            getList();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void getList() {
@@ -62,15 +86,15 @@ public class LightSceneListActivity extends BaseActivity {
     }
 
     private void initAdapter() {
-        mAdapter = new BaseQuickAdapter<EScene.sceneListItemEntry, BaseViewHolder>(R.layout.item_scene_log, mList) {
+        mAdapter = new BaseQuickAdapter<EScene.sceneListItemEntry, BaseViewHolder>(R.layout.item_scene, mList) {
 
             @Override
             protected void convert(@NotNull BaseViewHolder baseViewHolder, EScene.sceneListItemEntry sceneListItemEntry) {
-
+                baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name);
             }
         };
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-
+            LightSceneActivity.start(this, mList.get(position), mIotId);
         });
     }
 
@@ -88,6 +112,7 @@ public class LightSceneListActivity extends BaseActivity {
                                 mList.add(item);
                             }
                         }
+                        mAdapter.notifyDataSetChanged();
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
                             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);

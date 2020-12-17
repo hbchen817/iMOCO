@@ -3,17 +3,13 @@ package com.rexense.imoco.view;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -36,20 +32,21 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-/**
- * @author Gary
- * @time 2020/9/27 13:51
- */
-
-public class OneKeySceneDetailActivity extends DetailActivity {
+public class FourSceneSwitchActivity extends DetailActivity {
 
     @BindView(R.id.mSceneContentText1)
     TextView mSceneContentText1;//1
+    @BindView(R.id.mSceneContentText2)
+    TextView mSceneContentText2;//2
+    @BindView(R.id.mSceneContentText3)
+    TextView mSceneContentText3;//3
+    @BindView(R.id.mSceneContentText4)
+    TextView mSceneContentText4;//4
 
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
-    private String[] mManualIDs = new String[1];
-    private String[] mManualNames = new String[1];
+    private String[] mManualIDs = new String[4];
+    private String[] mManualNames = new String[4];
     private String mCurrentKey;
 
     @Override
@@ -82,7 +79,7 @@ public class OneKeySceneDetailActivity extends DetailActivity {
         getScenes();
     }
 
-    @OnClick({R.id.mSceneContentText1})
+    @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSceneContentText4})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
@@ -92,17 +89,54 @@ public class OneKeySceneDetailActivity extends DetailActivity {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
                 }
                 break;
+            case R.id.mSceneContentText2:
+                if (mManualIDs[1] != null) {
+                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                } else {
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                }
+                break;
+            case R.id.mSceneContentText3:
+                if (mManualIDs[2] != null) {
+                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                } else {
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                }
+                break;
+            case R.id.mSceneContentText4:
+                if (mManualIDs[3] != null) {
+                    mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                } else {
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                }
+                break;
             default:
                 break;
         }
     }
 
-    @OnLongClick({R.id.mSceneContentText1})
+
+    @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSceneContentText4})
     public boolean onLongClick(View view) {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+                }
+                break;
+            case R.id.mSceneContentText2:
+                if (mManualIDs[1] != null) {
+                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
+                }
+                break;
+            case R.id.mSceneContentText3:
+                if (mManualIDs[2] != null) {
+                    EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
+                }
+                break;
+            case R.id.mSceneContentText4:
+                if (mManualIDs[3] != null) {
+                    EditSceneBindActivity.start(this, "按键四", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4, mSceneContentText4.getText().toString());
                 }
                 break;
             default:
@@ -113,16 +147,16 @@ public class OneKeySceneDetailActivity extends DetailActivity {
 
 
     private static class MyHandler extends Handler {
-        final WeakReference<OneKeySceneDetailActivity> mWeakReference;
+        final WeakReference<FourSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(OneKeySceneDetailActivity activity) {
+        public MyHandler(FourSceneSwitchActivity activity) {
             mWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            OneKeySceneDetailActivity activity = mWeakReference.get();
+            FourSceneSwitchActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -137,6 +171,45 @@ public class OneKeySceneDetailActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
+                                }
+                                activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_2;
+                                activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
+                                        activity.mCommitFailureHandler, activity.mExtendedPropertyResponseErrorHandler, activity.mMyHandler);
+                                break;
+                            case CTSL.SCENE_SWITCH_KEY_CODE_2:
+                                if (!jsonObject.isEmpty()) {
+                                    activity.mSceneContentText2.setText(jsonObject.getString("name"));
+                                    activity.mManualNames[1] = jsonObject.getString("name");
+                                    activity.mManualIDs[1] = jsonObject.getString("msId");
+                                } else {
+                                    activity.mSceneContentText2.setText(R.string.no_bind_scene);
+                                    activity.mManualNames[1] = null;
+                                }
+                                activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_3;
+                                activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
+                                        activity.mCommitFailureHandler, activity.mExtendedPropertyResponseErrorHandler, activity.mMyHandler);
+                                break;
+                            case CTSL.SCENE_SWITCH_KEY_CODE_3:
+                                if (!jsonObject.isEmpty()) {
+                                    activity.mSceneContentText3.setText(jsonObject.getString("name"));
+                                    activity.mManualNames[2] = jsonObject.getString("name");
+                                    activity.mManualIDs[2] = jsonObject.getString("msId");
+                                } else {
+                                    activity.mSceneContentText3.setText(R.string.no_bind_scene);
+                                    activity.mManualNames[2] = null;
+                                }
+                                activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_4;
+                                activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
+                                        activity.mCommitFailureHandler, activity.mExtendedPropertyResponseErrorHandler, activity.mMyHandler);
+                                break;
+                            case CTSL.SCENE_SWITCH_KEY_CODE_4:
+                                if (!jsonObject.isEmpty()) {
+                                    activity.mSceneContentText4.setText(jsonObject.getString("name"));
+                                    activity.mManualNames[3] = jsonObject.getString("name");
+                                    activity.mManualIDs[3] = jsonObject.getString("msId");
+                                } else {
+                                    activity.mSceneContentText4.setText(R.string.no_bind_scene);
+                                    activity.mManualNames[3] = null;
                                 }
                                 break;
                             default:

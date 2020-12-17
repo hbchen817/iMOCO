@@ -5,7 +5,7 @@
     android:background="#ECECEC"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include layout="@layout/include_detail_black" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
 
 
         <TextView
-            android:id="@+id/mSceneContentText"
+            android:id="@+id/mSceneContentText1"
             android:paddingVertical="@dimen/dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
 
 
         <TextView
-            android:id="@+id/mSceneContentText1"
+            android:id="@+id/mSceneContentText2"
             android:paddingVertical="@dimen/dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

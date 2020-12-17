@@ -47,6 +47,11 @@
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
 
+        <TextView
+            android:text=">>"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

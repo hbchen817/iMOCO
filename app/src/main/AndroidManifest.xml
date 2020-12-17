@@ -75,6 +75,33 @@
 	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
+            android:name=".view.SwitchSceneListActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SwitchSceneActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SceneSwitchDeviceListActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.DeviceActionActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.FourSceneSwitchActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.ThreeSceneSwitchActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SixSceneSwitchActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.TwoSceneSwitchActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SixTwoSceneSwitchActivity"
+            android:label="@string/app_name" />
+        <activity
             android:name=".view.LightActionChoiceActivity"
 	    android:screenOrientation="portrait"
             android:label="@string/app_name" />
