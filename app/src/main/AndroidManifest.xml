@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -36,8 +38,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
+
+        <!-- vivo push start -->
+        <meta-data
+            android:name="com.vivo.push.api_key"
+            android:value="2e62c1883af9e74ff145082e05e0db2a" />
+        <meta-data
+            android:name="com.vivo.push.app_id"
+            android:value="105330794" />
+        <!-- vivo push start -->
 
         <activity
             android:name=".view.StartActivity"

@@ -40,9 +40,13 @@ public class Initializer {
         // 替换为从FCM平台申请的sendid
         pushConfig.fcmSendId = "fcmsendid";
         // 替换为从小米平台申请的AppID
-        pushConfig.xiaomiAppId = "XiaoMiAppId";
+        pushConfig.xiaomiAppId = "2882303761518671822";
         // 替换为从小米平台申请的AppKey
-        pushConfig.xiaomiAppkey = "XiaoMiAppKey";
+        pushConfig.xiaomiAppkey = "5721867161822";
+        // 替换为从OPPO平台申请的AppKey
+        pushConfig.oppoAppKey = "1aea91af981e400ebf1e58d2ea93eb94";
+        // 替换为从OPPO平台申请的AppSecret
+        pushConfig.oppoAppSecret = "b919e5bdf18d40b986634e0b49d0cab1";
         // 华为推送通道需要在AndroidManifest.xml里面添加从华为评审申请的appId
         initConfig.setPushConfig(pushConfig);
 

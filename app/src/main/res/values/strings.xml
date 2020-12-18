@@ -425,6 +425,8 @@
     <string name="aboutus_user_deal">用户协议</string>
     <string name="aboutus_opensourse_deal">开源组件使用协议</string>
     <string name="aboutus_current_version">当前版本</string>
+    <string name="service_tel">客服电话</string>
+    <string name="service_telephone">400-816-2911</string>
     <string name="about_us">关于莫科智家</string>
     <string name="tmall_spirit">天猫精灵</string>
     <string name="tmall_spirit_bind_success">绑定账号成功</string>

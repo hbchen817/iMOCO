@@ -1,31 +1,34 @@
 package com.rexense.imoco.view;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
-import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
 import com.rexense.imoco.utility.PermissionUtil;
 import com.rexense.imoco.utility.SpUtils;
 import com.rexense.imoco.utility.ToastUtils;
+import com.tencent.bugly.crashreport.CrashReport;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -92,21 +95,37 @@ public class IndexActivity extends BaseActivity {
                     TAG = 0;
                     // 切换至碎片一
                     switchFragment(indexFragment1);
+                    if (Build.VERSION.SDK_INT >= 23)
+                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
                     break;
                 case R.id.rb_tab_two:
                     TAG = 1;
                     // 切换至碎片二
                     switchFragment(indexFragment2);
+                    if (Build.VERSION.SDK_INT >= 23)
+                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
                     break;
                 case R.id.rb_tab_three:
                     TAG = 2;
                     // 切换至碎片三
                     switchFragment(indexFragment3);
+                    if (Build.VERSION.SDK_INT >= 23)
+                        getWindow().setStatusBarColor(Color.WHITE);
                     break;
                 default:
             }
         }
     };
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View decorView = getWindow().getDecorView();
+            //int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +164,8 @@ public class IndexActivity extends BaseActivity {
         } else {
             init();
         }
+
+        initStatusBar();
     }
 
     private void init() {

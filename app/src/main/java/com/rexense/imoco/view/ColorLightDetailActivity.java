@@ -145,7 +145,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         });
     }
 
-    // APIÊı¾İ´¦ÀíÆ÷
+    // API æ•°æ®å¤„ç†å™¨
     private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -161,7 +161,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
-                    // ´¦Àí»ñÈ¡³¡¾°ÁĞ±íÊı¾İ
+                    // å¤„ç†è·å–åœºæ™¯åˆ—è¡¨æ•°æ®
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
@@ -172,7 +172,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                             }
                         }
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
-                            // Êı¾İÃ»ÓĞ»ñÈ¡ÍêÔò»ñÈ¡ÏÂÒ»Ò³Êı¾İ
+                            // æ•°æ®æ²¡æœ‰è·å–ç©åˆ™è·å–ä¸‹ä¸€é¡µæ•°æ®
                             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }

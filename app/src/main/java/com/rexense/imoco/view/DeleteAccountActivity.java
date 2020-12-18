@@ -2,6 +2,8 @@ package com.rexense.imoco.view;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,6 +45,17 @@ public class DeleteAccountActivity extends BaseActivity {
         setContentView(R.layout.activity_delete_account);
         ButterKnife.bind(this);
         tvToolbarTitle.setText(getString(R.string.myinfo_delete_account));
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @OnClick({R.id.confirm_btn})
@@ -68,8 +81,16 @@ public class DeleteAccountActivity extends BaseActivity {
                             Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                            IndexActivity.mainActivity.finish();
-                            MyInfoActivity.myInfoActivity.finish();
+                            // IndexActivity.mainActivity.finish();
+                            Intent fIntent = new Intent();
+                            fIntent.setAction("finish_IndexActivity");
+                            sendBroadcast(fIntent);
+
+                            // MyInfoActivity.myInfoActivity.finish();
+                            Intent fInfoIntent = new Intent();
+                            fInfoIntent.setAction("finish_MyInfoActivity");
+                            sendBroadcast(fInfoIntent);
+
                             finish();
                             overridePendingTransition(0, 0);
                         }

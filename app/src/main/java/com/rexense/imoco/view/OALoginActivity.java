@@ -3,6 +3,7 @@ package com.rexense.imoco.view;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import com.alibaba.sdk.android.openaccount.ui.ui.LoginActivity;
 import com.alibaba.sdk.android.openaccount.ui.widget.InputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.ui.widget.MobileInputBoxWithClear;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.SpUtils;
@@ -99,6 +101,18 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         if (!isFirst) {
             showPrivacyPolicyDialog();
             SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", true);
+        }
+        //initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if ("com.rexense.imoco".equals(BuildConfig.APPLICATION_ID)) {
+                View view = getWindow().getDecorView();
+                //view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                getWindow().setStatusBarColor(getResources().getColor(R.color.login_bg_2_color));
+            }
         }
     }
 

@@ -34,6 +34,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.LogcatTree;
 
+//import leakcanary.LeakCanary;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-03-31 15:29
@@ -48,9 +50,13 @@ public class MocoApplication extends AApplication {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+
         //设置日志级别
         Logger.setLogLevel(2);
-        CrashReport.initCrashReport(getApplicationContext(), "32e9d238a3", true);
+        CrashReport.initCrashReport(getApplicationContext(), "9b346e3393", BuildConfig.DEBUG);
 
         //安装MultiDex
         MultiDex.install(this);
@@ -67,8 +73,6 @@ public class MocoApplication extends AApplication {
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
         }
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
         initLog();
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {

@@ -1,7 +1,12 @@
 package com.rexense.imoco.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +21,7 @@ import com.rexense.imoco.event.RefreshMyinfo;
 import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.DialogUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -75,6 +81,16 @@ public class MyInfoActivity extends BaseActivity {
         nickName.setText(Account.getUserNick());
         userAccount.setText(Account.getUserPhone());
 
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Override

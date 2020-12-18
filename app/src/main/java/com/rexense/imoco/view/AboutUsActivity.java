@@ -1,10 +1,13 @@
 package com.rexense.imoco.view;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.presenter.SystemParameter;
@@ -22,7 +25,8 @@ public class AboutUsActivity extends BaseActivity {
     TextView tvToolbarRight;
     @BindView(R.id.version_tv)
     TextView versionTv;
-
+    @BindView(R.id.service_tel_view)
+    RelativeLayout mServiceTelView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,20 @@ public class AboutUsActivity extends BaseActivity {
         }
 
         versionTv.setText(AppUtils.getVersionName(mActivity));
+
+        if ("com.rexense.imoco".equals(BuildConfig.APPLICATION_ID)) {
+            mServiceTelView.setVisibility(View.VISIBLE);
+        }
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @OnClick({R.id.evaluate_view,R.id.privacy_policy_view,R.id.user_deal_view,R.id.opensourse_deal_view,R.id.aboutus_view})
