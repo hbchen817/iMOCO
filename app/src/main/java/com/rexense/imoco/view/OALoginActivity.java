@@ -110,7 +110,7 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         if (Build.VERSION.SDK_INT >= 23) {
             if ("com.rexense.imoco".equals(BuildConfig.APPLICATION_ID)) {
                 View view = getWindow().getDecorView();
-                //view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
                 getWindow().setStatusBarColor(getResources().getColor(R.color.login_bg_2_color));
             }
         }
