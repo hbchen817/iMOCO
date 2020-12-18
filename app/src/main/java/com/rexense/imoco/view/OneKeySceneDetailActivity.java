@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.SceneBindEvent;
@@ -82,14 +83,19 @@ public class OneKeySceneDetailActivity extends DetailActivity {
         getScenes();
     }
 
-    @OnClick({R.id.mSceneContentText1})
+    @OnClick({R.id.mSceneContentText1, R.id.device_image_view})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
+                }
+                break;
+            case R.id.device_image_view:
+                if (mManualIDs[0] != null) {
+                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
             default:
@@ -134,9 +140,12 @@ public class OneKeySceneDetailActivity extends DetailActivity {
                                     activity.mSceneContentText1.setText(jsonObject.getString("name"));
                                     activity.mManualNames[0] = jsonObject.getString("name");
                                     activity.mManualIDs[0] = jsonObject.getString("msId");
+//                                    activity.mSceneManager.querySceneDetail(jsonObject.getString("asId"), CScene.TYPE_AUTOMATIC,
+//                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
+                                    activity.mManualIDs[0] = null;
                                 }
                                 break;
                             default:
@@ -148,6 +157,9 @@ public class OneKeySceneDetailActivity extends DetailActivity {
                     String sceneId = (String) msg.obj;
                     //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
 //                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     break;
                 default:
                     break;

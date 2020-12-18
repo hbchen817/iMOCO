@@ -44,6 +44,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -92,18 +93,21 @@ public class SwitchSceneActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void actionChoose(ItemAction itemAction) {
-        for (int i = 0; i < mList.size(); i++) {
-            ItemAction itemAction1 = mList.get(i);
-            if (itemAction.getIotId().equals(itemAction1.getIotId()) &&
-                    itemAction.getIdentifier().equals(itemAction1.getIdentifier())) {
-                itemAction1.setActionKey(itemAction.getActionKey());
-                itemAction1.setActionValue(itemAction.getActionValue());
-                mAdapter.notifyDataSetChanged();
-                return;
+    public void actionChoose(List<ItemAction> itemActions) {
+        Iterator<ItemAction> iterator = itemActions.iterator();
+        while (iterator.hasNext()){
+            ItemAction itemAction = iterator.next();
+            for (int j = 0; j < mList.size(); j++) {
+                ItemAction itemAction1 = mList.get(j);
+                if (itemAction.getIotId().equals(itemAction1.getIotId()) &&
+                        itemAction.getIdentifier().equals(itemAction1.getIdentifier())) {
+                    itemAction1.setActionKey(itemAction.getActionKey());
+                    itemAction1.setActionValue(itemAction.getActionValue());
+                    iterator.remove();
+                }
             }
         }
-        mList.add(itemAction);
+        mList.addAll(itemActions);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -238,10 +242,15 @@ public class SwitchSceneActivity extends BaseActivity {
                         itemAction.setIotId(params.getString("iotId"));
                         itemAction.setIdentifier(params.getString("identifier"));
                         itemAction.setProductKey(params.getString("productKey"));
+                        itemAction.setActionKey(params.getString("localizedCompareValueName"));
+                        itemAction.setActionName(params.getString("localizedPropertyName"));
                         itemAction.setActionValue(params.getString("compareValue"));
                         mSceneManager.getDeviceAction(params.getString("iotId"), mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                        itemAction.setDeviceName(DeviceBuffer.getDeviceInformation(params.getString("iotId")).nickName);
-                        mList.add(itemAction);
+                        EDevice.deviceEntry device = DeviceBuffer.getDeviceInformation(params.getString("iotId"));
+                        if (device != null) {
+                            itemAction.setDeviceName(device.nickName);
+                            mList.add(itemAction);
+                        }
                     }
                     break;
                 case Constant.MSG_CALLBACK_SCENE_ABILITY_TSL:
@@ -255,11 +264,12 @@ public class SwitchSceneActivity extends BaseActivity {
                             for (int j = 0; j < properties.size(); j++) {
                                 JSONObject jsonObject = properties.getJSONObject(j);
                                 if (jsonObject.getString("identifier").equals(itemAction.getIdentifier())) {
-                                    itemAction.setActionName(jsonObject.getString("name"));
+                                    itemAction.setActionName(jsonObject.getString("name").trim());
                                     JSONObject dataType = jsonObject.getJSONObject("dataType");
                                     JSONObject specs = dataType.getJSONObject("specs");
                                     switch (dataType.getString("type")) {
                                         case "enum":
+                                        case "bool":
                                             for (Map.Entry<String, Object> map : specs.entrySet()) {
                                                 if (itemAction.getActionValue().toString().equals(map.getKey())) {
                                                     itemAction.setActionKey(map.getValue().toString());

@@ -51,7 +51,6 @@ public class DeviceActionActivity extends BaseActivity {
     private BaseQuickAdapter<ItemAction, BaseViewHolder> mAdapter;
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
-    private int mChoosePosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,8 +69,14 @@ public class DeviceActionActivity extends BaseActivity {
         mTitle.setText("选择动作");
         mTitleRight.setText("保存");
         mTitleRight.setOnClickListener(v -> {
-            if (mChoosePosition >= 0) {
-                EventBus.getDefault().post(mList.get(mChoosePosition));
+            List<ItemAction> mSelectList = new ArrayList<>();
+            for (int i = 0; i < mList.size(); i++) {
+                if (mList.get(i).isSelected()) {
+                    mSelectList.add(mList.get(i));
+                }
+            }
+            if (mSelectList.size() >= 0) {
+                EventBus.getDefault().post(mSelectList);
                 finish();
             } else {
                 ToastUtils.showToastCentrally(mActivity, "请选择动作");
@@ -91,14 +96,23 @@ public class DeviceActionActivity extends BaseActivity {
 
             @Override
             protected void convert(@NotNull BaseViewHolder baseViewHolder, ItemAction itemAction) {
-                baseViewHolder.setVisible(R.id.chooseImage, baseViewHolder.getAdapterPosition() == mChoosePosition);
+                baseViewHolder.setVisible(R.id.chooseImage, itemAction.isSelected());
                 baseViewHolder.setText(R.id.actionName, itemAction.getActionName() + itemAction.getActionKey());
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                mChoosePosition = position;
+                ItemAction selectedItem = mList.get(position);
+                selectedItem.setSelected(!selectedItem.isSelected());
+                for (int i = 0; i < mList.size(); i++) {
+                    if (i == position) {
+                        continue;
+                    }
+                    if (mList.get(i).getActionName().equals(selectedItem.getActionName())) {
+                        mList.get(i).setSelected(false);
+                    }
+                }
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -138,15 +152,16 @@ public class DeviceActionActivity extends BaseActivity {
                                         JSONObject specs = dataType.getJSONObject("specs");
                                         switch (dataTypeValue) {
                                             case "enum":
+                                            case "bool":
                                                 for (Map.Entry<String, Object> map : specs.entrySet()) {
                                                     ItemAction<String> itemAction = new ItemAction<String>();
-                                                    itemAction.setActionName(property.getString("name"));
-                                                    itemAction.setIdentifier(property.getString("identifier"));
+                                                    itemAction.setActionName(property.getString("name").trim());
+                                                    itemAction.setIdentifier(property.getString("identifier").trim());
                                                     itemAction.setActionKey((String) map.getValue());
                                                     itemAction.setActionValue(map.getKey());
                                                     itemAction.setIotId(activity.mIotID);
                                                     itemAction.setDeviceName(activity.mDeviceName);
-                                                    itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey"));
+                                                    itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
                                                     activity.mList.add(itemAction);
                                                 }
                                                 break;

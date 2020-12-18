@@ -89,28 +89,28 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 if (mManualIDs[0] != null) {
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
                 }
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
                 }
                 break;
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
                     mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
                 }
                 break;
             case R.id.mSceneContentText4:
                 if (mManualIDs[3] != null) {
                     mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);
                 }
                 break;
             case R.id.mSceneContentText5:
@@ -198,6 +198,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
+                                    activity.mManualIDs[0] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_2;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -211,6 +212,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText2.setText(R.string.no_bind_scene);
                                     activity.mManualNames[1] = null;
+                                    activity.mManualIDs[1] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_3;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -224,6 +226,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText3.setText(R.string.no_bind_scene);
                                     activity.mManualNames[2] = null;
+                                    activity.mManualIDs[2] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_4;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -237,6 +240,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText4.setText(R.string.no_bind_scene);
                                     activity.mManualNames[3] = null;
+                                    activity.mManualIDs[3] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SIX_SCENE_SWITCH_KEY_CODE_1;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -250,6 +254,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText5.setText(R.string.no_bind_scene);
                                     activity.mManualNames[4] = null;
+                                    activity.mManualIDs[4] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SIX_SCENE_SWITCH_KEY_CODE_2;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -263,6 +268,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText6.setText(R.string.no_bind_scene);
                                     activity.mManualNames[5] = null;
+                                    activity.mManualIDs[5] = null;
                                 }
                                 break;
                             default:

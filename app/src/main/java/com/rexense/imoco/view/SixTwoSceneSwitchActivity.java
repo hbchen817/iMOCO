@@ -222,6 +222,7 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
                             } else {
                                 activity.mSceneContentText2.setText(R.string.no_bind_scene);
                                 activity.mFirstManualSceneId = null;
+                                activity.mFirstManualSceneName = null;
                             }
                             activity.mCurrentKey = CTSL.SIX_SCENE_SWITCH_KEY_CODE_2;
                             activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -234,6 +235,7 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
                             } else {
                                 activity.mSceneContentText5.setText(R.string.no_bind_scene);
                                 activity.mSecondManualSceneId = null;
+                                activity.mSecondManualSceneName = null;
                             }
                         }
                     }

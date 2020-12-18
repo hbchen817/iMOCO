@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ProductGuidanceActivity extends BaseActivity {
     private ImageView mOperateIcon;
     private CheckBox mChbIsRead;
     private int mStepCount, mCurrentStepIndex;
+    private String[] mIgnoreList = {};
 
     // 数据处理器
     private Handler processDataHandler = new Handler(new Handler.Callback(){

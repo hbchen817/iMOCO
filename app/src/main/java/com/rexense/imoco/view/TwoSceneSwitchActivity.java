@@ -73,21 +73,31 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         getScenes();
     }
 
-    @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2})
+    @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSwitch1, R.id.mSwitch2})
     public void onClickView(View view) {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
                 }
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
+                }
+                break;
+            case R.id.mSwitch1:
+                if (mManualIDs[0] != null) {
+                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                }
+                break;
+            case R.id.mSwitch2:
+                if (mManualIDs[1] != null) {
+                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
             default:
@@ -141,6 +151,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
+                                    activity.mManualIDs[0] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_2;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -154,6 +165,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText2.setText(R.string.no_bind_scene);
                                     activity.mManualNames[1] = null;
+                                    activity.mManualIDs[1] = null;
                                 }
                                 break;
                             default:

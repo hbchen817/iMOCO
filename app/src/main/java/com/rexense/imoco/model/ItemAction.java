@@ -11,6 +11,7 @@ public class ItemAction<T> {
     private String identifier;
     private String actionKey;
     private T actionValue;
+    private boolean isSelected;
 
     public String getDeviceName() {
         return deviceName;
@@ -74,5 +75,13 @@ public class ItemAction<T> {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

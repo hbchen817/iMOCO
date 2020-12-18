@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
@@ -431,7 +432,7 @@ public class SceneManager {
         conditionParams.put("eventCode", "KeyValueNotification");
         conditionParams.put("propertyName", "KeyValue");
         conditionParams.put("compareType", "==");
-        conditionParams.put("compareValue", triggerEntry.state.rawValue);
+        conditionParams.put("compareValue", Integer.parseInt(triggerEntry.state.rawValue));
 
         condition.put("params", conditionParams);
         caConditions.add(condition);
@@ -475,6 +476,7 @@ public class SceneManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     //获取设备扩展信息
     public void getExtendedProperty(String iotId,
                                     String dataKey,
@@ -666,9 +668,9 @@ public class SceneManager {
     // 更新用于按键自动场景触发手动场景
     public void updateSwitchAutoScene(EScene.sceneBaseInfoEntry baseInfo, EScene.triggerEntry triggerEntry,
                                       String actionSceneID,
-                              Handler commitFailureHandler,
-                              Handler responseErrorHandler,
-                              Handler processDataHandler) {
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
@@ -694,7 +696,7 @@ public class SceneManager {
         conditionParams.put("eventCode", "KeyValueNotification");
         conditionParams.put("propertyName", "KeyValue");
         conditionParams.put("compareType", "==");
-        conditionParams.put("compareValue", triggerEntry.state.rawValue);
+        conditionParams.put("compareValue", Integer.parseInt(triggerEntry.state.rawValue));
 
         condition.put("params", conditionParams);
         caConditions.add(condition);
