@@ -82,6 +82,46 @@ public class PermitJoinActivity extends BaseActivity {
         }
     });
 
+    private void deviceHandle(SceneManager mSceneManager) {
+        switch (mProductKey) {
+            case CTSL.PK_LIGHT:
+                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_THREE_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                break;
+            default:
+                break;
+        }
+    }
+
     // API数据处理器
     private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
@@ -104,9 +144,7 @@ public class PermitJoinActivity extends BaseActivity {
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
-                    if (mProductKey.equals(CTSL.PK_LIGHT)) {
-                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                    }
+                    deviceHandle(mSceneManager);
                     BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
