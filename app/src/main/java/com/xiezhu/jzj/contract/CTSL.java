@@ -45,9 +45,13 @@ public class CTSL {
     public static final String PK_CONTROL_COLOR_TEMP_LIGHT  = "a1uXFxg1cAL";// 调光色温灯
     public static final String PK_CONTROL_COLOR_LIGHT       = "a1mSlpQen3w";// 调光灯
     public static final String PK_RGB_COLOR_LIGHT           = "a1MAzhopgCh";// RGB彩色灯
+    public static final String PK_AIRCOMDITION_TWO          = "a1SlOjihHnP";// 空调二管制
+    public static final String PK_AIRCOMDITION_FOUR         = "a1ayoCqQpxx";// 空调四管制
 
-    public static final String PK_FOURWAYSWITCH              = "a1pOIRmMTGF";// 四键开关
-
+    public static final String PK_FOURWAYSWITCH             = "a1pOIRmMTGF";// 四键开关
+    public static final String PK_FOURWAYSWITCH_2           = "a1q9trgD6NK";// 四键开关
+    public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
+    public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
@@ -166,6 +170,54 @@ public class CTSL {
         }
     };
 
+    // 定义空调二管制属性常量
+    public static final String AIRC_T_PowerSwitch              = "PowerSwitch";
+    public static final String AIRC_T_CurrentHumidity          = "CurrentHumidity";
+    public static final String AIRC_T_TargetTemperature        = "TargetTemperature";
+    public static final Map<String, PTYPE> AIRC_T_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(AIRC_T_PowerSwitch, PTYPE.t_bool);
+            put(AIRC_T_CurrentHumidity, PTYPE.t_double);
+            put(AIRC_T_TargetTemperature, PTYPE.t_double);
+        }
+    };
+
+    // 定义空调四管制属性常量
+    public static final String AIRC_F_PowerSwitch              = "PowerSwitch";
+    public static final String AIRC_F_CurrentHumidity          = "CurrentHumidity";
+    public static final String AIRC_F_TargetTemperature        = "TargetTemperature";
+    public static final Map<String, PTYPE> AIRC_F_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(AIRC_F_PowerSwitch, PTYPE.t_bool);
+            put(AIRC_F_CurrentHumidity, PTYPE.t_double);
+            put(AIRC_F_TargetTemperature, PTYPE.t_double);
+        }
+    };
+
+    // 定义拉菲地暖(电机)属性常量
+    public static final String FLOORH_001_PowerSwitch              = "PowerSwitch";
+    public static final String FLOORH_001_CurrentHumidity          = "CurrentHumidity";
+    public static final String FLOORH_001_TargetTemperature        = "TargetTemperature";
+    public static final Map<String, PTYPE> FLOORH_001_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(FLOORH_001_PowerSwitch, PTYPE.t_bool);
+            put(FLOORH_001_CurrentHumidity, PTYPE.t_double);
+            put(FLOORH_001_TargetTemperature, PTYPE.t_double);
+        }
+    };
+
+    // 定义三键开关属性常量
+    public static final String TWS_P3_PowerSwitch_1          = "PowerSwitch_1";
+    public static final String TWS_P3_PowerSwitch_2          = "PowerSwitch_2";
+    public static final String TWS_P3_PowerSwitch_3          = "PowerSwitch_3";
+    public static final Map<String, PTYPE> TWS_3_Properties   = new HashMap<String, PTYPE>(){
+        {
+            put(TWS_P3_PowerSwitch_1, PTYPE.t_bool);
+            put(TWS_P3_PowerSwitch_2, PTYPE.t_bool);
+            put(TWS_P3_PowerSwitch_3, PTYPE.t_bool);
+        }
+    };
+
     // 定义遥控按钮属性常量
     public static final String RCB_P_EmergencyAlarm         = "EmergencyAlarm";
     public static final String RCB_P_BatteryPercentage      = "BatteryPercentage";
@@ -273,7 +325,12 @@ public class CTSL {
 			put(PK_LIGHT, LIGHT_Properties);
             put(PK_RGB_COLOR_LIGHT_STRIP, RGBLS_Properties);
             put(PK_FOURWAYSWITCH, FWS_Properties);
+            put(PK_FOURWAYSWITCH_2, FWS_Properties);
             put(PK_SIX_TWO_SCENE_SWITCH, SIX_SCENE_SWITCH_Properties);
+            put(PK_AIRCOMDITION_TWO, AIRC_T_Properties);
+            put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
+            put(PK_FLOORHEATING001, FLOORH_001_Properties);
+            put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
         }
     };
 
