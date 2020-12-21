@@ -551,4 +551,6 @@
     <string name="privacy_policy_dialog_check_tip">详情请查阅</string>
     <string name="privacy_policy_dialog_link">《莫科智家隐私权政策》</string>
     <string name="privacy_policy_dialog_get">知道了</string>
+
+    <string name="target_temperature">目标温度</string>
 </resources>
