@@ -204,6 +204,16 @@ public class CodeMapper {
                     }
                 }
                 break;
+            case CTSL.PK_LIGHT:
+                //调光调色面板
+                if (propertyName.equals(CTSL.LIGHT_P_BRIGHTNESS)) {
+                    mapName = context.getString(R.string.lightness);
+                    mapValue = propertyValue;
+                } else if (propertyName.equals(CTSL.LIGHT_P_COLOR_TEMPERATURE)) {
+                    mapName = context.getString(R.string.color_temperature);
+                    mapValue = propertyValue;
+                }
+                break;
             case CTSL.PK_TEMHUMSENSOR:
                 // 处理温湿度状态
                 if (propertyName.equals(CTSL.THS_P_CurrentTemperature)) {
