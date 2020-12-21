@@ -130,6 +130,33 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/service_tel_view"
+        style="@style/InputItemStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/dp_14"
+        android:paddingVertical="@dimen/dp_12">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/service_tel"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="9dp"
+            android:text="@string/service_telephone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_14" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/aboutus_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

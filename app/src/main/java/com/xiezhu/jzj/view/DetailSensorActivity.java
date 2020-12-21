@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -122,6 +123,16 @@ public class DetailSensorActivity extends DetailActivity {
             mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));
             mStateName2 = (TextView) findViewById(R.id.detailSensorLblStateName2);
             mStateValue2 = (TextView) findViewById(R.id.detailSensorLblStateValue2);
+        }
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            getWindow().setStatusBarColor(getResources().getColor(R.color.sensor_detail_bg));
         }
     }
 }

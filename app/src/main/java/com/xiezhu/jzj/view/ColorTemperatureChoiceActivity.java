@@ -31,6 +31,7 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
 
     private TextView mTypeName;
     private TextView mMaxValue;
+    private TextView mMinValue;
     private boolean mSceneAction;
     private int mSceneType;
 
@@ -39,8 +40,9 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color_temperature_choice);
         ButterKnife.bind(this);
-        mTypeName = (TextView) findViewById(R.id.mTypeName);
-        mMaxValue = (TextView) findViewById(R.id.mMaxValue);
+        mTypeName = findViewById(R.id.mTypeName);
+        mMaxValue = findViewById(R.id.mMaxValue);
+        mMinValue = findViewById(R.id.minValue);
         mRightText.setText("保存");
         mTitle.setText("选择色温");
         mSceneType = getIntent().getIntExtra("sceneType", 0);
@@ -48,13 +50,17 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
             mSceneAction = true;
             int value = getIntent().getIntExtra("value", 0);
             mTypeName.setText(mSceneType == 1 ? R.string.color_temperature : R.string.lightness);
-            mMaxValue.setText(mSceneType == 1 ? "1000" : "100");
+            mMaxValue.setText(mSceneType == 1 ? "6500" : "100");
+            mMinValue.setText(mSceneType == 1 ? "2700" : "0");
             mTitle.setText("场景动作");
-            mSeekBar.setProgress(value);
+            mSeekBar.setMax(mSceneType == 1 ? 65 - 27 : 100);
+            mSeekBar.setProgress(mSceneType == 1 ? (value / 100) - 27 : value);
         } else {
             int temperature = getIntent().getIntExtra("temperature", 0);
-            mMaxValue.setText("1000");
-            mSeekBar.setProgress(temperature);
+            mMaxValue.setText("6500");
+            mMinValue.setText("2700");
+            mSeekBar.setMax(65 - 27);
+            mSeekBar.setProgress((temperature / 100) - 27);
         }
     }
 
@@ -76,14 +82,15 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_toolbar_right:
+                int progress = mSeekBar.getProgress();
                 if (mSceneAction) {
                     ColorLightSceneEvent event = new ColorLightSceneEvent();
                     event.setmType(mSceneType == 1 ? ColorLightSceneEvent.TYPE.TYPE_COLOR_TEMPERATURE : ColorLightSceneEvent.TYPE.TYPE_LIGHTNESS);
-                    event.setmValue(mSeekBar.getProgress());
+                    event.setmValue(mSceneType == 1 ? (progress + 27) * 100 : progress);
                     EventBus.getDefault().post(event);
                 } else {
                     Intent intent = new Intent();
-                    intent.putExtra("temperature", mSeekBar.getProgress() * 10);
+                    intent.putExtra("temperature", (progress + 27) * 100);
                     setResult(RESULT_OK, intent);
                 }
                 finish();

@@ -2,6 +2,8 @@ package com.xiezhu.jzj.view;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -75,6 +77,16 @@ public class MyInfoActivity extends BaseActivity {
         nickName.setText(Account.getUserNick());
         userAccount.setText(Account.getUserPhone());
 
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Override

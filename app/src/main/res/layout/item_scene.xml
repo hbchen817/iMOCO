@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_160"
+    android:layout_marginHorizontal="@dimen/dp_20"
+    android:layout_marginTop="@dimen/dp_10"
+    android:layout_marginBottom="@dimen/dp_10"
+    app:cardCornerRadius="@dimen/dp_20">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_120"
+                android:scaleType="centerCrop"
+                android:src="@drawable/scene_alarm_on" />
+
+            <TextView
+                android:id="@+id/sceneName"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_40"
+                android:gravity="center"
+                android:paddingVertical="@dimen/dp_10"
+                android:text="场景一"
+                android:textColor="@color/all_3"
+                android:textSize="@dimen/sp_16" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editMask"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_160"
+            android:background="#33000000"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/editBtn"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                android:background="@drawable/white_round"
+                android:gravity="center"
+                android:text="编辑"
+                android:textColor="@color/topic_color2"
+                android:textSize="@dimen/sp_16" />
+
+            <View
+                android:layout_width="@dimen/dp_1"
+                android:layout_height="@dimen/dp_50"
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:background="@color/white" />
+
+            <TextView
+                android:id="@+id/bindBtn"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                android:background="@drawable/white_round"
+                android:gravity="center"
+                android:text="绑定"
+                android:textColor="@color/topic_color2"
+                android:textSize="@dimen/sp_16" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -6,8 +6,8 @@ public class ItemColorLightScene implements Visitable {
 
     private String id;
     private String sceneName;
-    private int lightness;
-    private int k;
+    private int lightness = -1;
+    private int k = -1;
 
     public ItemColorLightScene() {
     }

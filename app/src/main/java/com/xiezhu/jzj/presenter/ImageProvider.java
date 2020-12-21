@@ -237,6 +237,37 @@ public class ImageProvider {
                         return R.drawable.state_fourswitch_4_off;
                     }
                 }
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                //六键两场景
+                if (property.equals(CTSL.SIX_SCENE_SWITCH_P_POWER_1)) {
+                    // 第一路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_twoswitch_1_on;
+                    } else {
+                        return R.drawable.state_twoswitch_1_off;
+                    }
+                } else if (property.equals(CTSL.SIX_SCENE_SWITCH_P_POWER_2)) {
+                    // 第二路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_twoswitch_2_on;
+                    } else {
+                        return R.drawable.state_twoswitch_2_off;
+                    }
+                } else if (property.equals(CTSL.SIX_SCENE_SWITCH_P_POWER_3)) {
+                    // 第三路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_twoswitch_2_on;
+                    } else {
+                        return R.drawable.state_twoswitch_2_off;
+                    }
+                } else if (property.equals(CTSL.SIX_SCENE_SWITCH_P_POWER_4)) {
+                    // 第四路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        return R.drawable.state_twoswitch_2_on;
+                    } else {
+                        return R.drawable.state_twoswitch_2_off;
+                    }
+                }
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
                 if(property.equals(CTSL.DS_P_ContactState)) {

@@ -399,6 +399,102 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    //创建用于按键自动场景触发手动场景
+    public void createSwitchAutoScene(EScene.sceneBaseInfoEntry baseInfo, EScene.triggerEntry triggerEntry,
+                                      String actionSceneID,
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      Handler processDataHandler) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("mode", "any");
+
+        // 构造条件caConditions
+        JSONArray caConditions = new JSONArray();
+        // 设置属性
+        JSONObject condition = new JSONObject();
+        condition.put("uri", "condition/device/event");
+        JSONObject conditionParams = new JSONObject();
+
+        conditionParams.put("productKey", triggerEntry.productKey);
+        conditionParams.put("deviceName", triggerEntry.deviceName);
+        conditionParams.put("eventCode", "KeyValueNotification");
+        conditionParams.put("propertyName", "KeyValue");
+        conditionParams.put("compareType", "==");
+        conditionParams.put("compareValue", Integer.parseInt(triggerEntry.state.rawValue));
+
+        condition.put("params", conditionParams);
+        caConditions.add(condition);
+
+        // 构造响应Actions
+        JSONArray actions = new JSONArray();
+        // 设置属性
+        JSONObject state = new JSONObject();
+        state.put("uri", "action/scene/trigger");
+        JSONObject params = new JSONObject();
+        params.put("sceneId", actionSceneID);
+        state.put("params", params);
+        actions.add(state);
+
+        requestParameterEntry.addParameter("caConditions", caConditions);
+        requestParameterEntry.addParameter("actions", actions);
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATE_SWITCH_AUTO_SCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //设置设备扩展信息
+    public void setExtendedProperty(String iotId,
+                                    String dataKey,
+                                    String dataValue,
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    Handler processDataHandler) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_SET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.addParameter("dataValue", dataValue);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //获取设备扩展信息
+    public void getExtendedProperty(String iotId,
+                                    String dataKey,
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    Handler processDataHandler) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_GET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     // 更新场景
     public void update(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,
                        Handler commitFailureHandler,
@@ -560,6 +656,61 @@ public class SceneManager {
         if(isHasAction){
             requestParameterEntry.addParameter("actions", actions);
         }
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 更新用于按键自动场景触发手动场景
+    public void updateSwitchAutoScene(EScene.sceneBaseInfoEntry baseInfo, EScene.triggerEntry triggerEntry,
+                                      String actionSceneID,
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("mode", "any");
+
+        // 构造条件caConditions
+        JSONArray caConditions = new JSONArray();
+        // 设置属性
+        JSONObject condition = new JSONObject();
+        condition.put("uri", "condition/device/event");
+        JSONObject conditionParams = new JSONObject();
+
+        conditionParams.put("productKey", triggerEntry.productKey);
+        conditionParams.put("deviceName", triggerEntry.deviceName);
+        conditionParams.put("eventCode", "KeyValueNotification");
+        conditionParams.put("propertyName", "KeyValue");
+        conditionParams.put("compareType", "==");
+        conditionParams.put("compareValue", Integer.parseInt(triggerEntry.state.rawValue));
+
+        condition.put("params", conditionParams);
+        caConditions.add(condition);
+
+        // 构造响应Actions
+        JSONArray actions = new JSONArray();
+        // 设置属性
+        JSONObject state = new JSONObject();
+        state.put("uri", "action/scene/trigger");
+        JSONObject params = new JSONObject();
+        params.put("sceneId", actionSceneID);
+        state.put("params", params);
+        actions.add(state);
+
+        requestParameterEntry.addParameter("caConditions", caConditions);
+        requestParameterEntry.addParameter("actions", actions);
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
 
@@ -1166,6 +1317,46 @@ public class SceneManager {
         //requestParameterEntry.addParameter("nowTime", new Date().getTime()-1000*3600*24);
         requestParameterEntry.addParameter("nowTime", new Date().getTime());
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETSCENELOG;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //获取设备动作
+    public void getDeviceAction(String iotID,
+                                Handler commitFailureHandler,
+                                Handler responseErrorHandler,
+                                Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotID);
+        requestParameterEntry.addParameter("flowType", 2);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_SCENE_ABILITY_TSL;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //获取设备动作
+    public void getDeviceTrigger(String iotID,
+                                 Handler commitFailureHandler,
+                                 Handler responseErrorHandler,
+                                 Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotID);
+        requestParameterEntry.addParameter("flowType", 0);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_SCENE_ABILITY_TSL_TRIGGER;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

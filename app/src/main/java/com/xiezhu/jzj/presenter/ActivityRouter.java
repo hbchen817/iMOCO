@@ -14,7 +14,13 @@ import com.xiezhu.jzj.view.DetailOneSwitchActivity;
 import com.xiezhu.jzj.view.DetailSensorActivity;
 import com.xiezhu.jzj.view.DetailThreeSwitchActivity;
 import com.xiezhu.jzj.view.DetailTwoSwitchActivity;
+import com.xiezhu.jzj.view.FourSceneSwitchActivity;
 import com.xiezhu.jzj.view.LockDetailActivity;
+import com.xiezhu.jzj.view.OneKeySceneDetailActivity;
+import com.xiezhu.jzj.view.SixSceneSwitchActivity;
+import com.xiezhu.jzj.view.SixTwoSceneSwitchActivity;
+import com.xiezhu.jzj.view.ThreeSceneSwitchActivity;
+import com.xiezhu.jzj.view.TwoSceneSwitchActivity;
 
 /**
  * Creator: xieshaobing
@@ -73,6 +79,24 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_LIGHT:
                 intent = new Intent(context, ColorLightDetailActivity.class);
+                break;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                intent = new Intent(context, OneKeySceneDetailActivity.class);
+                break;
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                intent = new Intent(context, SixSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                intent = new Intent(context, TwoSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_THREE_SCENE_SWITCH:
+                intent = new Intent(context, ThreeSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;
             default:
                 String code = "link://router/" + productKey;

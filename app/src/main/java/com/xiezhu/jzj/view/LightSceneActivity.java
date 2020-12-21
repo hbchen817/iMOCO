@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.CTSL;
@@ -148,6 +151,7 @@ public class LightSceneActivity extends BaseActivity {
             //编辑场景
             mTitle.setText("编辑场景");
             mSceneName.setText(mScene.name);
+            mSceneManager.querySceneDetail(mScene.id, "0", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
         }
     }
 
@@ -191,6 +195,24 @@ public class LightSceneActivity extends BaseActivity {
                     String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
                     ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     finish();
+                    RefreshData.refreshSceneListData();
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
+                    // 处理获取场景详情
+                    JSONObject result = JSON.parseObject((String) msg.obj);
+                    JSONArray actionsJson = result.getJSONArray("actionsJson");
+                    for (int j = 0; j < actionsJson.size(); j++) {
+                        JSONObject jsonObject = JSON.parseObject(actionsJson.getString(j));
+                        JSONObject params = jsonObject.getJSONObject("params");
+                        mIotID = params.getString("iotId");
+                        if (params.getString("propertyName").equalsIgnoreCase(CTSL.LIGHT_P_BRIGHTNESS)) {
+                            mLightnessView.setVisibility(View.VISIBLE);
+                            mLightnessText.setText(params.getString("propertyValue"));
+                        } else {
+                            mTemperatureView.setVisibility(View.VISIBLE);
+                            mTemperatureText.setText(params.getString("propertyValue"));
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -229,11 +251,13 @@ public class LightSceneActivity extends BaseActivity {
                         EScene.responseEntry entry = new EScene.responseEntry();
                         entry.iotId = mIotID;
                         entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
+                        parameters.add(entry);
                     }
                     if (mTemperatureView.getVisibility() == View.VISIBLE) {
                         EScene.responseEntry entry = new EScene.responseEntry();
                         entry.iotId = mIotID;
                         entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
+                        parameters.add(entry);
                     }
                     mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 } else {
@@ -246,11 +270,13 @@ public class LightSceneActivity extends BaseActivity {
                         EScene.responseEntry entry = new EScene.responseEntry();
                         entry.iotId = mIotID;
                         entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
+                        parameters.add(entry);
                     }
                     if (mTemperatureView.getVisibility() == View.VISIBLE) {
                         EScene.responseEntry entry = new EScene.responseEntry();
                         entry.iotId = mIotID;
                         entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
+                        parameters.add(entry);
                     }
                     mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 }

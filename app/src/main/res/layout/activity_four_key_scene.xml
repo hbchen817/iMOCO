@@ -5,7 +5,7 @@
     android:background="#ECECEC"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include layout="@layout/include_detail_black" />
 
     <RelativeLayout
         android:layout_width="@dimen/dp_180"
@@ -21,7 +21,7 @@
             android:background="#71A0F9" />
 
         <TextView
-            android:id="@+id/mSceneContentText"
+            android:id="@+id/mSceneContentText1"
             android:paddingVertical="@dimen/dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             android:textColor="#565353" />
         <TextView
             android:layout_alignParentRight="true"
-            android:id="@+id/mSceneContentText1"
+            android:id="@+id/mSceneContentText3"
             android:paddingVertical="@dimen/dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:textColor="#565353" />
         <TextView
             android:layout_alignParentRight="true"
-            android:id="@+id/mSceneContentText3"
+            android:id="@+id/mSceneContentText4"
             android:paddingVertical="@dimen/dp_20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

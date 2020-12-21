@@ -5,18 +5,33 @@
     android:background="#ECECEC"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include layout="@layout/include_detail_black" />
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_350">
+        android:layout_width="@dimen/dp_300"
+        android:layout_height="@dimen/dp_200"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="@dimen/dp_75">
 
         <ImageView
-            android:id="@+id/device_image_view"
-            android:layout_width="@dimen/dp_200"
-            android:layout_centerInParent="true"
+            android:id="@+id/mSwitch1"
+            android:layout_width="@dimen/dp_100"
             android:layout_height="@dimen/dp_200"
-            android:background="#71A0F9" />
+            android:src="@drawable/state_twoswitch_1_off" />
+
+        <ImageView
+            android:id="@+id/mSwitch2"
+            android:layout_width="@dimen/dp_100"
+            android:layout_height="@dimen/dp_200"
+            android:layout_toRightOf="@id/mSwitch1"
+            android:src="@drawable/state_twoswitch_2_off" />
+
+        <ImageView
+            android:id="@+id/mSwitch3"
+            android:layout_width="@dimen/dp_100"
+            android:layout_height="@dimen/dp_200"
+            android:layout_toRightOf="@id/mSwitch2"
+            android:src="@drawable/state_twoswitch_2_off" />
 
 
     </RelativeLayout>
@@ -31,23 +46,24 @@
 
         <TextView
             android:layout_width="0dp"
-            android:paddingVertical="@dimen/dp_20"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/key_one_status"
             android:textColor="#565353" />
 
 
         <TextView
-            android:id="@+id/mSceneContentText"
-            android:paddingVertical="@dimen/dp_20"
+            android:id="@+id/mSceneContentText1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
 
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,23 +74,24 @@
 
         <TextView
             android:layout_width="0dp"
-            android:paddingVertical="@dimen/dp_20"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/key_two_status"
             android:textColor="#565353" />
 
 
         <TextView
-            android:id="@+id/mSceneContentText1"
-            android:paddingVertical="@dimen/dp_20"
+            android:id="@+id/mSceneContentText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
 
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -85,18 +102,18 @@
 
         <TextView
             android:layout_width="0dp"
-            android:paddingVertical="@dimen/dp_20"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/key_three_status"
             android:textColor="#565353" />
 
 
         <TextView
-            android:id="@+id/mSceneContentText2"
-            android:paddingVertical="@dimen/dp_20"
+            android:id="@+id/mSceneContentText3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
 

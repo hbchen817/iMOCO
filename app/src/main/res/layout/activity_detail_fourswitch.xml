@@ -23,20 +23,20 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/detailTwoSwitchImgOperate2"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:scaleType="fitEnd"
-                android:src="@drawable/state_fourswitch_2_off" />
-
-            <ImageView
                 android:id="@+id/detailTwoSwitchImgOperate1"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
-                android:scaleType="fitStart"
+                android:scaleType="fitEnd"
                 android:src="@drawable/state_fourswitch_1_off" />
+
+            <ImageView
+                android:id="@+id/detailTwoSwitchImgOperate2"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:scaleType="fitStart"
+                android:src="@drawable/state_fourswitch_2_off" />
         </LinearLayout>
 
         <LinearLayout
@@ -45,20 +45,20 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/detailFourSwitchImgOperate4"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:scaleType="fitEnd"
-                android:src="@drawable/state_fourswitch_4_off" />
-
-            <ImageView
                 android:id="@+id/detailFourSwitchImgOperate3"
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
-                android:scaleType="fitStart"
+                android:scaleType="fitEnd"
                 android:src="@drawable/state_fourswitch_3_off" />
+
+            <ImageView
+                android:id="@+id/detailFourSwitchImgOperate4"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:scaleType="fitStart"
+                android:src="@drawable/state_fourswitch_4_off" />
         </LinearLayout>
     </LinearLayout>
 

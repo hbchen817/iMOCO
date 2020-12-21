@@ -300,7 +300,7 @@ public class LockDetailActivity extends DetailActivity {
                 finish();
                 break;
             case R.id.includeDetailImgSetting:
-
+                showBindKeyDialog("指纹钥匙1");
                 break;
             case R.id.mUserManagerView:
                 UserManagerActivity.start(this, mIOTId);

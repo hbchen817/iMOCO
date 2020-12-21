@@ -1,6 +1,8 @@
 package com.xiezhu.jzj.view;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,12 +13,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xiezhu.jzj.R;
+import com.xiezhu.jzj.contract.CScene;
+import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.event.RefreshData;
 import com.xiezhu.jzj.model.ERealtimeData;
+import com.xiezhu.jzj.model.EScene;
+import com.xiezhu.jzj.presenter.CloudDataParser;
 import com.xiezhu.jzj.presenter.ConfigureNetwork;
 import com.xiezhu.jzj.presenter.RealtimeDataParser;
 import com.xiezhu.jzj.presenter.RealtimeDataReceiver;
+import com.xiezhu.jzj.presenter.SceneManager;
 import com.xiezhu.jzj.presenter.SystemParameter;
 import com.xiezhu.jzj.utility.Dialog;
 import com.xiezhu.jzj.utility.Logger;
@@ -79,6 +86,7 @@ public class PermitJoinActivity extends BaseActivity {
     private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            SceneManager mSceneManager = new SceneManager(mActivity);
             if (Constant.MSG_CALLBACK_BINDSUBDEVICE == msg.what) {
                 // 绑定子设备回调
                 if (msg.obj != null && ((String) msg.obj).length() > 0) {
@@ -96,6 +104,9 @@ public class PermitJoinActivity extends BaseActivity {
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
+                    if (mProductKey.equals(CTSL.PK_LIGHT)) {
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                    }
                     BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
@@ -110,6 +121,20 @@ public class PermitJoinActivity extends BaseActivity {
                         mJoinThread = null;
                     }
                     finish();
+                }
+            } else if (Constant.MSG_CALLBACK_QUERYSCENELIST == msg.what) {
+                // 处理获取场景列表数据
+                EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                if (sceneList != null && sceneList.scenes != null) {
+                    for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                        if (item.description.equals(mSubDeviceIotId)) {
+                            mSceneManager.deleteScene(item.id, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                        }
+                    }
+                    if (sceneList.scenes.size() >= sceneList.pageSize) {
+                        // 数据没有获取完则获取下一页数据
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                    }
                 }
             }
             return false;
@@ -158,6 +183,17 @@ public class PermitJoinActivity extends BaseActivity {
         this.mConfigNetwork = new ConfigureNetwork(this);
         tvToolbarTitle.setText("添加设备");
         this.initProcess();
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Override

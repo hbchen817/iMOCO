@@ -69,6 +69,54 @@
             android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
+            android:name=".view.ColorTemperatureChoiceActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightSceneActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.LightSceneListActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SwitchSceneListActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SwitchSceneActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SceneSwitchDeviceListActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.DeviceActionActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.FourSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.ThreeSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SixSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.TwoSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".view.SixTwoSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
             android:name="com.xiezhu.jzj.view.ScanGatewayByNetActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name" />

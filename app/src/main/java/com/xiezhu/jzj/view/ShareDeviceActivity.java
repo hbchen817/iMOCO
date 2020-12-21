@@ -1,5 +1,7 @@
 package com.xiezhu.jzj.view;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -50,6 +52,16 @@ public class ShareDeviceActivity extends BaseActivity {
         type[0] = getString(R.string.share_device_my_device);
         type[1] = getString(R.string.share_device_share_device);
         initFragments();
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @OnClick({R.id.tv_toolbar_right,R.id.tv_toolbar_left})

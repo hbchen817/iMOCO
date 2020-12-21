@@ -78,6 +78,24 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_LIGHT:
                 setContentView(R.layout.activity_color_light);
                 break;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                setContentView(R.layout.activity_one_key_scene);
+                break;
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                setContentView(R.layout.activity_six_two_scene);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                setContentView(R.layout.activity_six_scene);
+                break;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                setContentView(R.layout.activity_two_key_scene);
+                break;
+            case CTSL.PK_THREE_SCENE_SWITCH:
+                setContentView(R.layout.activity_three_key_scene);
+                break;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                setContentView(R.layout.activity_four_key_scene);
+                break;
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);

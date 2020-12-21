@@ -23,6 +23,8 @@ import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.event.CEvent;
+import com.xiezhu.jzj.event.EEvent;
 import com.xiezhu.jzj.model.EScene;
 import com.xiezhu.jzj.model.ETSL;
 import com.xiezhu.jzj.model.ItemColorLightScene;
@@ -36,6 +38,9 @@ import com.xiezhu.jzj.presenter.SystemParameter;
 import com.xiezhu.jzj.presenter.TSLHelper;
 import com.xiezhu.jzj.viewholder.CommonAdapter;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +52,8 @@ public class ColorLightDetailActivity extends DetailActivity {
 
     @BindView(R.id.includeDetailImgBack)
     ImageView mBackView;
+    @BindView(R.id.includeDetailLblTitle)
+    TextView mTitleText;
     @BindView(R.id.lightnessText)
     TextView mLightnessText;
     @BindView(R.id.kText)
@@ -74,20 +81,20 @@ public class ColorLightDetailActivity extends DetailActivity {
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS).length() > 0) {
             mLightness = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_BRIGHTNESS, propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-            if (stateEntry != null) {
-                mLightnessText.setText(stateEntry.value);
-                mLightnessProgressBar.setProgress(Integer.parseInt(stateEntry.value));
-            }
+//            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_BRIGHTNESS, propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
+//            if (stateEntry != null) {
+            mLightnessText.setText(String.valueOf(mLightness));
+            mLightnessProgressBar.setProgress(mLightness);
+//            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE).length() > 0) {
             mColorTemperature = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE));
-            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_COLOR_TEMPERATURE, propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE));
-            if (stateEntry != null) {
-                mKText.setText(stateEntry.value);
-                mColorTemperatureText.setText(stateEntry.value);
-            }
+//            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_COLOR_TEMPERATURE, propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE));
+//            if (stateEntry != null) {
+            mKText.setText(String.valueOf(mColorTemperature));
+            mColorTemperatureText.setText(String.valueOf(mColorTemperature));
+//            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER).length() > 0) {
@@ -104,11 +111,28 @@ public class ColorLightDetailActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         this.mTSLHelper = new TSLHelper(this);
         this.mSceneManager = new SceneManager(this);
         mBackView.setImageResource(R.drawable.back_default);
+        mTitleText.setTextColor(getResources().getColor(R.color.all_3));
         initView();
         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+
+    @Subscribe
+    public void refreshSceneList(EEvent eventEntry) {
+        // 处理刷新手动执行场景列表数据
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
+            mList.clear();
+            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initView() {
@@ -171,6 +195,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                                 mList.add(scene);
                             }
                         }
+                        mAdapter.notifyDataSetChanged();
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // Êý¾ÝÃ»ÓÐ»ñÈ¡ÍêÔò»ñÈ¡ÏÂÒ»Ò³Êý¾Ý
                             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -178,6 +203,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
+                    // 处理获取场景详情
                     JSONObject result = JSON.parseObject((String) msg.obj);
                     String id = result.getString("id");
                     for (int i = 0; i < mList.size(); i++) {
@@ -185,7 +211,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                         if (id.equalsIgnoreCase(scene.getId())) {
                             JSONArray actionsJson = result.getJSONArray("actionsJson");
                             for (int j = 0; j < actionsJson.size(); j++) {
-                                JSONObject jsonObject = actionsJson.getJSONObject(j);
+                                JSONObject jsonObject = JSON.parseObject(actionsJson.getString(j));
                                 JSONObject params = jsonObject.getJSONObject("params");
                                 if (params.getString("propertyName").equalsIgnoreCase(CTSL.LIGHT_P_BRIGHTNESS)) {
                                     scene.setLightness(params.getIntValue("propertyValue"));
@@ -193,6 +219,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                                     scene.setK(params.getIntValue("propertyValue"));
                                 }
                             }
+                            mAdapter.notifyDataSetChanged();
                             break;
                         }
                     }
