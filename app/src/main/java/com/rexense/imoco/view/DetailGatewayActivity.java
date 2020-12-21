@@ -71,8 +71,7 @@ public class DetailGatewayActivity extends DetailActivity {
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
-        if(!super.updateState(propertyEntry))
-        {
+        if (!super.updateState(propertyEntry)) {
             return false;
         }
 
@@ -175,8 +174,8 @@ public class DetailGatewayActivity extends DetailActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSTATUSNOTIFY:
                     // 处理连接状态通知
-                    ERealtimeData.deviceConnectionStatusEntry entry = RealtimeDataParser.processConnectStatus((String)msg.obj);
-                    if(entry == null) {
+                    ERealtimeData.deviceConnectionStatusEntry entry = RealtimeDataParser.processConnectStatus((String) msg.obj);
+                    if (entry == null || entry.iotId == null) {
                         return false;
                     }
 
@@ -338,8 +337,7 @@ public class DetailGatewayActivity extends DetailActivity {
         super.onResume();
         if(this.mDeviceList != null && this.mDeviceList.size() > 0) {
             EDevice.deviceEntry bufferEntry, displayEntry;
-            for(int i = this.mDeviceList.size() - 1; i >= 0; i--)
-            {
+            for (int i = this.mDeviceList.size() - 1; i >= 0; i--) {
                 displayEntry = this.mDeviceList.get(i);
                 bufferEntry = DeviceBuffer.getDeviceInformation(displayEntry.iotId);
                 if(bufferEntry != null) {

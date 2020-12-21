@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -44,6 +45,7 @@ public class ProductGuidanceActivity extends BaseActivity {
     private ImageView mOperateIcon;
     private CheckBox mChbIsRead;
     private int mStepCount, mCurrentStepIndex;
+    private String[] mIgnoreList = {};
 
     // 数据处理器
     private Handler processDataHandler = new Handler(new Handler.Callback(){
@@ -85,12 +87,12 @@ public class ProductGuidanceActivity extends BaseActivity {
 
     // 配网步骤引导
     public void guidance(int stepIndex) {
-        if ((this.mGuidances == null || this.mGuidances.size() == 0) && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)&& !mProductKey.equals(CTSL.PK_SIX_SCENE_SWITCH)) {
+        if ((this.mGuidances == null || this.mGuidances.size() == 0) && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)&& !mProductKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
             return;
         }
 
         // 引导完作后的处理
-        if (this.mCurrentStepIndex >= this.mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100) || mProductKey.equalsIgnoreCase(CTSL.PK_SIX_SCENE_SWITCH)) {
+        if (this.mCurrentStepIndex >= this.mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100) || mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
             if(!mChbIsRead.isChecked()){
                 Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
                 return;
@@ -185,10 +187,10 @@ public class ProductGuidanceActivity extends BaseActivity {
             }
         });
 
-        if (this.mProductKey.length() > 1 && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)&&!mProductKey.equalsIgnoreCase(CTSL.PK_SIX_SCENE_SWITCH)) {
+        if (this.mProductKey.length() > 1 && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)&&!mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
             //获取产品配网引导信息
             new ProductHelper(this).getGuidanceInformation(this.mProductKey, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
-        } else if (this.mProductKey.length() > 1 && (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)||mProductKey.equalsIgnoreCase(CTSL.PK_SIX_SCENE_SWITCH))) {
+        } else if (this.mProductKey.length() > 1 && (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)||mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH))) {
             //RG4100网关
             mGuidanceCopywriting.setText(R.string.gateway_guidance);
             mChbIsRead.setVisibility(View.VISIBLE);

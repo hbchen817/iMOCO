@@ -22,8 +22,13 @@ public class CTSL {
     public static final String PK_PIRSENSOR                 = "a1CzbnRNzCR";
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
     public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
-    public static final String PK_SIX_SCENE_SWITCH          = "a1zf8jfGzTX";
-	public static final String PK_LIGHT                     = "a1SdpzGgZCa";
+    public static final String PK_SIX_TWO_SCENE_SWITCH      = "a1zf8jfGzTX";
+    public static final String PK_SIX_SCENE_SWITCH          = "a1MLvTtRmWo";
+    public static final String PK_TWO_SCENE_SWITCH          = "a14kD7IKWqp";
+    public static final String PK_THREE_SCENE_SWITCH        = "a1S5xUUURz4";
+    public static final String PK_FOUR_SCENE_SWITCH         = "a1uaG4drs1e";
+    public static final String PK_LIGHT                     = "a1SdpzGgZCa";
+    public static final String PK_ONE_SCENE_SWITCH          = "a1HurDIuRiW";
 
     public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
     public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
@@ -113,6 +118,27 @@ public class CTSL {
             put(LIGHT_P_COLOR_TEMPERATURE, PTYPE.t_int32);
         }
     };
+
+    //定义六键四开二场景属性常量
+    public static final String SIX_SCENE_SWITCH_P_POWER_1    = "PowerSwitch_1";
+    public static final String SIX_SCENE_SWITCH_P_POWER_2    = "PowerSwitch_2";
+    public static final String SIX_SCENE_SWITCH_P_POWER_3    = "PowerSwitch_3";
+    public static final String SIX_SCENE_SWITCH_P_POWER_4    = "PowerSwitch_4";
+    public static final String SIX_SCENE_SWITCH_KEY_CODE_1   = "5";
+    public static final String SIX_SCENE_SWITCH_KEY_CODE_2   = "6";
+    public static final Map<String, PTYPE> SIX_SCENE_SWITCH_Properties = new HashMap<String, PTYPE>(){
+        {
+            put(SIX_SCENE_SWITCH_P_POWER_1, PTYPE.t_int32);
+            put(SIX_SCENE_SWITCH_P_POWER_2, PTYPE.t_int32);
+            put(SIX_SCENE_SWITCH_P_POWER_3, PTYPE.t_int32);
+            put(SIX_SCENE_SWITCH_P_POWER_4, PTYPE.t_int32);
+        }
+    };
+
+    public static final String SCENE_SWITCH_KEY_CODE_1       = "1";
+    public static final String SCENE_SWITCH_KEY_CODE_2       = "2";
+    public static final String SCENE_SWITCH_KEY_CODE_3       = "3";
+    public static final String SCENE_SWITCH_KEY_CODE_4       = "4";
 
     // 定义四键开关属性常量
     public static final String FWS_P_PowerSwitch_1          = "PowerSwitch_1";
@@ -234,6 +260,7 @@ public class CTSL {
 			put(PK_LIGHT, LIGHT_Properties);
             put(PK_RGB_COLOR_LIGHT_STRIP, RGBLS_Properties);
             put(PK_FOURWAYSWITCH, FWS_Properties);
+            put(PK_SIX_TWO_SCENE_SWITCH, SIX_SCENE_SWITCH_Properties);
         }
     };
 

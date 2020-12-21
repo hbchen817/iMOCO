@@ -81,16 +81,8 @@ public class DeleteAccountActivity extends BaseActivity {
                             Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                            // IndexActivity.mainActivity.finish();
-                            Intent fIntent = new Intent();
-                            fIntent.setAction("finish_IndexActivity");
-                            sendBroadcast(fIntent);
-
-                            // MyInfoActivity.myInfoActivity.finish();
-                            Intent fInfoIntent = new Intent();
-                            fInfoIntent.setAction("finish_MyInfoActivity");
-                            sendBroadcast(fInfoIntent);
-
+                            IndexActivity.mainActivity.finish();
+                            MyInfoActivity.myInfoActivity.finish();
                             finish();
                             overridePendingTransition(0, 0);
                         }

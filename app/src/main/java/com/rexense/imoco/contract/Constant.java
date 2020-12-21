@@ -140,6 +140,14 @@ public class Constant {
     public static final String API_PATH_USER_KEY_UNBIND             = "/lock/key/user/unbind";
     //查询用户和设备的关系
     public static final String API_PATH_GET_BY_ACCOUNT_AND_DEV      = "/uc/getByAccountAndDev";
+    //获取设备上支持trigger/condition/action配置的功能与TSL定义
+    public static final String API_IOTID_SCENE_ABILITY_TSL_LIST     = "/iotid/scene/ability/tsl/list";
+    //获取设备上支持TCA配置的功能属性列表
+    public static final String API_IOTID_SCENE_ABILITY_LIST         = "/iotid/scene/ability/list";
+    //设置设备扩展信息
+    public static final String API_EXTENDED_PROPERTY_SET            = "/thing/extended/property/set";
+    //获取设备扩展信息
+    public static final String API_EXTENDED_PROPERTY_GET            = "/thing/extended/property/get";
 
 
     // 定义插件URL常量
@@ -226,6 +234,11 @@ public class Constant {
     public static final int MSG_CALLBACK_KEY_USER_GET               = 154;
     public static final int MSG_CALLBACK_KEY_USER_UNBIND            = 155;
     public static final int MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV     = 156;
+    public static final int MSG_CALLBACK_SCENE_ABILITY_TSL          = 157;
+    public static final int MSG_CALLBACK_SCENE_ABILITY_TSL_TRIGGER  = 158;
+    public static final int MSG_CALLBACK_EXTENDED_PROPERTY_SET      = 159;
+    public static final int MSG_CALLBACK_EXTENDED_PROPERTY_GET      = 160;
+    public static final int MSG_CALLBACK_CREATE_SWITCH_AUTO_SCENE   = 161;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

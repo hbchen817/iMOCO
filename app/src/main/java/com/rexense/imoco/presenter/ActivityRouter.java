@@ -13,7 +13,13 @@ import com.rexense.imoco.view.DetailGatewayActivity;
 import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
 import com.rexense.imoco.view.DetailTwoSwitchActivity;
+import com.rexense.imoco.view.FourSceneSwitchActivity;
 import com.rexense.imoco.view.LockDetailActivity;
+import com.rexense.imoco.view.OneKeySceneDetailActivity;
+import com.rexense.imoco.view.SixSceneSwitchActivity;
+import com.rexense.imoco.view.SixTwoSceneSwitchActivity;
+import com.rexense.imoco.view.ThreeSceneSwitchActivity;
+import com.rexense.imoco.view.TwoSceneSwitchActivity;
 
 /**
  * Creator: xieshaobing
@@ -68,6 +74,24 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_LIGHT:
                 intent = new Intent(context, ColorLightDetailActivity.class);
+                break;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                intent = new Intent(context, OneKeySceneDetailActivity.class);
+                break;
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                intent = new Intent(context, SixSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                intent = new Intent(context, TwoSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_THREE_SCENE_SWITCH:
+                intent = new Intent(context, ThreeSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;
             default:
                 String code = "link://router/" + productKey;

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -17,6 +18,8 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
+import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
 import com.rexense.imoco.utility.PermissionUtil;
 import com.rexense.imoco.utility.SpUtils;
@@ -28,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
