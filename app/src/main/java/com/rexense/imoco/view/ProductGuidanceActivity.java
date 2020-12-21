@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -194,6 +196,17 @@ public class ProductGuidanceActivity extends BaseActivity {
             mChbIsRead.setVisibility(View.VISIBLE);
             mOperateCopywriting.setText(R.string.dialog_confirm);
             Glide.with(ProductGuidanceActivity.this).load(R.drawable.icon_gateway_fton).into(this.mGuidanceIcon);
+        }
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
         }
     }
 }

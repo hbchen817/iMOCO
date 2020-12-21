@@ -9,8 +9,7 @@
     <View
         android:id="@+id/fake_statusbar_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/statusbar_view_height"
-        android:background="@color/topic_color1" />
+        android:layout_height="@dimen/statusbar_view_height"/>
 
     <include layout="@layout/include_detail" />
 

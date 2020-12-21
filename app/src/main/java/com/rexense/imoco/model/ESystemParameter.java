@@ -26,6 +26,8 @@ public class ESystemParameter {
     private String mIsHidePrivacyPolicy;
     // 是否隐藏用户协议
     private String mIsHideUserDeal;
+    // 首页手动模式item宽度
+    private int mSceneItemWidth;
 
     // 构造
     public ESystemParameter(){
@@ -39,6 +41,17 @@ public class ESystemParameter {
         this.mIsAddXZDevice = "No";
         this.mIsHidePrivacyPolicy = "No";
         this.mIsHideUserDeal = "No";
+        this.mSceneItemWidth = 0;
+    }
+
+    // 获取首页手动模式item宽度
+    public int getSceneItemWidth() {
+        return mSceneItemWidth;
+    }
+
+    // 设置首页手动模式item宽度
+    public void setSceneItemWidth(int mSceneItemWidth) {
+        this.mSceneItemWidth = mSceneItemWidth;
     }
 
     // 设置是否登录

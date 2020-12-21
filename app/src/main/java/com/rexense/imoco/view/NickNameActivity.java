@@ -1,6 +1,8 @@
 package com.rexense.imoco.view;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,6 +49,17 @@ public class NickNameActivity extends BaseActivity {
         ButterKnife.bind(this);
         tvToolbarRight.setText(getString(R.string.nick_name_save));
         tvToolbarTitle.setText(getString(R.string.myinfo_nickname));
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @OnClick({R.id.tv_toolbar_right})

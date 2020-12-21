@@ -2,6 +2,8 @@ package com.rexense.imoco.presenter;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -9,19 +11,30 @@ import android.view.WindowManager;
 import androidx.multidex.MultiDex;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.iot.aep.sdk.IoTSmart;
+import com.aliyun.iot.aep.sdk.apiclient.IoTAPIClientImpl;
+import com.aliyun.iot.aep.sdk.apiclient.callback.IoTResponse;
+import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequest;
+import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequestWrapper;
+import com.aliyun.iot.aep.sdk.apiclient.tracker.Tracker;
 import com.aliyun.iot.aep.sdk.framework.AApplication;
+import com.aliyun.iot.aep.sdk.log.ALog;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.login.oa.OALoginAdapter;
 import com.gary.hi.library.log.HiConsolePrinter;
 import com.gary.hi.library.log.HiFilePrinter;
 import com.gary.hi.library.log.HiLogConfig;
 import com.gary.hi.library.log.HiLogManager;
+import com.gary.hi.library.log.HiLogPrinter;
 import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.utility.CrashHandler;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.view.OALoginActivity;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.LogcatTree;
+
+//import leakcanary.LeakCanary;
 
 /**
  * Creator: xieshaobing
@@ -37,8 +50,13 @@ public class MocoApplication extends AApplication {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
+
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+
         //设置日志级别
         Logger.setLogLevel(2);
+        CrashReport.initCrashReport(getApplicationContext(), "9b346e3393", BuildConfig.DEBUG);
 
         //安装MultiDex
         MultiDex.install(this);
@@ -55,8 +73,6 @@ public class MocoApplication extends AApplication {
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
         }
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
         initLog();
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
@@ -125,6 +141,7 @@ public class MocoApplication extends AApplication {
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
 
+        SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
     }
 
     private void initLog(){

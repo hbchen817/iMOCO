@@ -283,7 +283,7 @@
         <ListView
             android:id="@+id/mainLstShare"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="4dp"
             android:visibility="visible"
