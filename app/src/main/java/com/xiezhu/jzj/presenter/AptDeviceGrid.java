@@ -55,6 +55,7 @@ public class AptDeviceGrid extends BaseAdapter {
 	// 清除数据
 	public void clearData() {
 		this.mDeviceList.clear();
+		this.notifyDataSetChanged();
 	}
 
 	// 更新状态数据

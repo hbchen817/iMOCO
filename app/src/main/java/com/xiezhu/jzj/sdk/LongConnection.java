@@ -37,6 +37,7 @@ public class LongConnection {
                 return;
             }
 
+            if (mLock == null) mLock = new ReentrantLock();
             mLock.lock();
             try {
                 for (String key : mCallbackHandlerList.keySet()) {
@@ -106,6 +107,7 @@ public class LongConnection {
 
     // 添加回调处理器
     public static boolean addCallbackHandler(String key, ERealtimeData.callbackHandlerEntry entry) {
+        if (mLock == null) mLock = new ReentrantLock();
         mLock.lock();
         boolean r = true;
         try {
@@ -125,6 +127,7 @@ public class LongConnection {
 
     // 删除回调处理器
     public static boolean deleteCallbackHandler(String key) {
+        if (mLock == null) mLock = new ReentrantLock();
         mLock.lock();
         boolean r = true;
         try {
