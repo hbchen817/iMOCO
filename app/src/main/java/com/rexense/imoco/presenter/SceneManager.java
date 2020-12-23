@@ -623,6 +623,101 @@ public class SceneManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    // 更新场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, List<EScene.responseEntry> parameters,
+                       Handler commitFailureHandler,
+                       Handler responseErrorHandler,
+                       Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        // 构造响应Actions
+        boolean isHasAction = false;
+        JSONArray actions = new JSONArray();
+        for (EScene.responseEntry responseEntry : parameters) {
+            // 设置属性
+            JSONObject state = new JSONObject();
+            state.put("uri", "action/device/setProperty");
+            JSONObject params = new JSONObject();
+            params.put("iotId", responseEntry.iotId);
+            params.put("propertyName", responseEntry.state.rawName);
+            params.put("propertyValue", Integer.parseInt(responseEntry.state.rawValue));
+            state.put("params", params);
+            actions.add(state);
+            isHasAction = true;
+        }
+        if(isHasAction){
+            requestParameterEntry.addParameter("actions", actions);
+        }
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 更新用于按键自动场景触发手动场景
+    public void updateSwitchAutoScene(EScene.sceneBaseInfoEntry baseInfo, EScene.triggerEntry triggerEntry,
+                                      String actionSceneID,
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("mode", "any");
+
+        // 构造条件caConditions
+        JSONArray caConditions = new JSONArray();
+        // 设置属性
+        JSONObject condition = new JSONObject();
+        condition.put("uri", "condition/device/event");
+        JSONObject conditionParams = new JSONObject();
+
+        conditionParams.put("productKey", triggerEntry.productKey);
+        conditionParams.put("deviceName", triggerEntry.deviceName);
+        conditionParams.put("eventCode", "KeyValueNotification");
+        conditionParams.put("propertyName", "KeyValue");
+        conditionParams.put("compareType", "==");
+        conditionParams.put("compareValue", Integer.parseInt(triggerEntry.state.rawValue));
+
+        condition.put("params", conditionParams);
+        caConditions.add(condition);
+
+        // 构造响应Actions
+        JSONArray actions = new JSONArray();
+        // 设置属性
+        JSONObject state = new JSONObject();
+        state.put("uri", "action/scene/trigger");
+        JSONObject params = new JSONObject();
+        params.put("sceneId", actionSceneID);
+        state.put("params", params);
+        actions.add(state);
+
+        requestParameterEntry.addParameter("caConditions", caConditions);
+        requestParameterEntry.addParameter("actions", actions);
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
     // 更新场景
     public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, List<EScene.responseEntry> parameters,
