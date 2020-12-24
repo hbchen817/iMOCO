@@ -59,6 +59,7 @@ public class AptSceneList extends BaseAdapter {
 		if (sceneList != null) {
 			this.mSceneList.clear();
 			this.mSceneList.addAll(sceneList);
+			mDeleteList.clear();
 
 			for (int i = 0; i < sceneList.size(); i++) {
 				deleteTag d = new deleteTag();

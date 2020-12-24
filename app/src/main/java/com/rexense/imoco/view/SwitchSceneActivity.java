@@ -153,6 +153,10 @@ public class SwitchSceneActivity extends BaseActivity {
         titleTv.setText("输入场景名称");
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setText(mSceneName.getText());
+        if (mSceneName.getText() != null && mSceneName.getText().toString() != null) {
+            int length = mSceneName.getText().toString().length();
+            nameEt.setSelection(length);
+        }
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();

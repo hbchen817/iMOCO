@@ -92,7 +92,6 @@
         android:background="@color/appbgcolor"
         android:divider="@null"
         android:dividerHeight="6dp"
-        android:layout_weight="1"
         android:horizontalSpacing="1dip">
     </ListView>
 
@@ -103,7 +102,6 @@
         android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
         android:divider="@null"
-        android:layout_weight="1"
         android:dividerHeight="6dp"
         android:visibility="gone"
         android:horizontalSpacing="1dip">

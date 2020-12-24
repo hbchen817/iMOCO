@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECECEC"
+    android:background="@color/appbgcolor"
     android:orientation="vertical">
 
     <include layout="@layout/include_detail_black" />
@@ -18,7 +18,7 @@
             android:layout_width="@dimen/dp_180"
             android:layout_centerInParent="true"
             android:layout_height="@dimen/dp_300"
-            android:background="#71A0F9" />
+            android:background="@drawable/shape_frame_item" />
 
         <TextView
             android:id="@+id/mSceneContentText1"
