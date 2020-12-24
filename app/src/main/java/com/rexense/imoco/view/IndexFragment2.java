@@ -244,7 +244,9 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            mSceneList.add(item);
+                            if (!item.description.contains("mode == CA,")) {
+                                mSceneList.add(item);
+                            }
                         }
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据

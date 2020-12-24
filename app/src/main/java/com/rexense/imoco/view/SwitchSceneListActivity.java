@@ -127,7 +127,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (item.description.equals(mIotId)) {
+                            if (item.description.contains(mIotId)) {
                                 mList.add(item);
                             }
                         }

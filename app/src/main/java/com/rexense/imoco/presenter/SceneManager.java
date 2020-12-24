@@ -371,7 +371,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
         requestParameterEntry.addParameter("enable", baseInfo.enable);
         requestParameterEntry.addParameter("name", baseInfo.name);
-        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("description", "mode == CA," + baseInfo.description);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
         requestParameterEntry.addParameter("mode", "any");
@@ -415,7 +415,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
         requestParameterEntry.addParameter("enable", baseInfo.enable);
         requestParameterEntry.addParameter("name", baseInfo.name);
-        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("description", "mode == CA," + baseInfo.description);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
         requestParameterEntry.addParameter("mode", "any");

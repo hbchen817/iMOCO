@@ -190,7 +190,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (item.description.equals(mIOTId)) {
+                            if (item.description.contains(mIOTId)) {
                                 ItemColorLightScene scene = new ItemColorLightScene(item.id, item.name);
                                 mSceneManager.querySceneDetail(item.id, "0", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 mList.add(scene);

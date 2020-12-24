@@ -2,6 +2,7 @@ package com.rexense.imoco.view;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,10 +22,14 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.event.RefreshData;
+import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
+import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.presenter.UserCenter;
@@ -49,15 +54,17 @@ public class MoreSubdeviceActivity extends BaseActivity {
     private UserCenter mUserCenter;
     private EHomeSpace.roomListEntry mRoomListEntry;
     private String mNewNickName, mNewRoomId, mNewRoomName;
+    private SceneManager mSceneManager;
+    private String mSceneType;
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETHOMEROOMLIST:
                     // 处理获取家房间列表回调
-                    mRoomListEntry = CloudDataParser.processHomeRoomList((String)msg.obj);
+                    mRoomListEntry = CloudDataParser.processHomeRoomList((String) msg.obj);
                     break;
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
                     // 处理设置设备昵称回调
@@ -76,8 +83,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调
-                    ETSL.thingBaseInforEntry thingBaseInforEntry = CloudDataParser.processThingBaseInformation((String)msg.obj);
-                    TextView version = (TextView)findViewById(R.id.moreSubdeviceLblVersion);
+                    ETSL.thingBaseInforEntry thingBaseInforEntry = CloudDataParser.processThingBaseInformation((String) msg.obj);
+                    TextView version = (TextView) findViewById(R.id.moreSubdeviceLblVersion);
                     version.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
@@ -86,6 +93,31 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     Dialog.confirm(MoreSubdeviceActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
+                    // 处理获取场景列表数据
+                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    if (sceneList != null && sceneList.scenes != null) {
+                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                            if (item.description.contains(mIOTId)) {
+                                mSceneManager.deleteScene(item.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                        }
+                        if (sceneList.scenes.size() >= sceneList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        } else {
+                            // 如果自动场景获取结束则开始获取手动场景
+                            if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
+                                mSceneType = CScene.TYPE_MANUAL;
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                            if (mSceneType.equals(CScene.TYPE_MANUAL)) {
+                                // 数据获取完则设置场景列表数据
+                                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -99,19 +131,19 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mSetType = type;
         mWheelPickerValue.setText(initValue + "");
         // 确认处理
-        TextView ok = (TextView)findViewById(R.id.oneItemWheelPickerLblOk);
+        TextView ok = (TextView) findViewById(R.id.oneItemWheelPickerLblOk);
         ok.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWheelPickerLayout.setVisibility(View.GONE);
-                if(mSetType == 1) {
+                if (mSetType == 1) {
                     // 设置设备所属房间
                     mHomeSpaceManager.updateRoomDevice(SystemParameter.getInstance().getHomeId(), mNewRoomId, mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
             }
         });
         // 取消处理
-        TextView cancel = (TextView)findViewById(R.id.oneItemWheelPickerLblCancel);
+        TextView cancel = (TextView) findViewById(R.id.oneItemWheelPickerLblCancel);
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,19 +153,19 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
         // 生成选择项数量
         int count = 0;
-        if(type == 1) {
+        if (type == 1) {
             count = mRoomListEntry == null || mRoomListEntry.data == null ? 0 : mRoomListEntry.data.size();
         }
 
         // 生成选择项内容
-        if(count > 0) {
+        if (count > 0) {
             List<String> data = new ArrayList<String>();
             int initIndex = 0;
-            if(type == 1) {
+            if (type == 1) {
                 int n = 0;
-                for(EHomeSpace.roomEntry room : mRoomListEntry.data) {
+                for (EHomeSpace.roomEntry room : mRoomListEntry.data) {
                     data.add(room.name);
-                    if(room.name.equals(initValue)) {
+                    if (room.name.equals(initValue)) {
                         initIndex = n;
                     }
                     n++;
@@ -144,7 +176,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 @Override
                 public void onItemSelected(WheelPicker picker, Object data, int position) {
                     mWheelPickerValue.setText(data.toString());
-                    if(mSetType == 1) {
+                    if (mSetType == 1) {
                         mNewRoomId = mRoomListEntry.data.get(position).roomId;
                         mNewRoomName = data.toString();
                     }
@@ -152,7 +184,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
             });
 
             // 如果房间没有初始值则默认选择第一项
-            if(mSetType == 1 && initValue.equals("")) {
+            if (mSetType == 1 && initValue.equals("")) {
                 initIndex = 0;
                 mNewRoomId = mRoomListEntry.data.get(0).roomId;
                 mNewRoomName = data.get(0);
@@ -160,7 +192,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
             }
 
             // 加载两次数据是为了正确初始选中位置
-            for(int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2; i++) {
                 mWheelPicker.setData(data);
                 mWheelPicker.setSelectedItemPosition(initIndex);
             }
@@ -194,7 +226,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String nameStr = nameEt.getText().toString().trim();
-                if (!nameStr.equals("")){
+                if (!nameStr.equals("")) {
                     dialog.dismiss();
                     mNewNickName = nameEt.getText().toString();
                     // 设置设备昵称
@@ -221,44 +253,44 @@ public class MoreSubdeviceActivity extends BaseActivity {
         this.mName = intent.getStringExtra("name");
         this.mProductKey = intent.getStringExtra("productKey");
 
-        this.mLblTitle = (TextView)findViewById(R.id.includeTitleLblTitle);
+        this.mLblTitle = (TextView) findViewById(R.id.includeTitleLblTitle);
         this.mLblTitle.setText(this.mName);
 
         // 分享设备不允许修改房间，故不显示
-        if(intent.getIntExtra("owned", 0) == 0){
-            RelativeLayout rlRoom = (RelativeLayout)findViewById(R.id.moreSubdeviceRLRoom);
+        if (intent.getIntExtra("owned", 0) == 0) {
+            RelativeLayout rlRoom = (RelativeLayout) findViewById(R.id.moreSubdeviceRLRoom);
             rlRoom.setVisibility(View.GONE);
         }
 
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
-        if(deviceEntry != null) {
+        if (deviceEntry != null) {
             this.mRoomName = deviceEntry.roomName;
             this.mBindTime = deviceEntry.bindTime;
         }
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        ImageView imgBack = (ImageView) findViewById(R.id.includeTitleImgBack);
+        imgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.oneItemWheelPickerRLPicker);
+        this.mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
         this.mWheelPickerLayout.setVisibility(View.GONE);
-        this.mWheelPickerValue = (TextView)findViewById(R.id.oneItemWheelPickerLblValue);
+        this.mWheelPickerValue = (TextView) findViewById(R.id.oneItemWheelPickerLblValue);
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
-        this.mLblRoomName = (TextView)findViewById(R.id.moreSubdeviceLblRoom);
+        this.mLblRoomName = (TextView) findViewById(R.id.moreSubdeviceLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
-        this.mLblMACAddress = (TextView)findViewById(R.id.moreSubdeviceLblMACAddress);
+        this.mLblMACAddress = (TextView) findViewById(R.id.moreSubdeviceLblMACAddress);
         this.mLblMACAddress.setText(deviceEntry.deviceName);
-        TextView bindTime = (TextView)findViewById(R.id.moreSubdeviceLblBindTime);
+        TextView bindTime = (TextView) findViewById(R.id.moreSubdeviceLblBindTime);
         bindTime.setText(this.mBindTime);
 
         // 显示设备名称修改对话框事件处理
-        this.mLblNewNickName = (TextView)findViewById(R.id.moreSubdeviceLblName);
+        this.mLblNewNickName = (TextView) findViewById(R.id.moreSubdeviceLblName);
         this.mLblNewNickName.setText(mName);
         ImageView inputNickName = (ImageView) findViewById(R.id.moreSubdeviceImgName);
         inputNickName.setOnClickListener(new OnClickListener() {
@@ -290,7 +322,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // 设备解除绑定
-                        mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        unbindDevice();
                     }
                 });
                 builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -301,8 +333,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 builder.create().show();
             }
         };
-        TextView lblUnbind = (TextView)findViewById(R.id.moreSubdeviceLblUnbind);
-        ImageView imgUnbind = (ImageView)findViewById(R.id.moreSubdeviceImgUnbind);
+        TextView lblUnbind = (TextView) findViewById(R.id.moreSubdeviceLblUnbind);
+        ImageView imgUnbind = (ImageView) findViewById(R.id.moreSubdeviceImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
 
@@ -316,7 +348,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 startActivity(intent);
             }
         };
-        ImageView imgMessageRecord = (ImageView)findViewById(R.id.moreSubdeviceImgMsg);
+        ImageView imgMessageRecord = (ImageView) findViewById(R.id.moreSubdeviceImgMsg);
         imgMessageRecord.setOnClickListener(messageRecordListener);
 
         // 获取设备基本信息
@@ -325,11 +357,31 @@ public class MoreSubdeviceActivity extends BaseActivity {
         // 获取家房间列表
         this.mHomeSpaceManager = new HomeSpaceManager(this);
         this.mHomeSpaceManager.getHomeRoomList(SystemParameter.getInstance().getHomeId(), 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-
+        mSceneManager = new SceneManager(this);
         this.mUserCenter = new UserCenter(this);
 
         initStatusBar();
     }
+
+
+    private void unbindDevice() {
+        switch (mProductKey) {
+            case CTSL.PK_LIGHT:
+            case CTSL.PK_ONE_SCENE_SWITCH:
+            case CTSL.PK_TWO_SCENE_SWITCH:
+            case CTSL.PK_THREE_SCENE_SWITCH:
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                this.mSceneType = CScene.TYPE_AUTOMATIC;
+                this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+                break;
+            default:
+                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                break;
+        }
+    }
+
 
     // 嵌入式状态栏
     private void initStatusBar() {
