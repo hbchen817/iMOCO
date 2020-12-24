@@ -136,7 +136,6 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                 H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
             }
         });
-
     }
 
     public void setViewListener(Activity activity) {

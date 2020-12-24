@@ -201,7 +201,7 @@ public class IndexFragment2 extends BaseFragment {
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
                 LightSceneActivity.start(mActivity, mSceneList.get(i), "");
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -244,7 +244,9 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            mSceneList.add(item);
+                            if (!item.description.contains("mode == CA,")) {
+                                mSceneList.add(item);
+                            }
                         }
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
@@ -285,6 +287,7 @@ public class IndexFragment2 extends BaseFragment {
     public void onRefreshSceneListData(EEvent eventEntry) {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
+            SystemParameter.getInstance().setIsRefreshSceneListData(false);
         }
     }
 }

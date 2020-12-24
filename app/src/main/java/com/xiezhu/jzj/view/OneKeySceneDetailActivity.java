@@ -141,7 +141,7 @@ public class OneKeySceneDetailActivity extends DetailActivity {
             OneKeySceneDetailActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
-                    //�����ȡ��չ����
+                    //处理获取拓展数据
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                         switch (activity.mCurrentKey) {
@@ -177,7 +177,7 @@ public class OneKeySceneDetailActivity extends DetailActivity {
         }
     }
 
-    // ��Ӧ��������
+    // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -194,7 +194,7 @@ public class OneKeySceneDetailActivity extends DetailActivity {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//����û��Ƿ��¼������App
+                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
                     logOut();
                     return false;

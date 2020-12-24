@@ -3,25 +3,35 @@ package com.xiezhu.jzj.view;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.push.common.util.NetworkUtils;
 import com.just.agentweb.AgentWeb;
+import com.just.agentweb.LogUtils;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.utility.Network;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,6 +67,7 @@ public class H5Activity extends BaseActivity {
 
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+            ViseLog.d("重新加载当前url");
             // 重新加载当前url
             mAgentWeb.getUrlLoader().loadUrl(mUrl);
         }
@@ -77,6 +88,31 @@ public class H5Activity extends BaseActivity {
                     mSrlH5.finishRefresh(false);
                 }
             }
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            ViseLog.d("onReceivedSslError error = "+error.toString());
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            super.onReceivedHttpError(view, request, errorResponse);
+            ViseLog.d("onReceivedSslError error = "+errorResponse.toString());
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+            ViseLog.d("onReceivedError 1111111111111 = "+error.getDescription().toString()+" , "+error.getErrorCode());
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+            ViseLog.d("onReceivedError 2222222222222 = "+description+" , "+failingUrl);
         }
     };
 

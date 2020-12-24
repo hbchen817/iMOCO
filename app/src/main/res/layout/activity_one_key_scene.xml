@@ -16,7 +16,8 @@
             android:layout_width="@dimen/dp_200"
             android:layout_centerInParent="true"
             android:layout_height="@dimen/dp_200"
-            android:background="#71A0F9" />
+            android:background="@drawable/selector_one_scene"
+            /><!--#71A0F9-->
     </RelativeLayout>
 
 

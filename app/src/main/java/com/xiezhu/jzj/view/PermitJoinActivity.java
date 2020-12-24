@@ -186,7 +186,7 @@ public class PermitJoinActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
-                    Log.i("lzm", "(String) msg.obj"+(String) msg.obj);
+                    Log.i("lzm", "(String) msg.obj" + (String) msg.obj);
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
                     mSubDeviceName = joinResultEntry.subDeviceName;
                     mSubDeviceIotId = joinResultEntry.subIotId;

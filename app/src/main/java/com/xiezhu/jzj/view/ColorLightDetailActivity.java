@@ -169,7 +169,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         });
     }
 
-    // APIÊý¾Ý´¦ÀíÆ÷
+    // API数据处理器
     private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -185,11 +185,11 @@ public class ColorLightDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
-                    // ´¦Àí»ñÈ¡³¡¾°ÁÐ±íÊý¾Ý
+                    // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (item.description.equals(mIOTId)) {
+                            if (item.description.contains(mIOTId)) {
                                 ItemColorLightScene scene = new ItemColorLightScene(item.id, item.name);
                                 mSceneManager.querySceneDetail(item.id, "0", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 mList.add(scene);
@@ -197,7 +197,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                         }
                         mAdapter.notifyDataSetChanged();
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
-                            // Êý¾ÝÃ»ÓÐ»ñÈ¡ÍêÔò»ñÈ¡ÏÂÒ»Ò³Êý¾Ý
+                            // 数据没有获取完则获取下一页数据
                             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }

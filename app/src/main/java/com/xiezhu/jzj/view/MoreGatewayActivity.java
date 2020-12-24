@@ -1,6 +1,7 @@
 package com.xiezhu.jzj.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -24,10 +25,13 @@ import com.aigestudio.wheelpicker.WheelPicker;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiezhu.jzj.R;
+import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.event.CEvent;
 import com.xiezhu.jzj.event.EEvent;
 import com.xiezhu.jzj.event.RefreshData;
+import com.xiezhu.jzj.model.EScene;
+import com.xiezhu.jzj.model.EUser;
 import com.xiezhu.jzj.presenter.CloudDataParser;
 import com.xiezhu.jzj.presenter.CodeMapper;
 import com.xiezhu.jzj.presenter.DeviceBuffer;
@@ -35,6 +39,7 @@ import com.xiezhu.jzj.presenter.HomeSpaceManager;
 import com.xiezhu.jzj.presenter.OTAHelper;
 import com.xiezhu.jzj.presenter.RealtimeDataParser;
 import com.xiezhu.jzj.presenter.RealtimeDataReceiver;
+import com.xiezhu.jzj.presenter.SceneManager;
 import com.xiezhu.jzj.presenter.SystemParameter;
 import com.xiezhu.jzj.presenter.TSLHelper;
 import com.xiezhu.jzj.presenter.UserCenter;
@@ -76,47 +81,50 @@ public class MoreGatewayActivity extends BaseActivity {
     private TSLHelper mTSLHelper;
     private TextView currentVersionTv;
     private int mOwned;
+    private HashMap<String, String> mDeviceMap = new HashMap<>();
+    private SceneManager mSceneManager;
+    private String mSceneType;
 
     // 更新状态
     protected void updateStatus(ETSL.propertyEntry propertyEntry) {
-        if(propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
+        if (propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
             return;
         }
 
         // 如果是主动获取状态则补全iotId与productKey
-        if(propertyEntry.iotId == null || propertyEntry.iotId.length() == 0) {
+        if (propertyEntry.iotId == null || propertyEntry.iotId.length() == 0) {
             propertyEntry.iotId = mIOTId;
             propertyEntry.productKey = mProductKey;
         }
 
-        if(!propertyEntry.iotId.equals(mIOTId) || !propertyEntry.productKey.equals(mProductKey)) {
+        if (!propertyEntry.iotId.equals(mIOTId) || !propertyEntry.productKey.equals(mProductKey)) {
             return;
         }
 
-        if(propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundID) != null && propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundID).length() > 0) {
+        if (propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundID) != null && propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundID).length() > 0) {
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(MoreGatewayActivity.this, mProductKey, CTSL.GW_P_AlarmSoundID, propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundID));
-            if(mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
+            if (mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
                 mAlarmBellId.setText(mapperEntry.name + ":");
                 mAlarmBellIdValue.setText(mapperEntry.value);
             }
         }
-        if(propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundVolume) != null && propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundVolume).length() > 0) {
+        if (propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundVolume) != null && propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundVolume).length() > 0) {
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(MoreGatewayActivity.this, mProductKey, CTSL.GW_P_DoorBellSoundVolume, propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundVolume));
-            if(mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
+            if (mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
                 mBellVolume.setText(mapperEntry.name + ":");
                 mBellVolumeValue.setText(mapperEntry.value);
             }
         }
-        if(propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundID) != null && propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundID).length() > 0) {
+        if (propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundID) != null && propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundID).length() > 0) {
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(MoreGatewayActivity.this, mProductKey, CTSL.GW_P_DoorBellSoundID, propertyEntry.getPropertyValue(CTSL.GW_P_DoorBellSoundID));
-            if(mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
+            if (mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
                 mBellMusicId.setText(mapperEntry.name + ":");
                 mBellMusicIdValue.setText(mapperEntry.value);
             }
         }
-        if(propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundVolume) != null && propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundVolume).length() > 0) {
+        if (propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundVolume) != null && propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundVolume).length() > 0) {
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(MoreGatewayActivity.this, mProductKey, CTSL.GW_P_AlarmSoundVolume, propertyEntry.getPropertyValue(CTSL.GW_P_AlarmSoundVolume));
-            if(mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
+            if (mapperEntry != null && mapperEntry.name != null && mapperEntry.value != null) {
                 mAlarmVolume.setText(mapperEntry.name + ":");
                 mAlarmVolumeValue.setText(mapperEntry.value);
             }
@@ -124,22 +132,22 @@ public class MoreGatewayActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETTSLPROPERTY:
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
-                    JSONObject items = JSON.parseObject((String)msg.obj);
-                    if(items != null) {
+                    JSONObject items = JSON.parseObject((String) msg.obj);
+                    if (items != null) {
                         TSLHelper.parseProperty(mProductKey, items, propertyEntry);
                         updateStatus(propertyEntry);
                     }
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEROOMLIST:
                     // 处理获取家房间列表回调
-                    mRoomListEntry = CloudDataParser.processHomeRoomList((String)msg.obj);
+                    mRoomListEntry = CloudDataParser.processHomeRoomList((String) msg.obj);
                     break;
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
                     // 处理设置设备昵称回调
@@ -158,7 +166,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     // 处理获取物的基本信息回调
-                    ETSL.thingBaseInforEntry thingBaseInforEntry = CloudDataParser.processThingBaseInformation((String)msg.obj);
+                    ETSL.thingBaseInforEntry thingBaseInforEntry = CloudDataParser.processThingBaseInformation((String) msg.obj);
                     currentVersionTv.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
@@ -172,11 +180,96 @@ public class MoreGatewayActivity extends BaseActivity {
                     break;
                 case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
                     // 处理获取OTA固件信息
-                    JSONObject dataJson = JSONObject.parseObject((String)msg.obj);
+                    JSONObject dataJson = JSONObject.parseObject((String) msg.obj);
                     currentVersion = dataJson.getString("currentVersion");
                     theNewVersion = dataJson.getString("version");
                     hasNewerVersion = !currentVersion.equals(theNewVersion);
                     currentVersionTv.setText(currentVersion);
+                    break;
+                case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST:
+                    EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
+                    if (list != null && list.data != null) {
+                        for (EUser.deviceEntry e : list.data) {
+                            switch (e.productKey) {
+                                case CTSL.PK_LIGHT:
+                                case CTSL.PK_ONE_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                case CTSL.PK_TWO_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                case CTSL.PK_THREE_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                case CTSL.PK_FOUR_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                case CTSL.PK_SIX_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        if (list.data.size() >= list.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            mUserCenter.getGatewaySubdeviceList(mIOTId, list.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        } else {
+                            // 数据获取完则加载显示
+                            if (mDeviceMap.size() > 0) {
+                                mSceneType = CScene.TYPE_AUTOMATIC;
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            } else {
+                                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                        }
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
+                    // 处理获取场景列表数据
+                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    if (sceneList != null && sceneList.scenes != null) {
+                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                            String iotID = item.description.replace("mode == CA,", "");
+                            if (mDeviceMap.containsKey(iotID)) {
+                                mSceneManager.deleteScene(item.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                        }
+                        if (sceneList.scenes.size() >= sceneList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        } else {
+                            // 如果自动场景获取结束则开始获取手动场景
+                            if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
+                                mSceneType = CScene.TYPE_MANUAL;
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }else {
+                                // 数据获取完则设置场景列表数据
+                                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -192,7 +285,7 @@ public class MoreGatewayActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知回调
-                    ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String)msg.obj);
+                    ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     updateStatus(propertyEntry);
                     break;
                 default:
@@ -207,41 +300,41 @@ public class MoreGatewayActivity extends BaseActivity {
         mSetType = type;
         mWheelPickerValue.setText(initValue + "");
         // 确认处理
-        TextView ok = (TextView)findViewById(R.id.oneItemWheelPickerLblOk);
+        TextView ok = (TextView) findViewById(R.id.oneItemWheelPickerLblOk);
         ok.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWheelPickerLayout.setVisibility(View.GONE);
                 // 设置网关属性
                 String value = mWheelPickerValue.getText().toString();
-                if(mSetType == 1) {
-                    if(value.equals("")){
+                if (mSetType == 1) {
+                    if (value.equals("")) {
                         value = "1";
                     }
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundID}, new String[]{value});
-                } else if(mSetType == 2) {
-                    if(value.equals("")){
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_AlarmSoundID}, new String[]{value});
+                } else if (mSetType == 2) {
+                    if (value.equals("")) {
                         value = "60";
                     }
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundVolume}, new String[]{value});
-                } else if(mSetType == 3) {
-                    if(value.equals("")){
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_DoorBellSoundVolume}, new String[]{value});
+                } else if (mSetType == 3) {
+                    if (value.equals("")) {
                         value = "1";
                     }
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_DoorBellSoundID}, new String[]{value});
-                } else if(mSetType == 4) {
-                    if(value.equals("")){
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_DoorBellSoundID}, new String[]{value});
+                } else if (mSetType == 4) {
+                    if (value.equals("")) {
                         value = "90";
                     }
-                    mTSLHelper.setProperty(mIOTId,mProductKey, new String[]{CTSL.GW_P_AlarmSoundVolume}, new String[]{value});
-                } else if(mSetType == 5) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_AlarmSoundVolume}, new String[]{value});
+                } else if (mSetType == 5) {
                     // 设置设备所属房间
                     mHomeSpaceManager.updateRoomDevice(SystemParameter.getInstance().getHomeId(), mNewRoomId, mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
             }
         });
         // 取消处理
-        TextView cancel = (TextView)findViewById(R.id.oneItemWheelPickerLblCancel);
+        TextView cancel = (TextView) findViewById(R.id.oneItemWheelPickerLblCancel);
         cancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,7 +344,7 @@ public class MoreGatewayActivity extends BaseActivity {
 
         // 生成选择项数量
         int count = 0;
-        if(type == 1 || type == 3) {
+        if (type == 1 || type == 3) {
             count = 10;
         } else if (type == 2 || type == 4) {
             count = 100;
@@ -260,21 +353,21 @@ public class MoreGatewayActivity extends BaseActivity {
         }
 
         // 生成选择项内容
-        if(count > 0) {
+        if (count > 0) {
             List<String> data = new ArrayList<String>();
             int initIndex = 0;
-            if(type <= 4) {
-                for(int i = 1; i <= count; i++) {
-                    if(String.format("%d", i).equals(initValue)) {
+            if (type <= 4) {
+                for (int i = 1; i <= count; i++) {
+                    if (String.format("%d", i).equals(initValue)) {
                         initIndex = i - 1;
                     }
                     data.add(String.format("%d", i));
                 }
             } else {
                 int n = 0;
-                for(EHomeSpace.roomEntry room : mRoomListEntry.data) {
+                for (EHomeSpace.roomEntry room : mRoomListEntry.data) {
                     data.add(room.name);
-                    if(room.name.equals(initValue)) {
+                    if (room.name.equals(initValue)) {
                         initIndex = n;
                     }
                     n++;
@@ -285,7 +378,7 @@ public class MoreGatewayActivity extends BaseActivity {
                 @Override
                 public void onItemSelected(WheelPicker picker, Object data, int position) {
                     mWheelPickerValue.setText(data.toString());
-                    if(mSetType == 5) {
+                    if (mSetType == 5) {
                         mNewRoomId = mRoomListEntry.data.get(position).roomId;
                         mNewRoomName = data.toString();
                     }
@@ -293,7 +386,7 @@ public class MoreGatewayActivity extends BaseActivity {
             });
 
             // 如果房间没有初始值则默认选择第一项
-            if(mSetType == 5 && initValue.equals("")) {
+            if (mSetType == 5 && initValue.equals("")) {
                 initIndex = 0;
                 mNewRoomId = mRoomListEntry.data.get(0).roomId;
                 mNewRoomName = data.get(0);
@@ -301,7 +394,7 @@ public class MoreGatewayActivity extends BaseActivity {
             }
 
             // 加载两次数据是为了正确初始选中位置
-            for(int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2; i++) {
                 mWheelPicker.setData(data);
                 mWheelPicker.setSelectedItemPosition(initIndex);
             }
@@ -335,7 +428,7 @@ public class MoreGatewayActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String nameStr = nameEt.getText().toString().trim();
-                if (!nameStr.equals("")){
+                if (!nameStr.equals("")) {
                     dialog.dismiss();
                     mNewNickName = nameEt.getText().toString();
                     // 设置设备昵称
@@ -355,12 +448,12 @@ public class MoreGatewayActivity extends BaseActivity {
     @Subscribe
     public void onRefreshRoomData(EEvent eventEntry) {
         // 处理刷新网关固件数据
-        if(eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA)){
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA)) {
             // 获取设备基本信息
             new TSLHelper(this).getBaseInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
             // 非共享设备才能去获取版本号信息
-            if(mOwned > 0){
+            if (mOwned > 0) {
                 OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
             return;
@@ -379,30 +472,30 @@ public class MoreGatewayActivity extends BaseActivity {
 
         // 分享设备不允许修改房间,故不显示
         this.mOwned = intent.getIntExtra("owned", 0);
-        if(this.mOwned == 0){
-            RelativeLayout rlRoom = (RelativeLayout)findViewById(R.id.moreGatewayRLRoom);
+        if (this.mOwned == 0) {
+            RelativeLayout rlRoom = (RelativeLayout) findViewById(R.id.moreGatewayRLRoom);
             rlRoom.setVisibility(View.GONE);
         }
 
         this.mTSLHelper = new TSLHelper(this);
 
-        currentVersionTv =(TextView)findViewById(R.id.moreGatewayLblVersion);
+        currentVersionTv = (TextView) findViewById(R.id.moreGatewayLblVersion);
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
-        if(deviceEntry != null) {
+        if (deviceEntry != null) {
             this.mRoomName = deviceEntry.roomName;
             this.mBindTime = deviceEntry.bindTime;
         }
 
-        TextView lblDeviceId = (TextView)findViewById(R.id.moreGatewayLblId);
+        TextView lblDeviceId = (TextView) findViewById(R.id.moreGatewayLblId);
         lblDeviceId.setText(deviceEntry.deviceName);
 
-        this.mLblTitle = (TextView)findViewById(R.id.includeTitleLblTitle);
+        this.mLblTitle = (TextView) findViewById(R.id.includeTitleLblTitle);
         this.mLblTitle.setText(this.mName);
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        ImageView imgBack = (ImageView) findViewById(R.id.includeTitleImgBack);
+        imgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -410,45 +503,45 @@ public class MoreGatewayActivity extends BaseActivity {
         });
 
         // 分享设备不能进行升级,故不显示
-        if(this.mOwned == 0){
-            RelativeLayout upgrade = (RelativeLayout)findViewById(R.id.upgrade_view);
+        if (this.mOwned == 0) {
+            RelativeLayout upgrade = (RelativeLayout) findViewById(R.id.upgrade_view);
             upgrade.setVisibility(View.GONE);
         }
         this.upgradeView = findViewById(R.id.upgrade_view);
         upgradeView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (hasNewerVersion){
+                if (hasNewerVersion) {
                     Intent intent1 = new Intent(mActivity, UpgradeFirmwareActivity.class);
-                    intent1.putExtra("iotId",mIOTId);
-                    intent1.putExtra("productKey",mProductKey);
-                    intent1.putExtra("currentVersion",currentVersion);
-                    intent1.putExtra("theNewVersion",theNewVersion);
+                    intent1.putExtra("iotId", mIOTId);
+                    intent1.putExtra("productKey", mProductKey);
+                    intent1.putExtra("currentVersion", currentVersion);
+                    intent1.putExtra("theNewVersion", theNewVersion);
                     startActivity(intent1);
-                }else {
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.current_version_is_new));
+                } else {
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.current_version_is_new));
                 }
             }
         });
 
-        this.mAlarmBellId = (TextView)findViewById(R.id.moreGatewayLblAlarmBellId);
-        this.mBellVolume = (TextView)findViewById(R.id.moreGatewayLblBellVolume);
-        this.mBellMusicId = (TextView)findViewById(R.id.moreGatewayLblBellMusicId);
-        this.mAlarmVolume = (TextView)findViewById(R.id.moreGatewayLblAlarmVolume);
+        this.mAlarmBellId = (TextView) findViewById(R.id.moreGatewayLblAlarmBellId);
+        this.mBellVolume = (TextView) findViewById(R.id.moreGatewayLblBellVolume);
+        this.mBellMusicId = (TextView) findViewById(R.id.moreGatewayLblBellMusicId);
+        this.mAlarmVolume = (TextView) findViewById(R.id.moreGatewayLblAlarmVolume);
 
-        this.mAlarmBellIdValue = (TextView)findViewById(R.id.moreGatewayLblAlarmBellIdValue);
-        this.mBellVolumeValue = (TextView)findViewById(R.id.moreGatewayLblBellVolumeValue);
-        this.mBellMusicIdValue = (TextView)findViewById(R.id.moreGatewayLblBellMusicIdValue);
-        this.mAlarmVolumeValue = (TextView)findViewById(R.id.moreGatewayLblAlarmVolumeValue);
+        this.mAlarmBellIdValue = (TextView) findViewById(R.id.moreGatewayLblAlarmBellIdValue);
+        this.mBellVolumeValue = (TextView) findViewById(R.id.moreGatewayLblBellVolumeValue);
+        this.mBellMusicIdValue = (TextView) findViewById(R.id.moreGatewayLblBellMusicIdValue);
+        this.mAlarmVolumeValue = (TextView) findViewById(R.id.moreGatewayLblAlarmVolumeValue);
 
-        this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.oneItemWheelPickerRLPicker);
+        this.mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
         this.mWheelPickerLayout.setVisibility(View.GONE);
-        this.mWheelPickerValue = (TextView)findViewById(R.id.oneItemWheelPickerLblValue);
-        this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.oneItemWheelPickerRLPicker);
+        this.mWheelPickerValue = (TextView) findViewById(R.id.oneItemWheelPickerLblValue);
+        this.mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
-        this.mLblRoomName = (TextView)findViewById(R.id.moreGatewayLblRoom);
+        this.mLblRoomName = (TextView) findViewById(R.id.moreGatewayLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
-        TextView bindTime = (TextView)findViewById(R.id.moreGatewayLblBindTime);
+        TextView bindTime = (TextView) findViewById(R.id.moreGatewayLblBindTime);
         bindTime.setText(this.mBindTime);
 
         // 报警铃音设置事件处理
@@ -494,7 +587,7 @@ public class MoreGatewayActivity extends BaseActivity {
         setAlarmVolume.setOnClickListener(setAlarmVolumeListener);
 
         // 修改设备名称事件处理
-        this.mLblNewNickName = (TextView)findViewById(R.id.moreGatewayLblName);
+        this.mLblNewNickName = (TextView) findViewById(R.id.moreGatewayLblName);
         this.mLblNewNickName.setText(mName);
         ImageView inputNickName = (ImageView) findViewById(R.id.moreGatewayImgName);
         inputNickName.setOnClickListener(new OnClickListener() {
@@ -524,7 +617,7 @@ public class MoreGatewayActivity extends BaseActivity {
                 startActivity(intent);
             }
         };
-        ImageView imgMessageRecord = (ImageView)findViewById(R.id.moreGatewayImgMsg);
+        ImageView imgMessageRecord = (ImageView) findViewById(R.id.moreGatewayImgMsg);
         imgMessageRecord.setOnClickListener(messageRecordListener);
 
         // 解除绑定处理
@@ -539,7 +632,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // 设备解除绑定
-                        mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
                 });
                 builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -550,8 +643,8 @@ public class MoreGatewayActivity extends BaseActivity {
                 builder.create().show();
             }
         };
-        TextView lblUnbind = (TextView)findViewById(R.id.moreLblUnbind);
-        ImageView imgUnbind = (ImageView)findViewById(R.id.moreImgUnbind);
+        TextView lblUnbind = (TextView) findViewById(R.id.moreLblUnbind);
+        ImageView imgUnbind = (ImageView) findViewById(R.id.moreImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
 
@@ -569,9 +662,9 @@ public class MoreGatewayActivity extends BaseActivity {
         RealtimeDataReceiver.addPropertyCallbackHandler("MoreGatewayProperty", this.mRealtimeDataHandler);
 
         this.mUserCenter = new UserCenter(this);
-
+        mSceneManager = new SceneManager(this);
         // 非共享设备才能去获取版本号信息
-        if(mOwned > 0){
+        if (mOwned > 0) {
             OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
         initStatusBar();
