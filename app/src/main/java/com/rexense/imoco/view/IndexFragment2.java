@@ -201,7 +201,7 @@ public class IndexFragment2 extends BaseFragment {
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
                 LightSceneActivity.start(mActivity, mSceneList.get(i), "");
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -287,6 +287,7 @@ public class IndexFragment2 extends BaseFragment {
     public void onRefreshSceneListData(EEvent eventEntry) {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
+            SystemParameter.getInstance().setIsRefreshSceneListData(false);
         }
     }
 }
