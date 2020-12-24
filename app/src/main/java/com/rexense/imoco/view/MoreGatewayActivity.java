@@ -196,11 +196,39 @@ public class MoreGatewayActivity extends BaseActivity {
                             switch (e.productKey) {
                                 case CTSL.PK_LIGHT:
                                 case CTSL.PK_ONE_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 case CTSL.PK_TWO_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 case CTSL.PK_THREE_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 case CTSL.PK_FOUR_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 case CTSL.PK_SIX_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
                                 default:
@@ -238,9 +266,8 @@ public class MoreGatewayActivity extends BaseActivity {
                             // 如果自动场景获取结束则开始获取手动场景
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 mSceneType = CScene.TYPE_MANUAL;
-                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                            }
-                            if (mSceneType.equals(CScene.TYPE_MANUAL)) {
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }else {
                                 // 数据获取完则设置场景列表数据
                                 mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }
