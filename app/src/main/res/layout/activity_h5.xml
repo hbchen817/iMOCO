@@ -7,10 +7,19 @@
 
     <include layout="@layout/layout_common_toolbar" />
 
+    <TextView
+        android:id="@+id/content_tv"
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/dp_10"
+        android:layout_height="match_parent"
+        android:lineSpacingExtra="@dimen/dp_10"
+        android:scrollbars="vertical"/>
+
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/srl_h5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:srlEnableLoadMore="false"
         app:srlPrimaryColor="@color/colorPrimary">
 

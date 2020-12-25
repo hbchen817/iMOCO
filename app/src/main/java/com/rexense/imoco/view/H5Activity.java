@@ -7,6 +7,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
@@ -22,6 +23,7 @@ import com.alibaba.sdk.android.push.common.util.NetworkUtils;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.LogUtils;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.AppUtils;
 import com.rexense.imoco.utility.Network;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -56,6 +58,9 @@ public class H5Activity extends BaseActivity {
 
     @BindView(R.id.tv_toolbar_title)
     TextView mTvToolbarTitle;
+
+    @BindView(R.id.content_tv)
+    TextView mContentTV;
 
     private AgentWeb mAgentWeb;
 
@@ -137,6 +142,8 @@ public class H5Activity extends BaseActivity {
         initListener();
 
         initStatusBar();
+
+        mContentTV.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     // 嵌入式状态栏
@@ -159,6 +166,8 @@ public class H5Activity extends BaseActivity {
         mUrl = intent.getStringExtra("url");
         String title = intent.getStringExtra("title");
 
+        ViseLog.d(mUrl);
+
         if (TextUtils.isEmpty(mUrl)) {
             mUrl = "";
         }
@@ -168,15 +177,23 @@ public class H5Activity extends BaseActivity {
             mTvToolbarTitle.setText(title);
         }
 
-        // 加载url
-        mAgentWeb = AgentWeb.with(this)
-                .setAgentWebParent(mFlH5Container, new FrameLayout.LayoutParams(-1, -1))
-                .useDefaultIndicator()
-                .setWebViewClient(mWebViewClient)
-                .setMainFrameErrorView(R.layout.layout_h5_error_page, -1)
-                .createAgentWeb()
-                .ready()
-                .go(mUrl);
+        if (Constant.USER_PROTOCOL_URL.equals(mUrl)) {
+            mContentTV.setText(getString(R.string.user_protocol_txt));
+        } else if (Constant.PRIVACY_POLICY_URL.equals(mUrl)) {
+            mContentTV.setText(getString(R.string.privacy_policy_txt));
+        } else {
+            mSrlH5.setVisibility(View.GONE);
+            mContentTV.setVisibility(View.VISIBLE);
+            // 加载url
+            mAgentWeb = AgentWeb.with(this)
+                    .setAgentWebParent(mFlH5Container, new FrameLayout.LayoutParams(-1, -1))
+                    .useDefaultIndicator()
+                    .setWebViewClient(mWebViewClient)
+                    .setMainFrameErrorView(R.layout.layout_h5_error_page, -1)
+                    .createAgentWeb()
+                    .ready()
+                    .go(mUrl);
+        }
     }
 
     private void initListener() {
@@ -196,27 +213,32 @@ public class H5Activity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        mAgentWeb.getWebLifeCycle().onPause();
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onPause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        mAgentWeb.getWebLifeCycle().onResume();
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onResume();
         super.onResume();
     }
 
     @Override
     protected void onDestroy() {
-        mAgentWeb.getWebLifeCycle().onDestroy();
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onDestroy();
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
         // 点击返回键时, 如果网页可以回退, 实现网页回退; 如果网页不能回退, 执行默认操作
-        if (!mAgentWeb.back()) {
-            super.onBackPressed();
-        }
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null) {
+            if (!mAgentWeb.back()) {
+                super.onBackPressed();
+            }
+        } else super.onBackPressed();
     }
 }
