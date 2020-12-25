@@ -203,7 +203,7 @@ public class IndexFragment2 extends BaseFragment {
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
                 PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                // SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
