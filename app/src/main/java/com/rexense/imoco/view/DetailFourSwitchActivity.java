@@ -127,7 +127,7 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate2 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate2);
+        this.mImgOperate2 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate2);
         this.mImgOperate2.setOnClickListener(operateOnClickListener2);
 
         // 键3操作事件处理
@@ -141,7 +141,7 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate3 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate3);
+        this.mImgOperate3 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate3);
         this.mImgOperate3.setOnClickListener(operateOnClickListener3);
 
         // 键4操作事件处理

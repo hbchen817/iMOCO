@@ -61,6 +61,7 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_TWOWAYSWITCH:
                 setContentView(R.layout.activity_detail_twoswitch);
                 break;
+            case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 setContentView(R.layout.activity_detail_fourswitch);
                 break;

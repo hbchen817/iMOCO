@@ -15,6 +15,7 @@ import com.aliyun.iot.link.ui.component.LinkToast;
 import com.rexense.imoco.R;
 import com.rexense.imoco.presenter.MocoApplication;
 import com.rexense.imoco.sdk.Account;
+import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -106,7 +107,8 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onLoginFailed(int i, String s) {
-                ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                // ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                QMUITipDialogUtil.showFailDialog(StartActivity.this, s);
             }
         });
         finishLater();

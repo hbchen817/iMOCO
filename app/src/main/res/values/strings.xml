@@ -553,4 +553,5 @@
     <string name="privacy_policy_dialog_get">知道了</string>
 
     <string name="target_temperature">目标温度</string>
+    <string name="is_loading">正在加载</string>
 </resources>

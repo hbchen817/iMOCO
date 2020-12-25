@@ -45,6 +45,7 @@ public class ActivityRouter {
                 // 两键开关处理
                 intent = new Intent(context, DetailTwoSwitchActivity.class);
                 break;
+            case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
                 intent = new Intent(context, DetailFourSwitchActivity.class);
