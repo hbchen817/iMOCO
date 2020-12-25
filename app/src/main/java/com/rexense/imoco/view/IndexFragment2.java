@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
@@ -288,6 +289,12 @@ public class IndexFragment2 extends BaseFragment {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
+
+            /*QMUITipDialog dialog = new QMUITipDialog.Builder(getActivity())
+                    .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
+                    .setTipWord("完成")
+                    .create();
+            dialog.show();*/
         }
     }
 }
