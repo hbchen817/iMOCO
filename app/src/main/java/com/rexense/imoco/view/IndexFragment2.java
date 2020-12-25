@@ -200,7 +200,7 @@ public class IndexFragment2 extends BaseFragment {
             int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
-                LightSceneActivity.start(mActivity, mSceneList.get(i), "");
+                PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
