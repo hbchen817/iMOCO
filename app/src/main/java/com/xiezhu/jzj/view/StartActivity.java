@@ -13,6 +13,7 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.presenter.MocoApplication;
+import com.xiezhu.jzj.utility.QMUITipDialogUtil;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -104,7 +105,8 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onLoginFailed(int i, String s) {
-                ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                // ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                QMUITipDialogUtil.showFailDialog(StartActivity.this, s);
             }
         });
         finishLater();

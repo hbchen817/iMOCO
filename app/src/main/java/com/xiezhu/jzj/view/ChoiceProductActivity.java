@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.event.ShareDeviceSuccessEvent;
 import com.xiezhu.jzj.presenter.AptConfigProductList;
@@ -34,6 +35,7 @@ import com.xiezhu.jzj.model.EHomeSpace;
 import com.xiezhu.jzj.model.EProduct;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.utility.Dialog;
+import com.xiezhu.jzj.utility.QMUITipDialogUtil;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -141,6 +143,7 @@ public class ChoiceProductActivity extends BaseActivity {
                                 }
                             }
                         }
+                        new HomeSpaceManager(ChoiceProductActivity.this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, 50, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         handleTypeVisible();
                     }
                     break;
@@ -155,6 +158,7 @@ public class ChoiceProductActivity extends BaseActivity {
                             mGatewayStatus = gateways.data.get(0).status;
                         }
                     }
+                    QMUITipDialogUtil.dismiss();
                     break;
                 default:
                     break;
@@ -261,18 +265,21 @@ public class ChoiceProductActivity extends BaseActivity {
         this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
         this.mGatewayStatus = intent.getIntExtra("gatewayStatus", Constant.CONNECTION_STATUS_UNABLED);
 
-        // 获取支持配网产品列表
-        new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        ViseLog.d("mGatewayIOTId = "+mGatewayIOTId+" , mGatewayStatus = "+mGatewayStatus);
 
         // 没有指定网关时获取网关列表以获取网关的数量
         if (this.mGatewayIOTId == null || this.mGatewayIOTId.length() == 0) {
-            new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, 50, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            //new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, 50, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
         } else {
             this.mGatewayNumber = 1;
             this.mLblGateway.setVisibility(View.GONE);
             scanImg.setVisibility(View.GONE);
         }
         shareDeviceManager = new ShareDeviceManager(mActivity);
+
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        // 获取支持配网产品列表
+        new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
         initStatusBar();
     }

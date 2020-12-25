@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.Constant;
@@ -26,6 +27,7 @@ import com.xiezhu.jzj.presenter.ImageProvider;
 import com.xiezhu.jzj.presenter.PluginHelper;
 import com.xiezhu.jzj.presenter.SceneManager;
 import com.xiezhu.jzj.presenter.SystemParameter;
+import com.xiezhu.jzj.utility.QMUITipDialogUtil;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.util.ArrayList;
@@ -200,8 +202,8 @@ public class IndexFragment2 extends BaseFragment {
             int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
-                LightSceneActivity.start(mActivity, mSceneList.get(i), "");
-                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -263,17 +265,21 @@ public class IndexFragment2 extends BaseFragment {
                                 mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
                                 mListMy.setOnItemClickListener(sceneListOnItemClickListener);
                             }
+                            QMUITipDialogUtil.dismiss();
                         }
+                    } else {
+                        QMUITipDialogUtil.dismiss();
                     }
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
                     String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
+                    QMUITipDialogUtil.showSuccessDialog(getActivity(), R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
                         RefreshData.refreshSceneListData();
                     }
-                    ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
+                    //ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
                     break;
                 default:
                     break;
@@ -288,6 +294,13 @@ public class IndexFragment2 extends BaseFragment {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    QMUITipDialogUtil.showLoadingDialg(getActivity(), getString(R.string.is_loading));
+                }
+            });
         }
     }
 }
