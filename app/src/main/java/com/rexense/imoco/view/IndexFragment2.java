@@ -201,8 +201,8 @@ public class IndexFragment2 extends BaseFragment {
             int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
-                LightSceneActivity.start(mActivity, mSceneList.get(i), "");
-                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                // SystemParameter.getInstance().setIsRefreshSceneListData(true);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -289,12 +289,6 @@ public class IndexFragment2 extends BaseFragment {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
-
-            /*QMUITipDialog dialog = new QMUITipDialog.Builder(getActivity())
-                    .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                    .setTipWord("完成")
-                    .create();
-            dialog.show();*/
         }
     }
 }
