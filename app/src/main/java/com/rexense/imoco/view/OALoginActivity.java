@@ -33,6 +33,7 @@ import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.utility.SpUtils;
+import com.rexense.imoco.utility.ToastUtils;
 
 public class OALoginActivity extends LoginActivity implements View.OnClickListener{
 
@@ -280,7 +281,8 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
 
             @Override
             public void onEmailSent(String email) {
-                Toast.makeText(getApplicationContext(), email + " 已经发送了", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), email + " 已经发送了", Toast.LENGTH_LONG).show();
+                ToastUtils.showLongToast(getApplicationContext(), email + " 已经发送了");
             }
 
         };

@@ -108,7 +108,6 @@ public class StartActivity extends BaseActivity {
             @Override
             public void onLoginFailed(int i, String s) {
                 ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
-                //QMUITipDialogUtil.showFailDialog(StartActivity.this, s);
             }
         });
         finishLater();

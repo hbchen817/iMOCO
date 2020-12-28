@@ -58,6 +58,7 @@ import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.utility.Utility;
 
 import org.greenrobot.eventbus.EventBus;
@@ -808,7 +809,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            Toast.makeText(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name), Toast.LENGTH_LONG).show();
+                            ToastUtils.showLongToastCentrally(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
                             break;
                         }
                     }
