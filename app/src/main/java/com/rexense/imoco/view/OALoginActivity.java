@@ -100,7 +100,6 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         boolean isFirst = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", false);
         if (!isFirst) {
             showPrivacyPolicyDialog();
-            SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", true);
         }
         //initStatusBar();
     }
@@ -121,7 +120,8 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
         AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
         TextView linkTV = (TextView) view.findViewById(R.id.policy_link);
-        TextView doTV = (TextView) view.findViewById(R.id.do_tv);
+        TextView disagreeTV = (TextView) view.findViewById(R.id.disagree_btn);
+        TextView agreeTV = (TextView) view.findViewById(R.id.agree_btn);
 
         linkTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,10 +129,43 @@ public class OALoginActivity extends LoginActivity implements View.OnClickListen
                 H5Activity.actionStart(OALoginActivity.this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
             }
         });
-        doTV.setOnClickListener(new View.OnClickListener() {
+        disagreeTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                showPrivacyPolicyCheckDialog();
+            }
+        });
+        agreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpUtils.putBooleanValue(OALoginActivity.this, SpUtils.SP_APP_INFO, "show_policy", true);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showPrivacyPolicyCheckDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_policy_check, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+
+        TextView lgoutTV = (TextView) view.findViewById(R.id.lgout_btn);
+        TextView checkAgainTV = (TextView) view.findViewById(R.id.check_again_btn);
+
+        lgoutTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        checkAgainTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                showPrivacyPolicyDialog();
             }
         });
 
