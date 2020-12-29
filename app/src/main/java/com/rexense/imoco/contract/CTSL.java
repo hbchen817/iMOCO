@@ -296,6 +296,16 @@ public class CTSL {
         }
     };
 
+    // 智能锁A7
+    public static final String SL_batterypercentage = "BatteryPercentage";
+    public static final String SL_lockstate = "LockState";
+    public static final Map<String, PTYPE> SL_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(SL_batterypercentage, PTYPE.t_int32);
+            put(SL_lockstate, PTYPE.t_enum);
+        }
+    };
+
     // 定义属性配置文件
     public static final Map<String, Map<String, PTYPE>> propertyProfile = new HashMap<String, Map<String, PTYPE>>() {
         {
@@ -318,6 +328,7 @@ public class CTSL {
             put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
             put(PK_FLOORHEATING001, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
+            put(PK_SMART_LOCK, SL_Properties);
         }
     };
 

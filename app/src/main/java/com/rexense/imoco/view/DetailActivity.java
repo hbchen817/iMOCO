@@ -44,6 +44,7 @@ public class DetailActivity extends BaseActivity {
         this.mName = intent.getStringExtra("name");
         this.mOwned = intent.getIntExtra("owned", 0);
 
+        if (mProductKey == null) mProductKey = "";
         // 处理布局文件
         switch (this.mProductKey) {
             case CTSL.PK_DOORSENSOR:

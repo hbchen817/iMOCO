@@ -463,8 +463,12 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
-                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
+                    ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                            mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                } else {
+                    ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
+                }
             }
         }
     };
@@ -474,8 +478,10 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShareDeviceList != null && position < mShareDeviceList.size()) {
-                ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
-                        mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
+                if (mShareDeviceList.get(position) != null && mShareDeviceList.get(position).productKey != null) {
+                    ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
+                            mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
+                } else ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
             }
         }
     };

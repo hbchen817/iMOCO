@@ -27,11 +27,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.datepicker.CustomDatePicker;
 import com.rexense.imoco.datepicker.DateFormatUtils;
 import com.rexense.imoco.datepicker.PickerView;
+import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.Visitable;
@@ -41,6 +44,7 @@ import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.SrlUtils;
 import com.rexense.imoco.utility.TimeUtils;
 import com.rexense.imoco.viewholder.CommonAdapter;
+import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -94,11 +98,14 @@ public class LockDetailActivity extends DetailActivity {
     private List<Visitable> mHistoryList = new ArrayList<>();
     private CommonAdapter mAdapter;
 
+    private String[] mLockStates;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         mHandler = new LockHandler(this);
+        mLockStates = getResources().getStringArray(R.array.smart_lock_state_a7);
         RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", mHandler);
         includeDetailImgSetting.setVisibility(View.VISIBLE);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -133,6 +140,7 @@ public class LockDetailActivity extends DetailActivity {
                 mKeyTime = timestamp;
                 String startTime = DateFormatUtils.long2Str(timestamp, true);
                 String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
+                ViseLog.d("mIOTId ========= "+mIOTId);
                 LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         }, beginTime, endTime, true);
@@ -334,9 +342,8 @@ public class LockDetailActivity extends DetailActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    JSONObject params = jsonObject.getJSONObject("params");
-                    JSONObject value = params.getJSONObject("value");
-                    String identifier = params.getString("identifier");
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
                     switch (identifier) {
                         case "KeyAddedNotification"://添加钥匙
                             switch (value.getString("LockType")) {//开锁方式
@@ -438,7 +445,9 @@ public class LockDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    JSONArray historyArray = JSON.parseArray((String) msg.obj);
+                    ViseLog.d((String) msg.obj);
+                    JSONObject j = JSON.parseObject((String) msg.obj);
+                    JSONArray historyArray = JSON.parseArray(j.getString("data"));
                     int historySize = historyArray.size();
                     for (int i = 0; i < historySize; i++) {
                         JSONObject jo = historyArray.getJSONObject(i);
@@ -464,5 +473,31 @@ public class LockDetailActivity extends DetailActivity {
         public String keyId;
         public int keyType;
         public int keyPermission;
+    }
+
+    @Override
+    protected boolean updateState(ETSL.propertyEntry propertyEntry) {
+        String s = new Gson().toJson(propertyEntry);
+        ViseLog.d("updateState:\n" + s);
+        if (!super.updateState(propertyEntry)) {
+            return false;
+        }
+
+        ViseLog.d("propertyEntry.getPropertyValue(CTSL.SL_lockstate) = "+propertyEntry.getPropertyValue(CTSL.SL_lockstate));
+
+        if (propertyEntry.getPropertyValue(CTSL.SL_batterypercentage) != null && propertyEntry.getPropertyValue(CTSL.SL_batterypercentage).length() > 0) {
+            mElectricityValue.setText(String.valueOf(propertyEntry.getPropertyValue(CTSL.SL_batterypercentage))+"%");
+        }
+        if (propertyEntry.getPropertyValue(CTSL.SL_lockstate) != null && propertyEntry.getPropertyValue(CTSL.SL_lockstate).length() > 0) {
+            int lockState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.SL_lockstate));
+            ViseLog.d("lockState = "+lockState);
+            /*if (lockState >= 0 && lockState <= 3)
+                mIconLock.setText(mLockStates[lockState]);
+            else mIconLock.setText(getString(R.string.unknown_state));*/
+            if (lockState == 0 || lockState == 1 || lockState == 3 || lockState == 255)
+                mIconLock.setText(getString(R.string.icon_lock));
+            else if (lockState == 2) mIconLock.setText(getString(R.string.icon_unlock));
+        }
+        return true;
     }
 }

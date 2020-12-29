@@ -42,6 +42,7 @@ import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.ERealtimeData;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.EUser;
+import com.rexense.imoco.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -247,8 +248,12 @@ public class DetailGatewayActivity extends DetailActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(DetailGatewayActivity.this, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
-                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
+                    ActivityRouter.toDetail(DetailGatewayActivity.this, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                            mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                } else {
+                    ToastUtils.showLongToast(DetailGatewayActivity.this, R.string.pls_try_again_later);
+                }
             }
         }
     };

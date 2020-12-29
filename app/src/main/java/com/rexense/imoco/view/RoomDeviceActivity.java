@@ -24,6 +24,7 @@ import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.HomeSpaceManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.SrlUtils;
+import com.rexense.imoco.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -169,8 +170,10 @@ public class RoomDeviceActivity extends BaseActivity {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 // 处理owned以在下级页面判断是否可以修改房间
                 int owned = DeviceBuffer.getDeviceOwned(mDeviceList.get(position).iotId);
-                ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
-                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, owned);
+                if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null)
+                    ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                            mDeviceList.get(position).status, mDeviceList.get(position).nickName, owned);
+                else ToastUtils.showLongToast(RoomDeviceActivity.this, R.string.pls_try_again_later);
             }
         }
     };

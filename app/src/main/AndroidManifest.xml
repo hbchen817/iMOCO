@@ -42,6 +42,12 @@
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
 
+        <!-- huawei push start -->
+        <meta-data
+            android:name="com.huawei.hms.client.appid"
+            android:value="103546039" />
+        <!-- huawei push end -->
+
         <!-- vivo push start -->
         <meta-data
             android:name="com.vivo.push.api_key"
