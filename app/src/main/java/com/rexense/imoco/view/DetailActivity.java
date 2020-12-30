@@ -69,6 +69,7 @@ public class DetailActivity extends BaseActivity {
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;
+            case CTSL.PK_SMART_LOCK_A7:
             case CTSL.PK_SMART_LOCK:
                 StatusBarUtils.getStatusBarHeight(this);
                 setContentView(R.layout.activity_detail_lock);

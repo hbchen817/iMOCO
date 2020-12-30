@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.LockManager;
@@ -45,6 +47,8 @@ public class KeyManagerActivity extends BaseActivity {
 
     private static final String IOTID = "IOTID";
 
+    @BindView(R.id.tv_toolbar_title)
+    TextView tvToolbarTitle;
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
 
@@ -59,6 +63,7 @@ public class KeyManagerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_key_manager);
         ButterKnife.bind(this);
+        tvToolbarTitle.setText(R.string.lock_key_manager);
         mIotId = getIntent().getStringExtra(IOTID);
         mHandler = new MyHandler(this);
         EventBus.getDefault().register(this);
@@ -73,7 +78,7 @@ public class KeyManagerActivity extends BaseActivity {
     }
 
     private void getData() {
-        UserCenter.queryVirtualUserListInDevice(mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        UserCenter.queryVirtualUserListInAccount(1, 20, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     @Subscribe
@@ -137,6 +142,22 @@ public class KeyManagerActivity extends BaseActivity {
                             }
                         }
                         LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_QUERY_USER_IN_ACCOUNT:
+                    JSONObject result = JSON.parseObject((String) msg.obj);
+                    long total = result.getLongValue("total");
+                    int pageNo = result.getIntValue("pageNo");
+                    int pageSize = result.getIntValue("pageSize");
+                    JSONArray users = result.getJSONArray("data");
+                    int size = users.size();
+                    for (int i = 0; i < size; i++) {
+                        JSONObject user = users.getJSONObject(i);
+                        LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                    }
+                    if (pageSize * pageNo < total) {
+                        pageNo++;
+                        UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_KEY_BY_USER:

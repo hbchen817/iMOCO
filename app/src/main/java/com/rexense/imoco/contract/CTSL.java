@@ -21,7 +21,8 @@ public class CTSL {
     public static final String PK_DOORSENSOR                = "a1q32AasDLg";
     public static final String PK_PIRSENSOR                 = "a1CzbnRNzCR";
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
-    public static final String PK_SMART_LOCK                = "a19ONFPQn0u";
+    public static final String PK_SMART_LOCK_A7             = "a19ONFPQn0u";//临时密码StartTime
+    public static final String PK_SMART_LOCK                = "a1SlrD1NHyW";//临时密码StartDate
     public static final String PK_SIX_TWO_SCENE_SWITCH      = "a1zf8jfGzTX";
     public static final String PK_SIX_SCENE_SWITCH          = "a1MLvTtRmWo";
     public static final String PK_TWO_SCENE_SWITCH          = "a14kD7IKWqp";
@@ -328,7 +329,7 @@ public class CTSL {
             put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
             put(PK_FLOORHEATING001, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
-            put(PK_SMART_LOCK, SL_Properties);
+            put(PK_SMART_LOCK_A7, SL_Properties);
         }
     };
 

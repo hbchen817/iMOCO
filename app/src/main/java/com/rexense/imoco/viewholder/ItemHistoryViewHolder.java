@@ -39,22 +39,47 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
         if (TextUtils.isEmpty(model.getUserName())) {
             StringBuffer keyName = new StringBuffer();
             switch (model.getLockType()) {
+                case 0:
+                    keyName.append("密码");
+                    break;
                 case 1:
-                    keyName.append("指纹钥匙");
+                    keyName.append("射频");
                     break;
                 case 2:
-                    keyName.append("密码钥匙");
+                    keyName.append("机械钥匙");
                     break;
                 case 3:
-                    keyName.append("卡钥匙");
+                    keyName.append("卡片");
                     break;
                 case 4:
-                    keyName.append("机械钥匙");
+                    keyName.append("指纹");
+                    break;
+                case 5:
+                    keyName.append("临时密码");
+                    break;
+                case 6:
+                    keyName.append("App应用程序");
+                    break;
+                case 7:
+                    keyName.append("蓝牙");
+                    break;
+                case 8:
+                    keyName.append("人脸");
+                    break;
+                case 9:
+                    keyName.append("遥控器");
+                    break;
+                case 10:
+                    keyName.append("指静脉");
                     break;
                 default:
                     break;
             }
-            keyNameStr = keyName.append(model.getKeyID()).toString();
+            if (!TextUtils.isEmpty(model.getKeyID())) {
+                keyNameStr = keyName.append(model.getKeyID()).toString();
+            } else {
+                keyNameStr = "";
+            }
         } else {
             keyNameStr = model.getUserName();
         }

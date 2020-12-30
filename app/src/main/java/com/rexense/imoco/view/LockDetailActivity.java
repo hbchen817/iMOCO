@@ -5,10 +5,12 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.datepicker.CustomDatePicker;
 import com.rexense.imoco.datepicker.DateFormatUtils;
 import com.rexense.imoco.datepicker.PickerView;
+import com.rexense.imoco.event.RefreshHistoryEvent;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.ItemUser;
@@ -43,8 +46,13 @@ import com.rexense.imoco.presenter.RealtimeDataReceiver;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.SrlUtils;
 import com.rexense.imoco.utility.TimeUtils;
+import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.viewholder.CommonAdapter;
+import com.rexense.imoco.widget.DialogUtils;
 import com.vise.log.ViseLog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -97,6 +105,7 @@ public class LockDetailActivity extends DetailActivity {
     private UnbindKey mCurrentUnBindUser;
     private List<Visitable> mHistoryList = new ArrayList<>();
     private CommonAdapter mAdapter;
+    private int mPageNo = 1;
 
     private String[] mLockStates;
 
@@ -104,6 +113,7 @@ public class LockDetailActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mHandler = new LockHandler(this);
         mLockStates = getResources().getStringArray(R.array.smart_lock_state_a7);
         RealtimeDataReceiver.addEventCallbackHandler("LockEventCallback", mHandler);
@@ -112,8 +122,23 @@ public class LockDetailActivity extends DetailActivity {
         recycleView.setLayoutManager(linearLayoutManager);
         mAdapter = new CommonAdapter(mHistoryList, this);
         recycleView.setAdapter(mAdapter);
+//        if (mOwned == 0) {
+//            mRemoteOpenView.setVisibility(View.GONE);
+//        }
         getUserList();
         getOpenRecord();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void refresh(RefreshHistoryEvent event) {
+        mHistoryList.clear();
+        LockManager.getLockHistory(mIOTId, 0, System.currentTimeMillis(), TYPE_OPEN, 1, 10, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     private void getOpenRecord() {
@@ -140,8 +165,12 @@ public class LockDetailActivity extends DetailActivity {
                 mKeyTime = timestamp;
                 String startTime = DateFormatUtils.long2Str(timestamp, true);
                 String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
-                ViseLog.d("mIOTId ========= "+mIOTId);
-                LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                ViseLog.d("mIOTId ========= " + mIOTId);
+                if (mProductKey.equals(CTSL.PK_SMART_LOCK_A7)) {
+                    LockManager.setTemporaryKey(mIOTId, randomKey, startTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                } else {
+                    LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                }
             }
         }, beginTime, endTime, true);
         // 允许点击屏幕或物理返回键关闭
@@ -158,7 +187,7 @@ public class LockDetailActivity extends DetailActivity {
      * 获取虚拟用户列表
      */
     private void getUserList() {
-        UserCenter.queryVirtualUserListInDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        UserCenter.queryVirtualUserListInAccount(mPageNo, 20, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     /**
@@ -223,9 +252,9 @@ public class LockDetailActivity extends DetailActivity {
     /**
      * 绑定钥匙Dialog
      *
-     * @param keyName
+     * @param name
      */
-    private void showBindKeyDialog(String keyName) {
+    private void showBindKeyDialog(String name) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         final View view = LayoutInflater.from(mActivity).inflate(R.layout.dialog_key_bind_user, null);
         builder.setView(view);
@@ -253,7 +282,7 @@ public class LockDetailActivity extends DetailActivity {
         dialog.getWindow().setAttributes(params);//这行要放在dialog.show()之后才有效
 
 
-        key_name_text.setText(keyName);
+        key_name_text.setText(name);
         btn_cancel.setOnClickListener(v -> {
             dialog.dismiss();
         });
@@ -321,7 +350,12 @@ public class LockDetailActivity extends DetailActivity {
                 HistoryActivity.start(this, mIOTId);
                 break;
             case R.id.mRemoteOpenView:
-                //todo 远程开门 部分PK由此功能
+                DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        LockManager.remoteOpen(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    }
+                }, "您确定要远程开门吗？", "远程开门确认");
                 break;
             default:
                 break;
@@ -346,6 +380,7 @@ public class LockDetailActivity extends DetailActivity {
                     String identifier = jsonObject.getString("identifier");
                     switch (identifier) {
                         case "KeyAddedNotification"://添加钥匙
+                            EventBus.getDefault().post(new RefreshHistoryEvent());
                             switch (value.getString("LockType")) {//开锁方式
                                 case "5"://临时钥匙
                                     if (value.getIntValue("Status") == 0) {
@@ -358,6 +393,21 @@ public class LockDetailActivity extends DetailActivity {
                                     LockManager.filterUnbindKey(activity.mIOTId, value.getString("KeyID"), value.getString("LockType"), value.getString("UserLimit"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                                     break;
                             }
+                            break;
+                        case "HijackingAlarm":
+                        case "TamperAlarm":
+                        case "DoorUnlockedAlarm":
+                        case "ArmDoorOpenAlarm":
+                        case "LockedAlarm":
+                        case "DoorOpenNotification":
+                        case "KeyDeletedNotification":
+                        case "LowElectricityAlarm":
+                        case "ReportReset":
+                            EventBus.getDefault().post(new RefreshHistoryEvent());
+                            break;
+                        case "RemoteUnlockNotification":
+                            EventBus.getDefault().post(new RefreshHistoryEvent());
+                            ToastUtils.showToastCentrally(activity, "远程开门" + (value.getIntValue("Status") == 0 ? "成功" : "失败"));
                             break;
                         default:
                             break;
@@ -380,17 +430,38 @@ public class LockDetailActivity extends DetailActivity {
                         if (lockUserPermType == 0) {//未绑定
                             StringBuffer name = new StringBuffer();
                             switch (data.getIntValue("lockUserType")) {
+                                case 0:
+                                    name.append("密码");
+                                    break;
                                 case 1:
-                                    name.append("指纹钥匙");
+                                    name.append("射频");
                                     break;
                                 case 2:
-                                    name.append("密码钥匙");
+                                    name.append("机械钥匙");
                                     break;
                                 case 3:
-                                    name.append("卡钥匙");
+                                    name.append("卡片");
                                     break;
                                 case 4:
-                                    name.append("机械钥匙");
+                                    name.append("指纹");
+                                    break;
+                                case 5:
+                                    name.append("临时密码");
+                                    break;
+                                case 6:
+                                    name.append("App应用程序");
+                                    break;
+                                case 7:
+                                    name.append("蓝牙");
+                                    break;
+                                case 8:
+                                    name.append("人脸");
+                                    break;
+                                case 9:
+                                    name.append("遥控器");
+                                    break;
+                                case 10:
+                                    name.append("指静脉");
                                     break;
                                 default:
                                     break;
@@ -408,13 +479,6 @@ public class LockDetailActivity extends DetailActivity {
                     long total = result.getLongValue("total");
                     int pageNo = result.getIntValue("pageNo");
                     int pageSize = result.getIntValue("pageSize");
-                    if (pageNo == 1 && pageSize < total) {
-                        while (pageNo * pageSize < total) {
-                            pageNo += 1;
-                            UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
-
-                        }
-                    }
                     JSONArray users = result.getJSONArray("data");
                     int size = users.size();
                     for (int i = 0; i < size; i++) {
@@ -424,6 +488,10 @@ public class LockDetailActivity extends DetailActivity {
                         JSONArray attrList = user.getJSONArray("attrList");
                         itemUser.setName(attrList.getJSONObject(0).getString("attrValue"));
                         activity.mUserList.add(itemUser);
+                    }
+                    if (pageSize * pageNo < total) {
+                        pageNo++;
+                        UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_USER_IN_DEVICE:
@@ -445,23 +513,24 @@ public class LockDetailActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    ViseLog.d((String) msg.obj);
-                    JSONObject j = JSON.parseObject((String) msg.obj);
-                    JSONArray historyArray = JSON.parseArray(j.getString("data"));
-                    int historySize = historyArray.size();
-                    for (int i = 0; i < historySize; i++) {
-                        JSONObject jo = historyArray.getJSONObject(i);
-                        ItemHistoryMsg item = new ItemHistoryMsg();
-                        item.setTime(jo.getString("client_date"));
-                        item.setEvent_code(jo.getString("event_code"));
-                        item.setKeyID(jo.getString("keyID"));
-                        item.setLockType(jo.getIntValue("lockType"));
-                        activity.mHistoryList.add(item);
+                    if (!TextUtils.isEmpty((String) msg.obj)) {
+                        JSONObject js = JSON.parseObject((String) msg.obj);
+                        JSONArray historyArray = js.getJSONArray("data");
+                        int historySize = historyArray.size();
+                        for (int i = 0; i < historySize; i++) {
+                            JSONObject jo = historyArray.getJSONObject(i);
+                            ItemHistoryMsg item = new ItemHistoryMsg();
+                            item.setTime(jo.getString("client_date"));
+                            item.setEvent_code(jo.getString("event_code"));
+                            item.setKeyID(jo.getString("KeyID"));
+                            item.setLockType(jo.getIntValue("LockType"));
+                            activity.mHistoryList.add(item);
+                        }
+                        if (activity.mHistoryList.size() > 0) {
+                            activity.mNoRecordHint.setVisibility(View.GONE);
+                        }
+                        activity.mAdapter.notifyDataSetChanged();
                     }
-                    if (activity.mHistoryList.size() > 0) {
-                        activity.mNoRecordHint.setVisibility(View.GONE);
-                    }
-                    activity.mAdapter.notifyDataSetChanged();
                     break;
                 default:
                     break;
@@ -483,14 +552,14 @@ public class LockDetailActivity extends DetailActivity {
             return false;
         }
 
-        ViseLog.d("propertyEntry.getPropertyValue(CTSL.SL_lockstate) = "+propertyEntry.getPropertyValue(CTSL.SL_lockstate));
+        ViseLog.d("propertyEntry.getPropertyValue(CTSL.SL_lockstate) = " + propertyEntry.getPropertyValue(CTSL.SL_lockstate));
 
         if (propertyEntry.getPropertyValue(CTSL.SL_batterypercentage) != null && propertyEntry.getPropertyValue(CTSL.SL_batterypercentage).length() > 0) {
-            mElectricityValue.setText(String.valueOf(propertyEntry.getPropertyValue(CTSL.SL_batterypercentage))+"%");
+            mElectricityValue.setText(String.valueOf(propertyEntry.getPropertyValue(CTSL.SL_batterypercentage)) + "%");
         }
         if (propertyEntry.getPropertyValue(CTSL.SL_lockstate) != null && propertyEntry.getPropertyValue(CTSL.SL_lockstate).length() > 0) {
             int lockState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.SL_lockstate));
-            ViseLog.d("lockState = "+lockState);
+            ViseLog.d("lockState = " + lockState);
             /*if (lockState >= 0 && lockState <= 3)
                 mIconLock.setText(mLockStates[lockState]);
             else mIconLock.setText(getString(R.string.unknown_state));*/

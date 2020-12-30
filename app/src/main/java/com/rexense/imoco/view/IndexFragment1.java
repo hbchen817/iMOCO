@@ -29,6 +29,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshHistoryEvent;
 import com.rexense.imoco.event.RefreshRoomDevice;
 import com.rexense.imoco.event.RefreshRoomName;
 import com.rexense.imoco.event.CEvent;
@@ -884,6 +885,20 @@ public class IndexFragment1 extends BaseFragment {
                                 mLockType = value.getIntValue("LockType");
                                 mIotId = value.getString("iotId");
                                 LockManager.getUserByKey(mLockUserId, mLockType, mIotId, mCommitFailureHandler, mResponseErrorHandler, mRealtimeDataHandler);
+                            case "HijackingAlarm":
+                            case "TamperAlarm":
+                            case "DoorUnlockedAlarm":
+                            case "ArmDoorOpenAlarm":
+                            case "LockedAlarm":
+                            case "DoorOpenNotification":
+                            case "KeyAddedNotification":
+                            case "LowElectricityAlarm":
+                            case "ReportReset":
+                                EventBus.getDefault().post(new RefreshHistoryEvent());
+                                break;
+                            case "RemoteUnlockNotification":
+                                EventBus.getDefault().post(new RefreshHistoryEvent());
+                                ToastUtils.showToastCentrally(mActivity, "远程开门" + (value.getIntValue("Status") == 0 ? "成功" : "失败"));
                                 break;
                             default:
                                 break;

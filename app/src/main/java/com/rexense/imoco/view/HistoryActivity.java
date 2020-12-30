@@ -1,9 +1,9 @@
 package com.rexense.imoco.view;
 
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,13 +11,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,16 +24,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshHistoryEvent;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.LockManager;
-import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.SrlUtils;
+import com.rexense.imoco.view.BaseActivity;
 import com.rexense.imoco.viewholder.CommonAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -68,11 +70,13 @@ public class HistoryActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
+    @BindView(R.id.no_record_hint)
+    TextView mNoRecordHint;
 
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private String mIotID;
-    private int mPageNo;
+    private int mPageNo = 1;
     private int mPageSize = 30;
     private MyResponseHandler mHandler;
     private long mStartTime;
@@ -95,10 +99,17 @@ public class HistoryActivity extends BaseActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mIotID = getIntent().getStringExtra(IOTID);
         mHandler = new MyResponseHandler(this);
         initView();
@@ -109,12 +120,21 @@ public class HistoryActivity extends BaseActivity {
         getData();
     }
 
+    @Subscribe
+    public void refresh(RefreshHistoryEvent event) {
+        mList.clear();
+        mPageNo = 1;
+        getData();
+    }
+
     private void initView() {
         mTitle.setText(R.string.history_record);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new CommonAdapter(mList, this);
         mRecyclerView.setAdapter(mAdapter);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mNoRecordHint.setTypeface(iconfont);
     }
 
     private void getData() {
@@ -239,6 +259,7 @@ public class HistoryActivity extends BaseActivity {
                 mTypeText.setText(all_record.getText());
                 mCurrentType = TYPE_ALL;
                 mList.clear();
+                mPageNo = 1;
                 getData();
             }
             dialog.dismiss();
@@ -248,6 +269,7 @@ public class HistoryActivity extends BaseActivity {
                 mTypeText.setText(alarm_record.getText());
                 mCurrentType = TYPE_ALARM;
                 mList.clear();
+                mPageNo = 1;
                 getData();
             }
             dialog.dismiss();
@@ -257,6 +279,7 @@ public class HistoryActivity extends BaseActivity {
                 mTypeText.setText(open_record.getText());
                 mCurrentType = TYPE_OPEN;
                 mList.clear();
+                mPageNo = 1;
                 getData();
             }
             dialog.dismiss();
@@ -266,6 +289,7 @@ public class HistoryActivity extends BaseActivity {
                 mTypeText.setText(info_record.getText());
                 mCurrentType = TYPE_INFO;
                 mList.clear();
+                mPageNo = 1;
                 getData();
             }
             dialog.dismiss();
@@ -286,19 +310,22 @@ public class HistoryActivity extends BaseActivity {
             HistoryActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    JSONArray array = JSON.parseArray((String) msg.obj);
+                    JSONObject js = JSON.parseObject((String) msg.obj);
+                    JSONArray array = js.getJSONArray("data");
                     int size = array.size();
                     for (int i = 0; i < size; i++) {
                         JSONObject jo = array.getJSONObject(i);
                         ItemHistoryMsg item = new ItemHistoryMsg();
                         item.setTime(jo.getString("client_date"));
                         item.setEvent_code(jo.getString("event_code"));
-                        item.setKeyID(jo.getString("keyID"));
-                        item.setLockType(jo.getIntValue("lockType"));
+                        item.setKeyID(jo.getString("KeyID"));
+                        item.setLockType(jo.getIntValue("LockType"));
                         activity.mList.add(item);
                     }
+                    activity.mNoRecordHint.setVisibility(activity.mList.isEmpty() ? View.VISIBLE : View.GONE);
                     activity.mAdapter.notifyDataSetChanged();
                     SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
+                    SrlUtils.finishLoadMore(activity.mSrlFragmentMe, true);
                     break;
                 default:
                     break;

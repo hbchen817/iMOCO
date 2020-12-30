@@ -60,7 +60,7 @@ public class EditUserActivity extends BaseActivity {
         String name = intent.getStringExtra(NAME);
         tvToolbarTitle.setText(R.string.edit_user);
         tvToolbarRight.setText(R.string.nick_name_save);
-        tvToolbarRight.setTextColor(0xFFD5A035);
+        tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
         mNameEditText.setText(name);
     }

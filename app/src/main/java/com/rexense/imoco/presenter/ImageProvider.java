@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
-import com.rexense.imoco.contract.Constant;
-import com.rexense.imoco.sdk.TSL;
 
 /**
  * Creator: xieshaobing
@@ -58,7 +56,7 @@ public class ImageProvider {
                 return R.drawable.icon_pirsensor;
             case CTSL.PK_TEMHUMSENSOR:
                 return R.drawable.icon_thsensor;
-            case CTSL.PK_SMART_LOCK:
+            case CTSL.PK_SMART_LOCK_A7:
                 return R.drawable.icon_smart_lock;
             case CTSL.PK_WSD_ELE:
                 return R.drawable.icon_dianji;
