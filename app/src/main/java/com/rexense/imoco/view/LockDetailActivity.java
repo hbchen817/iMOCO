@@ -124,10 +124,10 @@ public class LockDetailActivity extends DetailActivity {
         recycleView.setLayoutManager(linearLayoutManager);
         mAdapter = new CommonAdapter(mHistoryList, this);
         recycleView.setAdapter(mAdapter);
-//        if (mOwned == 0) {
+        if (mOwned == 1) {
 //            mRemoteOpenView.setVisibility(View.GONE);
-//        }
-        getUserList();
+            getUserList();
+        }
         getOpenRecord();
     }
 
@@ -344,10 +344,16 @@ public class LockDetailActivity extends DetailActivity {
                 finish();
                 break;
             case R.id.includeDetailImgSetting:
-                showBindKeyDialog("指纹钥匙1");
+                if (mOwned == 1) {
+                    showBindKeyDialog("指纹钥匙1");
+                }
                 break;
             case R.id.mUserManagerView:
-                UserManagerActivity.start(this, mIOTId);
+                if (mOwned == 1) {
+                    UserManagerActivity.start(this, mIOTId);
+                } else {
+                    DialogUtils.showMsgDialog(this, "被分享用户暂无此权限");
+                }
                 break;
             case R.id.mShortTimePasswordView:
                 mStartTimerPicker = null;
@@ -355,7 +361,11 @@ public class LockDetailActivity extends DetailActivity {
                 mStartTimerPicker.show(System.currentTimeMillis());
                 break;
             case R.id.mKeyManagerView:
-                KeyManagerActivity.start(this, mIOTId);
+                if (mOwned == 1) {
+                    KeyManagerActivity.start(this, mIOTId);
+                } else {
+                    DialogUtils.showMsgDialog(this, "被分享用户暂无此权限");
+                }
                 break;
             case R.id.all_record_btn:
                 HistoryActivity.start(this, mIOTId);
@@ -425,7 +435,9 @@ public class LockDetailActivity extends DetailActivity {
                             activity.mCurrentUnBindUser.keyId = value.getString("KeyID");
                             activity.mCurrentUnBindUser.keyType = value.getIntValue("LockType");
                             activity.mCurrentUnBindUser.keyPermission = value.getIntValue("UserLimit");
-                            activity.showBindKeyDialog(name.append(value.getString("KeyID")).toString());
+                            if (activity.mOwned == 1) {
+                                activity.showBindKeyDialog(name.append(value.getString("KeyID")).toString());
+                            }
                             break;
                         case "HijackingAlarm":
                         case "TamperAlarm":
@@ -504,7 +516,7 @@ public class LockDetailActivity extends DetailActivity {
                     if (pageSize * pageNo < total) {
                         pageNo++;
                         UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
-                    } else if (activity.mRefreshPicker){
+                    } else if (activity.mRefreshPicker) {
                         List<String> pickList = new ArrayList<>();
                         pickList.add("创建新用户");//这里加入了一个默认的新建选项 index要-1
                         for (int i = 0; i < activity.mUserList.size(); i++) {

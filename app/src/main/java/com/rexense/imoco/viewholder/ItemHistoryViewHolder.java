@@ -40,16 +40,16 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
             StringBuffer keyName = new StringBuffer();
             switch (model.getLockType()) {
                 case 1:
-                    name.append("指纹钥匙");
+                    keyName.append("指纹钥匙");
                     break;
                 case 2:
-                    name.append("密码钥匙");
+                    keyName.append("密码钥匙");
                     break;
                 case 3:
-                    name.append("卡钥匙");
+                    keyName.append("卡钥匙");
                     break;
                 case 4:
-                    name.append("机械钥匙");
+                    keyName.append("机械钥匙");
                     break;
                 default:
                     break;
