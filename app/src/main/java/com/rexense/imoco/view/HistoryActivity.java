@@ -315,6 +315,9 @@ public class HistoryActivity extends BaseActivity {
                     int size = array.size();
                     for (int i = 0; i < size; i++) {
                         JSONObject jo = array.getJSONObject(i);
+                        if (jo.getIntValue("KeyID") == 103) {
+                            continue;
+                        }
                         ItemHistoryMsg item = new ItemHistoryMsg();
                         item.setTime(jo.getString("client_date"));
                         item.setEvent_code(jo.getString("event_code"));
