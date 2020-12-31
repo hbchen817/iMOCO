@@ -596,9 +596,8 @@ public class LockDetailActivity extends DetailActivity {
             /*if (lockState >= 0 && lockState <= 3)
                 mIconLock.setText(mLockStates[lockState]);
             else mIconLock.setText(getString(R.string.unknown_state));*/
-            if (lockState == 0 || lockState == 1 || lockState == 3 || lockState == 255)
-                mIconLock.setText(getString(R.string.icon_lock));
-            else if (lockState == 2) mIconLock.setText(getString(R.string.icon_unlock));
+            if (lockState == 0) mIconLock.setText(getString(R.string.icon_lock));
+            else if (lockState == 1) mIconLock.setText(getString(R.string.icon_unlock));
         }
         return true;
     }
