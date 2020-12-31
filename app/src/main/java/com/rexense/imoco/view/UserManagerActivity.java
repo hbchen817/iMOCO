@@ -115,7 +115,7 @@ public class UserManagerActivity extends BaseActivity {
     }
 
     private void initView() {
-        ivToolbarRight.setImageResource(R.drawable.add_gray);
+        ivToolbarRight.setImageResource(R.drawable.add_topic_color2);
         tvToolbarTitle.setText(R.string.lock_user_manager);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new CommonAdapter(mList, this);
