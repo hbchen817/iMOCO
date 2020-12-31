@@ -463,38 +463,17 @@ public class LockDetailActivity extends DetailActivity {
                         if (lockUserPermType == 0) {//未绑定
                             StringBuffer name = new StringBuffer();
                             switch (data.getIntValue("lockUserType")) {
-                                case 0:
-                                    name.append("密码");
-                                    break;
                                 case 1:
-                                    name.append("射频");
+                                    name.append("指纹钥匙");
                                     break;
                                 case 2:
-                                    name.append("机械钥匙");
+                                    name.append("密码钥匙");
                                     break;
                                 case 3:
-                                    name.append("卡片");
+                                    name.append("卡钥匙");
                                     break;
                                 case 4:
-                                    name.append("指纹");
-                                    break;
-                                case 5:
-                                    name.append("临时密码");
-                                    break;
-                                case 6:
-                                    name.append("App应用程序");
-                                    break;
-                                case 7:
-                                    name.append("蓝牙");
-                                    break;
-                                case 8:
-                                    name.append("人脸");
-                                    break;
-                                case 9:
-                                    name.append("遥控器");
-                                    break;
-                                case 10:
-                                    name.append("指静脉");
+                                    name.append("机械钥匙");
                                     break;
                                 default:
                                     break;
