@@ -70,7 +70,7 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     name.setText(keyNameStr + "被挟持");
                     break;
                 case "TamperAlarm":
-                    name.setText(keyNameStr + "被篡改");
+                    name.setText(keyNameStr + "被撬");
                     break;
                 case "DoorUnlockedAlarm":
                     name.setText(keyNameStr + "未锁门警告");
@@ -79,7 +79,7 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     name.setText(keyNameStr + "暴力破门警告");
                     break;
                 case "LockedAlarm":
-                    name.setText(keyNameStr + "卡塞告警");
+                    name.setText(keyNameStr + "被锁定");
                     break;
                 default:
                     break;
