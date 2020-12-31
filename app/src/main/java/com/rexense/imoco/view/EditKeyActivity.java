@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshKeyListEvent;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.presenter.LockManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -23,7 +26,6 @@ import java.lang.ref.WeakReference;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 
 public class EditKeyActivity extends BaseActivity {
 
@@ -108,6 +110,8 @@ public class EditKeyActivity extends BaseActivity {
                 break;
             case R.id.delete_key:
                 LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+//                EventBus.getDefault().post(new RefreshKeyListEvent());
+//                finish();
                 break;
         }
     }
@@ -132,7 +136,7 @@ public class EditKeyActivity extends BaseActivity {
             EditKeyActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_DELETE_KEY:
-                    EventBus.getDefault().post(new KeyManagerActivity.RefreshKeyListEvent());
+                    EventBus.getDefault().post(new RefreshKeyListEvent());
                     activity.finish();
                     break;
                 default:

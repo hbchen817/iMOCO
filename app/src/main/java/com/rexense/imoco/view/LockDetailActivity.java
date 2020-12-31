@@ -145,9 +145,11 @@ public class LockDetailActivity extends DetailActivity {
 
     @Subscribe
     public void refreshUsers(UserManagerActivity.RefreshUserEvent event) {
-        mRefreshPicker = true;
-        mUserList.clear();
-        getUserList();
+        if (mPicker != null) {
+            mRefreshPicker = true;
+            mUserList.clear();
+            getUserList();
+        }
     }
 
     private void getOpenRecord() {

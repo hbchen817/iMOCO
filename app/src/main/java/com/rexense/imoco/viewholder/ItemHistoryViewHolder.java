@@ -102,7 +102,11 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
             icon.setTextColor(0xff3BBC5F);
             switch (eventCode) {
                 case "KeyDeletedNotification":
-                    name.setText("删除" + keyNameStr);
+                    if (!TextUtils.isEmpty(model.getKeyID()) && model.getKeyID().equals("65535")) {
+                        name.setText("删除全部钥匙");
+                    } else {
+                        name.setText("删除" + keyNameStr);
+                    }
                     break;
                 case "KeyAddedNotification":
                     name.setText("增加" + keyNameStr);

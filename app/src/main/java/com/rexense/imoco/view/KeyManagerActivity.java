@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.event.RefreshKeyListEvent;
 import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.model.Visitable;
@@ -62,11 +63,11 @@ public class KeyManagerActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_key_manager);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         tvToolbarTitle.setText(R.string.lock_key_manager);
         mIotId = getIntent().getStringExtra(IOTID);
         mHandler = new MyHandler(this);
-        EventBus.getDefault().register(this);
         initView();
         getData();
     }
@@ -153,6 +154,7 @@ public class KeyManagerActivity extends BaseActivity {
                     int size = users.size();
                     for (int i = 0; i < size; i++) {
                         JSONObject user = users.getJSONObject(i);
+                        activity.mUserMap.put(user.getString("userId"), user.getJSONArray("attrList").getJSONObject(0).getString("attrValue"));
                         LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                     }
                     if (pageSize * pageNo < total) {
@@ -181,9 +183,5 @@ public class KeyManagerActivity extends BaseActivity {
             }
 
         }
-    }
-
-    public static class RefreshKeyListEvent {
-
     }
 }
