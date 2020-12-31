@@ -28,7 +28,7 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
                 android:scaleType="fitEnd"
-                android:src="@drawable/state_fourswitch_1_off" />
+                android:src="@drawable/state_fourswitch_2_off" />
 
             <ImageView
                 android:id="@+id/detailTwoSwitchImgOperate3"
@@ -36,7 +36,7 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
                 android:scaleType="fitStart"
-                android:src="@drawable/state_fourswitch_2_off" />
+                android:src="@drawable/state_fourswitch_1_off" />
         </LinearLayout>
 
         <LinearLayout
@@ -50,7 +50,7 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
                 android:scaleType="fitEnd"
-                android:src="@drawable/state_fourswitch_3_off" />
+                android:src="@drawable/state_fourswitch_4_off" />
 
             <ImageView
                 android:id="@+id/detailFourSwitchImgOperate4"
@@ -58,7 +58,7 @@
                 android:layout_height="100dp"
                 android:contentDescription="@string/contentDescription_null"
                 android:scaleType="fitStart"
-                android:src="@drawable/state_fourswitch_4_off" />
+                android:src="@drawable/state_fourswitch_3_off" />
         </LinearLayout>
     </LinearLayout>
 
