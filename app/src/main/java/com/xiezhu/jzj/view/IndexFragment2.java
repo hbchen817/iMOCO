@@ -138,7 +138,7 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setTextColor(getResources().getColor(R.color.topic_color1));
+                mLblScene.setTextColor(getResources().getColor(R.color.topic_color2));
                 mLblSceneDL.setVisibility(View.VISIBLE);
                 mLblMy.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblMyDL.setVisibility(View.INVISIBLE);
@@ -154,7 +154,7 @@ public class IndexFragment2 extends BaseFragment {
             public void onClick(View v) {
                 mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
                 mLblSceneDL.setVisibility(View.INVISIBLE);
-                mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
+                mLblMy.setTextColor(getResources().getColor(R.color.topic_color2));
                 mLblMyDL.setVisibility(View.VISIBLE);
 
                 mListSceneModel.setVisibility(View.GONE);

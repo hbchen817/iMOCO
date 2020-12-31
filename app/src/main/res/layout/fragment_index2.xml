@@ -42,7 +42,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="0dp"
             android:text="@string/scene_scene"
-            android:textColor="@color/topic_color1" />
+            android:textColor="@color/topic_color2" />
 
         <TextView
             android:id="@+id/sceneLblSceneDL"
@@ -54,8 +54,8 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
-            android:background="@color/topic_color1"
-            android:textColor="@color/topic_color1"
+            android:background="@color/topic_color2"
+            android:textColor="@color/topic_color2"
             android:text="@string/scene_scene" />
 
         <TextView
@@ -78,8 +78,8 @@
             android:layout_height="2dp"
             android:layout_marginTop="2dp"
             android:layout_centerVertical="true"
-            android:background="@color/topic_color1"
-            android:textColor="@color/topic_color1"
+            android:background="@color/topic_color2"
+            android:textColor="@color/topic_color2"
             android:visibility="invisible"
             android:text="@string/scene_my" />
 

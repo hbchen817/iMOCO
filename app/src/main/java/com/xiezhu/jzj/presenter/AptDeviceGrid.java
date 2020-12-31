@@ -35,7 +35,6 @@ public class AptDeviceGrid extends BaseAdapter {
 
 		private TextView state1;
 		private TextView state2;
-		private TextView state3;
 	}
 	private Context mContext;
 	private List<EDevice.deviceEntry> mDeviceList;
@@ -129,7 +128,6 @@ public class AptDeviceGrid extends BaseAdapter {
 			viewHolder.time = (TextView) convertView.findViewById(R.id.deviceGridLblTime);
 			viewHolder.state1 = (TextView) convertView.findViewById(R.id.deviceGridLblState1);
 			viewHolder.state2 = (TextView) convertView.findViewById(R.id.deviceGridLblState2);
-			viewHolder.state3 = (TextView) convertView.findViewById(R.id.deviceGridLblState3);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -143,7 +141,6 @@ public class AptDeviceGrid extends BaseAdapter {
 		viewHolder.state.setVisibility(View.GONE);
 		viewHolder.state1.setVisibility(View.GONE);
 		viewHolder.state2.setVisibility(View.GONE);
-		viewHolder.state3.setVisibility(View.GONE);
 		viewHolder.time.setVisibility(View.GONE);
 		if(this.mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
 			viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
@@ -166,38 +163,21 @@ public class AptDeviceGrid extends BaseAdapter {
 					viewHolder.time.setText(this.mDeviceList.get(position).stateTimes.get(0).time);
 				}
 				// 有多种状态的处理
-				/*if(this.mDeviceList.get(position).stateTimes.size() >= 2){
-					// 目前只显示前两种状态
-					viewHolder.state1.setVisibility(View.VISIBLE);
-					viewHolder.state2.setVisibility(View.VISIBLE);
-					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
-				}
-				if(this.mDeviceList.get(position).stateTimes.size() >= 3){
-					// 目前只显示前两种状态
-					viewHolder.state3.setVisibility(View.VISIBLE);
-					viewHolder.state3.setText(this.mDeviceList.get(position).stateTimes.get(3).value + " / " + this.mDeviceList.get(position).stateTimes.get(2).time);
-				}*/
+				// 目前只显示前两种状态
 				int stateTimesCount = this.mDeviceList.get(position).stateTimes.size();
-				if (stateTimesCount == 2){
+				if (stateTimesCount >= 2) {
 					viewHolder.state1.setVisibility(View.VISIBLE);
 					viewHolder.state2.setVisibility(View.VISIBLE);
-					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
-				} else if (stateTimesCount == 3){
-					viewHolder.state1.setVisibility(View.VISIBLE);
-					viewHolder.state2.setVisibility(View.VISIBLE);
-					viewHolder.state3.setVisibility(View.VISIBLE);
-					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
-					viewHolder.state3.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(2).time);
-				} else if (stateTimesCount >= 4){
-					// 目前只显示前两种状态
-					viewHolder.state1.setVisibility(View.VISIBLE);
-					viewHolder.state2.setVisibility(View.VISIBLE);
-					viewHolder.state3.setVisibility(View.GONE);
-					viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-					viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);
+					if (stateTimesCount == 2) {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+					} else if (stateTimesCount == 3) {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+					} else {
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);
+					}
 				}
 			}
 		}
