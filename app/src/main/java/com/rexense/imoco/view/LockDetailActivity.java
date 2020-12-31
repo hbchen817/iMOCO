@@ -326,6 +326,7 @@ public class LockDetailActivity extends DetailActivity {
         mPicker.setDataList(data);
         mPicker.setCanScrollLoop(false);
         mPicker.setSelected(1);
+        mSelectedUser = mUserList.get(0);
         mPicker.setOnSelectListener(new PickerView.OnSelectListener() {
             @Override
             public void onSelect(View view, String selected) {
