@@ -141,8 +141,8 @@ public class LockManager {
 
     public static void filterUnbindKey(String iotId,
                                        String keyID,
-                                       String keyType,
-                                       String lockUserPermType,
+                                       int keyType,
+                                       int lockUserPermType,
                                        Handler commitFailureHandler,
                                        Handler responseErrorHandler,
                                        @NonNull Handler processDataHandler) {
@@ -151,10 +151,14 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_FILTER_UNBIND_KEY;
         requestParameterEntry.version = "1.0.2";
-        requestParameterEntry.addParameter("iotId", iotId);
-        requestParameterEntry.addParameter("lockUserId", keyID);
-        requestParameterEntry.addParameter("lockUserType", keyType);
-        requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("iotId", iotId);
+        jsonObject.put("lockUserId", keyID);
+        jsonObject.put("lockUserType", keyType);
+        jsonObject.put("lockUserPermType", lockUserPermType);
+        jsonArray.add(jsonObject);
+        requestParameterEntry.addParameter("originalLockUsers", jsonArray);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_FILTER_UNBIND_KEY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
