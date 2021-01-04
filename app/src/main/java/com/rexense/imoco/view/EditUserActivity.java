@@ -76,6 +76,7 @@ public class EditUserActivity extends BaseActivity {
         tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
         mNameEditText.setText(name);
+        if (name != null) mNameEditText.setSelection(name.length());
     }
 
     @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right})

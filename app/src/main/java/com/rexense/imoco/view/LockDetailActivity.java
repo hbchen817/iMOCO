@@ -292,6 +292,8 @@ public class LockDetailActivity extends DetailActivity {
         TextView btn_cancel_two = view.findViewById(R.id.btn_cancel_two);
         LinearLayout belongView = view.findViewById(R.id.belong_view);
         TextView belongUserName = view.findViewById(R.id.user_name);
+        if (mSelectedUser != null)
+            belongUserName.setText(mSelectedUser.getName());
         mPicker = view.findViewById(R.id.picker);
 
         final Dialog dialog = builder.create();
@@ -313,6 +315,10 @@ public class LockDetailActivity extends DetailActivity {
             if (mSelectedUser != null && mCurrentUnBindUser != null) {
                 LockManager.bindUserKey(mSelectedUser.getID(), mCurrentUnBindUser.keyId, mCurrentUnBindUser.keyType, mCurrentUnBindUser.keyPermission, mIOTId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 dialog.dismiss();
+            } else if (mSelectedUser == null) {
+                ToastUtils.showLongToast(LockDetailActivity.this, R.string.pls_select_user_first);
+            } else if (mCurrentUnBindUser == null) {
+                ToastUtils.showLongToast(LockDetailActivity.this, R.string.pls_add_key_first);
             }
         });
         belongView.setOnClickListener(v2 -> {
@@ -327,6 +333,7 @@ public class LockDetailActivity extends DetailActivity {
             if (mPicker.getSelectedIndex() == 0) {
                 CreateUserActivity.start(this);
             } else {
+                if (mSelectedUser == null) mSelectedUser = mUserList.get(0);
                 belongUserName.setText(mSelectedUser.getName());
                 dialogOneView.setVisibility(View.VISIBLE);
                 dialogTwoView.setVisibility(View.GONE);
@@ -340,7 +347,7 @@ public class LockDetailActivity extends DetailActivity {
         mPicker.setDataList(data);
         mPicker.setCanScrollLoop(false);
         mPicker.setSelected(1);
-        mSelectedUser = mUserList.get(0);
+        // mSelectedUser = mUserList.get(0);
         mPicker.setOnSelectListener(new PickerView.OnSelectListener() {
             @Override
             public void onSelect(View view, String selected) {
@@ -359,7 +366,33 @@ public class LockDetailActivity extends DetailActivity {
                 break;
             case R.id.includeDetailImgSetting:
                 if (mOwned == 1) {
-                    showBindKeyDialog("指纹钥匙1");
+                    if (mCurrentUnBindUser == null)
+                        showBindKeyDialog(getString(R.string.no_key));
+                    else {
+
+                        StringBuffer name = new StringBuffer();
+                        switch (mCurrentUnBindUser.keyType) {//开锁方式
+                            /*case "5"://临时钥匙
+                                return;*/
+                            case 1:
+                                name.append("指纹钥匙");
+                                break;
+                            case 2:
+                                name.append("密码钥匙");
+                                break;
+                            case 3:
+                                name.append("卡钥匙");
+                                break;
+                            case 4:
+                                name.append("机械钥匙");
+                                break;
+                            default://其他钥匙 指纹 密码 卡 机械钥匙
+//                                    LockManager.filterUnbindKey(activity.mIOTId, value.getString("KeyID"), value.getIntValue("LockType"), value.getIntValue("UserLimit"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                                break;
+                        }
+                        showBindKeyDialog(name.append(mCurrentUnBindUser.keyId).toString());
+                        // showBindKeyDialog("指纹钥匙1");
+                    }
                 }
                 break;
             case R.id.mUserManagerView:
@@ -429,7 +462,7 @@ public class LockDetailActivity extends DetailActivity {
                                         Toast.makeText(activity, "创建临时密码失败", Toast.LENGTH_SHORT).show();
                                     }
                                     return;
-                                case "0":
+                                case "1":
                                     name.append("指纹钥匙");
                                     break;
                                 case "2":
