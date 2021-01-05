@@ -55,6 +55,7 @@ public class LockManager {
 
     /**
      * 设置临时密码
+     *
      * @param iotId
      * @param key
      * @param start
@@ -75,7 +76,7 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
         requestParameterEntry.version = "1.0.5";
-        requestParameterEntry.addParameter("iotid", iotId);
+        requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.addParameter("identifier", "AddOTP");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("OTP", key);
@@ -83,16 +84,65 @@ public class LockManager {
         jsonObject.put("EndDate", end);
         jsonObject.put("ValidCount", 1);
         requestParameterEntry.addParameter("args", jsonObject);
-        //fixme 这个callback应该不对
-        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_HISTORY;
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_LNEVENTNOTIFY;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    /**
+     * 设置临时密码
+     *
+     * @param iotId
+     * @param key
+     * @param startTime
+     * @param commitFailureHandler
+     * @param responseErrorHandler
+     * @param processDataHandler
+     */
+    public static void setTemporaryKey(String iotId,
+                                       String key,
+                                       String startTime,
+                                       Handler commitFailureHandler,
+                                       Handler responseErrorHandler,
+                                       @NonNull Handler processDataHandler) {
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "AddOTP");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("OTP", key);
+        jsonObject.put("StartTime", startTime);
+        jsonObject.put("ValidTime", 600);
+        requestParameterEntry.addParameter("args", jsonObject);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_TEMPORARY_KEY;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //远程开门
+    public static void remoteOpen(String iotId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "RemoteUnlock");
+        JSONObject jsonObject = new JSONObject();
+        requestParameterEntry.addParameter("args", jsonObject);
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
     public static void filterUnbindKey(String iotId,
                                        String keyID,
-                                       String keyType,
-                                       String lockUserPermType,
+                                       int keyType,
+                                       int lockUserPermType,
                                        Handler commitFailureHandler,
                                        Handler responseErrorHandler,
                                        @NonNull Handler processDataHandler) {
@@ -101,10 +151,14 @@ public class LockManager {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_FILTER_UNBIND_KEY;
         requestParameterEntry.version = "1.0.2";
-        requestParameterEntry.addParameter("iotId", iotId);
-        requestParameterEntry.addParameter("lockUserId", keyID);
-        requestParameterEntry.addParameter("lockUserType", keyType);
-        requestParameterEntry.addParameter("lockUserPermType", lockUserPermType);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("iotId", iotId);
+        jsonObject.put("lockUserId", keyID);
+        jsonObject.put("lockUserType", keyType);
+        jsonObject.put("lockUserPermType", lockUserPermType);
+        jsonArray.add(jsonObject);
+        requestParameterEntry.addParameter("originalLockUsers", jsonArray);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_FILTER_UNBIND_KEY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

@@ -239,6 +239,7 @@ public class Constant {
     public static final int MSG_CALLBACK_EXTENDED_PROPERTY_SET      = 159;
     public static final int MSG_CALLBACK_EXTENDED_PROPERTY_GET      = 160;
     public static final int MSG_CALLBACK_CREATE_SWITCH_AUTO_SCENE   = 161;
+    public static final int MSG_CALLBACK_TEMPORARY_KEY              = 162;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

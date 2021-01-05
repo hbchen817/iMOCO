@@ -74,7 +74,7 @@ public class ActivityRouter {
                     intent.putExtra("isHasPowerSource", true);
                 }
                 break;
-            case CTSL.PK_SMART_LOCK:
+            case CTSL.PK_SMART_LOCK_A7:
                 intent = new Intent(context, LockDetailActivity.class);
                 break;
             case CTSL.PK_LIGHT:

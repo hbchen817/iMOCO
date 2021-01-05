@@ -1,4 +1,4 @@
-package com.rexense.imoco.event;
+package com.xiezhu.jzj.event;
 
 public class RefreshSceneListEvent {
 }

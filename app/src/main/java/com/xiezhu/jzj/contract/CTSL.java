@@ -21,7 +21,8 @@ public class CTSL {
     public static final String PK_DOORSENSOR                = "a1q32AasDLg";
     public static final String PK_PIRSENSOR                 = "a1CzbnRNzCR";
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
-    public static final String PK_SMART_LOCK                = "a19ONFPQn0u";//智能锁pk
+    public static final String PK_SMART_LOCK_A7             = "a19ONFPQn0u";//临时密码StartTime
+    public static final String PK_SMART_LOCK                = "a1SlrD1NHyW";//临时密码StartDate
     public static final String PK_SIX_TWO_SCENE_SWITCH      = "a1zf8jfGzTX";
     public static final String PK_SIX_SCENE_SWITCH          = "a1MLvTtRmWo";
     public static final String PK_TWO_SCENE_SWITCH          = "a14kD7IKWqp";
@@ -110,8 +111,8 @@ public class CTSL {
             put(TWS_P_PowerSwitch_2, PTYPE.t_bool);
         }
     };
-
-//定义调光调色属性常量
+	
+	//定义调光调色属性常量
     public static final String LIGHT_P_POWER                = "PowerSwitch";
     public static final String LIGHT_P_BRIGHTNESS           = "brightness";
     public static final String LIGHT_P_COLOR_TEMPERATURE    = "colorTemperature";
@@ -155,8 +156,8 @@ public class CTSL {
     public static final String SCENE_SWITCH_KEY_CODE_2       = "2";
     public static final String SCENE_SWITCH_KEY_CODE_3       = "3";
     public static final String SCENE_SWITCH_KEY_CODE_4       = "4";
-	
-	// 定义四键开关属性常量
+
+    // 定义四键开关属性常量
     public static final String FWS_P_PowerSwitch_1          = "PowerSwitch_1";
     public static final String FWS_P_PowerSwitch_2          = "PowerSwitch_2";
     public static final String FWS_P_PowerSwitch_3          = "PowerSwitch_3";
@@ -308,6 +309,16 @@ public class CTSL {
         }
     };
 
+    // 智能锁A7
+    public static final String SL_batterypercentage = "BatteryPercentage";
+    public static final String SL_lockstate = "LockState";
+    public static final Map<String, PTYPE> SL_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(SL_batterypercentage, PTYPE.t_int32);
+            put(SL_lockstate, PTYPE.t_enum);
+        }
+    };
+
     // 定义属性配置文件
     public static final Map<String, Map<String, PTYPE>> propertyProfile = new HashMap<String, Map<String, PTYPE>>() {
         {
@@ -331,6 +342,7 @@ public class CTSL {
             put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
             put(PK_FLOORHEATING001, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
+            put(PK_SMART_LOCK_A7, SL_Properties);
         }
     };
 
