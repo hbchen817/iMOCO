@@ -11,7 +11,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="140dp" >
 
-		<com.rexense.imoco.widget.ComRoundCornerImageView
+		<com.laffey.smart.widget.ComRoundCornerImageView
 			android:id="@+id/roomListImgIcon"
 			android:layout_width="match_parent"
 			android:layout_height="140dp"

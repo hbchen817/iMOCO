@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/dp_70">
 
-            <com.rexense.imoco.view.AlignTextView
+            <com.laffey.smart.view.AlignTextView
                 android:id="@+id/temperature_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

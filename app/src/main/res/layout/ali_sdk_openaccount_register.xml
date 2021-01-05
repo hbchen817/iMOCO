@@ -73,7 +73,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="我同意莫科智家"
+                        android:text="我同意拉斐智能"
                         android:textSize="@dimen/sp_14" />
 
                     <TextView
@@ -98,7 +98,7 @@
                         android:textColor="@color/appfontcolor"
                         android:textSize="@dimen/sp_14" />
                 </LinearLayout>
-                <com.rexense.imoco.widget.NextStepButton
+                <com.laffey.smart.widget.NextStepButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
