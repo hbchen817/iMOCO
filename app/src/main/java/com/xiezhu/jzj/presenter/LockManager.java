@@ -150,7 +150,7 @@ public class LockManager {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_FILTER_UNBIND_KEY;
-        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.version = "1.0.1";
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("iotId", iotId);
