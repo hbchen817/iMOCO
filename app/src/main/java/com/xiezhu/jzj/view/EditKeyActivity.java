@@ -2,6 +2,8 @@ package com.xiezhu.jzj.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.event.RefreshKeyListEvent;
 import com.xiezhu.jzj.model.ItemUserKey;
 import com.xiezhu.jzj.presenter.LockManager;
 
@@ -51,6 +54,17 @@ public class EditKeyActivity extends BaseActivity {
         mIotId = getIntent().getStringExtra("iotId");
         mHandler = new MyProcessHandler(this);
         initView();
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     private void initView() {
@@ -106,6 +120,8 @@ public class EditKeyActivity extends BaseActivity {
                 break;
             case R.id.delete_key:
                 LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+//                EventBus.getDefault().post(new RefreshKeyListEvent());
+//                finish();
                 break;
         }
     }
@@ -130,7 +146,7 @@ public class EditKeyActivity extends BaseActivity {
             EditKeyActivity activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_DELETE_KEY:
-                    EventBus.getDefault().post(new KeyManagerActivity.RefreshKeyListEvent());
+                    EventBus.getDefault().post(new RefreshKeyListEvent());
                     activity.finish();
                     break;
                 default:

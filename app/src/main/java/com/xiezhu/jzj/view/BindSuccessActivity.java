@@ -26,6 +26,7 @@ import com.xiezhu.jzj.presenter.ActivityRouter;
 import com.xiezhu.jzj.presenter.DeviceBuffer;
 import com.xiezhu.jzj.presenter.TSLHelper;
 import com.xiezhu.jzj.presenter.UserCenter;
+import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -160,9 +161,13 @@ public class BindSuccessActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.current_test_btn:
-                ActivityRouter.toDetail(this, mIotId, mPK,
-                        mStatus, mNickName, mOwned);
-                finish();
+                if (mPK == null) {
+                    ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
+                } else {
+                    ActivityRouter.toDetail(this, mIotId, mPK,
+                            mStatus, mNickName, mOwned);
+                    finish();
+                }
                 break;
             case R.id.edit_name_btn:
                 showDeviceNameDialogEdit();

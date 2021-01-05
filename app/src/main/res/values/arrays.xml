@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="smart_lock_state_a7">
+        <item>未完全上锁</item>
+        <item>门外反锁</item>
+        <item>开锁</item>
+        <item>内部反锁</item>
+    </string-array>
+</resources>

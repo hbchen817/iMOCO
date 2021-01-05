@@ -150,29 +150,30 @@ public class APIChannel {
 
     // 输出请求信息
     private void printfRequestInfo(IoTRequest request, String type, int displayType){
-        String info = type + ":\r\n";
-        info = info + "    host: " + request.getHost() + "\r\n";
-        info = info + "    scheme: " + request.getScheme().toString() + "\r\n";
-        info = info + "    path: " + request.getPath() + "\r\n";
-        info = info + "    version: " + request.getAPIVersion() + "\r\n";
-        info = info + "    authType: " + request.getAuthType() + "\r\n";
-        info = info + "    Params:\r\n";
-        Integer i = 1;
-        for (Map.Entry<String, Object> entry: request.getParams().entrySet()) {
-            info = info + "        " + i.toString() + ": " + entry.getKey() + " / " + entry.getValue().toString() + "\r\n";
-            i++;
-        }
+        try {
+            String info = type + ":\r\n";
+            info = info + "    host: " + request.getHost() + "\r\n";
+            info = info + "    scheme: " + request.getScheme().toString() + "\r\n";
+            info = info + "    path: " + request.getPath() + "\r\n";
+            info = info + "    version: " + request.getAPIVersion() + "\r\n";
+            info = info + "    authType: " + request.getAuthType() + "\r\n";
+            info = info + "    Params:\r\n";
+            Integer i = 1;
+            for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
+                info = info + "        " + i.toString() + ": " + entry.getKey() + " / " + entry.getValue().toString() + "\r\n";
+                i++;
+            }
 
-        if(displayType == 1){
-            Logger.i(info);
+            if (displayType == 1) {
+                Logger.i(info);
+            } else if (displayType == 2) {
+                Logger.w(info);
+            } else {
+                Logger.e(info);
+            }
+        } catch (Exception e) {
+            Logger.e(e.toString());
         }
-        else if(displayType == 2){
-            Logger.w(info);
-        }
-        else{
-            Logger.e(info);
-        }
-
     }
 }
 

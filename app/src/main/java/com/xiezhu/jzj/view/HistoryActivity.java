@@ -3,7 +3,9 @@ package com.xiezhu.jzj.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +26,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.event.RefreshHistoryEvent;
 import com.xiezhu.jzj.model.ItemHistoryMsg;
 import com.xiezhu.jzj.model.Visitable;
 import com.xiezhu.jzj.presenter.LockManager;
@@ -33,6 +36,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -94,10 +100,17 @@ public class HistoryActivity extends BaseActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mIotID = getIntent().getStringExtra(IOTID);
         mHandler = new MyResponseHandler(this);
         initView();
@@ -105,6 +118,24 @@ public class HistoryActivity extends BaseActivity {
         mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
         mStartTime = 0;
         mCurrentType = TYPE_ALL;
+        getData();
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
+    }
+
+    @Subscribe
+    public void refresh(RefreshHistoryEvent event) {
+        mList.clear();
+        mPageNo = 1;
         getData();
     }
 
@@ -296,6 +327,9 @@ public class HistoryActivity extends BaseActivity {
                     int size = array.size();
                     for (int i = 0; i < size; i++) {
                         JSONObject jo = array.getJSONObject(i);
+                        if (jo.getIntValue("KeyID") == 103) {
+                            continue;
+                        }
                         ItemHistoryMsg item = new ItemHistoryMsg();
                         item.setTime(jo.getString("client_date"));
                         item.setEvent_code(jo.getString("event_code"));

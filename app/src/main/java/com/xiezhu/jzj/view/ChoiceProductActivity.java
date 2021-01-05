@@ -265,8 +265,6 @@ public class ChoiceProductActivity extends BaseActivity {
         this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
         this.mGatewayStatus = intent.getIntExtra("gatewayStatus", Constant.CONNECTION_STATUS_UNABLED);
 
-        ViseLog.d("mGatewayIOTId = "+mGatewayIOTId+" , mGatewayStatus = "+mGatewayStatus);
-
         // 没有指定网关时获取网关列表以获取网关的数量
         if (this.mGatewayIOTId == null || this.mGatewayIOTId.length() == 0) {
             //new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, 50, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);

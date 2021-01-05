@@ -42,8 +42,11 @@ public class CTSL {
 
     public static final String PK_RGB_COLOR_LIGHT_STRIP     = "a1yzxlzMyR0";// RGB彩色灯带
     public static final String PK_HSL_COLOR_LIGHT           = "a11jimE2TIi";// HSL彩色灯
+    public static final String PK_HSL_COLOR_LIGHT_JZJ       = "a1NTVC20VvJ";// HSL彩色灯
     public static final String PK_HSL_COLOR_LIGHT_STRIP     = "a1yARva6fVG";// HSL彩色灯带
+    public static final String PK_HSL_COLOR_LIGHT_STRIP_JZJ = "a13QDZNtbNg";// HSL彩色灯带
     public static final String PK_CONTROL_COLOR_TEMP_LIGHT  = "a1uXFxg1cAL";// 调光色温灯
+    public static final String PK_CONTROL_COLOR_TEMP_LIGHT_JZJ= "a1hJe3FCYTS";// 调光色温灯
     public static final String PK_CONTROL_COLOR_LIGHT       = "a1mSlpQen3w";// 调光灯
     public static final String PK_RGB_COLOR_LIGHT           = "a1MAzhopgCh";// RGB彩色灯
     public static final String PK_AIRCOMDITION_TWO          = "a1SlOjihHnP";// 空调二管制

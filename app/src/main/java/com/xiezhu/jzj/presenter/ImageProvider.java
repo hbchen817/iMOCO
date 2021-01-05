@@ -76,10 +76,13 @@ public class ImageProvider {
                 return R.drawable.icon_three_switch_white;
             case CTSL.PK_RGB_COLOR_LIGHT_STRIP:// RGB彩色灯带
                 return R.drawable.icon_color_light;
+            case CTSL.PK_HSL_COLOR_LIGHT_JZJ:// HSL彩色灯
             case CTSL.PK_HSL_COLOR_LIGHT:// HSL彩色灯
                 return R.drawable.icon_color_light;
+            case CTSL.PK_HSL_COLOR_LIGHT_STRIP_JZJ:// HSL彩色灯带
             case CTSL.PK_HSL_COLOR_LIGHT_STRIP:// HSL彩色灯带
                 return R.drawable.icon_color_light;
+            case CTSL.PK_CONTROL_COLOR_TEMP_LIGHT_JZJ:// 调光色温灯
             case CTSL.PK_CONTROL_COLOR_TEMP_LIGHT:// 调光色温灯
                 return R.drawable.icon_color_light;
             case CTSL.PK_CONTROL_COLOR_LIGHT:// 调光灯

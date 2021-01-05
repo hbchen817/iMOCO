@@ -2,10 +2,13 @@ package com.xiezhu.jzj.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +20,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.event.RefreshKeyListEvent;
 import com.xiezhu.jzj.model.ItemUserKey;
 import com.xiezhu.jzj.model.Visitable;
 import com.xiezhu.jzj.presenter.LockManager;
@@ -44,6 +48,8 @@ public class KeyManagerActivity extends BaseActivity {
 
     private static final String IOTID = "IOTID";
 
+    @BindView(R.id.tv_toolbar_title)
+    TextView tvToolbarTitle;
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
 
@@ -57,12 +63,24 @@ public class KeyManagerActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_key_manager);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
+        tvToolbarTitle.setText(R.string.lock_key_manager);
         mIotId = getIntent().getStringExtra(IOTID);
         mHandler = new MyHandler(this);
-        EventBus.getDefault().register(this);
         initView();
         getData();
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Override
@@ -72,7 +90,7 @@ public class KeyManagerActivity extends BaseActivity {
     }
 
     private void getData() {
-        UserCenter.queryVirtualUserListInDevice(mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        UserCenter.queryVirtualUserListInAccount(1, 20, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     @Subscribe
@@ -138,6 +156,23 @@ public class KeyManagerActivity extends BaseActivity {
                         LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                     }
                     break;
+                case Constant.MSG_CALLBACK_QUERY_USER_IN_ACCOUNT:
+                    JSONObject result = JSON.parseObject((String) msg.obj);
+                    long total = result.getLongValue("total");
+                    int pageNo = result.getIntValue("pageNo");
+                    int pageSize = result.getIntValue("pageSize");
+                    JSONArray users = result.getJSONArray("data");
+                    int size = users.size();
+                    for (int i = 0; i < size; i++) {
+                        JSONObject user = users.getJSONObject(i);
+                        activity.mUserMap.put(user.getString("userId"), user.getJSONArray("attrList").getJSONObject(0).getString("attrValue"));
+                        LockManager.queryKeyByUser(user.getString("userId"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                    }
+                    if (pageSize * pageNo < total) {
+                        pageNo++;
+                        UserCenter.queryVirtualUserListInAccount(pageNo, pageSize, activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                    }
+                    break;
                 case Constant.MSG_CALLBACK_QUERY_KEY_BY_USER:
                     JSONArray keyArray = JSON.parseArray((String) msg.obj);
                     for (int i = 0; i < keyArray.size(); i++) {
@@ -159,9 +194,5 @@ public class KeyManagerActivity extends BaseActivity {
             }
 
         }
-    }
-
-    public static class RefreshKeyListEvent {
-
     }
 }

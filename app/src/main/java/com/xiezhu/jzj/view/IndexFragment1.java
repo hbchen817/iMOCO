@@ -28,6 +28,7 @@ import com.gary.hi.library.log.HiLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.event.RefreshHistoryEvent;
 import com.xiezhu.jzj.event.RefreshRoomDevice;
 import com.xiezhu.jzj.event.RefreshRoomName;
 import com.xiezhu.jzj.event.CEvent;
@@ -57,6 +58,7 @@ import com.xiezhu.jzj.presenter.UserCenter;
 import com.xiezhu.jzj.utility.Configure;
 import com.xiezhu.jzj.utility.Dialog;
 import com.xiezhu.jzj.utility.Logger;
+import com.xiezhu.jzj.utility.ToastUtils;
 import com.xiezhu.jzj.utility.Utility;
 
 import org.greenrobot.eventbus.EventBus;
@@ -461,8 +463,12 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
-                ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
-                        mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
+                    ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                            mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
+                } else {
+                    ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
+                }
             }
         }
     };
@@ -472,8 +478,10 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShareDeviceList != null && position < mShareDeviceList.size()) {
-                ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
-                        mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
+                if (mShareDeviceList.get(position) != null && mShareDeviceList.get(position).productKey != null) {
+                    ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
+                            mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
+                } else ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
             }
         }
     };
@@ -807,7 +815,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            Toast.makeText(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name), Toast.LENGTH_LONG).show();
+                            ToastUtils.showLongToastCentrally(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
                             break;
                         }
                     }
@@ -876,6 +884,20 @@ public class IndexFragment1 extends BaseFragment {
                                 mLockType = value.getIntValue("LockType");
                                 mIotId = value.getString("iotId");
                                 LockManager.getUserByKey(mLockUserId, mLockType, mIotId, mCommitFailureHandler, mResponseErrorHandler, mRealtimeDataHandler);
+                            case "HijackingAlarm":
+                            case "TamperAlarm":
+                            case "DoorUnlockedAlarm":
+                            case "ArmDoorOpenAlarm":
+                            case "LockedAlarm":
+                            case "DoorOpenNotification":
+                            case "KeyAddedNotification":
+                            case "LowElectricityAlarm":
+                            case "ReportReset":
+                                EventBus.getDefault().post(new RefreshHistoryEvent());
+                                break;
+                            case "RemoteUnlockNotification":
+                                EventBus.getDefault().post(new RefreshHistoryEvent());
+                                ToastUtils.showToastCentrally(mActivity, "远程开门" + (value.getIntValue("Status") == 0 ? "成功" : "失败"));
                                 break;
                             default:
                                 break;

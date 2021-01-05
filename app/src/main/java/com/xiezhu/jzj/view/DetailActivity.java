@@ -44,6 +44,7 @@ public class DetailActivity extends BaseActivity {
         this.mName = intent.getStringExtra("name");
         this.mOwned = intent.getIntExtra("owned", 0);
 
+        if (mProductKey == null) mProductKey = "";
         // 处理布局文件
         switch (this.mProductKey) {
             case CTSL.PK_DOORSENSOR:
@@ -64,12 +65,14 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_WHITE_THREE_SWITCH:
                 setContentView(R.layout.activity_detail_threeswitch);
                 break;
+			case CTSL.PK_FOURWAYSWITCH_2:
 			case CTSL.PK_FOURWAYSWITCH:
                 setContentView(R.layout.activity_detail_fourswitch);
                 break;
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;
+            case CTSL.PK_SMART_LOCK_A7:
             case CTSL.PK_SMART_LOCK:
                 StatusBarUtils.getStatusBarHeight(this);
                 setContentView(R.layout.activity_detail_lock);

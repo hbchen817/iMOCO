@@ -51,7 +51,11 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                 default:
                     break;
             }
-            keyNameStr = keyName.append(model.getKeyID()).toString();
+            if (!TextUtils.isEmpty(model.getKeyID())) {
+                keyNameStr = keyName.append(model.getKeyID()).toString();
+            } else {
+                keyNameStr = "";
+            }
         } else {
             keyNameStr = model.getUserName();
         }
@@ -63,7 +67,7 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     name.setText(keyNameStr + "被挟持");
                     break;
                 case "TamperAlarm":
-                    name.setText(keyNameStr + "被篡改");
+                    name.setText(keyNameStr + "被撬");
                     break;
                 case "DoorUnlockedAlarm":
                     name.setText(keyNameStr + "未锁门警告");
@@ -72,7 +76,7 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
                     name.setText(keyNameStr + "暴力破门警告");
                     break;
                 case "LockedAlarm":
-                    name.setText(keyNameStr + "卡塞告警");
+                    name.setText(keyNameStr + "被锁定");
                     break;
                 default:
                     break;
@@ -95,7 +99,11 @@ public class ItemHistoryViewHolder extends BaseViewHolder<ItemHistoryMsg> {
             icon.setTextColor(0xff3BBC5F);
             switch (eventCode) {
                 case "KeyDeletedNotification":
-                    name.setText("删除" + keyNameStr);
+                    if (!TextUtils.isEmpty(model.getKeyID()) && model.getKeyID().equals("65535")) {
+                        name.setText("删除全部钥匙");
+                    } else {
+                        name.setText("删除" + keyNameStr);
+                    }
                     break;
                 case "KeyAddedNotification":
                     name.setText("增加" + keyNameStr);
