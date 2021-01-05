@@ -182,6 +182,7 @@ public class ImageProvider {
                         return R.drawable.state_twoswitch_2_off;
                     }
                 }
+            case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
                 if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {
