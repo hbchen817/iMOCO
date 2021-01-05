@@ -1,7 +1,9 @@
 package com.laffey.smart.presenter;
 
 import android.content.Context;
+import android.os.Build;
 
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 
@@ -62,6 +64,12 @@ public class ImageProvider {
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
+            case CTSL.PK_ONE_KEY_SWITCH:
+                return R.drawable.icon_d3_switch_1;
+            case CTSL.PK_TWO_KEY_SWITCH:
+                return R.drawable.icon_d3_switch_2;
+            case CTSL.PK_THREE_KEY_SWITCH:
+                return R.drawable.icon_d3_switch_3;
             case CTSL.PK_BLACK_ONE_SWITCH:
                 return R.drawable.icon_one_switch;
             case CTSL.PK_BLACK_TWO_SWITCH:
@@ -87,6 +95,9 @@ public class ImageProvider {
             case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
                 return R.drawable.icon_color_light;
             case CTSL.PK_FOURWAYSWITCH_2:
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_d3_switch_4;
+                else return R.drawable.icon_four_switch_white;
             case CTSL.PK_FOURWAYSWITCH:// 四键开关
                 return R.drawable.icon_four_switch_white;
             default:
