@@ -462,29 +462,29 @@ public class LockDetailActivity extends DetailActivity {
                                         Toast.makeText(activity, "创建临时密码失败", Toast.LENGTH_SHORT).show();
                                     }
                                     return;
-                                case "1":
-                                    name.append("指纹钥匙");
-                                    break;
-                                case "2":
-                                    name.append("密码钥匙");
-                                    break;
-                                case "3":
-                                    name.append("卡钥匙");
-                                    break;
-                                case "4":
-                                    name.append("机械钥匙");
-                                    break;
+//                                case "0":
+//                                    name.append("指纹钥匙");
+//                                    break;
+//                                case "2":
+//                                    name.append("密码钥匙");
+//                                    break;
+//                                case "3":
+//                                    name.append("卡钥匙");
+//                                    break;
+//                                case "4":
+//                                    name.append("机械钥匙");
+//                                    break;
                                 default://其他钥匙 指纹 密码 卡 机械钥匙
-//                                    LockManager.filterUnbindKey(activity.mIOTId, value.getString("KeyID"), value.getIntValue("LockType"), value.getIntValue("UserLimit"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
+                                    LockManager.filterUnbindKey(activity.mIOTId, value.getString("KeyID"), value.getIntValue("LockType"), value.getIntValue("UserLimit"), activity.mCommitFailureHandler, activity.mResponseErrorHandler, this);
                                     break;
                             }
-                            activity.mCurrentUnBindUser = new UnbindKey();
-                            activity.mCurrentUnBindUser.keyId = value.getString("KeyID");
-                            activity.mCurrentUnBindUser.keyType = value.getIntValue("LockType");
-                            activity.mCurrentUnBindUser.keyPermission = value.getIntValue("UserLimit");
-                            if (activity.mOwned == 1) {
-                                activity.showBindKeyDialog(name.append(value.getString("KeyID")).toString());
-                            }
+//                            activity.mCurrentUnBindUser = new UnbindKey();
+//                            activity.mCurrentUnBindUser.keyId = value.getString("KeyID");
+//                            activity.mCurrentUnBindUser.keyType = value.getIntValue("LockType");
+//                            activity.mCurrentUnBindUser.keyPermission = value.getIntValue("UserLimit");
+//                            if (activity.mOwned == 1) {
+//                                activity.showBindKeyDialog(name.append(value.getString("KeyID")).toString());
+//                            }
                             break;
                         case "HijackingAlarm":
                         case "TamperAlarm":
