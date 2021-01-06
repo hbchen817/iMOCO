@@ -65,11 +65,11 @@ public class ImageProvider {
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
             case CTSL.PK_ONE_KEY_SWITCH:
-                return R.drawable.icon_d3_switch_1;
+                return R.drawable.icon_one_key_switch;
             case CTSL.PK_TWO_KEY_SWITCH:
                 return R.drawable.icon_two_key_switch;
             case CTSL.PK_THREE_KEY_SWITCH:
-                return R.drawable.icon_d3_switch_3;
+                return R.drawable.icon_three_key_switch;
             case CTSL.PK_BLACK_ONE_SWITCH:
                 return R.drawable.icon_one_switch;
             case CTSL.PK_BLACK_TWO_SWITCH:
@@ -112,7 +112,9 @@ public class ImageProvider {
             case CTSL.PK_VRV_AC:
                 return R.drawable.icon_ac;
             case CTSL.PK_OUTLET:
-                return R.drawable.icon_thsensor;
+                return R.drawable.icon_outlet;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                return R.drawable.icon_six_scene_switch;
             case CTSL.PK_THREE_SCENE_SWITCH:{
                 return R.drawable.icon_three_scene_switch;
             }

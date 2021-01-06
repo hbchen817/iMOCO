@@ -626,8 +626,6 @@ public class LockDetailActivity extends DetailActivity {
 
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
-        String s = new Gson().toJson(propertyEntry);
-        ViseLog.d("updateState:\n" + s);
         if (!super.updateState(propertyEntry)) {
             return false;
         }
