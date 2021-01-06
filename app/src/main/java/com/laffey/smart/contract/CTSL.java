@@ -54,8 +54,12 @@ public class CTSL {
     public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
-    public static final String PK_ONE_KEY_SWITCH          = "a1EEhmdntAu";// 一键面板开关
-    public static final String PK_TWO_KEY_SWITCH          = "a1pVHRVmHqD";// 两键面板开关
+    public static final String PK_ONE_KEY_SWITCH            = "a1EEhmdntAu";// 一键面板开关
+    public static final String PK_TWO_KEY_SWITCH            = "a1pVHRVmHqD";// 两键面板开关
+
+    public static final String PK_VRV_AC                    = "a1hGRYll4OE";// 拉斐VRV温控器LFWK001
+    public static final String PK_FAU                       = "a1msNJjnfnQ";// 拉斐新风LFXF001
+    public static final String PK_OUTLET                    = "a1x0DJE7Eqw";// 拉斐二三极插座LFS002
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 

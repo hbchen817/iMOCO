@@ -67,7 +67,7 @@ public class ImageProvider {
             case CTSL.PK_ONE_KEY_SWITCH:
                 return R.drawable.icon_d3_switch_1;
             case CTSL.PK_TWO_KEY_SWITCH:
-                return R.drawable.icon_d3_switch_2;
+                return R.drawable.icon_two_key_switch;
             case CTSL.PK_THREE_KEY_SWITCH:
                 return R.drawable.icon_d3_switch_3;
             case CTSL.PK_BLACK_ONE_SWITCH:
@@ -94,12 +94,28 @@ public class ImageProvider {
                 return R.drawable.icon_color_light;
             case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
                 return R.drawable.icon_color_light;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                return R.drawable.icon_four_scene_switch;
             case CTSL.PK_FOURWAYSWITCH_2:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    return R.drawable.icon_d3_switch_4;
+                    return R.drawable.icon_four_way_switch;
                 else return R.drawable.icon_four_switch_white;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                return R.drawable.icon_two_scene_switch;
             case CTSL.PK_FOURWAYSWITCH:// 四键开关
                 return R.drawable.icon_four_switch_white;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                return R.drawable.icon_one_scene_switch;
+            case CTSL.PK_AIRCOMDITION_TWO:
+            case CTSL.PK_FAU:
+            case CTSL.PK_FLOORHEATING001:
+            case CTSL.PK_VRV_AC:
+                return R.drawable.icon_ac;
+            case CTSL.PK_OUTLET:
+                return R.drawable.icon_thsensor;
+            case CTSL.PK_THREE_SCENE_SWITCH:{
+                return R.drawable.icon_three_scene_switch;
+            }
             default:
                 return R.drawable.icon_thsensor;
         }
