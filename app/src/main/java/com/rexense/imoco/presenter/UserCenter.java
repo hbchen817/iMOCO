@@ -154,6 +154,24 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+    /**
+     * 删除虚拟用户
+     * @param virtualUserId 虚拟用户的ID
+     */
+    public static void deleteVirtualUser(String virtualUserId,
+                                         Handler commitFailureHandler,
+                                         Handler responseErrorHandler,
+                                         @NonNull Handler processDataHandler) {
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_DELETE_USER;
+        requestParameterEntry.version = "1.0.6";
+        requestParameterEntry.addParameter("virtualUserId", virtualUserId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DELETE_USER;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 
     /**
      * 查询账号下的虚拟用户

@@ -1,6 +1,7 @@
 package com.rexense.imoco.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.ToastUtils;
 
@@ -79,7 +81,7 @@ public class EditUserActivity extends BaseActivity {
         if (name != null) mNameEditText.setSelection(name.length());
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right})
+    @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right, R.id.delete_user})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_toolbar_left:
@@ -92,6 +94,14 @@ public class EditUserActivity extends BaseActivity {
                     return;
                 }
                 UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                break;
+            case R.id.delete_user:
+                DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        UserCenter.deleteVirtualUser(mUserId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    }
+                }, "您确定要删除此用户吗？", "删除用户确认");
                 break;
         }
     }
@@ -106,9 +116,16 @@ public class EditUserActivity extends BaseActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            EditUserActivity activity = mWeakReference.get();
-            EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
-            activity.finish();
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_UPDATE_USER:
+                case Constant.MSG_CALLBACK_DELETE_USER:
+                EditUserActivity activity = mWeakReference.get();
+                EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
+                activity.finish();
+                default:
+                    break;
+            }
+
         }
     }
 
