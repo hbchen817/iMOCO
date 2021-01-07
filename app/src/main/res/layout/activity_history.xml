@@ -30,14 +30,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="全部时间"
-                android:textColor="@color/topic_color2"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_5"
-                android:text="∨"
+                android:drawableRight="@drawable/arrow_down"
+                android:drawablePadding="@dimen/dp_5"
                 android:textColor="@color/topic_color2"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
@@ -61,14 +55,8 @@
                 android:layout_height="wrap_content"
                 android:text="全部记录"
                 android:textColor="@color/topic_color2"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_5"
-                android:text="∨"
-                android:textColor="@color/topic_color2"
+                android:drawableRight="@drawable/arrow_down"
+                android:drawablePadding="@dimen/dp_5"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
 
