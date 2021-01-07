@@ -195,16 +195,16 @@ public class ImageProvider {
                 } else if (property.equals(CTSL.FWS_P_PowerSwitch_2)) {
                     // 第二路处理
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_fourswitch_3_off;
+                        return R.drawable.state_fourswitch_2_off;
                     } else {
-                        return R.drawable.state_fourswitch_3_on;
+                        return R.drawable.state_fourswitch_2_on;
                     }
                 } else if (property.equals(CTSL.FWS_P_PowerSwitch_3)) {
                     // 第三路处理
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_fourswitch_2_off;
+                        return R.drawable.state_fourswitch_3_off;
                     } else {
-                        return R.drawable.state_fourswitch_2_on;
+                        return R.drawable.state_fourswitch_3_on;
                     }
                 } else if (property.equals(CTSL.FWS_P_PowerSwitch_4)) {
                     // 第四路处理
