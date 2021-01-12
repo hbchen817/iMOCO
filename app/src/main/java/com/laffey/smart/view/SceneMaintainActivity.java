@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
@@ -36,6 +37,7 @@ import com.laffey.smart.presenter.ProductHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -238,6 +240,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String) msg.obj);
+                    ViseLog.d(new Gson().toJson(mConfigProductList));
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
                     if (mOperateType == CScene.OPERATE_UPDATE) {

@@ -29,7 +29,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -140,6 +140,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation project(path: ':HiLibrary')
 
     //必须 1.0.0 以上
@@ -157,6 +158,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.7.500' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
     implementation 'com.vise.xiaoyaoyou:viselog:1.1.2'
 
-    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
+    implementation 'com.qmuiteam:qmui:1.4.4'
+    // 2.0.0-alpha10
 }
 

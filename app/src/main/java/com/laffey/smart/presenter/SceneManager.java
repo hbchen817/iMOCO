@@ -11,10 +11,14 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.demoTest.ActionEntry;
+import com.laffey.smart.demoTest.CaConditionEntry;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EProduct;
@@ -23,6 +27,7 @@ import com.laffey.smart.model.ETSL;
 import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
+import com.vise.log.ViseLog;
 
 
 /**
@@ -394,6 +399,90 @@ public class SceneManager {
         }
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+        ViseLog.d(new Gson().toJson(requestParameterEntry));
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+
+    // wyy 创建CA自动场景
+    public void createCAAutoScene(EScene.sceneBaseInfoEntry baseInfo, CaConditionEntry conditionEntry, ActionEntry actionEntry,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler, boolean isAny) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("catalogId", "1");
+        requestParameterEntry.addParameter("enable", true);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("mode", isAny ? "any" : "all");
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+
+        requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionEntry.getEntries())));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionEntry.getEntries())));
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+        ViseLog.d(new Gson().toJson(requestParameterEntry));
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, CaConditionEntry caConditionEntry, ActionEntry actionEntry,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+
+        requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(caConditionEntry.getEntries())));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionEntry.getEntries())));
+
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, JSONArray caCondition, JSONArray action,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+
+        requestParameterEntry.addParameter("caConditions", caCondition);
+        requestParameterEntry.addParameter("actions", action);
+
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

@@ -12,9 +12,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.demoTest.DemoEditSceneActivity;
+import com.laffey.smart.demoTest.DemoTestActivity;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
@@ -130,6 +133,8 @@ public class IndexFragment2 extends BaseFragment {
             public void onClick(View v) {
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
                 PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                //Intent intent = new Intent(getActivity(), DemoTestActivity.class);
+                //startActivity(intent);
             }
         });
 
@@ -203,6 +208,11 @@ public class IndexFragment2 extends BaseFragment {
                 // 非模板场景处理
                 PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
+
+                /*Intent intent = new Intent(getActivity(), DemoEditSceneActivity.class);
+                intent.putExtra("id",mSceneList.get(i).id);
+                intent.putExtra("catalogId",mSceneList.get(i).catalogId);
+                startActivity(intent);*/
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {

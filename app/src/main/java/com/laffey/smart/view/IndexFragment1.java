@@ -59,6 +59,7 @@ import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -463,6 +464,7 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
+                    ViseLog.d(mDeviceList.get(position).productKey);
                     ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
                             mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
                 } else {
