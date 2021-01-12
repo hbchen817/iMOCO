@@ -74,6 +74,18 @@ public class ProductHelper {
         return name;
     }
 
+    // 获取产品图片
+    public static String getProductImage(String productKey, List<EProduct.configListEntry> productList){
+        String image = "";
+        for(EProduct.configListEntry product : productList){
+            if(product.productKey.equalsIgnoreCase(productKey)){
+                image = product.image;
+                break;
+            }
+        }
+        return image;
+    }
+
     // 替换产品品牌
     public static String replaceBrand(String sourceContent) {
         if (!SystemParameter.getInstance().getBrand().equalsIgnoreCase(SystemParameter.getInstance().getBrandShow()) ||

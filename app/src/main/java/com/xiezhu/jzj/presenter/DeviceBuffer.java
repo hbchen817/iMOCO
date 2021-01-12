@@ -36,6 +36,7 @@ public class DeviceBuffer {
                     deviceEntry.owned = 1;
                     deviceEntry.status = entry.status;
                     deviceEntry.nodeType = entry.nodeType;
+                    deviceEntry.image = entry.image;
                     mBuffer.put(entry.iotId, deviceEntry);
                 } else {
                     EDevice.deviceEntry deviceEntry = mBuffer.get(entry.iotId);
@@ -49,6 +50,7 @@ public class DeviceBuffer {
                         deviceEntry.owned = 1;
                         deviceEntry.status = entry.status;
                         deviceEntry.nodeType = entry.nodeType;
+                        deviceEntry.image = entry.image;
                     }
                 }
             }
@@ -71,6 +73,7 @@ public class DeviceBuffer {
                     deviceEntry.bindTime = entry.bindTime;
                     deviceEntry.status = entry.status;
                     deviceEntry.nodeType = entry.nodeType;
+                    deviceEntry.image = entry.image;
                     mBuffer.put(entry.iotId, deviceEntry);
                 }
             }

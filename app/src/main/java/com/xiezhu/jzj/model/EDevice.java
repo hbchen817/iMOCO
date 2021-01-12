@@ -24,6 +24,7 @@ public class EDevice {
         public String productKey;
         public String roomId;
         public String roomName;
+        public String image;
         public int owned;
         public int status;
         public String nodeType;
@@ -43,6 +44,7 @@ public class EDevice {
             this.nodeType = "DEVICE";
             this.bindTime = "";
             this.stateTimes = new ArrayList<ETSL.stateTimeEntry>();
+            this.image = "";
         }
 
         // 处理状态时间

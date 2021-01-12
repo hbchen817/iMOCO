@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.model.EDevice;
@@ -132,7 +133,11 @@ public class AptDeviceGrid extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
+		String image = this.mDeviceList.get(position).image;
+		if (image != null && image.length() > 0)
+			Glide.with(mContext).load(image).into(viewHolder.icon);
+		else
+			viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
 		viewHolder.name.setText(ProductHelper.replaceBrand(this.mDeviceList.get(position).nickName));
 		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
