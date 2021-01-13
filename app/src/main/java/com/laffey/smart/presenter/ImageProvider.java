@@ -64,10 +64,10 @@ public class ImageProvider {
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
-            case CTSL.PK_ONE_KEY_SWITCH:
+            /*case CTSL.PK_ONE_KEY_SWITCH:
                 return R.drawable.icon_one_key_switch;
             case CTSL.PK_TWO_KEY_SWITCH:
-                return R.drawable.icon_two_key_switch;
+                return R.drawable.icon_two_key_switch;*/
             case CTSL.PK_THREE_KEY_SWITCH:
                 return R.drawable.icon_three_key_switch;
             case CTSL.PK_BLACK_ONE_SWITCH:

@@ -573,4 +573,15 @@
     <string name="name">名称</string>
     <string name="pls_input_scene_name">请输入场景名称</string>
     <string name="type">类型</string>
+    <string name="satisfy_any_of_the_following_conditions">满足以下任一条件</string>
+    <string name="perform_the_following_actions">执行以下动作</string>
+    <string name="add_condition">添加条件</string>
+    <string name="add_action">添加动作</string>
+    <string name="timer_point">时间点</string>
+    <string name="timer_point_txt">如“每天上午6点”</string>
+    <string name="time_range">时间段</string>
+    <string name="time_range_txt">如：工作日19–22点</string>
+    <string name="dev_status">设备状态</string>
+    <string name="dev_status_txt">如“门打开”或“灯打开”</string>
+    <string name="do_once">执行一次</string>
 </resources>

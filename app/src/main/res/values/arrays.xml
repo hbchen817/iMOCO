@@ -6,4 +6,24 @@
         <item>开锁</item>
         <item>内部反锁</item>
     </string-array>
+
+    <string-array name="scene_type">
+        <item>自动场景</item>
+        <item>手动场景</item>
+    </string-array>
+
+    <string-array name="scene_status">
+        <item>启用</item>
+        <item>停用</item>
+    </string-array>
+
+    <string-array name="scene_catalog_id">
+        <item>满足以下任一条件</item>
+        <item>满足以下所有条件</item>
+    </string-array>
+
+    <string-array name="scene_time_hour">
+        <item>00</item>
+        <item>满足以下所有条件</item>
+    </string-array>
 </resources>

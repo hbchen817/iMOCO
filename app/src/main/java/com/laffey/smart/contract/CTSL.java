@@ -12,8 +12,8 @@ public class CTSL {
     // 定义设备ProductKey常量
     public static final String PK_GATEWAY                   = "a1GuwJkxdQx";
     public static final String PK_GATEWAY_RG4100            = "b17wpNLgyIe";
-    public static final String PK_ONEWAYSWITCH              = "a1X2BnFW2fx";
-    public static final String PK_TWOWAYSWITCH              = "a1C9G2We8Da";
+    public static final String PK_ONEWAYSWITCH              = "a1EEhmdntAu";// a1X2BnFW2fx
+    public static final String PK_TWOWAYSWITCH              = "a1pVHRVmHqD";// a1C9G2We8Da
     public static final String PK_GASSENSOR                 = "a1Av67v91qU";// a1Kwz77cZAu
     public static final String PK_SMOKESENSOR               = "a1CqMuzQngS";// a1pSa8eunPc
     public static final String PK_TEMHUMSENSOR              = "a1mg6JYZclJ";// a1TG5jEuQCN
@@ -61,7 +61,8 @@ public class CTSL {
     public static final String PK_FAU                       = "a1msNJjnfnQ";// 拉斐新风LFXF001
     public static final String PK_OUTLET                    = "a1x0DJE7Eqw";// 拉斐二三极插座LFS002
 
-    public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
+    public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "a12uBMtiWKz";// 单路窗帘
+    public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
 
     // 定义属性类型
     public static enum PTYPE
