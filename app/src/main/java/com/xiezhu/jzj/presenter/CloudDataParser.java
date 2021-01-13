@@ -513,6 +513,7 @@ public class CloudDataParser {
                     itemMsgCenter.setContent(body);
                 }
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
+                itemMsgCenter.setProductImg(msgJson.getString("productImage"));
 
                 JSONObject extData = msgJson.getJSONObject("extData");
                 if (extData!=null){

@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.model.ItemShareDevice;
 import com.xiezhu.jzj.presenter.ImageProvider;
@@ -22,9 +23,14 @@ public class ItemShareDeviceViewHolder extends BaseViewHolder<ItemShareDevice> {
         ImageView right_img = (ImageView) getView(R.id.right_img);// 0不显示 1 箭头 2 未选择 3 已选择
         View root_view = getView(R.id.root_view);
 
-        int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
-        if (imgSrcId!=0){
-            device_img.setImageResource(imgSrcId);
+        String image = model.getImage();
+        if (image != null && image.length() > 0)
+            Glide.with(adapter.getmContext()).load(image).into(device_img);
+        else {
+            int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
+            if (imgSrcId != 0) {
+                device_img.setImageResource(imgSrcId);
+            }
         }
         device_name.setText(model.getDeviceName());
         if (model.getStatus()==0){
