@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.NewSceneActivity">
+
+    <include layout="@layout/layout_common_toolbar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/appbgcolor">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:paddingLeft="12dp"
+                android:background="@android:color/white">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/dp_15"
+                    android:textSize="@dimen/sp_14"
+                    android:text="@string/name"/>
+
+                <ImageView
+                    android:id="@+id/name_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/go"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dp_10"/>
+
+                <TextView
+                    android:id="@+id/name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:layout_toRightOf="@id/name"
+                    android:layout_toLeftOf="@id/name_go"
+                    android:gravity="right"
+                    android:layout_centerVertical="true"
+                    android:text="@string/pls_input_scene_name"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/appbgcolor"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:background="@android:color/white">
+
+                <TextView
+                    android:id="@+id/type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/dp_15"
+                    android:textSize="@dimen/sp_14"
+                    android:text="@string/type"/>
+
+                <ImageView
+                    android:id="@+id/type_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/go"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dp_10"/>
+
+                <TextView
+                    android:id="@+id/type_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:layout_toRightOf="@id/type"
+                    android:layout_toLeftOf="@id/type_go"
+                    android:gravity="right"
+                    android:layout_centerVertical="true"
+                    android:text="@string/scenemodel_recommend"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/appbgcolor"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:background="@android:color/white">
+
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/dp_15"
+                    android:textSize="@dimen/sp_14"
+                    android:text="@string/oneswitch_state"/>
+
+                <ImageView
+                    android:id="@+id/status_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/go"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dp_10"/>
+
+                <TextView
+                    android:id="@+id/status_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:layout_toRightOf="@id/status"
+                    android:layout_toLeftOf="@id/status_go"
+                    android:gravity="right"
+                    android:layout_centerVertical="true"
+                    android:text="@string/scene_maintain_startusing"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/appbgcolor"/>
+            </RelativeLayout>
+
+            <!--<RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:paddingLeft="12dp"
+                android:background="@android:color/white">
+
+                <TextView
+                    android:id="@+id/con"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/dp_15"
+                    android:textSize="@dimen/sp_14"
+                    android:text="@string/name"/>
+
+                <ImageView
+                    android:id="@+id/name_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/go"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/dp_10"/>
+
+                <TextView
+                    android:id="@+id/name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:layout_toRightOf="@id/name"
+                    android:layout_toLeftOf="@id/name_go"
+                    android:gravity="right"
+                    android:layout_centerVertical="true"
+                    android:text="@string/pls_input_scene_name"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/appbgcolor"/>
+            </RelativeLayout>-->
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

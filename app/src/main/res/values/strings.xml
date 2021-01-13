@@ -569,4 +569,8 @@
     <string name="no_key">无钥匙</string>
     <string name="pls_select_user_first">请先选择用户</string>
     <string name="pls_add_key_first">请先添加钥匙</string>
+    <string name="create_new_scene">新建场景</string>
+    <string name="name">名称</string>
+    <string name="pls_input_scene_name">请输入场景名称</string>
+    <string name="type">类型</string>
 </resources>

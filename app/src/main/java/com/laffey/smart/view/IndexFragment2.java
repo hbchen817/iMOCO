@@ -132,9 +132,9 @@ public class IndexFragment2 extends BaseFragment {
             @Override
             public void onClick(View v) {
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
-                //Intent intent = new Intent(getActivity(), DemoTestActivity.class);
-                //startActivity(intent);
+                //PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                Intent intent = new Intent(getActivity(), NewSceneActivity.class);
+                startActivity(intent);
             }
         });
 

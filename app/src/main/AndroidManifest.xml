@@ -41,8 +41,8 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".demoTest.DemoEditSceneActivity"></activity>
-        <!-- huawei push start -->
+        <activity android:name=".view.NewSceneActivity"></activity>
+        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="103546039" /> <!-- huawei push end -->
