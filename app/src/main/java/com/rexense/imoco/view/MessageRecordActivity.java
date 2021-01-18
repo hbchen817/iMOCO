@@ -54,7 +54,7 @@ public class MessageRecordActivity extends BaseActivity {
     private OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            mMinTimeStamp=0;
+            mMinTimeStamp = 0;
             startQuery();
         }
     };
@@ -68,45 +68,45 @@ public class MessageRecordActivity extends BaseActivity {
     };
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETTSLPROPERTYTIMELINEDATA:
                     // 处理获取属性时间线数据处理
-                    ETSL.propertyTimelineListEntry propertyTimelineList = CloudDataParser.processPropertyTimelineData((String)msg.obj);
-                    if(propertyTimelineList != null && propertyTimelineList.items != null && propertyTimelineList.items.size() > 0) {
-                        if (mMinTimeStamp==0){
+                    ETSL.propertyTimelineListEntry propertyTimelineList = CloudDataParser.processPropertyTimelineData((String) msg.obj);
+                    if (propertyTimelineList != null && propertyTimelineList.items != null && propertyTimelineList.items.size() > 0) {
+                        if (mMinTimeStamp == 0) {
                             mAPTMessageRecord.clearData();
                         }
                         List<ETSL.messageRecordEntry> messageRecordEntries = mTSLHelper.processPropertyMessageRecord(mProductKey, propertyTimelineList.items);
-                        if(messageRecordEntries != null && messageRecordEntries.size() > 0) {
+                        if (messageRecordEntries != null && messageRecordEntries.size() > 0) {
                             mAPTMessageRecord.addData(messageRecordEntries);
                         }
                         mMinTimeStamp = propertyTimelineList.minTimeStamp;
                     } else {
                         Toast.makeText(MessageRecordActivity.this, getString(R.string.messagerecord_loadend), Toast.LENGTH_LONG).show();
                     }
-                    SrlUtils.finishRefresh(mSrlFragmentMe,true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe,true);
+                    SrlUtils.finishRefresh(mSrlFragmentMe, true);
+                    SrlUtils.finishLoadMore(mSrlFragmentMe, true);
                     break;
                 case Constant.MSG_CALLBACK_GETTSLEVENTTIMELINEDATA:
                     // 处理获取事件时间线数据处理
-                    ETSL.eventTimelineListEntry eventTimelineList = CloudDataParser.processEventTimelineData((String)msg.obj);
-                    if(eventTimelineList != null && eventTimelineList.items != null && eventTimelineList.items.size() > 0) {
-                        if (mMinTimeStamp==0){
+                    ETSL.eventTimelineListEntry eventTimelineList = CloudDataParser.processEventTimelineData((String) msg.obj);
+                    if (eventTimelineList != null && eventTimelineList.items != null && eventTimelineList.items.size() > 0) {
+                        if (mMinTimeStamp == 0) {
                             mAPTMessageRecord.clearData();
                         }
                         List<ETSL.messageRecordEntry> messageRecordEntries = mTSLHelper.processEventMessageRecord(mProductKey, eventTimelineList.items);
-                        if(messageRecordEntries != null && messageRecordEntries.size() > 0) {
+                        if (messageRecordEntries != null && messageRecordEntries.size() > 0) {
                             mAPTMessageRecord.addData(messageRecordEntries);
                         }
                         mMinTimeStamp = eventTimelineList.minTimeStamp;
                     } else {
                         Toast.makeText(MessageRecordActivity.this, getString(R.string.messagerecord_loadend), Toast.LENGTH_LONG).show();
                     }
-                    SrlUtils.finishRefresh(mSrlFragmentMe,true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe,true);
+                    SrlUtils.finishRefresh(mSrlFragmentMe, true);
+                    SrlUtils.finishLoadMore(mSrlFragmentMe, true);
                     break;
                 default:
                     break;
@@ -126,13 +126,13 @@ public class MessageRecordActivity extends BaseActivity {
         this.mIODId = getIntent().getStringExtra("iotId");
         this.mProductKey = getIntent().getStringExtra("productKey");
 
-        this.mTitle = (TextView)findViewById(R.id.messageRecordLblTitle);
-        this.mDropDown = (ImageView)findViewById(R.id.messageRecordImgDropdown);
+        this.mTitle = (TextView) findViewById(R.id.messageRecordLblTitle);
+        this.mDropDown = (ImageView) findViewById(R.id.messageRecordImgDropdown);
         this.mDropDown.setVisibility(View.GONE);
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.messageRecordImgBack);
-        imgBack.setOnClickListener(new View.OnClickListener(){
+        ImageView imgBack = (ImageView) findViewById(R.id.messageRecordImgBack);
+        imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -141,20 +141,20 @@ public class MessageRecordActivity extends BaseActivity {
 
         // 消息记录列表处理
         this.mAPTMessageRecord = new AptMessageRecord(this);
-        this.mListView = (ListView)findViewById(R.id.messageRecordLstMessageRecord);
+        this.mListView = (ListView) findViewById(R.id.messageRecordLstMessageRecord);
         this.mListView.setAdapter(this.mAPTMessageRecord);
 
         this.mTSLHelper = new TSLHelper(this);
         // 获取设备消息记录内容
         this.mContents = this.mTSLHelper.getMessageRecordContent(this.mProductKey);
-        if(this.mContents != null && this.mContents.size() > 0) {
+        if (this.mContents != null && this.mContents.size() > 0) {
             // 查询第一个内容
             this.mContentId = this.mContents.get(0).id;
             this.mContentType = this.mContents.get(0).type;
             this.mTitle.setText(this.mContents.get(0).name);
             this.startQuery();
             // 如果有多个内容则显示下拉选择
-            if(this.mContents.size() > 1) {
+            if (this.mContents.size() > 1) {
                 this.mDropDown.setVisibility(View.VISIBLE);
                 this.mDropDown.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -183,7 +183,7 @@ public class MessageRecordActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == Constant.REQUESTCODE_CALLCHOICECONTENTACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICECONTENTACTIVITY) {
+        if (requestCode == Constant.REQUESTCODE_CALLCHOICECONTENTACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICECONTENTACTIVITY) {
             this.mContentId = data.getStringExtra("id");
             this.mTitle.setText(data.getStringExtra("name"));
             this.mContentType = data.getIntExtra("type", Constant.CONTENTTYPE_PROPERTY);
@@ -193,24 +193,34 @@ public class MessageRecordActivity extends BaseActivity {
 
     // 开始查询
     private void startQuery() {
-        mAPTMessageRecord.clearData();
-        if(this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
-            this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
-                    mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+        if (this.mContents != null && this.mContents.size() > 0) {
+            mAPTMessageRecord.clearData();
+            if (this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
+                this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            } else {
+                this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            }
         } else {
-            this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType,0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
-                    mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            SrlUtils.finishRefresh(mSrlFragmentMe, true);
+            SrlUtils.finishLoadMore(mSrlFragmentMe, true);
         }
     }
 
     // 下一页查询
     private void nextQuery() {
-        if(this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
-            this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, mMinTimeStamp, this.mPageSize, "desc",
-                    mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+        if (this.mContents != null && this.mContents.size() > 0) {
+            if (this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
+                this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, mMinTimeStamp, this.mPageSize, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            } else {
+                this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType, 0, mMinTimeStamp, this.mPageSize, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            }
         } else {
-            this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType,0, mMinTimeStamp, this.mPageSize, "desc",
-                    mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            SrlUtils.finishRefresh(mSrlFragmentMe, true);
+            SrlUtils.finishLoadMore(mSrlFragmentMe, true);
         }
     }
 }

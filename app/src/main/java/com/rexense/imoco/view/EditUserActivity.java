@@ -21,6 +21,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.ToastUtils;
+import com.rexense.imoco.widget.DialogUtils;
 
 import org.greenrobot.eventbus.EventBus;
 

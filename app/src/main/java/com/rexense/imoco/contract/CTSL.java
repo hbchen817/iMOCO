@@ -92,6 +92,24 @@ public class CTSL {
     public static final String GW_SA_InvokeMode_Voice1      = "0";
     public static final String GW_SA_InvokeMode_Voice2      = "1";
 
+    //4100网关
+    public static final String GW_4100_ZB_Band               = "ZB_Band";//ZB带宽
+    public static final String GW_4100_NETWORK_KEY           = "NETWORK_KEY";//网络密钥
+    public static final String GW_4100_ZB_CO_MAC             = "ZB_CO_MAC";//ZB设备MAC地址
+    public static final String GW_4100_EXT_PAN_ID            = "EXT_PAN_ID";//扩展网路标识
+    public static final String GW_4100_ZB_Channel            = "ZB_Channel";//ZB通道
+    public static final String GW_4100_ZB_PAN_ID             = "ZB_PAN_ID";//网路标识
+    public static final Map<String, PTYPE> GW_4100_Properties    = new HashMap<String, PTYPE>(){
+        {
+            put(GW_4100_ZB_Band, PTYPE.t_enum);
+            put(GW_4100_NETWORK_KEY, PTYPE.t_text);
+            put(GW_4100_ZB_CO_MAC, PTYPE.t_text);
+            put(GW_4100_EXT_PAN_ID, PTYPE.t_text);
+            put(GW_4100_ZB_Channel, PTYPE.t_int32);
+            put(GW_4100_ZB_PAN_ID, PTYPE.t_text);
+        }
+    };
+
     // 定义一键开关属性常量
     public static final String OWS_P_PowerSwitch_1          = "PowerSwitch_1";
     public static final Map<String, PTYPE> OWS_Properties   = new HashMap<String, PTYPE>(){
@@ -311,6 +329,7 @@ public class CTSL {
     public static final Map<String, Map<String, PTYPE>> propertyProfile = new HashMap<String, Map<String, PTYPE>>() {
         {
             put(PK_GATEWAY, GW_Properties);
+            put(PK_GATEWAY_RG4100, GW_4100_Properties);
             put(PK_ONEWAYSWITCH, OWS_Properties);
             put(PK_TWOWAYSWITCH, TWS_Properties);
             put(PK_GASSENSOR, GS_Properties);

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.event.RefreshData;
@@ -155,6 +156,9 @@ public class AptDeviceList extends BaseAdapter {
 							this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value;
 					viewHolder.status.setText(state);
 				}
+			}
+			if (this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
+				viewHolder.status.setText("");
 			}
 		}
 
