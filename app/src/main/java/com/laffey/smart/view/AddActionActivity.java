@@ -5,39 +5,34 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.laffey.smart.R;
+import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddConditionActivity extends BaseActivity {
+public class AddActionActivity extends BaseActivity {
     @BindView(R.id.tv_toolbar_title)
     TextView mTitle;
-    @BindView(R.id.time_layout)
-    RelativeLayout mTimeLayout;
-    @BindView(R.id.time_range_layout)
-    RelativeLayout mTimeRangeLayout;
-    @BindView(R.id.dev_layout)
+    @BindView(R.id.dev_action_layout)
     RelativeLayout mDevLayout;
-    @BindView(R.id.dev_divider)
-    TextView mDevDividerTV;
+    @BindView(R.id.scene_action_layout)
+    LinearLayout mSceneLayout;
+    @BindView(R.id.notification_action_layout)
+    LinearLayout mNotificationLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_condition);
+        setContentView(R.layout.activity_add_action);
         ButterKnife.bind(this);
 
         initStatusBar();
-        boolean hasTimeCondition = getIntent().getBooleanExtra("has_time_condition", false);
-        mTimeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
-        mTimeRangeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
-        mDevDividerTV.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
-
         initView();
     }
 
@@ -51,24 +46,24 @@ public class AddConditionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.add_condition));
+        mTitle.setText(getString(R.string.add_action));
     }
 
-    @OnClick({R.id.time_layout, R.id.time_range_layout, R.id.dev_layout})
+    @OnClick({R.id.dev_action_layout, R.id.scene_action_layout, R.id.notification_action_layout})
     protected void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.time_layout: {
-                Intent intent = new Intent(this, TimeSelectorActivity.class);
+            case R.id.dev_action_layout: {
+                Intent intent = new Intent(this, DevListForActionActivity.class);
                 startActivity(intent);
                 break;
             }
-            case R.id.time_range_layout: {
-                Intent intent = new Intent(this, TimeRangeSelectorActivity.class);
+            case R.id.scene_action_layout: {
+                Intent intent = new Intent(this, SceneActionActivity.class);
                 startActivity(intent);
                 break;
             }
-            case R.id.dev_layout: {
-                Intent intent = new Intent(this, DevListForCAActivity.class);
+            case R.id.notification_action_layout: {
+                Intent intent = new Intent(this, NotificationActionActivity.class);
                 startActivity(intent);
                 break;
             }

@@ -15,11 +15,16 @@
         android:background="@color/appbgcolor"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/margin_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10"
+            android:background="@android:color/transparent"/>
+
         <RelativeLayout
             android:id="@+id/time_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
             android:clickable="true"
             android:background="@drawable/ripple_bg"
             android:orientation="horizontal">
@@ -172,6 +177,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/dev_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_1"
                 android:layout_toRightOf="@id/dev_iv"

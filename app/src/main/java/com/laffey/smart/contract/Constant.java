@@ -148,6 +148,10 @@ public class Constant {
     public static final String API_EXTENDED_PROPERTY_SET            = "/thing/extended/property/set";
     //获取设备扩展信息
     public static final String API_EXTENDED_PROPERTY_GET            = "/thing/extended/property/get";
+    // 获取支持TCA的设备列表
+    public static final String API_QUERY_DEV_LIST_FOR_CA            = "/scene/thing/list";
+    // 根据设备ID获取物的模板
+    public static final String API_QUERY_DEV_TSL                    = "/thing/tsl/get";
 
 
     // 定义插件URL常量
@@ -240,6 +244,11 @@ public class Constant {
     public static final int MSG_CALLBACK_EXTENDED_PROPERTY_GET      = 160;
     public static final int MSG_CALLBACK_CREATE_SWITCH_AUTO_SCENE   = 161;
     public static final int MSG_CALLBACK_TEMPORARY_KEY              = 162;
+    public static final int MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA      = 163;
+    public static final int MSG_CALLBACK_IDENTIFIER_LIST            = 164;
+    public static final int MSG_CALLBACK_TSL_LIST                   = 165;
+    public static final int MSG_CALLBACK_DEV_TSL                    = 166;
+    public static final int MSG_CALLBACK_UPDATE_SCENE               = 167;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
@@ -290,5 +299,21 @@ public class Constant {
     public static final int CONFIGNETWORK_SEND_STATUSMACHINE_0      = 0;
     public static final int CONFIGNETWORK_SEND_STATUSMACHINE_1      = 1;
     public static final int CONFIGNETWORK_SEND_STATUSMACHINE_2      = 2;
+
+    public static final String TIMER_LINUX                          = "linux";
+    public static final String TIMER_QUARTZ_CRON                    = "quartz_cron";
+    public static final String TIMER_ZONE_ID                        = "Asia/Shanghai";
+
+    public static final int SCENE_CONDITION_TIMER_EDIT              = 100;
+    public static final int SCENE_CONDITION_TIME_RANGE_EDIT         = 101;
+
+    public static final String SCENE_CONDITION_TIMER                = "condition/timer";
+    public static final String SCENE_CONDITION_TIME_RANGE           = "condition/timeRange";
+    public static final String SCENE_CONDITION_PROPERTY             = "condition/device/property";
+    public static final String SCENE_CONDITION_EVENT                = "condition/device/event";
+    public static final String SCENE_ACTION_SEND                    = "action/mq/send";
+    public static final String SCENE_ACTION_TRIGGER                 = "action/scene/trigger";
+    public static final String SCENE_ACTION_PROPERTY                = "action/device/setProperty";
+    public static final String SCENE_ACTION_SERVICE                 = "action/device/invokeService";
 }
 

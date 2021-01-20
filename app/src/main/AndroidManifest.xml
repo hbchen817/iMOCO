@@ -42,9 +42,22 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.TimeSelectorActivity"></activity>
+        <activity android:name=".view.SceneActionActivity"></activity>
+        <activity android:name=".view.NotificationActionActivity" />
+        <activity android:name=".view.AddActionActivity" />
+        <activity android:name=".view.EditPropertyValueActivity" />
+        <activity android:name=".view.EditPropertyValueForActionActivity" />
+        <activity android:name=".view.IdentifierListActivity" />
+        <activity android:name=".view.IdentifierListForActionActivity" />
+        <activity android:name=".view.DevListForCAActivity" />
+        <activity android:name=".view.DevListForActionActivity" />
+        <activity android:name=".view.TimeRangeSelectorActivity" />
+        <activity android:name=".view.CustomRepeatDayActivity" />
+        <activity android:name=".view.TimeSelectorActivity" />
         <activity android:name=".view.AddConditionActivity" />
-        <activity android:name=".view.NewSceneActivity" />
+        <activity
+            android:name=".view.NewSceneActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"

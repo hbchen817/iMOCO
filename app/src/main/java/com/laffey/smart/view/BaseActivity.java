@@ -15,12 +15,14 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.ResponseMessageUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import java.util.Map;
 
@@ -61,8 +63,10 @@ public class BaseActivity extends FragmentActivity {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("提交接口[%s]成功, 但是响应发生错误:", responseErrorEntry.path));
+                ViseLog.d(new Gson().toJson(responseErrorEntry));
                 if (responseErrorEntry.parameters != null && responseErrorEntry.parameters.size() > 0) {
                     for (Map.Entry<String, Object> entry : responseErrorEntry.parameters.entrySet()) {
+                        if (entry.getKey() != null && entry.getValue() != null)
                         sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue().toString()));
                     }
                 }

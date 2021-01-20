@@ -12,7 +12,6 @@ import android.util.Log;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
@@ -406,29 +405,136 @@ public class SceneManager {
 
 
     // wyy 创建CA自动场景
-    public void createCAAutoScene(EScene.sceneBaseInfoEntry baseInfo, CaConditionEntry conditionEntry, ActionEntry actionEntry,
+    public void createCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
+                                  List<Object> conditionList, List<Object> actionList,
                                   Handler commitFailureHandler,
                                   Handler responseErrorHandler,
-                                  Handler processDataHandler, boolean isAny) {
+                                  Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
         requestParameterEntry.version = "1.0.1";
         requestParameterEntry.addParameter("homeId", baseInfo.homeId);
-        requestParameterEntry.addParameter("catalogId", "1");
-        requestParameterEntry.addParameter("enable", true);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", enable);
         requestParameterEntry.addParameter("name", baseInfo.name);
         requestParameterEntry.addParameter("description", baseInfo.description);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
-        requestParameterEntry.addParameter("mode", isAny ? "any" : "all");
+        requestParameterEntry.addParameter("mode", mode);
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
 
-        requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionEntry.getEntries())));
-        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionEntry.getEntries())));
+        if ("1".equals(baseInfo.catalogId))
+            requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionList)));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionList)));
 
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
         ViseLog.d(new Gson().toJson(requestParameterEntry));
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新CA场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
+                                  List<Object> conditionList, List<Object> actionList,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("mode", mode);
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+
+        if ("1".equals(baseInfo.catalogId))
+            requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionList)));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionList)));
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATE_SCENE;
+        ViseLog.d(new Gson().toJson(requestParameterEntry));
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取支持TCA的设备列表
+    public void queryDevListInHomeForCA(int flowType, String homeId, int pageNum, int pageSize,
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_QUERY_DEV_LIST_FOR_CA;
+        requestParameterEntry.version = "1.0.6";
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("flowType", flowType);// 1（表示Condition）；2（表示Action）
+        requestParameterEntry.addParameter("sceneType", "CA");
+        requestParameterEntry.addParameter("pageNum", pageNum);
+        requestParameterEntry.addParameter("pageSize", pageSize);
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取设备上支持trigger/condition/action配置的功能属性列表
+    public void queryIdentifierListForCA(String iotId, int flowType,
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_IDENTIFIER_LIST;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取设备的trigger或condition或action功能列表与TSL定义
+    public void queryTSLListForCA(String iotId, int flowType,
+                                         Handler commitFailureHandler,
+                                         Handler responseErrorHandler,
+                                         Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_TSL_LIST;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 根据设备ID获取物的模板
+    public void queryTSLByIotId(String iotId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_QUERY_DEV_TSL;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DEV_TSL;
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

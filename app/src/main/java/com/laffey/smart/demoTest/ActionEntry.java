@@ -1,5 +1,9 @@
 package com.laffey.smart.demoTest;
 
+import com.laffey.smart.contract.Constant;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +37,9 @@ public class ActionEntry {
             this.params.put("sceneId", id);
         }
 
+        public String getSceneId() {
+            return this.params.get("sceneId");
+        }
     }
 
     public static class InvokeService {
@@ -50,6 +57,18 @@ public class ActionEntry {
         public void setServiceArgs(Object args) {
             this.params.put("serviceArgs", args);
         }
+
+        public String getIotId() {
+            return (String) this.params.get("iotId");
+        }
+
+        public String getServiceName() {
+            return (String) this.params.get("serviceName");
+        }
+
+        public Object getServiceArgs() {
+            return this.params.get("serviceArgs");
+        }
     }
 
     public static class Property {
@@ -64,8 +83,35 @@ public class ActionEntry {
             this.params.put("propertyName", propertyName);
         }
 
+        public String getPropertyName() {
+            return (String) this.params.get("propertyName");
+        }
+
         public void setPropertyValue(Object propertyValue) {
             this.params.put("propertyValue", propertyValue);
+        }
+
+        public Object getPropertyValue() {
+            return this.params.get("propertyValue");
+        }
+    }
+
+    public static class SendMsg {
+        private String uri = Constant.SCENE_ACTION_SEND;
+        private Map<String, Object> params = new HashMap<>();
+
+        public void setMessage(String msg) {
+            this.params.put("msgTag", "IlopBusiness_CustomMsg");
+
+            Map<String, String> m = new HashMap<>();
+            m.put("message",msg);
+
+            this.params.put("customData", m);
+        }
+
+        public String getMessage(){
+            Map<String, String> m = (Map<String, String>) params.get("customData");
+            return m.get("message");
         }
     }
 }

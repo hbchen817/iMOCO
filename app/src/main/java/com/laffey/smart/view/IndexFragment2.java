@@ -18,6 +18,7 @@ import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.DemoEditSceneActivity;
 import com.laffey.smart.demoTest.DemoTestActivity;
+import com.laffey.smart.demoTest.SceneCatalogIdCache;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
@@ -209,10 +210,10 @@ public class IndexFragment2 extends BaseFragment {
                 PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
 
-                /*Intent intent = new Intent(getActivity(), DemoEditSceneActivity.class);
-                intent.putExtra("id",mSceneList.get(i).id);
-                intent.putExtra("catalogId",mSceneList.get(i).catalogId);
-                startActivity(intent);*/
+                Intent intent = new Intent(getActivity(), NewSceneActivity.class);
+                intent.putExtra("scene_id", mSceneList.get(i).id);
+                intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
+                startActivity(intent);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -256,6 +257,7 @@ public class IndexFragment2 extends BaseFragment {
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
                             if (!item.description.contains("mode == CA,")) {
+                                SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
                             }
                         }

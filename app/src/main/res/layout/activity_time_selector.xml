@@ -58,29 +58,161 @@
 
         <RelativeLayout
             android:id="@+id/once_layout"
+            android:layout_marginTop="@dimen/dp_10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
-            android:background="@android:color/white"
-            android:clickable="true">
+            android:clickable="true"
+            android:background="@android:color/white">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/dp_15"
+                android:textSize="@dimen/sp_14"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:text="@string/do_once"
-                android:textSize="@dimen/sp_14" />
+                android:layout_marginVertical="@dimen/dp_15"
+                android:text="@string/do_once"/>
 
-            <CheckBox
-                android:id="@+id/once_cb"
+            <ImageView
+                android:id="@+id/once_checked"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:button="@drawable/item_checkbox"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/dp_10"
-                android:checked="true" />
+                android:src="@drawable/choose_48"
+                android:visibility="visible"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/everyday_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_14"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:text="@string/everyday"/>
+
+            <ImageView
+                android:id="@+id/everyday_checked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/choose_48"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_alignParentTop="true"
+                android:background="@color/appbgcolor" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/working_days_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_14"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:text="@string/working_days"/>
+
+            <ImageView
+                android:id="@+id/working_days_checked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/choose_48"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_alignParentTop="true"
+                android:background="@color/appbgcolor" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/weekend_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_14"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:text="@string/weekend"/>
+
+            <ImageView
+                android:id="@+id/weakend_checked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/choose_48"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_alignParentTop="true"
+                android:background="@color/appbgcolor" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/custom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@android:color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_14"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:text="@string/custom"/>
+
+            <ImageView
+                android:id="@+id/custom_checked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/dp_10"
+                android:src="@drawable/choose_48"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_1"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_alignParentTop="true"
+                android:background="@color/appbgcolor" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

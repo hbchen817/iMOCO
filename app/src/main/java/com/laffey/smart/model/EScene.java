@@ -40,6 +40,18 @@ public class EScene {
             this.iconColor = "#FFFFFF";
             this.sceneType = CScene.TYPE_IFTTT;
         }
+
+        // 构造
+        public sceneBaseInfoEntry(String sceneId, String homeId, String catalogId, String name, String description){
+            this.sceneId = sceneId;
+            this.homeId = homeId;
+            this.catalogId = catalogId;
+            this.name = name;
+            this.description = description;
+            this.icon = CScene.DEFAULT_ICON_URL;
+            this.iconColor = "#FFFFFF";
+            this.sceneType = CScene.TYPE_IFTTT;
+        }
     }
 
     // 场景列表列表条目实体

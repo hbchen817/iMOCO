@@ -67,8 +67,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 property.setPropertyValue(1);
                 actionEntry.getEntries().add(property);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, entry,
-                        actionEntry, mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);
+                /*new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, entry,
+                        actionEntry, mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);*/
                 break;
             }
             case R.id.two_button: {
@@ -91,8 +91,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 actionProperty.setPropertyValue(1);
                 actionEntry.getEntries().add(actionProperty);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry,
-                        actionEntry, mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);
+                /*new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry,
+                        actionEntry, mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);*/
                 break;
             }
             case R.id.three_button: {
@@ -113,8 +113,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 actionTrigger.setSceneId("3a00569f20e64632b0d613169935b55e");
                 actionEntry.getEntries().add(actionTrigger);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
-                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);
+                /*new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
+                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);*/
                 break;
             }
             case R.id.four_button: {
@@ -144,8 +144,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 actionProperty.setPropertyValue(1);
                 actionEntry.getEntries().add(actionProperty);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
-                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, false);
+                /*new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
+                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, false);*/
                 break;
             }
             case R.id.five_button:{
@@ -172,8 +172,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 invokeService.setServiceArgs(o);
                 actionEntry.getEntries().add(invokeService);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
-                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);
+                new SceneManager(DemoTestActivity.this).createCAScene(baseInfoEntry, true, "any", caConditionEntry.getEntries(),
+                        actionEntry.getEntries(), mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 break;
             }
             case R.id.six_button:{
@@ -195,8 +195,8 @@ public class DemoTestActivity extends AppCompatActivity {
                 setSwitch.setSwitchStatus(0);
                 actionEntry.getEntries().add(setSwitch);
 
-                new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
-                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);
+                /*new SceneManager(DemoTestActivity.this).createCAAutoScene(baseInfoEntry, caConditionEntry, actionEntry,
+                        mCommitFailureHandler, mResponseErrorHandler, processDataHandler, true);*/
                 break;
             }
         }

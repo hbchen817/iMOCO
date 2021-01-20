@@ -2,34 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:background="@android:color/white">
+    android:background="@drawable/ripple_bg"
+    android:clickable="true">
 
     <TextView
-        android:id="@+id/item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/sp_14"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginVertical="@dimen/dp_15"
-        android:text="demo"/>
-
-    <ImageView
-        android:id="@+id/item_checked"
-        android:layout_width="wrap_content"
+        android:id="@+id/name_tv"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/og_iv"
+        android:layout_alignParentLeft="true"
+        android:layout_marginVertical="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:textSize="@dimen/sp_14" />
+
+    <ImageView
+        android:id="@+id/og_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/dp_10"
-        android:src="@drawable/choose_48"
-        android:visibility="gone"/>
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/dp_10"
+        android:src="@drawable/go" />
 
     <TextView
-        android:id="@+id/item_divider"
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_1"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:visibility="gone"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/dp_10"
         android:background="@color/appbgcolor" />
 </RelativeLayout>
