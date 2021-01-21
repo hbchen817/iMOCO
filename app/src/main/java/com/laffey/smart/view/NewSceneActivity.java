@@ -228,7 +228,7 @@ public class NewSceneActivity extends BaseActivity {
                     holder.setImageResource(R.id.icon_iv, R.drawable.condition_dev)
                             .setText(R.id.title, item.getNickName())
                             .setText(R.id.detail, desc);
-                } else if (o instanceof ActionEntry.InvokeService){
+                } else if (o instanceof ActionEntry.InvokeService) {
                     ActionEntry.InvokeService service = (ActionEntry.InvokeService) o;
                     IdentifierItemForCA item = new IdentifierItemForCA();
                     for (IdentifierItemForCA i : mIdentifierList) {
@@ -289,7 +289,7 @@ public class NewSceneActivity extends BaseActivity {
 
                     Intent intent = new Intent(NewSceneActivity.this, EditPropertyValueForActionActivity.class);
                     startActivity(intent);
-                } else if (o instanceof ActionEntry.InvokeService){
+                } else if (o instanceof ActionEntry.InvokeService) {
                     ActionEntry.InvokeService property = (ActionEntry.InvokeService) o;
                     IdentifierItemForCA item = new IdentifierItemForCA();
                     for (int i = 0; i < mIdentifierList.size(); i++) {
@@ -650,19 +650,19 @@ public class NewSceneActivity extends BaseActivity {
                     mActionList.add(o1);
                 mActionAdapter.notifyDataSetChanged();
                 mAddActionLayout.setVisibility(View.GONE);
-            } else if (o1 instanceof CaConditionEntry.Property){
+            } else if (o1 instanceof CaConditionEntry.Property) {
                 // 条件-设备属性
                 if (!mCaconditionList.contains(item.getObject()))
                     mCaconditionList.add(item.getObject());
                 mCaconditionAdapter.notifyDataSetChanged();
                 mAddConditionLayout.setVisibility(View.GONE);
-            } else if (o1 instanceof ActionEntry.InvokeService){
+            } else if (o1 instanceof ActionEntry.InvokeService) {
                 // 服务
                 if (!mActionList.contains(o1))
                     mActionList.add(o1);
                 mActionAdapter.notifyDataSetChanged();
                 mAddActionLayout.setVisibility(View.GONE);
-            } else if (o1 instanceof CaConditionEntry.Event){
+            } else if (o1 instanceof CaConditionEntry.Event) {
                 // 事件
                 if (!mCaconditionList.contains(item.getObject()))
                     mCaconditionList.add(item.getObject());
@@ -1075,7 +1075,7 @@ public class NewSceneActivity extends BaseActivity {
                                 item.setObject(property);
                                 mActionList.add(property);
                                 mIdentifierList.add(item);
-                            } else if (Constant.SCENE_ACTION_SERVICE.equals(uri)){
+                            } else if (Constant.SCENE_ACTION_SERVICE.equals(uri)) {
                                 ActionEntry.InvokeService service = new ActionEntry.InvokeService();
 
                                 IdentifierItemForCA item = new IdentifierItemForCA();
@@ -1086,7 +1086,7 @@ public class NewSceneActivity extends BaseActivity {
                                 //item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
 
                                 Map<String, Object> map = new HashMap<>();
-                                for (Map.Entry<String, Object> map1 : object1.getJSONObject("params").getJSONObject("serviceArgs").entrySet()){
+                                for (Map.Entry<String, Object> map1 : object1.getJSONObject("params").getJSONObject("serviceArgs").entrySet()) {
                                     map.put(map1.getKey(), map1.getValue());
                                 }
 
@@ -1122,9 +1122,11 @@ public class NewSceneActivity extends BaseActivity {
         TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText(getString(R.string.scene_maintain_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
-        if (mSceneName != null && mSceneName.length() > 0)
-            nameEt.setText(mSceneNameTV.getText().toString());
-        else nameEt.setHint(getString(R.string.pls_input_scene_name));
+        if (mSceneName != null && mSceneName.length() > 0) {
+            String name = mSceneNameTV.getText().toString();
+            nameEt.setText(name);
+            nameEt.setSelection(name.length());
+        } else nameEt.setHint(getString(R.string.pls_input_scene_name));
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();

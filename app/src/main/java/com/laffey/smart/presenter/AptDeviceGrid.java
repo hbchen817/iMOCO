@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
@@ -181,6 +182,10 @@ public class AptDeviceGrid extends BaseAdapter {
 						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value+"\n...");
 					}
 				}
+			}
+			if (this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
+				viewHolder.state1.setVisibility(View.GONE);
+				viewHolder.state2.setVisibility(View.GONE);
 			}
 		}
 

@@ -45,8 +45,10 @@ public class MocoApplication extends AApplication {
         crashHandler.init(getApplicationContext());
 
         //设置日志级别
-        Logger.setLogLevel(2);
-        CrashReport.initCrashReport(getApplicationContext(), "e66b11bc4e", BuildConfig.DEBUG);
+        if (!BuildConfig.DEBUG) {
+            Logger.setLogLevel(2);
+            CrashReport.initCrashReport(getApplicationContext(), "e66b11bc4e", BuildConfig.DEBUG);
+        }
 
         //安装MultiDex
         MultiDex.install(this);

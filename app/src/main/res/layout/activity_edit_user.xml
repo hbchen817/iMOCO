@@ -53,6 +53,32 @@
             android:background="@null"
             android:textColorHint="#88676C6F"
             android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@color/all_c" />
+
+    <TextView
+        android:id="@+id/delete_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:paddingVertical="@dimen/dp_20"
+        android:textColor="#ff0000"
+        android:textSize="@dimen/sp_16"
+        android:text="删除用户" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@color/all_c" />
 </LinearLayout>

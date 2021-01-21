@@ -249,6 +249,13 @@
     <string name="moregateway_bellmusicid">门铃音乐</string>
     <string name="moregateway_alarmvolume">报警音量</string>
     <string name="moregateway_editname">修改设备名称</string>
+    
+    <string name="moregateway_4100_ZB_Band">ZB带宽</string>
+    <string name="moregateway_4100_NETWORK_KEY">网络密钥</string>
+    <string name="moregateway_4100_ZB_CO_MAC">ZB设备MAC地址</string>
+    <string name="moregateway_4100_EXT_PAN_ID">扩展网路标识</string>
+    <string name="moregateway_4100_ZB_Channel">ZB通道</string>
+    <string name="moregateway_4100_ZB_PAN_ID">网路标识</string>
 
     <string name="messagerecord_title">消息记录</string>
     <string name="messagerecord_is">为</string>

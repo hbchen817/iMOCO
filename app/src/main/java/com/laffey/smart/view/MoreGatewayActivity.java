@@ -606,7 +606,11 @@ public class MoreGatewayActivity extends BaseActivity {
             }
         };
         selectRoom.setOnClickListener(selectRoomListener);
-
+        List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
+        if (list == null || list.size()== 0){
+            RelativeLayout record = (RelativeLayout) findViewById(R.id.recordLayout);
+            record.setVisibility(View.GONE);
+        }
         // 消息记录处理
         OnClickListener messageRecordListener = new OnClickListener() {
             @Override

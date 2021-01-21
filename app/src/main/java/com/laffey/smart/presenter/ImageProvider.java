@@ -41,9 +41,15 @@ public class ImageProvider {
             case CTSL.PK_GATEWAY_RG4100:
                 return R.drawable.icon_gateway_fton;
             case CTSL.PK_ONEWAYSWITCH:
-                return R.drawable.icon_oneswitch;
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_one_key_switch;
+                else
+                    return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
-                return R.drawable.icon_twoswitch;
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_two_key_switch;
+                else
+                    return R.drawable.icon_twoswitch;
             case CTSL.PK_REMOTECONTRILBUTTON:
                 return R.drawable.icon_button;
             case CTSL.PK_DOORSENSOR:
@@ -117,6 +123,11 @@ public class ImageProvider {
                 return R.drawable.icon_six_scene_switch;
             case CTSL.PK_THREE_SCENE_SWITCH:{
                 return R.drawable.icon_three_scene_switch;
+            }
+            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:{
+                // 窗帘电机
+                return R.drawable.icon_dianji;
             }
             default:
                 return R.drawable.icon_thsensor;

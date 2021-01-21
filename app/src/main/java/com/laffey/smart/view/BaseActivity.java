@@ -66,8 +66,7 @@ public class BaseActivity extends FragmentActivity {
                 ViseLog.d(new Gson().toJson(responseErrorEntry));
                 if (responseErrorEntry.parameters != null && responseErrorEntry.parameters.size() > 0) {
                     for (Map.Entry<String, Object> entry : responseErrorEntry.parameters.entrySet()) {
-                        if (entry.getKey() != null && entry.getValue() != null)
-                        sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue().toString()));
+                        sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString()));
                     }
                 }
                 sb.append(String.format("\r\n    exception code: %s", responseErrorEntry.code));

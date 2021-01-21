@@ -454,6 +454,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
         requestParameterEntry.addParameter("mode", mode);
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        //requestParameterEntry.addParameter("reBind", true);
 
         if ("1".equals(baseInfo.catalogId))
             requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionList)));

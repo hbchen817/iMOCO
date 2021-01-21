@@ -191,6 +191,15 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_P_DoorBellSoundVolume, this.mContext.getString(R.string.moregateway_bellvolume), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_P_DoorBellSoundID, this.mContext.getString(R.string.moregateway_bellmusicid), Constant.CONTENTTYPE_PROPERTY));
                 break;
+            case CTSL.PK_GATEWAY_RG4100:
+                //4100网关处理
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_Band, this.mContext.getString(R.string.moregateway_4100_ZB_Band), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_NETWORK_KEY, this.mContext.getString(R.string.moregateway_4100_NETWORK_KEY), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_CO_MAC, this.mContext.getString(R.string.moregateway_4100_ZB_CO_MAC), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_EXT_PAN_ID, this.mContext.getString(R.string.moregateway_4100_EXT_PAN_ID), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_Channel, this.mContext.getString(R.string.moregateway_4100_ZB_Channel), Constant.CONTENTTYPE_PROPERTY));
+                list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_PAN_ID, this.mContext.getString(R.string.moregateway_4100_ZB_PAN_ID), Constant.CONTENTTYPE_PROPERTY));
+                break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一路开关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.OWS_P_PowerSwitch_1, this.mContext.getString(R.string.oneswitch_state), Constant.CONTENTTYPE_PROPERTY));
@@ -252,7 +261,7 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.LIGHT_P_COLOR_TEMPERATURE, this.mContext.getString(R.string.color_temperature), Constant.CONTENTTYPE_PROPERTY));
                 break;
             default:
-                return null;
+                return list;
         }
         return list;
     }

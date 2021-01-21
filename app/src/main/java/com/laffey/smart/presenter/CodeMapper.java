@@ -98,6 +98,27 @@ public class CodeMapper {
                     mapValue = propertyValue;
                 }
                 break;
+            case CTSL.PK_GATEWAY_RG4100:
+                if (propertyName.equals(CTSL.GW_4100_ZB_Band)) {
+                    mapName = context.getString(R.string.moregateway_4100_ZB_Band);
+                    mapValue = "2_4G";
+                } else if (propertyName.equals(CTSL.GW_4100_NETWORK_KEY)) {
+                    mapName = context.getString(R.string.moregateway_4100_NETWORK_KEY);
+                    mapValue = propertyValue;
+                } else if (propertyName.equals(CTSL.GW_4100_ZB_CO_MAC)) {
+                    mapName = context.getString(R.string.moregateway_4100_ZB_CO_MAC);
+                    mapValue = propertyValue;
+                } else if (propertyName.equals(CTSL.GW_4100_EXT_PAN_ID)) {
+                    mapName = context.getString(R.string.moregateway_4100_EXT_PAN_ID);
+                    mapValue = propertyValue;
+                } else if (propertyName.equals(CTSL.GW_4100_ZB_Channel)) {
+                    mapName = context.getString(R.string.moregateway_4100_ZB_Channel);
+                    mapValue = propertyValue;
+                } else if (propertyName.equals(CTSL.GW_4100_ZB_PAN_ID)) {
+                    mapName = context.getString(R.string.moregateway_4100_ZB_PAN_ID);
+                    mapValue = propertyValue;
+                }
+                break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一路开关状态
                 if (propertyName.equals(CTSL.OWS_P_PowerSwitch_1)) {

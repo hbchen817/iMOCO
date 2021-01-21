@@ -108,6 +108,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/recordLayout"
             style="@style/InputItemStyle">
 
             <TextView

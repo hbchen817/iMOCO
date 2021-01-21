@@ -267,6 +267,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
         if (deviceEntry != null) {
             this.mRoomName = deviceEntry.roomName;
             this.mBindTime = deviceEntry.bindTime;
+            this.mLblMACAddress = (TextView) findViewById(R.id.moreSubdeviceLblMACAddress);
+            this.mLblMACAddress.setText(deviceEntry.deviceName);
         }
 
         // 回退处理
@@ -284,8 +286,6 @@ public class MoreSubdeviceActivity extends BaseActivity {
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
         this.mLblRoomName = (TextView) findViewById(R.id.moreSubdeviceLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
-        this.mLblMACAddress = (TextView) findViewById(R.id.moreSubdeviceLblMACAddress);
-        this.mLblMACAddress.setText(deviceEntry.deviceName);
         TextView bindTime = (TextView) findViewById(R.id.moreSubdeviceLblBindTime);
         bindTime.setText(this.mBindTime);
 
@@ -337,7 +337,11 @@ public class MoreSubdeviceActivity extends BaseActivity {
         ImageView imgUnbind = (ImageView) findViewById(R.id.moreSubdeviceImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
-
+        List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
+        if (list == null || list.size()== 0){
+            RelativeLayout record = (RelativeLayout) findViewById(R.id.recordLayout);
+            record.setVisibility(View.GONE);
+        }
         // 消息记录处理
         OnClickListener messageRecordListener = new OnClickListener() {
             @Override

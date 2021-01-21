@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EDevice;
@@ -150,6 +151,9 @@ public class AptDeviceList extends BaseAdapter {
 							this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value;
 					viewHolder.status.setText(state);
 				}
+			}
+			if (this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
+				viewHolder.status.setText("");
 			}
 		}
 

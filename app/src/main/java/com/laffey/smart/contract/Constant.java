@@ -116,6 +116,8 @@ public class Constant {
     public static final String API_PATH_FILTER                      = "/awss/enrollee/product/filter";
     //创建虚拟用户
     public static final String API_PATH_CREATE_USER                 = "/uc/virtual/user/create";
+    //删除虚拟用户
+    public static final String API_PATH_DELETE_USER                 = "/uc/virtual/user/delete";
     //查询账户下的虚拟用户列表
     public static final String API_PATH_QUERY_USER_IN_ACCOUNT       = "/uc/virtual/user/list";
     //更新用户
@@ -249,6 +251,7 @@ public class Constant {
     public static final int MSG_CALLBACK_TSL_LIST                   = 165;
     public static final int MSG_CALLBACK_DEV_TSL                    = 166;
     public static final int MSG_CALLBACK_UPDATE_SCENE               = 167;
+	public static final int MSG_CALLBACK_DELETE_USER                = 168;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
