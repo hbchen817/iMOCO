@@ -144,7 +144,8 @@ public class AptDeviceList extends BaseAdapter {
 			viewHolder.status.setTextColor(Color.parseColor("#464645"));
 			viewHolder.room.setTextColor(Color.parseColor("#464645"));
 			// 如果有属性状态则显示属性状态
-			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0){
+			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0
+					&&!this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
 				// 只有一种状态的处理
 				if(this.mDeviceList.get(position).stateTimes.size() == 1){
 					viewHolder.status.setText(this.mDeviceList.get(position).stateTimes.get(0).time + " " + this.mDeviceList.get(position).stateTimes.get(0).value);
@@ -156,9 +157,6 @@ public class AptDeviceList extends BaseAdapter {
 							this.mDeviceList.get(position).stateTimes.get(1).time + " " + this.mDeviceList.get(position).stateTimes.get(1).value;
 					viewHolder.status.setText(state);
 				}
-			}
-			if (this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
-				viewHolder.status.setText("");
 			}
 		}
 

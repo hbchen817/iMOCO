@@ -154,7 +154,8 @@ public class AptDeviceGrid extends BaseAdapter {
 			viewHolder.status.setVisibility(View.VISIBLE);
 			viewHolder.status.setTextColor(Color.parseColor("#464645"));
 			// 如果有属性状态则显示属性状态
-			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0){
+			if(this.mDeviceList.get(position).stateTimes != null && this.mDeviceList.get(position).stateTimes.size() > 0
+				&&!this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
 				viewHolder.status.setVisibility(View.GONE);
 				// 只有一种状态的处理
 				if(this.mDeviceList.get(position).stateTimes.size() == 1){
@@ -180,10 +181,6 @@ public class AptDeviceGrid extends BaseAdapter {
 						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);
 					}
 				}
-			}
-			if (this.mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)){
-				viewHolder.state1.setVisibility(View.GONE);
-				viewHolder.state2.setVisibility(View.GONE);
 			}
 		}
 
