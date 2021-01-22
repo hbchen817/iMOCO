@@ -40,13 +40,13 @@ public class AptSceneList extends BaseAdapter {
 
 
 	// 构造
-	public AptSceneList(Context context, Handler commitFailureHandler, Handler responseErrorHandler, Handler processDataHandler) {
+	public AptSceneList(Context context, List<EScene.sceneListItemEntry> list, Handler commitFailureHandler, Handler responseErrorHandler, Handler processDataHandler) {
 		super();
 		this.mContext = context;
 		this.mCommitFailureHandler =commitFailureHandler;
 		this.mResponseErrorHandler = responseErrorHandler;
 		this.mProcessDataHandler = processDataHandler;
-		this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+		this.mSceneList = list;
 		this.mDeleteList = new ArrayList<deleteTag>();
 	}
 
@@ -54,8 +54,8 @@ public class AptSceneList extends BaseAdapter {
 	public void setData(List<EScene.sceneListItemEntry> sceneList) {
 		// this.mSceneList = sceneList;
 		if (sceneList != null) {
-			this.mSceneList.clear();
-			this.mSceneList.addAll(sceneList);
+			//this.mSceneList.clear();
+			//this.mSceneList.addAll(sceneList);
 			mDeleteList.clear();
 
 			for (int i = 0; i < sceneList.size(); i++) {
@@ -162,7 +162,7 @@ public class AptSceneList extends BaseAdapter {
 
 		viewHolder.name.setText(this.mSceneList.get(position).name);
 		viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
-		if(this.mDeleteList.get(position).isDeleted){
+		if (this.mDeleteList.get(position).isDeleted) {
 			viewHolder.delete.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -173,13 +173,13 @@ public class AptSceneList extends BaseAdapter {
 					alert.setTitle(R.string.dialog_title);
 					alert.setMessage(mContext.getString(R.string.scene_delete_confirm));
 					//添加否按钮
-					alert.setButton(DialogInterface.BUTTON_NEGATIVE,mContext.getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+					alert.setButton(DialogInterface.BUTTON_NEGATIVE, mContext.getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 						}
 					});
 					//添加是按钮
-					alert.setButton(DialogInterface.BUTTON_POSITIVE,mContext.getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+					alert.setButton(DialogInterface.BUTTON_POSITIVE, mContext.getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
 							new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);

@@ -452,6 +452,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("name", baseInfo.name);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
         requestParameterEntry.addParameter("mode", mode);
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
         //requestParameterEntry.addParameter("reBind", true);

@@ -53,7 +53,7 @@ public class IndexFragment2 extends BaseFragment {
     private TextView mLblScene, mLblSceneDL, mLblMy, mLblMyDL;
     private SceneManager mSceneManager = null;
     private List<EScene.sceneModelEntry> mModelList = null;
-    private List<EScene.sceneListItemEntry> mSceneList = null;
+    private List<EScene.sceneListItemEntry> mSceneList = new ArrayList<>();
     private AptSceneList mAptSceneList;
     private ListView mListSceneModel, mListMy;
     private final int mScenePageSize = 50;
@@ -124,7 +124,7 @@ public class IndexFragment2 extends BaseFragment {
         AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
         aptSceneModel.setData(this.mModelList);
         this.mListSceneModel.setAdapter(aptSceneModel);
-        this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mAptSceneList = new AptSceneList(getActivity(), mSceneList,this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
 
         mListMy.setAdapter(mAptSceneList);
 
@@ -132,7 +132,7 @@ public class IndexFragment2 extends BaseFragment {
         this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
                 //PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
                 Intent intent = new Intent(getActivity(), NewSceneActivity.class);
                 startActivity(intent);
@@ -180,10 +180,63 @@ public class IndexFragment2 extends BaseFragment {
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
                 intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
-                intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+                intent.putExtra("sceneNumber", mSceneList.size());
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000){
+            switch (resultCode){
+                case 100:{
+                    // 删除场景
+                    String sceneId = data.getStringExtra("scene_id");
+                    if (mSceneList != null){
+                        for (int i=0;i<mSceneList.size();i++){
+                            EScene.sceneListItemEntry entry = mSceneList.get(i);
+                            if (entry.id.equals(sceneId)) {
+                                ViseLog.d("i = "+i);
+                                mSceneList.remove(i);
+                                mAptSceneList.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case 101:{
+                    // 更新场景
+                    String catalogId = data.getStringExtra("catalog_id");
+                    String desc = data.getStringExtra("description");
+                    boolean enable = data.getBooleanExtra("enable",true);
+                    String id = data.getStringExtra("id");
+                    String name = data.getStringExtra("name");
+                    boolean valid = data.getBooleanExtra("valid",true);
+
+                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                    entry.id = id;
+                    entry.catalogId = catalogId;
+                    entry.description = desc;
+                    entry.enable = enable;
+                    entry.name = name;
+                    entry.valid = valid;
+
+                    for (int i=0;i<mSceneList.size();i++){
+                        if (entry.id.equals(mSceneList.get(i).id)){
+                            mSceneList.set(i, entry);
+                            break;
+                        }
+                    }
+                    mAptSceneList.notifyDataSetChanged();
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+            }
+        }
     }
 
     // 场景列表长按监听器
@@ -207,13 +260,13 @@ public class IndexFragment2 extends BaseFragment {
             int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
-                PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
 
                 Intent intent = new Intent(getActivity(), NewSceneActivity.class);
                 intent.putExtra("scene_id", mSceneList.get(i).id);
                 intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
-                startActivity(intent);
+                startActivityForResult(intent,1000);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -223,7 +276,7 @@ public class IndexFragment2 extends BaseFragment {
                     intent.putExtra("name", mSceneList.get(i).name);
                     intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
                     intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
-                    intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+                    intent.putExtra("sceneNumber", mSceneList.size());
                     mActivity.startActivity(intent);
                 } else {
                     PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
@@ -272,6 +325,7 @@ public class IndexFragment2 extends BaseFragment {
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
                                 mAptSceneList.setData(mSceneList);
+                                mAptSceneList.notifyDataSetChanged();
                                 //mListMy.setAdapter(mAptSceneList);
                                 mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
                                 mListMy.setOnItemClickListener(sceneListOnItemClickListener);

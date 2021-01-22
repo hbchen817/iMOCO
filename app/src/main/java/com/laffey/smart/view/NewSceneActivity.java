@@ -126,6 +126,8 @@ public class NewSceneActivity extends BaseActivity {
     private SceneManager mSceneManager;
     private CallbackHandler mHandler;
 
+    private boolean mValid = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -885,27 +887,45 @@ public class NewSceneActivity extends BaseActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            QMUITipDialogUtil.dismiss();
+                            Intent intent = new Intent();
+                            intent.putExtra("scene_id", mSceneId);
+                            setResult(100, intent);
                             finish();
                         }
                     }, 1000);
                     break;
                 }
                 case Constant.MSG_CALLBACK_CREATESCENE: {
+                    SystemParameter.getInstance().setIsRefreshSceneListData(true);
                     QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scenario_created_successfully);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            QMUITipDialogUtil.dismiss();
                             finish();
                         }
                     }, 1000);
                     break;
                 }
                 case Constant.MSG_CALLBACK_UPDATE_SCENE: {
+                    //JSONObject object = JSON.parseObject((String) msg.obj);
+                    ViseLog.d(new Gson().toJson(msg.obj));
                     QMUITipDialogUtil.dismiss();
                     QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scene_updated_successfully);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            QMUITipDialogUtil.dismiss();
+                            Intent intent = new Intent();
+                            intent.putExtra("catalog_id", mCatalogId);
+                            intent.putExtra("description", mSceneId);
+                            intent.putExtra("enable", mEnable);
+                            intent.putExtra("id", mSceneId);
+                            intent.putExtra("name", mSceneName);
+                            intent.putExtra("valid", mValid);
+                            setResult(101, intent);
+
                             finish();
                         }
                     }, 1000);
@@ -915,6 +935,7 @@ public class NewSceneActivity extends BaseActivity {
                     QMUITipDialogUtil.dismiss();
                     JSONObject object = JSON.parseObject((String) msg.obj);
                     ViseLog.d(new Gson().toJson(object));
+                    mValid = object.getBoolean("valid");
                     mSceneName = object.getString("name");
                     mTitle.setText(mSceneName);
                     mSceneNameTV.setText(mSceneName);

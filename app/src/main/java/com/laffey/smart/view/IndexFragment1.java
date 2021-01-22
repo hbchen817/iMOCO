@@ -945,7 +945,8 @@ public class IndexFragment1 extends BaseFragment {
         }
 
         // 处理刷新手动执行场景列表数据
-        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)
+            || eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
             this.startGetSceneList();
         }
 

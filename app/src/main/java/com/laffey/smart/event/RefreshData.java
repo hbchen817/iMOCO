@@ -15,6 +15,12 @@ public class RefreshData {
         EventBus.getDefault().post(event);
     }
 
+    // 刷新场景列表数据（首页）
+    public static void refreshHomeSceneListData(){
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME);
+        EventBus.getDefault().post(event);
+    }
+
     // 刷新房间列表数据
     public static void refreshRoomListData(){
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA);

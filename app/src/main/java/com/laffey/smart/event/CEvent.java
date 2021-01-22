@@ -13,4 +13,5 @@ public class CEvent {
     public final static String EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA        = "5";
     public final static String EVENT_NAME_REFRESH_DEVICE_LIST_DATA          = "6";
     public final static String EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA     = "7";
+    public final static String EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME      = "8";
 }

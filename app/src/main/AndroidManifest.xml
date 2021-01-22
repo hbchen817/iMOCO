@@ -42,33 +42,50 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.SceneActionActivity"></activity>
-        <activity android:name=".view.NotificationActionActivity" />
-        <activity android:name=".view.AddActionActivity" />
-        <activity android:name=".view.EditPropertyValueActivity" />
-        <activity android:name=".view.EditPropertyValueForActionActivity" />
-        <activity android:name=".view.IdentifierListActivity" />
-        <activity android:name=".view.IdentifierListForActionActivity" />
-        <activity android:name=".view.DevListForCAActivity" />
-        <activity android:name=".view.DevListForActionActivity" />
-        <activity android:name=".view.TimeRangeSelectorActivity" />
-        <activity android:name=".view.CustomRepeatDayActivity" />
-        <activity android:name=".view.TimeSelectorActivity" />
-        <activity android:name=".view.AddConditionActivity" />
+        <activity android:name=".view.SceneActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.NotificationActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.AddActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.EditPropertyValueActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.EditPropertyValueForActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.IdentifierListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.IdentifierListForActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.DevListForCAActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.DevListForActionActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.TimeRangeSelectorActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.CustomRepeatDayActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.TimeSelectorActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".view.AddConditionActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".view.NewSceneActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask" />
-        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
+        <activity android:name=".demoTest.DemoEditSceneActivity" />
+        <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
-            android:value="103546039" /> <!-- huawei push end -->
+            android:value="103546039" />
+        <!-- huawei push end -->
         <!-- vivo push start -->
         <meta-data
             android:name="com.vivo.push.api_key"
             android:value="2e62c1883af9e74ff145082e05e0db2a" />
         <meta-data
             android:name="com.vivo.push.app_id"
-            android:value="105330794" /> <!-- vivo push start -->
+            android:value="105330794" />
+        <!-- vivo push start -->
         <activity
             android:name=".view.StartActivity"
             android:launchMode="singleTop"
