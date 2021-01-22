@@ -124,7 +124,23 @@ public class IndexFragment2 extends BaseFragment {
         AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
         aptSceneModel.setData(this.mModelList);
         this.mListSceneModel.setAdapter(aptSceneModel);
-        this.mAptSceneList = new AptSceneList(getActivity(), mSceneList,this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mAptSceneList = new AptSceneList(getActivity(), mSceneList, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler,
+                new AptSceneList.AptSceneListCallback() {
+                    @Override
+                    public void onDelItem(String sceneId) {
+                        if (mSceneList != null) {
+                            for (int i = 0; i < mSceneList.size(); i++) {
+                                EScene.sceneListItemEntry entry = mSceneList.get(i);
+                                if (entry.id.equals(sceneId)) {
+                                    mSceneList.remove(i);
+                                    mAptSceneList.notifyDataSetChanged();
+                                    break;
+                                }
+                            }
+                        }
+                        RefreshData.refreshHomeSceneListData();
+                    }
+                });
 
         mListMy.setAdapter(mAptSceneList);
 
@@ -198,7 +214,6 @@ public class IndexFragment2 extends BaseFragment {
                         for (int i=0;i<mSceneList.size();i++){
                             EScene.sceneListItemEntry entry = mSceneList.get(i);
                             if (entry.id.equals(sceneId)) {
-                                ViseLog.d("i = "+i);
                                 mSceneList.remove(i);
                                 mAptSceneList.notifyDataSetChanged();
                                 break;

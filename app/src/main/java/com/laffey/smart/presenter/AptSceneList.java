@@ -37,10 +37,11 @@ public class AptSceneList extends BaseAdapter {
 	private Handler mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler;
 	private List<EScene.sceneListItemEntry> mSceneList;
 	private List<deleteTag> mDeleteList;
-
+	private AptSceneListCallback mCallback;
 
 	// 构造
-	public AptSceneList(Context context, List<EScene.sceneListItemEntry> list, Handler commitFailureHandler, Handler responseErrorHandler, Handler processDataHandler) {
+	public AptSceneList(Context context, List<EScene.sceneListItemEntry> list, Handler commitFailureHandler, Handler responseErrorHandler, Handler processDataHandler,
+						AptSceneListCallback callback) {
 		super();
 		this.mContext = context;
 		this.mCommitFailureHandler =commitFailureHandler;
@@ -48,6 +49,7 @@ public class AptSceneList extends BaseAdapter {
 		this.mProcessDataHandler = processDataHandler;
 		this.mSceneList = list;
 		this.mDeleteList = new ArrayList<deleteTag>();
+		this.mCallback = callback;
 	}
 
 	// 设置数据
@@ -182,7 +184,10 @@ public class AptSceneList extends BaseAdapter {
 					alert.setButton(DialogInterface.BUTTON_POSITIVE, mContext.getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
-							new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
+							//new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
+							new SceneManager(mContext).deleteScene(mSceneList.get(index).id, new Handler(), new Handler(), new Handler());
+							mDeleteList.remove(position);
+							mCallback.onDelItem(mSceneList.get(index).id);
 						}
 					});
 					alert.show();
@@ -224,5 +229,9 @@ public class AptSceneList extends BaseAdapter {
 
 
 		return convertView;
+	}
+
+	public interface AptSceneListCallback{
+		void onDelItem(String sceneId);
 	}
 }
