@@ -16,8 +16,8 @@ import com.rexense.imoco.view.DetailTwoSwitchActivity;
 import com.rexense.imoco.view.FourSceneSwitchActivity;
 import com.rexense.imoco.view.LockDetailActivity;
 import com.rexense.imoco.view.OneKeySceneDetailActivity;
+import com.rexense.imoco.view.SixFourSceneSwitchActivity;
 import com.rexense.imoco.view.SixSceneSwitchActivity;
-import com.rexense.imoco.view.SixTwoSceneSwitchActivity;
 import com.rexense.imoco.view.ThreeSceneSwitchActivity;
 import com.rexense.imoco.view.TwoSceneSwitchActivity;
 
@@ -80,7 +80,8 @@ public class ActivityRouter {
                 intent = new Intent(context, OneKeySceneDetailActivity.class);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+//                intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+                intent = new Intent(context, SixFourSceneSwitchActivity.class);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
                 intent = new Intent(context, SixSceneSwitchActivity.class);

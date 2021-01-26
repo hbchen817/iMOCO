@@ -129,6 +129,10 @@
             android:screenOrientation="portrait"
             android:label="@string/app_name" />
         <activity
+            android:name=".view.SixFourSceneSwitchActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/app_name" />
+        <activity
             android:name=".view.LightActionChoiceActivity"
 	        android:screenOrientation="portrait"
             android:label="@string/app_name" />

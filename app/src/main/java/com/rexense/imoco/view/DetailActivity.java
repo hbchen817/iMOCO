@@ -82,7 +82,8 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_one_key_scene);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                setContentView(R.layout.activity_six_two_scene);
+//                setContentView(R.layout.activity_six_two_scene);
+                setContentView(R.layout.activity_six_four_scene);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
                 setContentView(R.layout.activity_six_scene);
