@@ -23,7 +23,7 @@ public class CTSL {
     public static final String PK_REMOTECONTRILBUTTON       = "a1G306IUVoa";
     public static final String PK_SMART_LOCK_A7             = "a19ONFPQn0u";//临时密码StartTime
     public static final String PK_SMART_LOCK                = "a1SlrD1NHyW";//临时密码StartDate
-    public static final String PK_SIX_TWO_SCENE_SWITCH      = "a1zf8jfGzTX";
+    public static final String PK_SIX_TWO_SCENE_SWITCH      = "a1q6m3k0GkW";// a1zf8jfGzTX
     public static final String PK_SIX_SCENE_SWITCH          = "a1MLvTtRmWo";
     public static final String PK_TWO_SCENE_SWITCH          = "a14kD7IKWqp";
     public static final String PK_THREE_SCENE_SWITCH        = "a1S5xUUURz4";

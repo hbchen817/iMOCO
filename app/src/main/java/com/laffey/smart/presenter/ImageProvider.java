@@ -201,9 +201,9 @@ public class ImageProvider {
                 // 一键开关处理
                 if (property.equals(CTSL.OWS_P_PowerSwitch_1)) {
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_oneswitch_on;
+                        return R.drawable.one_scene_pressed;// state_oneswitch_on
                     } else {
-                        return R.drawable.state_oneswitch_off;
+                        return R.drawable.one_scene_normal;// state_oneswitch_off
                     }
                 }
             case CTSL.PK_TWOWAYSWITCH:

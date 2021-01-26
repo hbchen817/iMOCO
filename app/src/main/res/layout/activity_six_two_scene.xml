@@ -2,135 +2,84 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECECEC"
+    android:background="@color/appbgcolor2"
     android:orientation="vertical">
 
     <include layout="@layout/include_detail_black" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="@dimen/dp_270"
         android:layout_height="@dimen/dp_300"
         android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
         android:layout_marginTop="@dimen/dp_40">
 
-        <ImageView
-            android:id="@+id/device_image_view"
-            android:layout_width="@dimen/dp_270"
-            android:layout_height="@dimen/dp_300"
-            android:layout_centerInParent="true"
-            android:background="#71A0F9" />
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/switch1"
-            android:layout_width="@dimen/dp_90"
-            android:layout_height="@dimen/dp_150"
-            android:scaleType="fitXY"
-            android:src="@drawable/state_twoswitch_1_off" />
+            <ImageView
+                android:id="@+id/switch1"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_150"
+                android:background="@drawable/selector_top_switch" />
 
-        <ImageView
-            android:id="@+id/switch2"
-            android:layout_width="@dimen/dp_90"
-            android:layout_height="@dimen/dp_150"
-            android:layout_below="@id/switch1"
-            android:scaleType="fitXY"
-            android:src="@drawable/state_twoswitch_1_off" />
+            <ImageView
+                android:id="@+id/switch2"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_150"
+                android:background="@drawable/selector_bottom_switch" />
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/switch3"
-            android:layout_width="@dimen/dp_90"
-            android:layout_height="@dimen/dp_150"
-            android:layout_toRightOf="@id/switch1"
-            android:scaleType="fitXY"
-            android:src="@drawable/state_twoswitch_1_off" />
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/switch4"
-            android:layout_width="@dimen/dp_90"
-            android:layout_height="@dimen/dp_150"
-            android:layout_below="@id/switch1"
-            android:layout_toRightOf="@id/switch2"
-            android:scaleType="fitXY"
-            android:src="@drawable/state_twoswitch_1_off" />
+            <ImageView
+                android:id="@+id/switch3"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_150"
+                android:background="@drawable/selector_top_switch" />
 
+            <ImageView
+                android:id="@+id/switch4"
+                android:layout_width="@dimen/dp_90"
+                android:layout_height="@dimen/dp_150"
+                android:background="@drawable/selector_bottom_switch" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/mSceneContentText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginTop="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10"
-            android:visibility="gone" />
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_switch_two_state">
 
-        <TextView
-            android:id="@+id/mSceneContentText1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/mSceneContentText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dp_40"
+                android:paddingBottom="@dimen/dp_20"
+                android:gravity="center_horizontal"
+                android:text="@string/no_bind_scene"
+                android:textColor="#565353"
+                android:textSize="@dimen/sp_10" />
 
-        <TextView
-            android:id="@+id/mSceneContentText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginRight="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10" />
-
-        <TextView
-            android:id="@+id/mSceneContentText3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/mSceneContentText4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginRight="@dimen/dp_10"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/mSceneContentText5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/dp_10"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_20"
-            android:text="@string/no_bind_scene"
-            android:textColor="#565353"
-            android:textSize="@dimen/sp_10" />
-
-    </RelativeLayout>
-
-
+            <TextView
+                android:id="@+id/mSceneContentText5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="@dimen/dp_40"
+                android:paddingTop="@dimen/dp_20"
+                android:gravity="center_horizontal"
+                android:text="@string/no_bind_scene"
+                android:textColor="#565353"
+                android:textSize="@dimen/sp_10" />
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

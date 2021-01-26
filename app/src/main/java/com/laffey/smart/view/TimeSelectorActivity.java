@@ -231,13 +231,13 @@ public class TimeSelectorActivity extends BaseActivity {
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 } else if (mWorkingDaysIV.getVisibility() == View.VISIBLE) {
                     // 工作日
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " ? * 1,2,3,4,5";
+                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * 1,2,3,4,5";
                     mTimerEntry.setCron(mTimeResult);
                     mTimerEntry.setCronType(Constant.TIMER_LINUX);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 } else if (mWeakendIV.getVisibility() == View.VISIBLE) {
                     // 周末
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " ? * 6,7";
+                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * 6,7";
                     mTimerEntry.setCron(mTimeResult);
                     mTimerEntry.setCronType(Constant.TIMER_LINUX);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);

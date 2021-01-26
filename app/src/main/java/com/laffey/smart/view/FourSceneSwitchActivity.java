@@ -19,6 +19,7 @@ import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -94,6 +95,8 @@ public class FourSceneSwitchActivity extends DetailActivity {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
+                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
+                            mSceneContentText1.getText().toString()));
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -101,6 +104,8 @@ public class FourSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
+                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
+                            mSceneContentText2.getText().toString()));
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
@@ -108,6 +113,8 @@ public class FourSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
+                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
+                            mSceneContentText3.getText().toString()));
                     mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
@@ -115,6 +122,8 @@ public class FourSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText4:
                 if (mManualIDs[3] != null) {
+                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
+                            mSceneContentText4.getText().toString()));
                     mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);

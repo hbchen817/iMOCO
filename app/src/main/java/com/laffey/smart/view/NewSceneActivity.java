@@ -722,7 +722,6 @@ public class NewSceneActivity extends BaseActivity {
                 break;
             }
             case R.id.tv_toolbar_right: {
-                mSceneName = mSceneNameTV.getText().toString();
                 if (mSceneName == null || mSceneName.length() == 0) {
                     ToastUtils.showLongToast(this, R.string.pls_enter_a_scene_name);
                     return;
@@ -768,6 +767,22 @@ public class NewSceneActivity extends BaseActivity {
                             ToastUtils.showLongToast(this, R.string.time_period_cannot_be_only_one);
                             return;
                         }
+                    }
+
+                    // 时间点，事件上报
+                    int timerCount = 0;
+                    int eventCount = 0;
+                    for (int i = 0; i < mCaconditionList.size(); i++) {
+                        Object o = mCaconditionList.get(i);
+                        if (o instanceof CaConditionEntry.Timer)
+                            timerCount++;
+                        else if (o instanceof CaConditionEntry.Event)
+                            eventCount++;
+                    }
+                    if (timerCount > 0 && eventCount > 0) {
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(this, R.string.timer_and_event_cannot_be_reported_as_meet_all_of_the_following_conditions_at_the_same_time);
+                        return;
                     }
                 }
 
@@ -991,7 +1006,10 @@ public class NewSceneActivity extends BaseActivity {
                                 property.setCompareType(object1.getJSONObject("params").getString("compareType"));
                                 property.setProductKey(object1.getJSONObject("params").getString("productKey"));
                                 property.setDeviceName(object1.getJSONObject("params").getString("deviceName"));
-                                property.setCompareValue(object1.getJSONObject("params").getString("compareValue"));
+                                property.setCompareValue(object1.getJSONObject("params").get("compareValue"));
+
+                                if (!"==".equals(property.getCompareType()))
+                                    item.setDesc(item.getName().trim() + getCompareTypeString(property.getCompareType()) + property.getCompareValue());
 
                                 item.setObject(property);
                                 mCaconditionList.add(property);

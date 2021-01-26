@@ -342,7 +342,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void update(IdentifierItemForCA item) {
         mIdentifier = item;
-        mTitle.setText(mIdentifier.getName());
+        mTitle.setText(mIdentifier.getName().trim());
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mSceneManager.queryTSLListForCA(item.getIotId(), 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
