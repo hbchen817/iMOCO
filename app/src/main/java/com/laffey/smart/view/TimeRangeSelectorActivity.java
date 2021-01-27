@@ -24,13 +24,17 @@ import com.kyleduo.switchbutton.SwitchButton;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.CaConditionEntry;
+import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -141,7 +145,27 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                     mTimeRange.setBeginDate(mBeginTimeTV.getText().toString());
                     mTimeRange.setEndDate(mEndTimeTV.getText().toString());
                 }
-                mTimeRange.setRepeat(mRepeatDays);
+                if (mOnceIV.getVisibility() == View.VISIBLE) {
+                    if (!mAllDaySB.isChecked()){
+                        try {
+                            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+                            String s = format2.format(new Date(System.currentTimeMillis()));
+
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            long i = format.parse(s+" "+mBeginTimeTV.getText().toString()).getTime();
+                            long j = format.parse(s+" "+mEndTimeTV.getText().toString()).getTime();
+                            long n = System.currentTimeMillis();
+                            if (n >= i && n >=j && j >= i) {
+                                ToastUtils.showLongToast(TimeRangeSelectorActivity.this, R.string.invalid_for_past_time_period);
+                                return;
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    mTimeRange.setRepeat(mRepeatDays);
+                }
 
                 EventBus.getDefault().postSticky(mTimeRange);
 
