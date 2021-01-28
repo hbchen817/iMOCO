@@ -294,8 +294,16 @@ public class IndexFragment2 extends BaseFragment {
                     intent.putExtra("sceneNumber", mSceneList.size());
                     mActivity.startActivity(intent);
                 } else {
-                    PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                    SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                    //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                    //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                    intent.putExtra("sceneId", mSceneList.get(i).id);
+                    intent.putExtra("name", mSceneList.get(i).name);
+                    intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                    intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    mActivity.startActivity(intent);
                 }
             }
         }

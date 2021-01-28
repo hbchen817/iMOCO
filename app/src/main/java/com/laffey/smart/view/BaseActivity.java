@@ -20,6 +20,7 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ResponseMessageUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -36,6 +37,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            QMUITipDialogUtil.dismiss();
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -59,6 +61,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            QMUITipDialogUtil.dismiss();
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -123,6 +126,7 @@ public class BaseActivity extends FragmentActivity {
         LoginBusiness.logout(new ILogoutCallback() {
             @Override
             public void onLogoutSuccess() {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_other_device_login));
                 Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -134,6 +138,7 @@ public class BaseActivity extends FragmentActivity {
 
             @Override
             public void onLogoutFailed(int code, String error) {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
             }
         });
