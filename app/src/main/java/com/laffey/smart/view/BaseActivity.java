@@ -37,7 +37,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            QMUITipDialogUtil.dismiss();
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -61,7 +61,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            QMUITipDialogUtil.dismiss();
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -111,6 +111,10 @@ public class BaseActivity extends FragmentActivity {
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {
+    }
+
+    protected void dismissQMUIDialog() {
+        QMUITipDialogUtil.dismiss();
     }
 
     public Context mActivity;

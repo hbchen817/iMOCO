@@ -628,7 +628,6 @@ public class NewSceneActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void updateConditionOrAction(Object o) {
-        ViseLog.d(new Gson().toJson(o));
         if (o != null && o instanceof CaConditionEntry.Timer) {
             // 时间点
             if (!mCaconditionList.contains(o))

@@ -399,10 +399,6 @@ public class SceneManager {
             items.add(item);
             isHasTrigger = true;
         }
-        if (isHasTrigger) {
-            // triggers.put("items", items);
-            // requestParameterEntry.addParameter("triggers", triggers);
-        }
         // 构造时间条件
         boolean isHasConditionTime = false;
         //JSONObject conditions = new JSONObject();
@@ -492,7 +488,6 @@ public class SceneManager {
         if (isHasAction) {
             requestParameterEntry.addParameter("actions", actions);
         }
-        //requestParameterEntry.addParameter("sceneType", baseInfo.sceneType);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
 
         //提交
@@ -567,7 +562,6 @@ public class SceneManager {
         requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionList)));
 
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
-        ViseLog.d(new Gson().toJson(requestParameterEntry));
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

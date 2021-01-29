@@ -57,6 +57,7 @@ import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.Configure;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -329,8 +330,6 @@ public class IndexFragment1 extends BaseFragment {
     @Override
     protected void notifyFailureOrError(int type) {
         super.notifyFailureOrError(type);
-        mGridRL.finishRefresh(false);
-        mListRL.finishRefresh(false);
         if (this.mProgressDialog != null) {
             this.mProgressDialog.dismiss();
         }
@@ -863,6 +862,14 @@ public class IndexFragment1 extends BaseFragment {
             return false;
         }
     });
+
+    @Override
+    protected void dismissQMUIDialog() {
+        super.dismissQMUIDialog();
+        QMUITipDialogUtil.dismiss();
+        mGridRL.finishRefresh(false);
+        mListRL.finishRefresh(false);
+    }
 
     // 实时数据处理器
     private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
