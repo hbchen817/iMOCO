@@ -339,9 +339,13 @@
     <string name="set_time_begin">开始:</string>
     <string name="set_time_end">结束:</string>
     <string name="set_time_everyday">每一天:</string>
+    <string name="set_time_everyday_2">每一天</string>
     <string name="set_time_workday">工作日:</string>
+    <string name="set_time_workday_2">工作日</string>
     <string name="set_time_weekend">周末:</string>
+    <string name="set_time_weekend_2">周末</string>
     <string name="set_time_selfdefine">自定义:</string>
+    <string name="set_time_selfdefine_2">自定义</string>
     <string name="set_time_confirm">确认</string>
     <string name="set_time_seldefine_select">请进行自定义选择</string>
 

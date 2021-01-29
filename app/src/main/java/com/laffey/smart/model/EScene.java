@@ -217,6 +217,63 @@ public class EScene {
         }
 
         // 获取星期循环字符串
+        public String getWeekRepeatString2(Context context){
+            if(this.isEveryDay()){
+                return context.getString(R.string.set_time_everyday_2);
+            }
+            if(this.isWorkDay()){
+                return context.getString(R.string.set_time_workday_2);
+            }
+            if(this.isWeekEnd()){
+                return context.getString(R.string.set_time_weekend_2);
+            }
+
+            String weekRepeat = "";
+            boolean isFound;
+            for(int i = CScene.WEEK_CODE_MIN; i <= CScene.WEEK_CODE_MAX; i++)
+            {
+                isFound = false;
+                for(Integer r : this.repeat){
+                    if(r == i){
+                        isFound = true;
+                        break;
+                    }
+                }
+                if(isFound){
+                    if(weekRepeat.length() > 0) {
+                        weekRepeat = weekRepeat + " ";
+                    }
+                    switch (i){
+                        case CScene.WEEK_CODE_SUN:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_0);
+                            break;
+                        case CScene.WEEK_CODE_MON:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_1);
+                            break;
+                        case CScene.WEEK_CODE_TUE:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_2);
+                            break;
+                        case CScene.WEEK_CODE_WED:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_3);
+                            break;
+                        case CScene.WEEK_CODE_THU:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_4);
+                            break;
+                        case CScene.WEEK_CODE_FRI:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_5);
+                            break;
+                        case CScene.WEEK_CODE_SAT:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_6);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return weekRepeat;
+        }
+
+        // 获取星期循环字符串
         public String getWeekRepeatString(Context context){
             if(this.isEveryDay()){
                 return context.getString(R.string.set_time_everyday);

@@ -239,6 +239,7 @@ public class SceneMaintainActivity extends BaseActivity {
             }
         });
 
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         // 获取支持配网产品列表
         new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
@@ -294,6 +295,8 @@ public class SceneMaintainActivity extends BaseActivity {
                         // 获取场景详细信息
                         Log.i("lzm", "mSceneModelCode =" + mSceneModelCode);
                         mSceneManager.querySceneDetail(mSceneId, mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                    } else {
+                        QMUITipDialogUtil.dismiss();
                     }
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
@@ -312,6 +315,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     // 初始化场景参数
                     mSceneManager.initSceneParameterList(mParameterList, detailEntry);
                     mAptSceneParameter.notifyDataSetChanged();
+                    QMUITipDialogUtil.dismiss();
                     break;
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果

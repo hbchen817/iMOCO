@@ -174,8 +174,10 @@ public class AptDeviceGrid extends BaseAdapter {
 						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
 						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
 					} else if (stateTimesCount == 3) {
-						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+						//viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						//viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value+"\n...");
 					} else {
 						/*viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
 						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);*/

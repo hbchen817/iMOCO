@@ -219,23 +219,42 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/mainLstDevice"
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/list_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:dividerHeight="6dp"
-            android:visibility="gone"
-            android:horizontalSpacing="1dip">
-        </ListView>
+            android:visibility="gone">
 
-        <GridView
-            android:id="@+id/mainGrdDevice"
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ListView
+                android:id="@+id/mainLstDevice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:dividerHeight="6dp"
+                android:horizontalSpacing="1dip" />
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/grid_rl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="10dp"
-            android:numColumns="2"/>
+            android:layout_height="match_parent">
+
+            <com.scwang.smartrefresh.layout.header.ClassicsHeader
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <GridView
+                android:id="@+id/mainGrdDevice"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="10dp"
+                android:numColumns="2"/>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
         <LinearLayout
             android:id="@+id/alldevice_nodata_view"

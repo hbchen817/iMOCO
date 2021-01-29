@@ -59,6 +59,9 @@ import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -97,6 +100,7 @@ public class IndexFragment1 extends BaseFragment {
     private GridView mGridDevice;
     private View allDeviceView, shareDeviceView;
     private View allDeviceNoDataView, shareDeviceNoDataView;
+    private SmartRefreshLayout mGridRL, mListRL;
 
     private AptDeviceList mAptShareDeviceList = null;
     private AptDeviceList mAptDeviceList = null;
@@ -149,7 +153,23 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblShare = (TextView) view.findViewById(R.id.mainLblShare);
         this.mLblShareDL = (TextView) view.findViewById(R.id.mainLblShareDL);
         this.mListDevice = (ListView) view.findViewById(R.id.mainLstDevice);
+        this.mListRL = (SmartRefreshLayout) view.findViewById(R.id.list_rl);
+        mListRL.setEnableLoadMore(false);
+        mListRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                startGetDeviceList();
+            }
+        });
         this.mGridDevice = (GridView) view.findViewById(R.id.mainGrdDevice);
+        this.mGridRL = (SmartRefreshLayout) view.findViewById(R.id.grid_rl);
+        mGridRL.setEnableLoadMore(false);
+        mGridRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                startGetDeviceList();
+            }
+        });
         this.mListRoom = (ListView) view.findViewById(R.id.mainLstRoom);
         this.mListShare = (ListView) view.findViewById(R.id.mainLstShare);
         this.allDeviceView = view.findViewById(R.id.all_device_view);
@@ -226,11 +246,15 @@ public class IndexFragment1 extends BaseFragment {
                 mRlDevice.setVisibility(View.VISIBLE);
                 allDeviceView.setVisibility(View.VISIBLE);
                 if (mDeviceDisplayType == 1) {
-                    mGridDevice.setVisibility(View.VISIBLE);
-                    mListDevice.setVisibility(View.GONE);
+                    //mGridDevice.setVisibility(View.VISIBLE);
+                    mGridRL.setVisibility(View.VISIBLE);
+                    //mListDevice.setVisibility(View.GONE);
+                    mListRL.setVisibility(View.GONE);
                 } else {
-                    mGridDevice.setVisibility(View.GONE);
-                    mListDevice.setVisibility(View.VISIBLE);
+                    //mGridDevice.setVisibility(View.GONE);
+                    mGridRL.setVisibility(View.GONE);
+                    //mListDevice.setVisibility(View.VISIBLE);
+                    mListRL.setVisibility(View.VISIBLE);
                 }
                 mListRoom.setVisibility(View.GONE);
                 shareDeviceView.setVisibility(View.GONE);
@@ -277,8 +301,10 @@ public class IndexFragment1 extends BaseFragment {
         imgGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGridDevice.setVisibility(View.VISIBLE);
-                mListDevice.setVisibility(View.GONE);
+                //mGridDevice.setVisibility(View.VISIBLE);
+                mGridRL.setVisibility(View.VISIBLE);
+                //mListDevice.setVisibility(View.GONE);
+                mListRL.setVisibility(View.GONE);
                 mDeviceDisplayType = 1;
                 imgGrid.setAlpha((float) 1.0);
                 imgList.setAlpha((float) 0.4);
@@ -289,8 +315,10 @@ public class IndexFragment1 extends BaseFragment {
         imgList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListDevice.setVisibility(View.VISIBLE);
-                mGridDevice.setVisibility(View.GONE);
+                //mListDevice.setVisibility(View.VISIBLE);
+                mListRL.setVisibility(View.VISIBLE);
+                //mGridDevice.setVisibility(View.GONE);
+                mGridRL.setVisibility(View.GONE);
                 mDeviceDisplayType = 2;
                 imgGrid.setAlpha((float) 0.4);
                 imgList.setAlpha((float) 1.0);
@@ -301,6 +329,8 @@ public class IndexFragment1 extends BaseFragment {
     @Override
     protected void notifyFailureOrError(int type) {
         super.notifyFailureOrError(type);
+        mGridRL.finishRefresh(false);
+        mListRL.finishRefresh(false);
         if (this.mProgressDialog != null) {
             this.mProgressDialog.dismiss();
         }
@@ -328,9 +358,13 @@ public class IndexFragment1 extends BaseFragment {
     // 主动获取设备属性
     private void getDeviceProperty() {
         if (this.mDeviceList == null || this.mDeviceList.size() == 0) {
+            mGridRL.finishRefresh(true);
+            mListRL.finishRefresh(true);
             return;
         }
         if (this.mGetPropertyIndex < 0 || this.mGetPropertyIndex >= this.mDeviceList.size()) {
+            mGridRL.finishRefresh(true);
+            mListRL.finishRefresh(true);
             return;
         }
         this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
@@ -464,7 +498,6 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
-                    ViseLog.d(mDeviceList.get(position).productKey);
                     ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
                             mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
                 } else {
@@ -809,6 +842,9 @@ public class IndexFragment1 extends BaseFragment {
                             mGetPropertyIndex++;
                             getDeviceProperty();
                         }
+                    } else {
+                        mGridRL.finishRefresh(true);
+                        mListRL.finishRefresh(true);
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:

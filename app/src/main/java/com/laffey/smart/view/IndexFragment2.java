@@ -332,7 +332,7 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (!item.description.contains("mode == CA,")) {
+                            if (/*!item.description.contains("mode == CA,")*/true) {
                                 SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
                             }
