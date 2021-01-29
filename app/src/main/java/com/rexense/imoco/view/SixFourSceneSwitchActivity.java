@@ -17,16 +17,19 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.SceneBindEvent;
+import com.rexense.imoco.model.EAPIChannel;
+import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.presenter.ImageProvider;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.TSLHelper;
+import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -277,8 +280,12 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
-                    Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
-                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < activity.mManualIDs.length; i++) {
+                        if (sceneId.equals(activity.mManualIDs[i])){
+                            ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
+                                    , activity.mManualNames[i]));
+                        }
+                    }
                     break;
                 default:
                     break;
