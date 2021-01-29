@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,8 +25,6 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.ActionEntry;
-import com.laffey.smart.demoTest.CaConditionEntry;
-import com.laffey.smart.demoTest.IdentifierItemForCA;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.QMUITipDialogUtil;
@@ -74,6 +71,7 @@ public class SceneActionActivity extends BaseActivity {
         initStatusBar();
         initView();
         EventBus.getDefault().register(this);
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
@@ -181,17 +179,19 @@ public class SceneActionActivity extends BaseActivity {
                             mList.add(item);
                         }
                     }
-                    if (total >= pageSize) {
+                    if (array.size() > 0 && CScene.TYPE_AUTOMATIC.equals(mSceneType)) {
                         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, pageNo + 1, PAGE_SIZE,
                                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                    } else {
-                        if (CScene.TYPE_AUTOMATIC.equals(mSceneType)) {
-                            mSceneType = CScene.TYPE_MANUAL;
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, PAGE_SIZE,
-                                    mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                        }
+                    } else if (array.size() == 0 && CScene.TYPE_AUTOMATIC.equals(mSceneType)){
+                        mSceneType = CScene.TYPE_MANUAL;
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, PAGE_SIZE,
+                                mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    } else if (array.size() > 0 && CScene.TYPE_MANUAL.equals(mSceneType)) {
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, pageNo + 1, PAGE_SIZE,
+                                mCommitFailureHandler, mResponseErrorHandler, mHandler);
                     }
                     mAdapter.notifyDataSetChanged();
+                    QMUITipDialogUtil.dismiss();
                     break;
                 }
             }
@@ -200,7 +200,6 @@ public class SceneActionActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void update(SceneActionItem item){
-        ViseLog.d("update(SceneActionItem item)");
         mItem = item;
     }
 

@@ -328,7 +328,7 @@ public class SceneMaintainActivity extends BaseActivity {
                                 RefreshData.refreshSceneListData();
                                 finish();
                             }
-                        },2000);
+                        },1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mLblName.getText().toString()));
@@ -349,7 +349,7 @@ public class SceneMaintainActivity extends BaseActivity {
                                 RefreshData.refreshSceneListData();
                                 finish();
                             }
-                        },2000);
+                        },1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
                         ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mLblName.getText().toString()));

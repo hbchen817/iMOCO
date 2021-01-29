@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.laffey.smart.R;
-import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
