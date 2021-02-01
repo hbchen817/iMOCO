@@ -19,6 +19,7 @@ import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,6 +46,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
     private String[] mManualIDs = new String[3];
     private String[] mManualNames = new String[3];
     private String mCurrentKey;
+    private String mExecuteScene = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
+                    mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -99,6 +102,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
+                    mExecuteScene = mSceneContentText2.getText().toString();
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
@@ -106,6 +110,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
+                    mExecuteScene = mSceneContentText3.getText().toString();
                     mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
@@ -114,16 +119,19 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
 
             case R.id.mSwitch1:
                 if (mManualIDs[0] != null) {
+                    mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
             case R.id.mSwitch2:
                 if (mManualIDs[1] != null) {
+                    mExecuteScene = mSceneContentText2.getText().toString();
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
             case R.id.mSwitch3:
                 if (mManualIDs[2] != null) {
+                    mExecuteScene = mSceneContentText3.getText().toString();
                     mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
@@ -132,6 +140,9 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
         }
     }
 
+    public String getExecuteScene() {
+        return mExecuteScene;
+    }
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3})
     public boolean onLongClick(View view) {
@@ -221,6 +232,8 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
+                    ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint),
+                            activity.getExecuteScene()));
                     //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
 //                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
                     break;

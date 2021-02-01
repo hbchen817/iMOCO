@@ -31,6 +31,7 @@ import com.laffey.smart.demoTest.IdentifierItemForCA;
 import com.laffey.smart.demoTest.ServiceInputData;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vise.log.ViseLog;
 
@@ -203,6 +204,10 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                             }
                         }
                         Object result = null;
+                        if (value.getValue() == null) {
+                            ToastUtils.showLongToast(EditPropertyValueForActionActivity.this, R.string.pls_select_an_action);
+                            return;
+                        }
                         if (((String) value.getValue()).contains("."))
                             result = Double.parseDouble((String) value.getValue());
                         else result = Integer.parseInt((String) value.getValue());
@@ -255,6 +260,10 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
 
                         String compareValue = (String) value.getValue();
                         Object result = 0;
+                        if (value.getValue() == null) {
+                            ToastUtils.showLongToast(EditPropertyValueForActionActivity.this, R.string.pls_select_an_action);
+                            return;
+                        }
                         if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
                         else result = Integer.parseInt(compareValue);
 

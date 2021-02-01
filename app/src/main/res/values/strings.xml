@@ -639,4 +639,7 @@
     <string name="time_period_cannot_be_only_one">“时间段”无法作为独立条件</string>
     <string name="timer_and_event_cannot_be_reported_as_meet_all_of_the_following_conditions_at_the_same_time">“时间点”、键值信息上报无法同时作为“满足以下所有条件”的条件</string>
     <string name="invalid_for_past_time_period">过去时间段无效</string>
+    <string name="scene_does_not_exist">场景不存在</string>
+    <string name="pls_select_an_action">请先选择动作</string>
+    <string name="pls_select_an_condition">请先选择条件</string>
 </resources>

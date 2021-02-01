@@ -29,6 +29,7 @@ import com.laffey.smart.demoTest.CaConditionEntry;
 import com.laffey.smart.demoTest.IdentifierItemForCA;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -159,6 +160,10 @@ public class EditPropertyValueActivity extends BaseActivity {
                         }
                         String compareValue = value.getValue();
                         Object result = 0;
+                        if (value.getValue() == null) {
+                            ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
+                            return;
+                        }
                         if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
                         else result = Integer.parseInt(compareValue);
 
@@ -214,6 +219,10 @@ public class EditPropertyValueActivity extends BaseActivity {
 
                         String compareValue = value.getValue();
                         Object result = 0;
+                        if (value.getValue() == null) {
+                            ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
+                            return;
+                        }
                         if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
                         else result = Integer.parseInt(compareValue);
 

@@ -52,6 +52,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
     private String[] mManualIDs = new String[6];
     private String[] mManualNames = new String[6];
     private String mCurrentKey;
+    private String mExecuteScene = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,8 +100,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText1.getText().toString()));
+                    mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -108,8 +108,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText2.getText().toString()));
+                    mExecuteScene = mSceneContentText2.getText().toString();
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
@@ -117,8 +116,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText3.getText().toString()));
+                    mExecuteScene = mSceneContentText3.getText().toString();
                     mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
@@ -126,8 +124,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText4:
                 if (mManualIDs[3] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText4.getText().toString()));
+                    mExecuteScene = mSceneContentText4.getText().toString();
                     mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);
@@ -135,8 +132,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText5:
                 if (mManualIDs[4] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText5.getText().toString()));
+                    mExecuteScene = mSceneContentText5.getText().toString();
                     mSceneManager.executeScene(mManualIDs[4], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
@@ -144,8 +140,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText6:
                 if (mManualIDs[5] != null) {
-                    ToastUtils.showLongToast(this, String.format(getString(R.string.main_scene_execute_hint),
-                            mSceneContentText6.getText().toString()));
+                    mExecuteScene = mSceneContentText6.getText().toString();
                     mSceneManager.executeScene(mManualIDs[5], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
@@ -196,6 +191,9 @@ public class SixSceneSwitchActivity extends DetailActivity {
         return true;
     }
 
+    public String getExecuteScene() {
+        return mExecuteScene;
+    }
 
     private static class MyHandler extends Handler {
         final WeakReference<SixSceneSwitchActivity> mWeakReference;
@@ -302,6 +300,8 @@ public class SixSceneSwitchActivity extends DetailActivity {
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
+                    ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint),
+                            activity.getExecuteScene()));
                     //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
 //                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
                     break;
