@@ -141,7 +141,7 @@ public class ProductGuidanceActivity extends BaseActivity {
             if(this.mCurrentStepIndex == this.mStepCount - 1) {
                 this.mChbIsRead.setVisibility(View.VISIBLE);
             }
-            Glide.with(ProductGuidanceActivity.this).load(this.mGuidances.get(stepIndex).dnGuideIcon).into(this.mGuidanceIcon);
+            Glide.with(getApplicationContext()).load(this.mGuidances.get(stepIndex).dnGuideIcon).into(this.mGuidanceIcon);
         }
     }
 
@@ -194,7 +194,7 @@ public class ProductGuidanceActivity extends BaseActivity {
             mGuidanceCopywriting.setText(R.string.gateway_guidance);
             mChbIsRead.setVisibility(View.VISIBLE);
             mOperateCopywriting.setText(R.string.dialog_confirm);
-            Glide.with(ProductGuidanceActivity.this).load(R.drawable.icon_gateway_fton).into(this.mGuidanceIcon);
+            Glide.with(getApplicationContext()).load(R.drawable.icon_gateway_fton).into(this.mGuidanceIcon);
         }
 
         initStatusBar();
@@ -207,5 +207,11 @@ public class ProductGuidanceActivity extends BaseActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Glide.with(getApplicationContext()).pauseRequests();
     }
 }

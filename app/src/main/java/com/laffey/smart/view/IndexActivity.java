@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -177,6 +178,11 @@ public class IndexActivity extends BaseActivity {
             initView();
             initListener();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        //super.onSaveInstanceState(outState, outPersistentState);
     }
 
     /**

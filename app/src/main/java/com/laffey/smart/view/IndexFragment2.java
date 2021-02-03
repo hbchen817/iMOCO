@@ -1,5 +1,7 @@
 package com.laffey.smart.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,6 +62,12 @@ public class IndexFragment2 extends BaseFragment {
     private String mSceneType;
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         // 注销刷新场景数据事件
@@ -95,7 +103,7 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 获取碎片所依附的活动的上下文环境
-        mActivity = getActivity();
+        //mActivity = getActivity();
         View view = inflater.inflate(setLayout(), container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
@@ -119,12 +127,12 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     private void initView() {
-        this.mSceneManager = new SceneManager(getActivity());
+        this.mSceneManager = new SceneManager(mActivity);
         this.mModelList = this.mSceneManager.genSceneModelList();
-        AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
+        AptSceneModel aptSceneModel = new AptSceneModel(mActivity);
         aptSceneModel.setData(this.mModelList);
         this.mListSceneModel.setAdapter(aptSceneModel);
-        this.mAptSceneList = new AptSceneList(getActivity(), mSceneList, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler,
+        this.mAptSceneList = new AptSceneList(mActivity, mSceneList, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler,
                 new AptSceneList.AptSceneListCallback() {
                     @Override
                     public void onDelItem(String sceneId) {
@@ -149,8 +157,8 @@ public class IndexFragment2 extends BaseFragment {
             @Override
             public void onClick(View v) {
                 //SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                //PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
-                Intent intent = new Intent(getActivity(), NewSceneActivity.class);
+                //PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                Intent intent = new Intent(mActivity, NewSceneActivity.class);
                 startActivity(intent);
             }
         });
@@ -191,7 +199,7 @@ public class IndexFragment2 extends BaseFragment {
                     return;
                 }
 
-                Intent intent = new Intent(getActivity(), SceneMaintainActivity.class);
+                Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
                 intent.putExtra("operateType", CScene.OPERATE_CREATE);
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
@@ -278,7 +286,7 @@ public class IndexFragment2 extends BaseFragment {
                 //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
                 //SystemParameter.getInstance().setIsRefreshSceneListData(true);
 
-                Intent intent = new Intent(getActivity(), NewSceneActivity.class);
+                Intent intent = new Intent(mActivity, NewSceneActivity.class);
                 intent.putExtra("scene_id", mSceneList.get(i).id);
                 intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
                 startActivityForResult(intent,1000);
@@ -332,7 +340,8 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (/*!item.description.contains("mode == CA,")*/true) {
+                            ViseLog.d(new Gson().toJson(item));
+                            if (!item.description.contains("mode == CA,")) {
                                 SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
                             }
@@ -362,12 +371,12 @@ public class IndexFragment2 extends BaseFragment {
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
                     String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
-                    QMUITipDialogUtil.showSuccessDialog(getActivity(), R.string.scene_delete_sucess);
+                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
                         RefreshData.refreshSceneListData();
                     }
-                    //ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
+                    //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     break;
                 default:
                     break;
@@ -383,10 +392,10 @@ public class IndexFragment2 extends BaseFragment {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
 
-            getActivity().runOnUiThread(new Runnable() {
+            mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    QMUITipDialogUtil.showLoadingDialg(getActivity(), getString(R.string.is_loading));
+                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
                 }
             });
         }

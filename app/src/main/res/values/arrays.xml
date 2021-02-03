@@ -53,4 +53,13 @@
         <item>大于</item>
         <item>不等于</item>
     </string-array>
+
+    <integer-array name="scene_bgs">
+        <item>@drawable/scene_bg_1</item>
+        <item>@drawable/scene_bg_2</item>
+        <item>@drawable/scene_bg_3</item>
+        <item>@drawable/scene_bg_4</item>
+        <item>@drawable/scene_bg_5</item>
+        <item>@drawable/scene_bg_6</item>
+    </integer-array>
 </resources>

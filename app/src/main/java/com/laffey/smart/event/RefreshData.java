@@ -39,6 +39,12 @@ public class RefreshData {
         EventBus.getDefault().post(event);
     }
 
+    // 刷新设备状态数据_备份
+    public static void refreshDeviceStateDataFromBuffer() {
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_BUFFER_DATA);
+        EventBus.getDefault().post(event);
+    }
+
     // 刷新设备数量数据
     public static void refreshDeviceNumberData(){
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA);

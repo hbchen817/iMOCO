@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_120"
                 android:scaleType="centerCrop"
-                android:src="@drawable/scene_alarm_on" />
+                android:src="@drawable/scene_bg_1" /><!--scene_alarm_on-->
 
             <TextView
                 android:id="@+id/sceneName"

@@ -738,9 +738,8 @@ public class NewSceneActivity extends BaseActivity {
                     int timerCount = 0;
                     for (int i = 0; i < mCaconditionList.size(); i++) {
                         Object o = mCaconditionList.get(i);
-                        if (o instanceof CaConditionEntry.Timer)
-                            timerCount++;
-                        else if (o instanceof CaConditionEntry.TimeRange)
+                        if (o instanceof CaConditionEntry.Timer
+                                || o instanceof CaConditionEntry.TimeRange)
                             timerCount++;
                     }
                     if (timerCount > 1) {
