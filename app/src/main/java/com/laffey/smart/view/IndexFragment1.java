@@ -167,7 +167,7 @@ public class IndexFragment1 extends BaseFragment {
         mListRL.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                startGetDeviceList();
+                startGetDeviceList2();
             }
         });
         this.mGridDevice = (GridView) view.findViewById(R.id.mainGrdDevice);
@@ -176,7 +176,7 @@ public class IndexFragment1 extends BaseFragment {
         mGridRL.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                startGetDeviceList();
+                startGetDeviceList2();
             }
         });
         this.mListRoom = (ListView) view.findViewById(R.id.mainLstRoom);
@@ -572,6 +572,21 @@ public class IndexFragment1 extends BaseFragment {
         // 初始化处理设备缓存器
         DeviceBuffer.initProcess();
         this.mAptDeviceList.clearData();
+        // 获取家设备列表
+        this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 获取用户设备列表
+                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        },200);
+    }
+
+    // 开始获取设备列表
+    private void startGetDeviceList2() {
+        // 初始化处理设备缓存器
+        DeviceBuffer.initProcess();
         // 获取家设备列表
         this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
         new Handler().postDelayed(new Runnable() {

@@ -95,17 +95,26 @@
         android:horizontalSpacing="1dip">
     </ListView>
 
-    <ListView
-        android:id="@+id/sceneLstMy"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/sceneLstMy_rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/appbgcolor"
-        android:layout_marginTop="8dp"
-        android:divider="@null"
-        android:dividerHeight="6dp"
-        android:visibility="gone"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ListView
+            android:id="@+id/sceneLstMy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/appbgcolor"
+            android:layout_marginTop="8dp"
+            android:divider="@null"
+            android:dividerHeight="6dp"
+            android:visibility="gone"
+            android:horizontalSpacing="1dip"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <com.yanzhenjie.recyclerview.SwipeRecyclerView
         android:id="@+id/mRecyclerView"

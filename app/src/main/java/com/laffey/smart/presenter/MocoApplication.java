@@ -129,7 +129,7 @@ public class MocoApplication extends AApplication {
         ViseLog.getLogConfig()
                 .configAllowLog(BuildConfig.DEBUG)
                 .configShowBorders(true)
-                .configTagPrefix("wyy")
+                .configTagPrefix("wyylog")
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
 

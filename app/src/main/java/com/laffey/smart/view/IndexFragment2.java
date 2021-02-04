@@ -33,6 +33,9 @@ import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
@@ -60,6 +63,7 @@ public class IndexFragment2 extends BaseFragment {
     private ListView mListSceneModel, mListMy;
     private final int mScenePageSize = 50;
     private String mSceneType;
+    private SmartRefreshLayout mListMyRL;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -114,11 +118,26 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblMyDL = (TextView) view.findViewById(R.id.sceneLblMyDL);
         this.mListSceneModel = (ListView) view.findViewById(R.id.sceneLstSceneModel);
         this.mListMy = (ListView) view.findViewById(R.id.sceneLstMy);
+        mListMyRL = (SmartRefreshLayout) view.findViewById(R.id.sceneLstMy_rl);
+        mListMyRL.setEnableLoadMore(false);
+        mListMyRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                isRefreshLayout = false;
+                RefreshData.refreshSceneListData();
+            }
+        });
         initView();
         // 开始获取场景列表
         this.startGetSceneList(CScene.TYPE_AUTOMATIC);
 
         return view;
+    }
+
+    @Override
+    protected void dismissQMUIDialog() {
+        super.dismissQMUIDialog();
+        mListMyRL.finishRefresh(false);
     }
 
     @Override
@@ -367,6 +386,7 @@ public class IndexFragment2 extends BaseFragment {
                     } else {
                         QMUITipDialogUtil.dismiss();
                     }
+                    mListMyRL.finishRefresh(true);
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
@@ -385,6 +405,8 @@ public class IndexFragment2 extends BaseFragment {
         }
     });
 
+    private boolean isRefreshLayout = true;
+
     // 订阅刷新场景列表数据事件
     @Subscribe
     public void onRefreshSceneListData(EEvent eventEntry) {
@@ -392,12 +414,15 @@ public class IndexFragment2 extends BaseFragment {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
 
-            mActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
-                }
-            });
+            if (isRefreshLayout) {
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
+                    }
+                });
+            }
         }
+        isRefreshLayout = true;
     }
 }
