@@ -123,8 +123,10 @@ public class IndexFragment2 extends BaseFragment {
         mListMyRL.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                isRefreshLayout = false;
-                RefreshData.refreshSceneListData();
+                RefreshData.refreshHomeSceneListData();
+
+                startGetSceneList(CScene.TYPE_AUTOMATIC);
+                SystemParameter.getInstance().setIsRefreshSceneListData(false);
             }
         });
         initView();
@@ -359,7 +361,7 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            ViseLog.d(new Gson().toJson(item));
+                            //ViseLog.d(new Gson().toJson(item));
                             if (!item.description.contains("mode == CA,")) {
                                 SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
@@ -394,7 +396,7 @@ public class IndexFragment2 extends BaseFragment {
                     QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
-                        RefreshData.refreshSceneListData();
+                        RefreshData.refreshHomeSceneListData();
                     }
                     //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     break;
@@ -405,8 +407,6 @@ public class IndexFragment2 extends BaseFragment {
         }
     });
 
-    private boolean isRefreshLayout = true;
-
     // 订阅刷新场景列表数据事件
     @Subscribe
     public void onRefreshSceneListData(EEvent eventEntry) {
@@ -414,15 +414,12 @@ public class IndexFragment2 extends BaseFragment {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
 
-            if (isRefreshLayout) {
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
-                    }
-                });
-            }
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
+                }
+            });
         }
-        isRefreshLayout = true;
     }
 }

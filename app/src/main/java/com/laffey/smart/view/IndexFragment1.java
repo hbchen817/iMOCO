@@ -70,6 +70,7 @@ import com.vise.log.ViseLog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +123,8 @@ public class IndexFragment1 extends BaseFragment {
     private String mLockUserId;
     private int mLockType;
     private String mIotId;
+
+    private GetSceneHandler mGetSceneHandler;
 
     @Override
     protected int setLayout() {
@@ -333,6 +336,7 @@ public class IndexFragment1 extends BaseFragment {
                 imgList.setAlpha((float) 1.0);
             }
         });
+        mGetSceneHandler = new GetSceneHandler(mActivity);
     }
 
     @Override
@@ -567,6 +571,49 @@ public class IndexFragment1 extends BaseFragment {
         this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
+    // 开始获取场景列表
+    private void startGetSceneList2() {
+        if (this.mSceneList == null) {
+            this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+        } else {
+            this.mSceneList.clear();
+        }
+        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, mGetSceneHandler);
+    }
+
+    private class GetSceneHandler extends Handler{
+        private WeakReference<Activity> ref;
+
+        public GetSceneHandler(Activity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_QUERYSCENELIST) {
+                // 处理获取场景列表数据
+                EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                if (sceneList != null && sceneList.scenes != null) {
+                    ViseLog.d("count = "+sceneList.scenes.size());
+                    for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                        if (!item.description.contains("mode == CA,")) {
+                            mSceneList.add(item);
+                        }
+                    }
+                    if (sceneList.scenes.size() >= sceneList.pageSize) {
+                        // 数据没有获取完则获取下一页数据
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        // 数据获取完则设置场景列表数据
+                        setSceneList(mSceneList);
+                    }
+                }
+            }
+        }
+    }
+
     // 开始获取设备列表
     private void startGetDeviceList() {
         // 初始化处理设备缓存器
@@ -574,13 +621,13 @@ public class IndexFragment1 extends BaseFragment {
         this.mAptDeviceList.clearData();
         // 获取家设备列表
         this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 // 获取用户设备列表
                 mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
-        },200);
+        },200);*/
     }
 
     // 开始获取设备列表
@@ -589,13 +636,13 @@ public class IndexFragment1 extends BaseFragment {
         DeviceBuffer.initProcess();
         // 获取家设备列表
         this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 // 获取用户设备列表
                 mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
-        },200);
+        },200);*/
     }
 
     // 设备统计
@@ -617,6 +664,9 @@ public class IndexFragment1 extends BaseFragment {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
         this.mDeviceList.clear();
         this.mShareDeviceList.clear();
+        if (mAptDeviceGrid != null) mAptDeviceGrid.notifyDataSetChanged();
+        if (mAptDeviceList != null) mAptDeviceList.notifyDataSetChanged();
+        if (mAptShareDeviceList != null) mAptShareDeviceList.notifyDataSetChanged();
         if (all != null && all.size() > 0) {
             // 网关排前面
             for (EDevice.deviceEntry e : all.values()) {
@@ -812,7 +862,8 @@ public class IndexFragment1 extends BaseFragment {
                             mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", homeDeviceList.pageNo + 1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则同步刷新设备列表数据
-                            syncDeviceListData();
+                            //syncDeviceListData();
+                            mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }
                     break;
@@ -1021,9 +1072,12 @@ public class IndexFragment1 extends BaseFragment {
         }
 
         // 处理刷新手动执行场景列表数据
-        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)
-            || eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             this.startGetSceneList();
+        }
+
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+            startGetSceneList2();
         }
 
         // 处理刷新设备数量数据

@@ -129,6 +129,9 @@ public class ImageProvider {
                 // 窗帘电机
                 return R.drawable.icon_dianji;
             }
+            case CTSL.PK_CONTROL_COLOR_BROAD:{
+                return R.drawable.icon_control_light;
+            }
             default:
                 return R.drawable.icon_thsensor;
         }

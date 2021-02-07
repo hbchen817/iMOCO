@@ -21,6 +21,7 @@ import com.laffey.smart.view.SixSceneSwitchActivity;
 import com.laffey.smart.view.SixTwoSceneSwitchActivity;
 import com.laffey.smart.view.ThreeSceneSwitchActivity;
 import com.laffey.smart.view.TwoSceneSwitchActivity;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -44,6 +45,7 @@ public class ActivityRouter {
                     String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
+                    ViseLog.d("iotId = "+iotId+" , productKey = "+productKey);
                     Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
                 } else {
                     intent = new Intent(context, DetailOneSwitchActivity.class);
