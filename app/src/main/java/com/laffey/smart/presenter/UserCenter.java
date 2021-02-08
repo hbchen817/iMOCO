@@ -245,5 +245,31 @@ public class UserCenter {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    /**
+     * 提交意见反馈
+     */
+    public void submitFeedback(String mobileSystem, String appVersion, int type, String content, String mobileModel, String contact, String topic,
+                                      Handler commitFailureHandler,
+                                      Handler responseErrorHandler,
+                                      Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
 
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_FEEDBACK_ADD;
+        requestParameterEntry.version = "1.0.3";
+        requestParameterEntry.addParameter("mobileSystem", mobileSystem);
+        requestParameterEntry.addParameter("appVersion", appVersion);
+        requestParameterEntry.addParameter("type", type);
+        requestParameterEntry.addParameter("content", content);
+        requestParameterEntry.addParameter("mobileModel", mobileModel);
+        requestParameterEntry.addParameter("contact", contact);
+        requestParameterEntry.addParameter("topic", topic);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_SUBMIT_FEEDBACK;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 }

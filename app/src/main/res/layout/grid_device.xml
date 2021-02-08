@@ -41,8 +41,7 @@
 			android:layout_alignBottom="@id/deviceGridSpaSpace"
 			android:layout_marginBottom="5dp"
 			android:layout_marginLeft="6dp"
-			android:src="@drawable/icon_button"
-			android:contentDescription="@string/contentDescription_null"/>
+			android:contentDescription="@string/contentDescription_null"/><!--android:src="@drawable/icon_button"-->
 
 		<TextView
 			android:id="@+id/deviceGridLblStatus"

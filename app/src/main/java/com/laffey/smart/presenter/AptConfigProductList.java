@@ -10,6 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.laffey.smart.R;
 import com.laffey.smart.model.EProduct;
 
@@ -63,7 +65,9 @@ public class AptConfigProductList extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mProductList.get(position).productKey));
+		//viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mProductList.get(position).productKey));
+		Glide.with(mContext).load(ImageProvider.genProductIcon(this.mProductList.get(position).productKey))
+				.transition(new DrawableTransitionOptions().crossFade()).into(viewHolder.icon);
 		viewHolder.name.setText(this.mProductList.get(position).name);
 
 		return convertView;

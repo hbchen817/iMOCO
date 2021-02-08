@@ -154,6 +154,8 @@ public class Constant {
     public static final String API_QUERY_DEV_LIST_FOR_CA            = "/scene/thing/list";
     // 根据设备ID获取物的模板
     public static final String API_QUERY_DEV_TSL                    = "/thing/tsl/get";
+    // 提交意见反馈
+    public static final String API_FEEDBACK_ADD                    = "/feedback/add";
 
 
     // 定义插件URL常量
@@ -252,6 +254,7 @@ public class Constant {
     public static final int MSG_CALLBACK_DEV_TSL                    = 166;
     public static final int MSG_CALLBACK_UPDATE_SCENE               = 167;
 	public static final int MSG_CALLBACK_DELETE_USER                = 168;
+    public static final int MSG_CALLBACK_SUBMIT_FEEDBACK            = 169;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;

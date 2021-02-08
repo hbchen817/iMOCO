@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +26,8 @@ public class AboutUsActivity extends BaseActivity {
     TextView tvToolbarRight;
     @BindView(R.id.version_tv)
     TextView versionTv;
-    @BindView(R.id.service_tel_view)
-    RelativeLayout mServiceTelView;
+    @BindView(R.id.app_feedback_view)
+    RelativeLayout mFeedbackView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +50,6 @@ public class AboutUsActivity extends BaseActivity {
 
         versionTv.setText(AppUtils.getVersionName(mActivity));
 
-        if ("com.rexense.imoco".equals(BuildConfig.APPLICATION_ID)) {
-            mServiceTelView.setVisibility(View.VISIBLE);
-        }
         initStatusBar();
     }
 
@@ -64,7 +62,8 @@ public class AboutUsActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.evaluate_view,R.id.privacy_policy_view,R.id.user_deal_view,R.id.opensourse_deal_view,R.id.aboutus_view})
+    @OnClick({R.id.evaluate_view, R.id.privacy_policy_view, R.id.user_deal_view, R.id.opensourse_deal_view, R.id.aboutus_view,
+            R.id.app_feedback_view})
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.evaluate_view:
@@ -87,6 +86,11 @@ public class AboutUsActivity extends BaseActivity {
                 break;
             case R.id.aboutus_view:
                 break;
+            case R.id.app_feedback_view:{
+                Intent intent = new Intent(this, FeedbackActivity.class);
+                startActivity(intent);
+                break;
+            }
         }
     }
 

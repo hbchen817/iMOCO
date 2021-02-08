@@ -249,7 +249,7 @@
     <string name="moregateway_bellmusicid">门铃音乐</string>
     <string name="moregateway_alarmvolume">报警音量</string>
     <string name="moregateway_editname">修改设备名称</string>
-    
+
     <string name="moregateway_4100_ZB_Band">ZB带宽</string>
     <string name="moregateway_4100_NETWORK_KEY">网络密钥</string>
     <string name="moregateway_4100_ZB_CO_MAC">ZB设备MAC地址</string>
@@ -379,7 +379,8 @@
     <string name="myinfo_logout">退出登录</string>
 
     <string name="fragment3_edit_myinfo">编辑个人资料</string>
-    <string name="fragment3_advice_feedback">意见反馈</string>
+    <string name="fragment3_advice_feedback">设备反馈</string>
+    <string name="fragment3_app_feedback">意见反馈</string>
     <string name="fragment3_msg_center">消息中心</string>
     <string name="fragment3_scene_log">场景日志</string>
     <string name="fragment3_share_device">设备共享</string>
@@ -642,4 +643,11 @@
     <string name="scene_does_not_exist">场景不存在</string>
     <string name="pls_select_an_action">请先选择动作</string>
     <string name="pls_select_an_condition">请先选择条件</string>
+    <string name="feedback_fault">反馈故障</string>
+    <string name="feature_suggestions">功能建议</string>
+    <string name="other_problems">其他问题</string>
+    <string name="pls_enter_fault_description">请输入故障描述</string>
+    <string name="pls_enter_feature_suggestions">请输入功能建议</string>
+    <string name="pls_enter_description_of_the_problem">请输入问题描述</string>
+    <string name="submit_completed">提交完成</string>
 </resources>

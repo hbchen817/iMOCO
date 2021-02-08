@@ -11,6 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
@@ -124,7 +126,10 @@ public class AptDeviceList extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
+		//viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
+		Glide.with(mContext).load(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey))
+				.transition(new DrawableTransitionOptions().crossFade())
+				.into(viewHolder.icon);
 		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
 		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
