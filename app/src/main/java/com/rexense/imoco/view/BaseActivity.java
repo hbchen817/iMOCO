@@ -20,6 +20,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ResponseMessageUtil;
 import com.rexense.imoco.utility.ToastUtils;
 
@@ -35,6 +36,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -58,6 +60,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -108,6 +111,10 @@ public class BaseActivity extends FragmentActivity {
     protected void notifyFailureOrError(int type) {
     }
 
+    protected void dismissQMUIDialog() {
+        QMUITipDialogUtil.dismiss();
+    }
+
     public Context mActivity;
 
     @Override
@@ -121,6 +128,7 @@ public class BaseActivity extends FragmentActivity {
         LoginBusiness.logout(new ILogoutCallback() {
             @Override
             public void onLogoutSuccess() {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_other_device_login));
                 Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -132,6 +140,7 @@ public class BaseActivity extends FragmentActivity {
 
             @Override
             public void onLogoutFailed(int code, String error) {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
             }
         });

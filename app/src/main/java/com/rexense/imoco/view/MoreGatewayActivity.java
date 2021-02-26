@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -73,6 +74,7 @@ public class MoreGatewayActivity extends BaseActivity {
     private TextView mAlarmBellId, mBellVolume, mBellMusicId, mAlarmVolume;
     private TextView mAlarmBellIdValue, mBellVolumeValue, mBellMusicIdValue, mAlarmVolumeValue;
     private TextView mLblTitle, mWheelPickerValue, mLblNewNickName, mLblRoomName;
+    private LinearLayout mFunctionSettingsLayout;
     private View upgradeView;
     private boolean hasNewerVersion;
     private String currentVersion;
@@ -544,6 +546,12 @@ public class MoreGatewayActivity extends BaseActivity {
         this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
         this.mLblRoomName = (TextView) findViewById(R.id.moreGatewayLblRoom);
         this.mLblRoomName.setText(this.mRoomName);
+        this.mFunctionSettingsLayout = (LinearLayout) findViewById(R.id.function_settings);
+
+        if (CTSL.PK_GATEWAY_RG4100.equals(mProductKey)) {
+            this.mFunctionSettingsLayout.setVisibility(View.GONE);
+        }
+
         TextView bindTime = (TextView) findViewById(R.id.moreGatewayLblBindTime);
         bindTime.setText(this.mBindTime);
 

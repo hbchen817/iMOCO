@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.Constant;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,6 +34,18 @@ public class EScene {
 
         // 构造
         public sceneBaseInfoEntry(String homeId, String catalogId, String name, String description){
+            this.homeId = homeId;
+            this.catalogId = catalogId;
+            this.name = name;
+            this.description = description;
+            this.icon = CScene.DEFAULT_ICON_URL;
+            this.iconColor = "#FFFFFF";
+            this.sceneType = CScene.TYPE_IFTTT;
+        }
+
+        // 构造
+        public sceneBaseInfoEntry(String sceneId, String homeId, String catalogId, String name, String description){
+            this.sceneId = sceneId;
             this.homeId = homeId;
             this.catalogId = catalogId;
             this.name = name;
@@ -169,6 +182,21 @@ public class EScene {
             this.isSelected = false;
         }
 
+        public conditionTimeEntry(String beginTime, String endTime,String repeat){
+            String[] beginTimes = beginTime.split(":");
+            String[] endTimes = endTime.split(":");
+            String[] days = repeat.split(",");
+            this.beginHour = Integer.parseInt(beginTimes[0]);
+            this.beginMinute = Integer.parseInt(beginTimes[0]);
+            this.endHour = Integer.parseInt(endTimes[1]);
+            this.endMinute = Integer.parseInt(endTimes[1]);
+            this.repeat = new ArrayList<Integer>();
+            for(int i = 0; i < days.length; i++){
+                this.repeat.add(Integer.parseInt(days[i]));
+            }
+            this.isSelected = false;
+        }
+
         // 添加周循环
         public void addWeekRepeat(int dayIndex){
             if(dayIndex < CScene.WEEK_CODE_MIN || dayIndex > CScene.WEEK_CODE_MAX){
@@ -187,6 +215,63 @@ public class EScene {
         // 获取时间范围字符串
         public String getTimeRangeString(){
             return String.format("%02d:%02d - %02d:%02d", this.beginHour, this.beginMinute, this.endHour, this.endMinute);
+        }
+
+        // 获取星期循环字符串
+        public String getWeekRepeatString2(Context context){
+            if(this.isEveryDay()){
+                return context.getString(R.string.set_time_everyday_2);
+            }
+            if(this.isWorkDay()){
+                return context.getString(R.string.set_time_workday_2);
+            }
+            if(this.isWeekEnd()){
+                return context.getString(R.string.set_time_weekend_2);
+            }
+
+            String weekRepeat = "";
+            boolean isFound;
+            for(int i = CScene.WEEK_CODE_MIN; i <= CScene.WEEK_CODE_MAX; i++)
+            {
+                isFound = false;
+                for(Integer r : this.repeat){
+                    if(r == i){
+                        isFound = true;
+                        break;
+                    }
+                }
+                if(isFound){
+                    if(weekRepeat.length() > 0) {
+                        weekRepeat = weekRepeat + " ";
+                    }
+                    switch (i){
+                        case CScene.WEEK_CODE_SUN:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_0);
+                            break;
+                        case CScene.WEEK_CODE_MON:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_1);
+                            break;
+                        case CScene.WEEK_CODE_TUE:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_2);
+                            break;
+                        case CScene.WEEK_CODE_WED:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_3);
+                            break;
+                        case CScene.WEEK_CODE_THU:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_4);
+                            break;
+                        case CScene.WEEK_CODE_FRI:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_5);
+                            break;
+                        case CScene.WEEK_CODE_SAT:
+                            weekRepeat = weekRepeat + context.getString(R.string.week_6);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return weekRepeat;
         }
 
         // 获取星期循环字符串
@@ -313,6 +398,37 @@ public class EScene {
             }
 
             return String.format("%02d-%02d %02d-%02d * * %s", this.beginMinute, this.endMinute, this.beginHour, this.endHour, weekRepeat);
+        }
+
+        // 开始时间
+        public String getBeginTime() {
+            return this.beginHour + ":" + this.beginMinute;
+        }
+
+        // 结束时间
+        public String getEndTime() {
+            return this.endHour + ":" + this.endMinute;
+        }
+
+        // 重复日期
+        public String getRepeat() {
+            String weekRepeat = "";
+            for(int i = CScene.WEEK_CODE_MIN; i <= CScene.WEEK_CODE_MAX; i++)
+            {
+                for(Integer r : this.repeat){
+                    if(r == i){
+                        if(weekRepeat.length() > 0){
+                            weekRepeat = weekRepeat + ",";
+                        }
+                        weekRepeat = weekRepeat + i;
+                    }
+                }
+            }
+
+            if(this.isEveryDay()){
+                weekRepeat = "1,2,3,4,5";
+            }
+            return weekRepeat;
         }
 
         // 是否全天
@@ -476,6 +592,7 @@ public class EScene {
         private String conditionsJson;
         private String triggersJson;
         private List<String> actionsJson;
+        private List<String> caConditionsJson;
 
         public boolean isValid() {
             return valid;
@@ -564,6 +681,14 @@ public class EScene {
         public void setActionsJson(List<String> actionsJson) {
             this.actionsJson = actionsJson;
         }
+
+        public List<String> getCaConditionsJson(){
+            return this.caConditionsJson;
+        }
+
+        public void setCaConditionsJson(List<String> caConditionsJson) {
+            this.caConditionsJson = caConditionsJson;
+        }
     }
 
     // 处理后详细信息实体
@@ -574,6 +699,7 @@ public class EScene {
         public List<JSONObject> conditionTimeRanges;
         public List<JSONObject> actionSetProperties;
         public List<JSONObject> actionInvokeServices;
+        public List<JSONObject> caConditions;
 
         // 构造函数
         public processedDetailEntry(){
@@ -582,6 +708,13 @@ public class EScene {
             this.conditionTimeRanges = new ArrayList<JSONObject>();
             this.actionSetProperties = new ArrayList<JSONObject>();
             this.actionInvokeServices = new ArrayList<JSONObject>();
+            this.caConditions = new ArrayList<JSONObject>();
+        }
+
+        // 添加触发
+        public void addCaCondition(String condition) {
+            JSONObject root = JSON.parseObject(condition);
+            this.caConditions.add(root);
         }
 
         // 添加触发
@@ -633,6 +766,57 @@ public class EScene {
                     this.actionSetProperties.add(obj);
                 }
             }
+        }
+
+        // 查找CA属性触发(true存在,false不存在)
+        public Boolean findCaConditionProperty(String iotId, String deviceName, String propertyName, String compareType, String compareValue){
+            if(this.caConditions == null || this.caConditions.size() == 0){
+                return false;
+            }
+
+            JSONObject params;
+            String iotId_json, deviceName_json, propertyName_json, compareType_json, compareValue_json;
+            for(JSONObject obj : this.caConditions){
+                String uri = obj.getString("uri");
+                if (!Constant.SCENE_CONDITION_PROPERTY.equals(uri)){
+                    continue;
+                }
+                params = obj.getJSONObject("params");
+                if(params == null){
+                    continue;
+                }
+
+                // 比较iotId与deviceName
+                iotId_json = params.getString("iotId");
+                deviceName_json = params.getString("deviceName");
+                if((iotId_json == null || iotId_json.length() == 0) && (deviceName_json == null || deviceName_json.length() == 0)){
+                    continue;
+                }
+                if(!iotId_json.equalsIgnoreCase(iotId) && !deviceName_json.equalsIgnoreCase(deviceName)){
+                    continue;
+                }
+
+                // 比较propertyName
+                propertyName_json = params.getString("propertyName");
+                if(propertyName_json == null || propertyName_json.length() == 0 || !propertyName_json.equalsIgnoreCase(propertyName)){
+                    continue;
+                }
+
+                // 比较compareType
+                compareType_json = params.getString("compareType");
+                if(compareType_json == null || compareType_json.length() == 0 || !compareType_json.equalsIgnoreCase(compareType)){
+                    continue;
+                }
+
+                // 比较compareValue
+                compareValue_json = params.get("compareValue").toString();
+                if(compareValue_json == null || compareValue_json.length() == 0 || !compareValue_json.equalsIgnoreCase(compareValue)){
+                    continue;
+                }
+                return true;
+            }
+
+            return false;
         }
 
         // 查找属性触发(true存在,false不存在)
@@ -727,6 +911,40 @@ public class EScene {
             }
 
             return false;
+        }
+
+        // 查找CA时间范围条件(返回cron, 为空表示不存在)
+        public String findCaConditionTimeRange() {
+            if (this.caConditions == null || this.caConditions.size() == 0) {
+                return "";
+            }
+
+            boolean isHasTimeRange = false;
+            for (JSONObject object : caConditions) {
+                if (Constant.SCENE_CONDITION_TIME_RANGE.equals(object.getString("uri"))) {
+                    isHasTimeRange = true;
+                    break;
+                }
+            }
+            if (!isHasTimeRange)
+                return "";
+            for (JSONObject object : caConditions) {
+                if (!Constant.SCENE_CONDITION_TIME_RANGE.equals(object.getString("uri"))) {
+                    continue;
+                }
+                JSONObject params = object.getJSONObject("params");
+                String beginTime = params.getString("beginDate");
+                String endTime = params.getString("endDate");
+                String repeat = params.getString("repeat");
+
+                String[] beginTimes = beginTime.split(":");
+                String[] endTimes = endTime.split(":");
+
+                return String.format("%02d-%02d %02d-%02d * * %s", Integer.parseInt(beginTimes[1]), Integer.parseInt(endTimes[1]),
+                        Integer.parseInt(beginTimes[0]), Integer.parseInt(endTimes[0]), repeat);
+            }
+
+            return "";
         }
 
         // 查找时间范围条件(返回cron, 为空表示不存在)
@@ -827,6 +1045,53 @@ public class EScene {
                         continue;
                     }
                     argValue_json = serviceArgs.getString(argName);
+                    if(argValue_json == null || argValue_json.length() == 0 || !argValue_json.equalsIgnoreCase(argValue)){
+                        continue;
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        // 查找CA调用服务执行动作(true存在,false不存在)
+        public Boolean findCAActionInvokeService(String iotId, String deviceName, String serviceName, String argName, String argValue){
+            if(this.actionInvokeServices == null || this.actionInvokeServices.size() == 0){
+                return false;
+            }
+
+            JSONObject params;
+            String iotId_json, deviceName_json, serviceName_json, argValue_json;
+            for(JSONObject obj : this.actionInvokeServices){
+                params = obj.getJSONObject("params");
+                if(params == null){
+                    continue;
+                }
+
+                // 比较iotId与deviceName
+                iotId_json = params.getString("iotId");
+                deviceName_json = params.getString("deviceName");
+                if((iotId_json == null || iotId_json.length() == 0) && (deviceName_json == null || deviceName_json.length() == 0)){
+                    continue;
+                }
+                if(!iotId_json.equalsIgnoreCase(iotId) && !deviceName_json.equalsIgnoreCase(deviceName)){
+                    continue;
+                }
+
+                // 比较serviceName
+                serviceName_json = params.getString("serviceName");
+                if(serviceName_json == null || serviceName_json.length() == 0 || !serviceName_json.equalsIgnoreCase(serviceName)){
+                    continue;
+                }
+
+                // 比较argName与argValue
+                if(argName != null && argName.length() > 0){
+                    JSONObject serviceArgs = params.getJSONObject("serviceArgs");
+                    if(serviceArgs == null){
+                        continue;
+                    }
+                    argValue_json = serviceArgs.get(argName).toString();
                     if(argValue_json == null || argValue_json.length() == 0 || !argValue_json.equalsIgnoreCase(argValue)){
                         continue;
                     }

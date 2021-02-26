@@ -1,6 +1,7 @@
 package com.rexense.imoco.utility;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -18,6 +19,22 @@ public class ToastUtils {
         toast.setText(message);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    /**
+     * 在屏幕正中间弹短吐司
+     */
+    public static void showToastCentrally(Context context, String message, int delay) {
+        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        toast.setText(message);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                toast.cancel();
+            }
+        }, delay);
     }
     /**
      * 在屏幕正中间弹短吐司

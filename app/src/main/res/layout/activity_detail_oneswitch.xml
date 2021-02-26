@@ -16,7 +16,8 @@
         android:contentDescription="@string/contentDescription_null"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:src="@drawable/state_oneswitch_off" />
+        android:src="@drawable/one_scene_normal" />
+    <!--state_oneswitch_off-->
 
     <RelativeLayout
         android:layout_marginTop="20dp"

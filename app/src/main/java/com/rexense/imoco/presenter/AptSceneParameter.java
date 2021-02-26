@@ -132,7 +132,7 @@ public class AptSceneParameter extends BaseAdapter {
 			convertView.setTag(viewHolder);
 			viewHolder.icon.setBackgroundResource(R.drawable.time_range);
 			viewHolder.name.setText(this.mParameterList.get(position).conditionTimeEntry.getTimeRangeString());
-			viewHolder.state.setText(this.mParameterList.get(position).conditionTimeEntry.getWeekRepeatString(this.mContext));
+			viewHolder.state.setText(this.mParameterList.get(position).conditionTimeEntry.getWeekRepeatString2(this.mContext));
 			viewHolder.select.setVisibility(View.VISIBLE);
 			viewHolder.noHas.setVisibility(View.GONE);
 			if(this.mParameterList.get(position).conditionTimeEntry.isSelected){

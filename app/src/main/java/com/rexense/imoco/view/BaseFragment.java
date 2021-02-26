@@ -41,6 +41,7 @@ public abstract class BaseFragment extends Fragment {
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -64,6 +65,7 @@ public abstract class BaseFragment extends Fragment {
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -110,6 +112,10 @@ public abstract class BaseFragment extends Fragment {
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {
+    }
+
+    protected void dismissQMUIDialog(){
+
     }
 
     protected void logOut() {//todo 其他设备登录后强制退出

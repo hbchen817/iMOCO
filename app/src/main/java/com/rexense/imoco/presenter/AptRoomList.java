@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
@@ -79,7 +81,9 @@ public class AptRoomList extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.icon.setImageResource(ImageProvider.genRoomIcon(this.mContext, this.mRoomList.get(position).name));
+		//viewHolder.icon.setImageResource(ImageProvider.genRoomIcon(this.mContext, this.mRoomList.get(position).name));
+		Glide.with(mContext).load(ImageProvider.genRoomIcon(this.mContext, this.mRoomList.get(position).name))
+				.transition(new DrawableTransitionOptions().crossFade()).into(viewHolder.icon);
 		viewHolder.name.setText(this.mRoomList.get(position).name);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.roomlist_description), this.mRoomList.get(position).deviceCnt));
 

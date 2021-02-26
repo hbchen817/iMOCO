@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.view.ColorLightDetailActivity;
 import com.rexense.imoco.view.DetailFourSwitchActivity;
@@ -39,16 +40,37 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
-                intent = new Intent(context, DetailOneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    String code = "link://router/" + productKey;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
+                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                } else {
+                    intent = new Intent(context, DetailOneSwitchActivity.class);
+                }
                 break;
             case CTSL.PK_TWOWAYSWITCH:
                 // 两键开关处理
-                intent = new Intent(context, DetailTwoSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    String code = "link://router/" + productKey;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
+                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                } else {
+                    intent = new Intent(context, DetailTwoSwitchActivity.class);
+                }
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
-                intent = new Intent(context, DetailFourSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    String code = "link://router/" + productKey;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
+                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                } else {
+                    intent = new Intent(context, DetailFourSwitchActivity.class);
+                }
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
@@ -92,6 +114,7 @@ public class ActivityRouter {
             case CTSL.PK_THREE_SCENE_SWITCH:
                 intent = new Intent(context, ThreeSceneSwitchActivity.class);
                 break;
+            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
                 intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;

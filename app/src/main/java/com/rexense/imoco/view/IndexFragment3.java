@@ -1,10 +1,14 @@
 package com.rexense.imoco.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.rexense.imoco.R;
@@ -32,6 +36,12 @@ public class IndexFragment3 extends BaseFragment {
     @BindView(R.id.head_img)
     ImageView headImg;
     private Intent intent;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
 
     @Override
     public void onDestroyView() {

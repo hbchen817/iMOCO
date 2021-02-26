@@ -19,6 +19,7 @@ import com.rexense.imoco.event.SceneBindEvent;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,6 +44,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
     private String[] mManualIDs = new String[2];
     private String[] mManualNames = new String[2];
     private String mCurrentKey;
+    private String mExecuteScene = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
+                    mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -97,6 +100,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
+                    mExecuteScene = mSceneContentText2.getText().toString();
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
@@ -104,11 +108,13 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                 break;
             case R.id.mSwitch1:
                 if (mManualIDs[0] != null) {
+                    mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
             case R.id.mSwitch2:
                 if (mManualIDs[1] != null) {
+                    mExecuteScene = mSceneContentText2.getText().toString();
                     mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
                 break;
@@ -117,6 +123,9 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         }
     }
 
+    public String getExecuteScene() {
+        return mExecuteScene;
+    }
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2})
     public boolean onLongClick(View view) {
@@ -187,6 +196,8 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
+                    ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint),
+                            activity.getExecuteScene()));
                     //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
 //                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
                     break;

@@ -2,6 +2,7 @@ package com.rexense.imoco.presenter;
 
 import android.content.Context;
 
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 
@@ -39,9 +40,15 @@ public class ImageProvider {
             case CTSL.PK_GATEWAY_RG4100:
                 return R.drawable.icon_gateway_fton;
             case CTSL.PK_ONEWAYSWITCH:
-                return R.drawable.icon_oneswitch;
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_one_key_switch;
+                else
+                    return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
-                return R.drawable.icon_twoswitch;
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_two_key_switch;
+                else
+                    return R.drawable.icon_twoswitch;
             case CTSL.PK_REMOTECONTRILBUTTON:
                 return R.drawable.icon_button;
             case CTSL.PK_DOORSENSOR:
@@ -62,6 +69,12 @@ public class ImageProvider {
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
+            /*case CTSL.PK_ONE_KEY_SWITCH:
+                return R.drawable.icon_one_key_switch;
+            case CTSL.PK_TWO_KEY_SWITCH:
+                return R.drawable.icon_two_key_switch;*/
+            case CTSL.PK_THREE_KEY_SWITCH:
+                return R.drawable.icon_three_key_switch;
             case CTSL.PK_BLACK_ONE_SWITCH:
                 return R.drawable.icon_one_switch;
             case CTSL.PK_BLACK_TWO_SWITCH:
@@ -86,11 +99,41 @@ public class ImageProvider {
                 return R.drawable.icon_color_light;
             case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
                 return R.drawable.icon_color_light;
+            case CTSL.PK_FOUR_SCENE_SWITCH:
+                return R.drawable.icon_four_scene_switch;
+            case CTSL.PK_FOURWAYSWITCH_2:
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    return R.drawable.icon_four_way_switch;
+                else return R.drawable.icon_four_switch_white;
+            case CTSL.PK_TWO_SCENE_SWITCH:
+                return R.drawable.icon_two_scene_switch;
             case CTSL.PK_FOURWAYSWITCH:// 四键开关
                 return R.drawable.icon_four_switch_white;
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:// 二键随意贴
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH: {// 四键随意贴
                 return R.drawable.icon_four_switch_white;
+            }
+			case CTSL.PK_ONE_SCENE_SWITCH:
+                return R.drawable.icon_oneswitch;
+            case CTSL.PK_AIRCOMDITION_TWO:
+            case CTSL.PK_FAU:
+            case CTSL.PK_FLOORHEATING001:
+            case CTSL.PK_VRV_AC:
+                return R.drawable.icon_ac;
+            case CTSL.PK_OUTLET:
+                return R.drawable.icon_outlet;
+            case CTSL.PK_SIX_SCENE_SWITCH:
+                return R.drawable.icon_six_scene_switch;
+            case CTSL.PK_THREE_SCENE_SWITCH:{
+                return R.drawable.icon_three_scene_switch;
+            }
+            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:{
+                // 窗帘电机
+                return R.drawable.icon_dianji;
+            }
+            case CTSL.PK_CONTROL_COLOR_BROAD:{
+                return R.drawable.icon_control_light;
             }
             default:
                 return R.drawable.icon_thsensor;
@@ -164,9 +207,9 @@ public class ImageProvider {
                 // 一键开关处理
                 if (property.equals(CTSL.OWS_P_PowerSwitch_1)) {
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_oneswitch_on;
+                        return R.drawable.one_scene_pressed;// state_oneswitch_on
                     } else {
-                        return R.drawable.state_oneswitch_off;
+                        return R.drawable.one_scene_normal;// state_oneswitch_off
                     }
                 }
             case CTSL.PK_TWOWAYSWITCH:
@@ -186,6 +229,7 @@ public class ImageProvider {
                         return R.drawable.state_twoswitch_2_off;
                     }
                 }
+            case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
                 if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {

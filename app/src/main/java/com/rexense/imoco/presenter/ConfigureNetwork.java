@@ -44,6 +44,7 @@ public class ConfigureNetwork {
 
         // 生成数据帧
         byte[] value = new EConfigureNetwork.dataFrameEntry().genFrame(content_encrypt, cmd);
+        if (bleService == null) return false;
         return bleService.writeCharacteristic(CBLE.READ_WRITE_SERVICE_UUID, CBLE.READ_WRITE_CHARACTERISTIC_UUID, value);
     }
 

@@ -339,7 +339,7 @@ public class SwitchSceneActivity extends BaseActivity {
                     mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                 } else {
                     EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
+                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), "mode == CA," + mIotID);
                     baseInfoEntry.enable = true;
                     baseInfoEntry.sceneId = mScene.id;
                     List<EScene.responseEntry> parameters = new ArrayList<>();

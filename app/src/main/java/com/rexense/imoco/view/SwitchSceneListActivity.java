@@ -2,6 +2,7 @@ package com.rexense.imoco.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ public class SwitchSceneListActivity extends BaseActivity {
     private int mBindPosition;
     private JSONObject mExtendedJsonObject;
     private String mAutoSceneID;
+    private TypedArray mSceneBgs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class SwitchSceneListActivity extends BaseActivity {
         mKeyCode = getIntent().getStringExtra("keyCode");
         mTitle.setText("场景绑定");
         this.mSceneManager = new SceneManager(this);
+        mSceneBgs = getResources().obtainTypedArray(R.array.scene_bgs);
         initAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(gridLayoutManager);
@@ -212,8 +215,11 @@ public class SwitchSceneListActivity extends BaseActivity {
 
             @Override
             protected void convert(@NotNull BaseViewHolder baseViewHolder, EScene.sceneListItemEntry sceneListItemEntry) {
+                int i = mList.indexOf(sceneListItemEntry);
+                i = i % mSceneBgs.length();
                 baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name);
                 baseViewHolder.setGone(R.id.editMask, mClickPosition != baseViewHolder.getAdapterPosition());
+                baseViewHolder.setImageResource(R.id.image, mSceneBgs.getResourceId(i,0));
             }
         };
         mAdapter.addChildClickViewIds(R.id.editBtn, R.id.bindBtn);

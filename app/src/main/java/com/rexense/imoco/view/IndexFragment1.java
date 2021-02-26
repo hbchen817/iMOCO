@@ -1,6 +1,8 @@
 package com.rexense.imoco.view;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,12 +61,18 @@ import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.Configure;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.utility.Utility;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +106,7 @@ public class IndexFragment1 extends BaseFragment {
     private GridView mGridDevice;
     private View allDeviceView, shareDeviceView;
     private View allDeviceNoDataView, shareDeviceNoDataView;
+    private SmartRefreshLayout mGridRL, mListRL;
 
     private AptDeviceList mAptShareDeviceList = null;
     private AptDeviceList mAptDeviceList = null;
@@ -117,6 +126,8 @@ public class IndexFragment1 extends BaseFragment {
     private int mLockType;
     private String mIotId;
 
+    private GetSceneHandler mGetSceneHandler;
+
     @Override
     protected int setLayout() {
         // 注册事件总线
@@ -125,15 +136,21 @@ public class IndexFragment1 extends BaseFragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 获取碎片所依附的活动的上下文环境
-        mActivity = getActivity();
+        //mActivity = getActivity();
 
         View view = inflater.inflate(setLayout(), container, false);
         // 绑定ButterKnife
         mUnbinder = ButterKnife.bind(this, view);
 
-        this.mSceneManager = new SceneManager(getActivity());
+        this.mSceneManager = new SceneManager(mActivity);
         this.mLblSceneTitle = (TextView) view.findViewById(R.id.mainLblSceneTitle);
         this.mLblSceneTitle.setVisibility(View.GONE);
         this.mHscSceneList = (HorizontalScrollView) view.findViewById(R.id.mainSclSceneList);
@@ -150,7 +167,23 @@ public class IndexFragment1 extends BaseFragment {
         this.mLblShare = (TextView) view.findViewById(R.id.mainLblShare);
         this.mLblShareDL = (TextView) view.findViewById(R.id.mainLblShareDL);
         this.mListDevice = (ListView) view.findViewById(R.id.mainLstDevice);
+        this.mListRL = (SmartRefreshLayout) view.findViewById(R.id.list_rl);
+        mListRL.setEnableLoadMore(false);
+        mListRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                startGetDeviceList2();
+            }
+        });
         this.mGridDevice = (GridView) view.findViewById(R.id.mainGrdDevice);
+        this.mGridRL = (SmartRefreshLayout) view.findViewById(R.id.grid_rl);
+        mGridRL.setEnableLoadMore(false);
+        mGridRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                startGetDeviceList2();
+            }
+        });
         this.mListRoom = (ListView) view.findViewById(R.id.mainLstRoom);
         this.mListShare = (ListView) view.findViewById(R.id.mainLstShare);
         this.allDeviceView = view.findViewById(R.id.all_device_view);
@@ -177,19 +210,19 @@ public class IndexFragment1 extends BaseFragment {
     }
 
     private void initView() {
-        this.mHomeSpaceManager = new HomeSpaceManager(getActivity());
-        this.mUserCenter = new UserCenter(getActivity());
+        this.mHomeSpaceManager = new HomeSpaceManager(mActivity);
+        this.mUserCenter = new UserCenter(mActivity);
         this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
         this.mShareDeviceList = new ArrayList<EDevice.deviceEntry>();
         this.mRoomList = new ArrayList<EHomeSpace.roomEntry>();
-        this.mAptShareDeviceList = new AptDeviceList(getActivity());
-        this.mAptDeviceList = new AptDeviceList(getActivity());
-        this.mAptDeviceGrid = new AptDeviceGrid(getActivity());
-        this.mAptRoomList = new AptRoomList(getActivity());
+        this.mAptShareDeviceList = new AptDeviceList(mActivity);
+        this.mAptDeviceList = new AptDeviceList(mActivity);
+        this.mAptDeviceGrid = new AptDeviceGrid(mActivity);
+        this.mAptRoomList = new AptRoomList(mActivity);
 
         // 获取家信息
-        SystemParameter.getInstance().setHomeId(Configure.getItem(getActivity(), "homeId", ""));
-        SystemParameter.getInstance().setHomeName(Configure.getItem(getActivity(), "homeName", ""));
+        SystemParameter.getInstance().setHomeId(Configure.getItem(mActivity, "homeId", ""));
+        SystemParameter.getInstance().setHomeName(Configure.getItem(mActivity, "homeName", ""));
         if (SystemParameter.getInstance().getHomeId() != null && SystemParameter.getInstance().getHomeId().length() > 0) {
             this.mLblHome.setText(SystemParameter.getInstance().getHomeName());
             Logger.d("The current home id is " + SystemParameter.getInstance().getHomeId());
@@ -202,13 +235,13 @@ public class IndexFragment1 extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (!LoginBusiness.isLogin()) {
-                    Dialog.confirmLogin(getActivity(), R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
+                    Dialog.confirmLogin(mActivity, R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
                     return;
                 }
 
-                Intent intent = new Intent(getActivity(), ChoiceProductActivity.class);
+                Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
                 startActivity(intent);
-//                ActivityRouter.toDetail(getActivity(), "", CTSL.PK_SMART_LOCK,
+//                ActivityRouter.toDetail(mActivity, "", CTSL.PK_SMART_LOCK,
 //                        1, "测试", 1);
             }
         });
@@ -227,11 +260,15 @@ public class IndexFragment1 extends BaseFragment {
                 mRlDevice.setVisibility(View.VISIBLE);
                 allDeviceView.setVisibility(View.VISIBLE);
                 if (mDeviceDisplayType == 1) {
-                    mGridDevice.setVisibility(View.VISIBLE);
-                    mListDevice.setVisibility(View.GONE);
+                    //mGridDevice.setVisibility(View.VISIBLE);
+                    mGridRL.setVisibility(View.VISIBLE);
+                    //mListDevice.setVisibility(View.GONE);
+                    mListRL.setVisibility(View.GONE);
                 } else {
-                    mGridDevice.setVisibility(View.GONE);
-                    mListDevice.setVisibility(View.VISIBLE);
+                    //mGridDevice.setVisibility(View.GONE);
+                    mGridRL.setVisibility(View.GONE);
+                    //mListDevice.setVisibility(View.VISIBLE);
+                    mListRL.setVisibility(View.VISIBLE);
                 }
                 mListRoom.setVisibility(View.GONE);
                 shareDeviceView.setVisibility(View.GONE);
@@ -278,8 +315,10 @@ public class IndexFragment1 extends BaseFragment {
         imgGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGridDevice.setVisibility(View.VISIBLE);
-                mListDevice.setVisibility(View.GONE);
+                //mGridDevice.setVisibility(View.VISIBLE);
+                mGridRL.setVisibility(View.VISIBLE);
+                //mListDevice.setVisibility(View.GONE);
+                mListRL.setVisibility(View.GONE);
                 mDeviceDisplayType = 1;
                 imgGrid.setAlpha((float) 1.0);
                 imgList.setAlpha((float) 0.4);
@@ -290,13 +329,16 @@ public class IndexFragment1 extends BaseFragment {
         imgList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListDevice.setVisibility(View.VISIBLE);
-                mGridDevice.setVisibility(View.GONE);
+                //mListDevice.setVisibility(View.VISIBLE);
+                mListRL.setVisibility(View.VISIBLE);
+                //mGridDevice.setVisibility(View.GONE);
+                mGridRL.setVisibility(View.GONE);
                 mDeviceDisplayType = 2;
                 imgGrid.setAlpha((float) 0.4);
                 imgList.setAlpha((float) 1.0);
             }
         });
+        mGetSceneHandler = new GetSceneHandler(mActivity);
     }
 
     @Override
@@ -329,14 +371,18 @@ public class IndexFragment1 extends BaseFragment {
     // 主动获取设备属性
     private void getDeviceProperty() {
         if (this.mDeviceList == null || this.mDeviceList.size() == 0) {
+            mGridRL.finishRefresh(true);
+            mListRL.finishRefresh(true);
             return;
         }
         if (this.mGetPropertyIndex < 0 || this.mGetPropertyIndex >= this.mDeviceList.size()) {
+            mGridRL.finishRefresh(true);
+            mListRL.finishRefresh(true);
             return;
         }
         this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
         this.mCurrentProductKey = this.mDeviceList.get(this.mGetPropertyIndex).productKey;
-        new TSLHelper(getActivity()).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        new TSLHelper(mActivity).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     private void getDeviceProperty(String iotId) {
@@ -362,7 +408,7 @@ public class IndexFragment1 extends BaseFragment {
 
         this.mCurrentGetPropertyIotId = this.mDeviceList.get(this.mGetPropertyIndex).iotId;
         this.mCurrentProductKey = this.mDeviceList.get(this.mGetPropertyIndex).productKey;
-        new TSLHelper(getActivity()).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        new TSLHelper(mActivity).getProperty(this.mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     //刷新数据
@@ -423,7 +469,7 @@ public class IndexFragment1 extends BaseFragment {
         int size = list.size();
         int length = 126;
         DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         float density = dm.density;
         // 设置网格宽度(包括所有列宽与列之间的距离)
         float lengthDensity = length * density;
@@ -443,7 +489,7 @@ public class IndexFragment1 extends BaseFragment {
         // 设置列数量为列表集合数
         this.mGrdScene.setNumColumns(size);
 
-        AptSceneGrid aptScene = new AptSceneGrid(getActivity());
+        AptSceneGrid aptScene = new AptSceneGrid(mActivity);
         aptScene.setData(list);
         this.mGrdScene.setAdapter(aptScene);
         this.mGrdScene.setOnItemClickListener(this.sceneListOnItemClickListener);
@@ -465,10 +511,10 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
-                    ActivityRouter.toDetail(getActivity(), mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
+                    ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
                             mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
                 } else {
-                    ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
+                    ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
                 }
             }
         }
@@ -480,9 +526,9 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mShareDeviceList != null && position < mShareDeviceList.size()) {
                 if (mShareDeviceList.get(position) != null && mShareDeviceList.get(position).productKey != null) {
-                    ActivityRouter.toDetail(getActivity(), mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
+                    ActivityRouter.toDetail(mActivity, mShareDeviceList.get(position).iotId, mShareDeviceList.get(position).productKey,
                             mShareDeviceList.get(position).status, mShareDeviceList.get(position).nickName, mShareDeviceList.get(position).owned);
-                } else ToastUtils.showLongToast(getActivity(), R.string.pls_try_again_later);
+                } else ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
             }
         }
     };
@@ -506,7 +552,7 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mSceneList != null && mSceneList.size() > 0) {
-                new SceneManager(getActivity()).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                new SceneManager(mActivity).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         }
     };
@@ -527,6 +573,49 @@ public class IndexFragment1 extends BaseFragment {
         this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
     }
 
+    // 开始获取场景列表
+    private void startGetSceneList2() {
+        if (this.mSceneList == null) {
+            this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+        } else {
+            this.mSceneList.clear();
+        }
+        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, mGetSceneHandler);
+    }
+
+    private class GetSceneHandler extends Handler{
+        private WeakReference<Activity> ref;
+
+        public GetSceneHandler(Activity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_QUERYSCENELIST) {
+                // 处理获取场景列表数据
+                EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                if (sceneList != null && sceneList.scenes != null) {
+                    ViseLog.d("count = "+sceneList.scenes.size());
+                    for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                        if (!item.description.contains("mode == CA,")) {
+                            mSceneList.add(item);
+                        }
+                    }
+                    if (sceneList.scenes.size() >= sceneList.pageSize) {
+                        // 数据没有获取完则获取下一页数据
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, mScenePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        // 数据获取完则设置场景列表数据
+                        setSceneList(mSceneList);
+                    }
+                }
+            }
+        }
+    }
+
     // 开始获取设备列表
     private void startGetDeviceList() {
         // 初始化处理设备缓存器
@@ -534,12 +623,28 @@ public class IndexFragment1 extends BaseFragment {
         this.mAptDeviceList.clearData();
         // 获取家设备列表
         this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
-        try {
-            Thread.sleep(200);
-        } catch (Exception ex) {
-        }
-        // 获取用户设备列表
-        this.mUserCenter.getDeviceList(1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 获取用户设备列表
+                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        },200);*/
+    }
+
+    // 开始获取设备列表
+    private void startGetDeviceList2() {
+        // 初始化处理设备缓存器
+        DeviceBuffer.initProcess();
+        // 获取家设备列表
+        this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 获取用户设备列表
+                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        },200);*/
     }
 
     // 设备统计
@@ -561,6 +666,9 @@ public class IndexFragment1 extends BaseFragment {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
         this.mDeviceList.clear();
         this.mShareDeviceList.clear();
+        if (mAptDeviceGrid != null) mAptDeviceGrid.notifyDataSetChanged();
+        if (mAptDeviceList != null) mAptDeviceList.notifyDataSetChanged();
+        if (mAptShareDeviceList != null) mAptShareDeviceList.notifyDataSetChanged();
         if (all != null && all.size() > 0) {
             // 网关排前面
             for (EDevice.deviceEntry e : all.values()) {
@@ -697,8 +805,8 @@ public class IndexFragment1 extends BaseFragment {
                             SystemParameter.getInstance().setHomeId(homeList.data.get(0).homeId);
                             SystemParameter.getInstance().setHomeName(homeList.data.get(0).name);
                             // 作为配置保存
-                            Configure.setItem(getActivity(), "homeId", SystemParameter.getInstance().getHomeId());
-                            Configure.setItem(getActivity(), "homeName", SystemParameter.getInstance().getHomeName());
+                            Configure.setItem(mActivity, "homeId", SystemParameter.getInstance().getHomeId());
+                            Configure.setItem(mActivity, "homeName", SystemParameter.getInstance().getHomeName());
                             mLblHome.setText(SystemParameter.getInstance().getHomeName());
                         }
                         // 开始获取家房间列表
@@ -730,7 +838,9 @@ public class IndexFragment1 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            mSceneList.add(item);
+                            if (!item.description.contains("mode == CA,")) {
+                                mSceneList.add(item);
+                            }
                         }
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
@@ -754,7 +864,8 @@ public class IndexFragment1 extends BaseFragment {
                             mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", homeDeviceList.pageNo + 1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则同步刷新设备列表数据
-                            syncDeviceListData();
+                            //syncDeviceListData();
+                            mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }
                     break;
@@ -809,6 +920,9 @@ public class IndexFragment1 extends BaseFragment {
                             mGetPropertyIndex++;
                             getDeviceProperty();
                         }
+                    } else {
+                        mGridRL.finishRefresh(true);
+                        mListRL.finishRefresh(true);
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
@@ -816,7 +930,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            ToastUtils.showLongToastCentrally(getActivity(), String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
+                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
                             break;
                         }
                     }
@@ -827,6 +941,14 @@ public class IndexFragment1 extends BaseFragment {
             return false;
         }
     });
+
+    @Override
+    protected void dismissQMUIDialog() {
+        super.dismissQMUIDialog();
+        QMUITipDialogUtil.dismiss();
+        mGridRL.finishRefresh(false);
+        mListRL.finishRefresh(false);
+    }
 
     // 实时数据处理器
     private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
@@ -944,9 +1066,20 @@ public class IndexFragment1 extends BaseFragment {
             return;
         }
 
+        // 处理刷新设备状态数据_备份
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_BUFFER_DATA)) {
+            // 通过开始获取设备列表来触发获取状态
+            refreshData();
+            return;
+        }
+
         // 处理刷新手动执行场景列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             this.startGetSceneList();
+        }
+
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+            startGetSceneList2();
         }
 
         // 处理刷新设备数量数据

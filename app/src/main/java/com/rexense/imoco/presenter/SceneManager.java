@@ -12,10 +12,13 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.demoTest.ActionEntry;
+import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EProduct;
@@ -24,6 +27,7 @@ import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.sdk.APIChannel;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+import com.vise.log.ViseLog;
 
 
 /**
@@ -358,6 +362,139 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 创建模板CA场景
+    public void createCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,String mode,
+                       Handler commitFailureHandler,
+                       Handler responseErrorHandler,
+                       Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("sceneType", "CA");
+        requestParameterEntry.addParameter("mode", mode);// all any
+        // 构造触发Triggers
+        boolean isHasTrigger = false;
+        //JSONObject triggers = new JSONObject();
+        JSONArray items = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_TRIGGER || parameter.triggerEntry == null || !parameter.triggerEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.triggerEntry.productKey);
+            params.put("deviceName", parameter.triggerEntry.deviceName);
+            params.put("propertyName", parameter.triggerEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.triggerEntry.state.rawValue));
+            item.put("params", params);
+            items.add(item);
+            isHasTrigger = true;
+        }
+        // 构造时间条件
+        boolean isHasConditionTime = false;
+        //JSONObject conditions = new JSONObject();
+        //conditions.put("uri", "logical/and");
+        //JSONArray conditions_items = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_CONDITION_TIME || parameter.conditionTimeEntry == null || !parameter.conditionTimeEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/timeRange");
+            JSONObject params = new JSONObject();
+            //params.put("cron", parameter.conditionTimeEntry.genCronString());
+            //params.put("cronType", "linux");
+            //params.put("timezoneID", "Asia/Shanghai");
+
+            params.put("format", "HH:mm");
+            params.put("beginDate", parameter.conditionTimeEntry.getBeginTime());
+            params.put("endDate", parameter.conditionTimeEntry.getEndTime());
+            params.put("repeat", parameter.conditionTimeEntry.getRepeat());
+            item.put("params", params);
+            // conditions_items.add(item);
+            items.add(item);
+            isHasConditionTime = true;
+        }
+        // 构造属性状态条件
+        boolean isHasConditionState = false;
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_CONDITION_STATE || parameter.conditionStateEntry == null || !parameter.conditionStateEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.conditionStateEntry.productKey);
+            params.put("deviceName", parameter.conditionStateEntry.deviceName);
+            params.put("propertyName", parameter.conditionStateEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.conditionStateEntry.state.rawValue));
+            item.put("params", params);
+            // conditions_items.add(item);
+            items.add(item);
+            isHasConditionState = true;
+        }
+        /*if (isHasConditionTime || isHasConditionState) {
+            conditions.put("items", conditions_items);
+            requestParameterEntry.addParameter("conditions", conditions);
+            requestParameterEntry.addParameter("caConditions", items);
+        }*/
+        requestParameterEntry.addParameter("caConditions", items);
+        // 构造响应Actions
+        boolean isHasAction = false;
+        JSONArray actions = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_RESPONSE || parameter.responseEntry == null || !parameter.responseEntry.isSelected ||
+                    (parameter.responseEntry.state == null && parameter.responseEntry.service == null)) {
+                continue;
+            }
+            if (parameter.responseEntry.state != null) {
+                // 设置属性
+                JSONObject state = new JSONObject();
+                state.put("uri", "action/device/setProperty");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("propertyName", parameter.responseEntry.state.rawName);
+                params.put("propertyValue", Integer.parseInt(parameter.responseEntry.state.rawValue));
+                state.put("params", params);
+                actions.add(state);
+            } else if (parameter.responseEntry.service != null) {
+                // 调用服务
+                JSONObject service = new JSONObject();
+                service.put("uri", "action/device/invokeService");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("serviceName", parameter.responseEntry.service.rawName);
+                JSONObject args = new JSONObject();
+                // 构造服务参数
+                for (ETSL.serviceArgEntry arg : parameter.responseEntry.service.args) {
+                    args.put(arg.rawName, Integer.parseInt(arg.rawValue));
+                }
+                params.put("serviceArgs", args);
+                service.put("params", params);
+                actions.add(service);
+            }
+            isHasAction = true;
+        }
+        if (isHasAction) {
+            requestParameterEntry.addParameter("actions", actions);
+        }
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     //创建CA场景
     public void createCAScene(EScene.sceneBaseInfoEntry baseInfo, List<EScene.responseEntry> parameters,
                               Handler commitFailureHandler,
@@ -395,6 +532,198 @@ public class SceneManager {
         }
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+        ViseLog.d(new Gson().toJson(requestParameterEntry));
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+
+    // wyy 创建CA自动场景
+    public void createCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
+                                  List<Object> conditionList, List<Object> actionList,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
+        requestParameterEntry.version = "1.0.1";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("mode", mode);
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+
+        if ("1".equals(baseInfo.catalogId))
+            requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionList)));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionList)));
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新CA场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
+                                  List<Object> conditionList, List<Object> actionList,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("homeId", baseInfo.homeId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("enable", enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("mode", mode);
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        //requestParameterEntry.addParameter("reBind", true);
+
+        if ("1".equals(baseInfo.catalogId))
+            requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(conditionList)));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionList)));
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATE_SCENE;
+        ViseLog.d(new Gson().toJson(requestParameterEntry));
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取支持TCA的设备列表
+    public void queryDevListInHomeForCA(int flowType, String homeId, int pageNum, int pageSize,
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_QUERY_DEV_LIST_FOR_CA;
+        requestParameterEntry.version = "1.0.6";
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("flowType", flowType);// 1（表示Condition）；2（表示Action）
+        requestParameterEntry.addParameter("sceneType", "CA");
+        requestParameterEntry.addParameter("pageNum", pageNum);
+        requestParameterEntry.addParameter("pageSize", pageSize);
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取设备上支持trigger/condition/action配置的功能属性列表
+    public void queryIdentifierListForCA(String iotId, int flowType,
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_IDENTIFIER_LIST;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取设备的trigger或condition或action功能列表与TSL定义
+    public void queryTSLListForCA(String iotId, int flowType,
+                                         Handler commitFailureHandler,
+                                         Handler responseErrorHandler,
+                                         Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_TSL_LIST;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 根据设备ID获取物的模板
+    public void queryTSLByIotId(String iotId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_QUERY_DEV_TSL;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_DEV_TSL;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, CaConditionEntry caConditionEntry, ActionEntry actionEntry,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+
+        requestParameterEntry.addParameter("caConditions", JSONArray.parseArray(new Gson().toJson(caConditionEntry.getEntries())));
+        requestParameterEntry.addParameter("actions", JSONArray.parseArray(new Gson().toJson(actionEntry.getEntries())));
+
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 更新场景
+    public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, JSONArray caCondition, JSONArray action,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+
+        requestParameterEntry.addParameter("caConditions", caCondition);
+        requestParameterEntry.addParameter("actions", action);
+
+        requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
@@ -491,6 +820,140 @@ public class SceneManager {
         requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.addParameter("dataKey", dataKey);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 更新模板CA场景
+    public void updateCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,String mode,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("catalogId", baseInfo.catalogId);
+        requestParameterEntry.addParameter("sceneId", baseInfo.sceneId);
+        requestParameterEntry.addParameter("enable", baseInfo.enable);
+        requestParameterEntry.addParameter("name", baseInfo.name);
+        requestParameterEntry.addParameter("icon", baseInfo.icon);
+        requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
+        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("sceneType", "CA");
+        requestParameterEntry.addParameter("mode", mode);// all any
+
+        // 构造触发Triggers
+        boolean isHasTrigger = false;
+        //JSONObject triggers = new JSONObject();
+        JSONArray items = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_TRIGGER || parameter.triggerEntry == null || !parameter.triggerEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.triggerEntry.productKey);
+            params.put("deviceName", parameter.triggerEntry.deviceName);
+            params.put("propertyName", parameter.triggerEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.triggerEntry.state.rawValue));
+            item.put("params", params);
+            items.add(item);
+            isHasTrigger = true;
+        }
+        if (isHasTrigger) {
+            // triggers.put("items", items);
+            // requestParameterEntry.addParameter("triggers", triggers);
+        }
+        // 构造时间条件
+        boolean isHasConditionTime = false;
+        //JSONObject conditions = new JSONObject();
+        //conditions.put("uri", "logical/and");
+        //JSONArray conditions_items = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_CONDITION_TIME || parameter.conditionTimeEntry == null || !parameter.conditionTimeEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/timeRange");
+            JSONObject params = new JSONObject();
+            //params.put("cron", parameter.conditionTimeEntry.genCronString());
+            //params.put("cronType", "linux");
+            //params.put("timezoneID", "Asia/Shanghai");
+
+            params.put("format", "HH:mm");
+            params.put("beginDate", parameter.conditionTimeEntry.getBeginTime());
+            params.put("endDate", parameter.conditionTimeEntry.getEndTime());
+            params.put("repeat", parameter.conditionTimeEntry.getRepeat());
+            item.put("params", params);
+            // conditions_items.add(item);
+            items.add(item);
+            isHasConditionTime = true;
+        }
+        // 构造属性状态条件
+        boolean isHasConditionState = false;
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_CONDITION_STATE || parameter.conditionStateEntry == null || !parameter.conditionStateEntry.isSelected) {
+                continue;
+            }
+            JSONObject item = new JSONObject();
+            item.put("uri", "condition/device/property");
+            JSONObject params = new JSONObject();
+            params.put("productKey", parameter.conditionStateEntry.productKey);
+            params.put("deviceName", parameter.conditionStateEntry.deviceName);
+            params.put("propertyName", parameter.conditionStateEntry.state.rawName);
+            params.put("compareType", "==");
+            params.put("compareValue", Integer.parseInt(parameter.conditionStateEntry.state.rawValue));
+            item.put("params", params);
+            // conditions_items.add(item);
+            items.add(item);
+            isHasConditionState = true;
+        }
+        requestParameterEntry.addParameter("caConditions", items);
+        // 构造响应Actions
+        boolean isHasAction = false;
+        JSONArray actions = new JSONArray();
+        for (EScene.parameterEntry parameter : parameters) {
+            if (parameter.type != CScene.SPT_RESPONSE || parameter.responseEntry == null || !parameter.responseEntry.isSelected ||
+                    (parameter.responseEntry.state == null && parameter.responseEntry.service == null)) {
+                continue;
+            }
+            if (parameter.responseEntry.state != null) {
+                // 设置属性
+                JSONObject state = new JSONObject();
+                state.put("uri", "action/device/setProperty");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("propertyName", parameter.responseEntry.state.rawName);
+                params.put("propertyValue", Integer.parseInt(parameter.responseEntry.state.rawValue));
+                state.put("params", params);
+                actions.add(state);
+            } else if (parameter.responseEntry.service != null) {
+                // 调用服务
+                JSONObject service = new JSONObject();
+                service.put("uri", "action/device/invokeService");
+                JSONObject params = new JSONObject();
+                params.put("iotId", parameter.responseEntry.iotId);
+                params.put("serviceName", parameter.responseEntry.service.rawName);
+                JSONObject args = new JSONObject();
+                // 构造服务参数
+                for (ETSL.serviceArgEntry arg : parameter.responseEntry.service.args) {
+                    args.put(arg.rawName, Integer.parseInt(arg.rawValue));
+                }
+                params.put("serviceArgs", args);
+                service.put("params", params);
+                actions.add(service);
+            }
+            isHasAction = true;
+        }
+        if (isHasAction) {
+            requestParameterEntry.addParameter("actions", actions);
+        }
+        //requestParameterEntry.addParameter("sceneType", baseInfo.sceneType);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UPDATESCENE;
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
@@ -886,7 +1349,11 @@ public class SceneManager {
         for (EScene.parameterEntry parameter : parameterEntryList) {
             // 初始化属性状态触发
             if (parameter.type == CScene.SPT_TRIGGER && parameter.triggerEntry != null && parameter.triggerEntry.state != null) {
-                if (detailEntry.findTriggerProperty(parameter.triggerEntry.iotId, parameter.triggerEntry.deviceName, parameter.triggerEntry.state.rawName,
+                /*if (detailEntry.findTriggerProperty(parameter.triggerEntry.iotId, parameter.triggerEntry.deviceName, parameter.triggerEntry.state.rawName,
+                        "==", parameter.triggerEntry.state.rawValue)) {
+                    parameter.triggerEntry.isSelected = true;
+                }*/
+                if (detailEntry.findCaConditionProperty(parameter.triggerEntry.iotId, parameter.triggerEntry.deviceName, parameter.triggerEntry.state.rawName,
                         "==", parameter.triggerEntry.state.rawValue)) {
                     parameter.triggerEntry.isSelected = true;
                 }
@@ -895,7 +1362,8 @@ public class SceneManager {
 
             // 初始化时间范围条件
             if (parameter.type == CScene.SPT_CONDITION_TIME && parameter.conditionTimeEntry != null && parameter.conditionTimeEntry != null) {
-                String cron = detailEntry.findConditionTimeRange();
+                //String cron = detailEntry.findConditionTimeRange();
+                String cron = detailEntry.findCaConditionTimeRange();
                 if (cron != null && cron.length() > 0) {
                     parameter.conditionTimeEntry = new EScene.conditionTimeEntry(cron);
                     parameter.conditionTimeEntry.isSelected = true;
@@ -905,7 +1373,11 @@ public class SceneManager {
 
             // 初始化属性状态条件
             if (parameter.type == CScene.SPT_CONDITION_STATE && parameter.conditionStateEntry != null && parameter.conditionStateEntry.state != null) {
-                if (detailEntry.findConditionProperty(parameter.conditionStateEntry.iotId, parameter.conditionStateEntry.deviceName, parameter.conditionStateEntry.state.rawName,
+                /*if (detailEntry.findConditionProperty(parameter.conditionStateEntry.iotId, parameter.conditionStateEntry.deviceName, parameter.conditionStateEntry.state.rawName,
+                        "==", parameter.conditionStateEntry.state.rawValue)) {
+                    parameter.conditionStateEntry.isSelected = true;
+                }*/
+                if (detailEntry.findCaConditionProperty(parameter.conditionStateEntry.iotId, parameter.conditionStateEntry.deviceName, parameter.conditionStateEntry.state.rawName,
                         "==", parameter.conditionStateEntry.state.rawValue)) {
                     parameter.conditionStateEntry.isSelected = true;
                 }
@@ -923,7 +1395,12 @@ public class SceneManager {
 
             // 初始化调用服务响应
             if (parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && parameter.responseEntry.service != null) {
-                if (detailEntry.findActionInvokeService(parameter.responseEntry.iotId, parameter.responseEntry.deviceName, parameter.responseEntry.service.name,
+                /*if (detailEntry.findActionInvokeService(parameter.responseEntry.iotId, parameter.responseEntry.deviceName, parameter.responseEntry.service.name,
+                        parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawName : "",
+                        parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawValue : "")) {
+                    parameter.responseEntry.isSelected = true;
+                }*/
+                if (detailEntry.findCAActionInvokeService(parameter.responseEntry.iotId, parameter.responseEntry.deviceName, parameter.responseEntry.service.rawName,
                         parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawName : "",
                         parameter.responseEntry.service.args != null && parameter.responseEntry.service.args.size() > 0 ? parameter.responseEntry.service.args.get(0).rawValue : "")) {
                     parameter.responseEntry.isSelected = true;

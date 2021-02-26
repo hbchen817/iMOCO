@@ -90,7 +90,9 @@ public class DeviceActionActivity extends BaseActivity {
             }
             if (mSelectList.size() >= 0) {
                 EventBus.getDefault().post(mSelectList);
-                finish();
+                //finish();
+                Intent intent = new Intent(DeviceActionActivity.this, SwitchSceneActivity.class);
+                startActivity(intent);
             } else {
                 ToastUtils.showToastCentrally(mActivity, "请选择动作");
             }

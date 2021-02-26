@@ -6,6 +6,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,6 +38,7 @@ public class SetTimeActivity extends Activity {
     private TextView mWheelPickerValue;
     private String mFirstValue, mSecondValue;
     private int mType;
+    private TextView mLblSefldefineHint;
 
     // 设置滑轮选择器
     private void setWheelPicker(int type, String firstInitValue, String secondInitValue) {
@@ -126,7 +129,11 @@ public class SetTimeActivity extends Activity {
         this.mLblSelfDefine.setVisibility(View.GONE);
         if(this.mConditionTime.isSelfDefine()){
             this.mLblSelfDefine.setVisibility(View.VISIBLE);
-            this.mLblSelfDefine.setText(String.format(": %s", this.mConditionTime.getWeekRepeatString(this)));
+            //this.mLblSelfDefine.setText(String.format(": %s", this.mConditionTime.getWeekRepeatString(this)));
+            this.mLblSelfDefine.setText(String.format(" %s", this.mConditionTime.getWeekRepeatString(this)));
+            mLblSefldefineHint.setText(R.string.set_time_selfdefine);
+        } else {
+            mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
         }
     }
 
@@ -167,6 +174,7 @@ public class SetTimeActivity extends Activity {
         this.mWheelPickerValue = (TextView)findViewById(R.id.twoItemWheelPickerLblValue);
         this.mFirstWheelPicker = (WheelPicker) findViewById(R.id.firstItemWheelPickerWPPicker);
         this.mSecondWheelPicker = (WheelPicker) findViewById(R.id.secondItemWheelPickerWPPicker);
+        this.mLblSefldefineHint = (TextView) findViewById(R.id.setTimeLblSefldefineHint);
 
         // 全天开关处理
         this.mSthAllday = (Switch)findViewById(R.id.setTimeSwtAllday);
@@ -224,6 +232,7 @@ public class SetTimeActivity extends Activity {
                 mImgSelfdefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(1);
                 mLblSelfDefine.setVisibility(View.GONE);
+                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
@@ -241,6 +250,7 @@ public class SetTimeActivity extends Activity {
                 mImgSelfdefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(2);
                 mLblSelfDefine.setVisibility(View.GONE);
+                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
@@ -258,6 +268,7 @@ public class SetTimeActivity extends Activity {
                 mImgSelfdefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(3);
                 mLblSelfDefine.setVisibility(View.GONE);
+                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
@@ -272,9 +283,6 @@ public class SetTimeActivity extends Activity {
                 mImgEveryday.setVisibility(View.GONE);
                 mImgWorkday.setVisibility(View.GONE);
                 mImgWeekend.setVisibility(View.GONE);
-                mImgSelfdefine.setVisibility(View.VISIBLE);
-                mLblSelfDefine.setVisibility(View.VISIBLE);
-                mLblSelfDefine.setText(String.format(": %s", mConditionTime.getWeekRepeatString(SetTimeActivity.this)));
 
                 List<EChoice.itemEntry> items = mConditionTime.getReportChoiceItems(SetTimeActivity.this);
                 Intent intent = new Intent(SetTimeActivity.this, ChoiceActivity.class);
@@ -301,6 +309,16 @@ public class SetTimeActivity extends Activity {
                 finish();
             }
         });
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Override

@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
@@ -133,7 +135,10 @@ public class AptDeviceGrid extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
+		//viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
+		Glide.with(mContext).load(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey))
+				.transition(new DrawableTransitionOptions().crossFade())
+				.into(viewHolder.icon);
 		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
 		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
@@ -174,11 +179,15 @@ public class AptDeviceGrid extends BaseAdapter {
 						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
 						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
 					} else if (stateTimesCount == 3) {
-						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+						//viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						//viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value+"\n...");
 					} else {
-						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);
+						/*viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);*/
+						viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value+"\n...");
 					}
 				}
 			}

@@ -74,6 +74,22 @@ public class DetailSensorActivity extends DetailActivity {
         // 状态（非电池电量）处理
         ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, propertyEntry);
         if(stateEntry != null && stateEntry.name != null && stateEntry.value != null) {
+            if (CTSL.PK_DOORSENSOR.equals(mProductKey)){
+                // 门磁
+                mStateIcon.setImageResource(R.drawable.state_icon_door);
+            } else if (CTSL.PK_SMOKESENSOR.equals(mProductKey)) {
+                // 烟雾传感器
+                mStateIcon.setImageResource(R.drawable.state_icon_smoke);
+            } else if (CTSL.PK_WATERSENSOR.equals(mProductKey)) {
+                // 水浸传感器
+                mStateIcon.setImageResource(R.drawable.state_icon_water);
+            } else if (CTSL.PK_GASSENSOR.equals(mProductKey)) {
+                // 燃气传感器
+                mStateIcon.setImageResource(R.drawable.state_icon_gas);
+            } else if (CTSL.PK_PIRSENSOR.equals(mProductKey)) {
+                // 人体红外传感器
+                mStateIcon.setImageResource(R.drawable.state_icon_pir);
+            }
             mStateName.setText(stateEntry.name + ":");
             mStateValue.setText(stateEntry.value);
             // 更新图标

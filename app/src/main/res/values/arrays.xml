@@ -6,4 +6,60 @@
         <item>开锁</item>
         <item>内部反锁</item>
     </string-array>
+
+    <string-array name="scene_type">
+        <item>自动场景</item>
+        <item>手动场景</item>
+    </string-array>
+
+    <string-array name="scene_status">
+        <item>启用</item>
+        <item>停用</item>
+    </string-array>
+
+    <string-array name="scene_catalog_id">
+        <item>满足以下任一条件</item>
+        <item>满足以下所有条件</item>
+    </string-array>
+
+    <string-array name="scene_time_hour">
+        <item>00</item>
+        <item>满足以下所有条件</item>
+    </string-array>
+
+    <string-array name="scene_time_repeat">
+        <item>执行一次</item>
+        <item>每天</item>
+        <item>工作日</item>
+        <item>周末</item>
+        <item>自定义</item>
+    </string-array>
+
+    <string-array name="repeat_days">
+        <item>星期一</item>
+        <item>星期二</item>
+        <item>星期三</item>
+        <item>星期四</item>
+        <item>星期五</item>
+        <item>星期六</item>
+        <item>星期日</item>
+    </string-array>
+
+    <string-array name="compare_types">
+        <item>小于</item>
+        <item>小于等于</item>
+        <item>等于</item>
+        <item>大于等于</item>
+        <item>大于</item>
+        <item>不等于</item>
+    </string-array>
+
+    <integer-array name="scene_bgs">
+        <item>@drawable/scene_bg_1</item>
+        <item>@drawable/scene_bg_2</item>
+        <item>@drawable/scene_bg_3</item>
+        <item>@drawable/scene_bg_4</item>
+        <item>@drawable/scene_bg_5</item>
+        <item>@drawable/scene_bg_6</item>
+    </integer-array>
 </resources>

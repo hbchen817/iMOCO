@@ -130,7 +130,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/service_tel_view"
+        android:id="@+id/app_feedback_view"
         style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -141,19 +141,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="@string/service_tel"
+            android:text="@string/fragment3_app_feedback"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+        <ImageView
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
             android:layout_centerVertical="true"
-            android:layout_marginRight="9dp"
-            android:text="@string/service_telephone"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_14" />
+            android:src="@drawable/go"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
     <RelativeLayout

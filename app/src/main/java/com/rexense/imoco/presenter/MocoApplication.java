@@ -55,8 +55,10 @@ public class MocoApplication extends AApplication {
         crashHandler.init(getApplicationContext());
 
         //设置日志级别
+        if (!BuildConfig.DEBUG) {
         Logger.setLogLevel(2);
         CrashReport.initCrashReport(getApplicationContext(), "9b346e3393", BuildConfig.DEBUG);
+        }
 
         //安装MultiDex
         MultiDex.install(this);
@@ -137,7 +139,7 @@ public class MocoApplication extends AApplication {
         ViseLog.getLogConfig()
                 .configAllowLog(BuildConfig.DEBUG)
                 .configShowBorders(true)
-                .configTagPrefix("wyy")
+                .configTagPrefix("wyylog")
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
 

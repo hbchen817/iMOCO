@@ -642,6 +642,12 @@ public class CloudDataParser {
                 detailEntry.addAction(item);
             }
         }
+        // cacondition
+        if(rawDetailEntry.getCaConditionsJson() != null && rawDetailEntry.getCaConditionsJson().size() > 0){
+            for(String item : rawDetailEntry.getCaConditionsJson()){
+                detailEntry.addCaCondition(item);
+            }
+        }
         return  detailEntry;
     }
 }

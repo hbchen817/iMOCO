@@ -128,7 +128,7 @@ public class EditSceneBindActivity extends BaseActivity {
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                         String keyNo = jsonObject.getString("keyNo");
-                        if (keyNo.equals(activity.mKeyCode)) {
+                        if (keyNo != null && keyNo.equals(activity.mKeyCode)) {
                             String autoSceneId = jsonObject.getString("asId");
                             activity.mSceneManager.deleteScene(autoSceneId, activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
                             activity.mSceneManager.setExtendedProperty(activity.mIotId, activity.mKeyCode, "{}", activity.mCommitFailureHandler

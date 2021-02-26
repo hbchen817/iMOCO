@@ -1,5 +1,7 @@
 package com.rexense.imoco.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.demoTest.SceneCatalogIdCache;
 import com.rexense.imoco.event.CEvent;
 import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.event.RefreshData;
@@ -28,6 +31,9 @@ import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +55,18 @@ public class IndexFragment2 extends BaseFragment {
     private TextView mLblScene, mLblSceneDL, mLblMy, mLblMyDL;
     private SceneManager mSceneManager = null;
     private List<EScene.sceneModelEntry> mModelList = null;
-    private List<EScene.sceneListItemEntry> mSceneList = null;
+    private List<EScene.sceneListItemEntry> mSceneList = new ArrayList<>();
     private AptSceneList mAptSceneList;
     private ListView mListSceneModel, mListMy;
     private final int mScenePageSize = 50;
     private String mSceneType;
+    private SmartRefreshLayout mListMyRL;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
 
     @Override
     public void onDestroyView() {
@@ -91,7 +104,7 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 获取碎片所依附的活动的上下文环境
-        mActivity = getActivity();
+        //mActivity = getActivity();
         View view = inflater.inflate(setLayout(), container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
@@ -102,6 +115,17 @@ public class IndexFragment2 extends BaseFragment {
         this.mLblMyDL = (TextView) view.findViewById(R.id.sceneLblMyDL);
         this.mListSceneModel = (ListView) view.findViewById(R.id.sceneLstSceneModel);
         this.mListMy = (ListView) view.findViewById(R.id.sceneLstMy);
+        mListMyRL = (SmartRefreshLayout) view.findViewById(R.id.sceneLstMy_rl);
+        mListMyRL.setEnableLoadMore(false);
+        mListMyRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                RefreshData.refreshHomeSceneListData();
+
+                startGetSceneList(CScene.TYPE_AUTOMATIC);
+                SystemParameter.getInstance().setIsRefreshSceneListData(false);
+            }
+        });
         initView();
         // 开始获取场景列表
         this.startGetSceneList(CScene.TYPE_AUTOMATIC);
@@ -110,17 +134,39 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     @Override
+    protected void dismissQMUIDialog() {
+        super.dismissQMUIDialog();
+        mListMyRL.finishRefresh(false);
+    }
+
+    @Override
     protected void init() {
 
     }
 
     private void initView() {
-        this.mSceneManager = new SceneManager(getActivity());
+        this.mSceneManager = new SceneManager(mActivity);
         this.mModelList = this.mSceneManager.genSceneModelList();
-        AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
+        AptSceneModel aptSceneModel = new AptSceneModel(mActivity);
         aptSceneModel.setData(this.mModelList);
         this.mListSceneModel.setAdapter(aptSceneModel);
-        this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        this.mAptSceneList = new AptSceneList(mActivity, mSceneList, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler,
+                new AptSceneList.AptSceneListCallback() {
+                    @Override
+                    public void onDelItem(String sceneId) {
+                        if (mSceneList != null) {
+                            for (int i = 0; i < mSceneList.size(); i++) {
+                                EScene.sceneListItemEntry entry = mSceneList.get(i);
+                                if (entry.id.equals(sceneId)) {
+                                    mSceneList.remove(i);
+                                    mAptSceneList.notifyDataSetChanged();
+                                    break;
+                                }
+                            }
+                        }
+                        RefreshData.refreshHomeSceneListData();
+                    }
+                });
 
         mListMy.setAdapter(mAptSceneList);
 
@@ -128,8 +174,10 @@ public class IndexFragment2 extends BaseFragment {
         this.mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -169,15 +217,67 @@ public class IndexFragment2 extends BaseFragment {
                     return;
                 }
 
-                Intent intent = new Intent(getActivity(), SceneMaintainActivity.class);
+                Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
                 intent.putExtra("operateType", CScene.OPERATE_CREATE);
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
                 intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
-                intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+                intent.putExtra("sceneNumber", mSceneList.size());
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000){
+            switch (resultCode){
+                case 100:{
+                    // 删除场景
+                    String sceneId = data.getStringExtra("scene_id");
+                    if (mSceneList != null){
+                        for (int i=0;i<mSceneList.size();i++){
+                            EScene.sceneListItemEntry entry = mSceneList.get(i);
+                            if (entry.id.equals(sceneId)) {
+                                mSceneList.remove(i);
+                                mAptSceneList.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case 101:{
+                    // 更新场景
+                    String catalogId = data.getStringExtra("catalog_id");
+                    String desc = data.getStringExtra("description");
+                    boolean enable = data.getBooleanExtra("enable",true);
+                    String id = data.getStringExtra("id");
+                    String name = data.getStringExtra("name");
+                    boolean valid = data.getBooleanExtra("valid",true);
+
+                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                    entry.id = id;
+                    entry.catalogId = catalogId;
+                    entry.description = desc;
+                    entry.enable = enable;
+                    entry.name = name;
+                    entry.valid = valid;
+
+                    for (int i=0;i<mSceneList.size();i++){
+                        if (entry.id.equals(mSceneList.get(i).id)){
+                            mSceneList.set(i, entry);
+                            break;
+                        }
+                    }
+                    mAptSceneList.notifyDataSetChanged();
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+            }
+        }
     }
 
     // 场景列表长按监听器
@@ -201,8 +301,13 @@ public class IndexFragment2 extends BaseFragment {
             int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
             if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
                 // 非模板场景处理
-                PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+
+                Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                intent.putExtra("scene_id", mSceneList.get(i).id);
+                intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
+                startActivityForResult(intent,1000);
             } else {
                 // 模板场景处理
                 if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
@@ -212,11 +317,19 @@ public class IndexFragment2 extends BaseFragment {
                     intent.putExtra("name", mSceneList.get(i).name);
                     intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
                     intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
-                    intent.putExtra("sceneNumber", mSceneList == null ? 0 : mSceneList.size());
+                    intent.putExtra("sceneNumber", mSceneList.size());
                     mActivity.startActivity(intent);
                 } else {
-                    PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                    SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                    //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                    //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                    intent.putExtra("sceneId", mSceneList.get(i).id);
+                    intent.putExtra("name", mSceneList.get(i).name);
+                    intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                    intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    mActivity.startActivity(intent);
                 }
             }
         }
@@ -245,7 +358,9 @@ public class IndexFragment2 extends BaseFragment {
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                            //ViseLog.d(new Gson().toJson(item));
                             if (!item.description.contains("mode == CA,")) {
+                                SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
                             }
                         }
@@ -260,6 +375,7 @@ public class IndexFragment2 extends BaseFragment {
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
                                 mAptSceneList.setData(mSceneList);
+                                mAptSceneList.notifyDataSetChanged();
                                 //mListMy.setAdapter(mAptSceneList);
                                 mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
                                 mListMy.setOnItemClickListener(sceneListOnItemClickListener);
@@ -269,16 +385,17 @@ public class IndexFragment2 extends BaseFragment {
                     } else {
                         QMUITipDialogUtil.dismiss();
                     }
+                    mListMyRL.finishRefresh(true);
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
                     String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
-                    QMUITipDialogUtil.showSuccessDialog(getActivity(), R.string.scene_delete_sucess);
+                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
-                        RefreshData.refreshSceneListData();
+                        RefreshData.refreshHomeSceneListData();
                     }
-                    //ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
+                    //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     break;
                 default:
                     break;
@@ -294,10 +411,10 @@ public class IndexFragment2 extends BaseFragment {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
 
-            getActivity().runOnUiThread(new Runnable() {
+            mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    QMUITipDialogUtil.showLoadingDialg(getActivity(), getString(R.string.is_loading));
+                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
                 }
             });
         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="appbgcolor">#F2F2F2</color>
+    <color name="appbgcolor2">#ECECEC</color>
     <!--<color name="appbgcolor">#E0E0E0</color>-->
     <color name="topic_color1">#FC7C23</color>
     <color name="topic_color2">#F19725</color>

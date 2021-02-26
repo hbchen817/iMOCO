@@ -26,14 +26,14 @@
             android:id="@+id/mSwitch1"
             android:layout_width="@dimen/dp_100"
             android:layout_height="@dimen/dp_200"
-            android:src="@drawable/state_twoswitch_1_off" />
+            android:background="@drawable/selector_switch_clicked" />
 
         <ImageView
             android:id="@+id/mSwitch2"
             android:layout_width="@dimen/dp_100"
             android:layout_height="@dimen/dp_200"
             android:layout_toRightOf="@id/mSwitch1"
-            android:src="@drawable/state_twoswitch_2_off" />
+            android:background="@drawable/selector_switch_clicked" />
     </RelativeLayout>
 
 

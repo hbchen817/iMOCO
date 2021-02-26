@@ -67,7 +67,7 @@ public class ChoiceProductActivity extends BaseActivity {
     private final List<String> mLightCategoryKeyList = Arrays.asList("light", "Lamp");
     private final List<String> mElectricCategoryKeyList = Arrays.asList("WallSwitch", "SceneSwitch", "emergency_button", "Outlet", "Scene", "Dimming_panel");
     private final List<String> mSafeCategoryKeyList = Arrays.asList("Siren", "emergency_button", "SmartDoor", "azardWarningLamp", "AlarmSwitch", "Camera", "Cateyecamera", "DoorViewer", "Doorbell", "VideoDoorbell");
-    private final List<String> mHomeCategoryKeyList = Arrays.asList("LocalControlCenter", "Curtain", "Curtain_motor", "IRRemoteController", "WindowLinearActuator");
+    private final List<String> mHomeCategoryKeyList = Arrays.asList("LocalControlCenter", "Curtain","curtain", "Curtain_motor", "IRRemoteController", "WindowLinearActuator");
     private final List<String> mSensorCategoryKeyList = Arrays.asList("GasDetector", "WaterDetector", "SmokeAlarm", "DoorContact", "IRDetector", "Airbox", "TempHumiUnit", "airbox", "IlluminationSensor", "VibrationSensor");
     private final List<String> mEnvironmentalCategoryKeyList = Arrays.asList("airpurifier", "FAU", "AirConditioning", "FloorHeating", "aircondition");
     private final List<String> mLivingCategoryKeyList = Arrays.asList("ToiletSeat", "ElectricWaterHeater", "GasWaterHeater", "BathHeater", "hanger", "towelRack");

@@ -18,8 +18,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="10dp"
 			android:layout_marginTop="5dp"
-			android:src="@drawable/icon_button"
-			android:contentDescription="@string/contentDescription_null"/>
+			android:contentDescription="@string/contentDescription_null"/><!--android:src="@drawable/icon_button"-->
 
 		<TextView
 			android:id="@+id/deviceListLblName"

@@ -29,7 +29,7 @@ public class CTSL {
     public static final String PK_THREE_SCENE_SWITCH        = "a1S5xUUURz4";
     public static final String PK_FOUR_SCENE_SWITCH         = "a1uaG4drs1e";
     public static final String PK_LIGHT                     = "a1SdpzGgZCa";
-    public static final String PK_ONE_SCENE_SWITCH          = "a1HurDIuRiW";
+    public static final String PK_ONE_SCENE_SWITCH          = "a1GTs78yLr2";//   a1HurDIuRiW
 
     public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
     public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
@@ -45,6 +45,7 @@ public class CTSL {
     public static final String PK_HSL_COLOR_LIGHT_STRIP     = "a1yARva6fVG";// HSL彩色灯带
     public static final String PK_CONTROL_COLOR_TEMP_LIGHT  = "a1uXFxg1cAL";// 调光色温灯
     public static final String PK_CONTROL_COLOR_LIGHT       = "a1mSlpQen3w";// 调光灯
+    public static final String PK_CONTROL_COLOR_BROAD       = "a1OlU25BrOu";// 调光调色面板
     public static final String PK_RGB_COLOR_LIGHT           = "a1MAzhopgCh";// RGB彩色灯
     public static final String PK_AIRCOMDITION_TWO          = "a1SlOjihHnP";// 空调二管制
     public static final String PK_AIRCOMDITION_FOUR         = "a1ayoCqQpxx";// 空调四管制
@@ -54,10 +55,19 @@ public class CTSL {
     public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
-    public static final String PK_ANY_FOUR_SCENE_SWITCH     = "a1Qb4P7DHAv";// 四键面板开关
-    public static final String PK_ANY_TWO_SCENE_SWITCH      = "a1WBTOxm1Z5";// 二键面板开关
+    public static final String PK_ANY_FOUR_SCENE_SWITCH     = "a1Qb4P7DHAv";// 四键场景开关
+    public static final String PK_ANY_TWO_SCENE_SWITCH      = "a1WBTOxm1Z5";// 二键场景开关
 
-    public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
+	public static final String PK_ONE_KEY_SWITCH            = "a1EEhmdntAu";// 一键面板开关
+    public static final String PK_TWO_KEY_SWITCH            = "a1pVHRVmHqD";// 两键面板开关
+
+    public static final String PK_VRV_AC                    = "a1hGRYll4OE";// 拉斐VRV温控器LFWK001
+    public static final String PK_FAU                       = "a1msNJjnfnQ";// 拉斐新风LFXF001
+    public static final String PK_OUTLET                    = "a1x0DJE7Eqw";// 拉斐二三极插座LFS002
+
+    public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "a12uBMtiWKz";// 单路窗帘
+    public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
+	
 
     // 定义属性类型
     public static enum PTYPE

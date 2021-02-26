@@ -72,6 +72,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     mLblTitle.setText(mNewNickName);
                     // 更新设备缓存备注名称
                     DeviceBuffer.updateDeviceNickName(mIOTId, mNewNickName);
+                    RefreshData.refreshDeviceStateDataFromBuffer();
                     break;
                 case Constant.MSG_CALLBACK_UPDATEDEVICEROOM:
                     // 处理更新设备所属房间回调
