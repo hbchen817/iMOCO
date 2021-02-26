@@ -54,6 +54,9 @@ public class CTSL {
     public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
+    public static final String PK_ANY_FOUR_SCENE_SWITCH     = "a1Qb4P7DHAv";// 四键面板开关
+    public static final String PK_ANY_TWO_SCENE_SWITCH      = "a1WBTOxm1Z5";// 二键面板开关
+
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
     // 定义属性类型

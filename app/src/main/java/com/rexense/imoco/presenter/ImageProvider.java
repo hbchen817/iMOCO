@@ -88,6 +88,10 @@ public class ImageProvider {
                 return R.drawable.icon_color_light;
             case CTSL.PK_FOURWAYSWITCH:// 四键开关
                 return R.drawable.icon_four_switch_white;
+            case CTSL.PK_ANY_TWO_SCENE_SWITCH:// 二键随意贴
+            case CTSL.PK_ANY_FOUR_SCENE_SWITCH: {// 四键随意贴
+                return R.drawable.icon_four_switch_white;
+            }
             default:
                 return R.drawable.icon_thsensor;
         }
