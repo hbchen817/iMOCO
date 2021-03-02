@@ -121,16 +121,19 @@ public class ImageProvider {
                 return R.drawable.icon_outlet;
             case CTSL.PK_SIX_SCENE_SWITCH:
                 return R.drawable.icon_six_scene_switch;
-            case CTSL.PK_THREE_SCENE_SWITCH:{
+            case CTSL.PK_THREE_SCENE_SWITCH: {
                 return R.drawable.icon_three_scene_switch;
             }
             case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:
-            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:{
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
                 // 窗帘电机
                 return R.drawable.icon_dianji;
             }
-            case CTSL.PK_CONTROL_COLOR_BROAD:{
+            case CTSL.PK_CONTROL_COLOR_BROAD: {
                 return R.drawable.icon_control_light;
+            }
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH: {
+                return R.drawable.icon_six_scene_switch;
             }
             default:
                 return R.drawable.icon_thsensor;

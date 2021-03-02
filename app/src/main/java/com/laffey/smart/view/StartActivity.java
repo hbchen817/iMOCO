@@ -13,6 +13,8 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.laffey.smart.R;
 import com.laffey.smart.presenter.MocoApplication;
+import com.laffey.smart.utility.LogcatFileManager;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -36,6 +38,12 @@ public class StartActivity extends BaseActivity {
 
     private void initView() {
         //mDownCountTextView = findViewById(R.id.tv_count_down_splash);
+        if (SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "log_state", false)) {
+            String path = getApplicationContext().getExternalCacheDir() + "/Log/";
+            LogcatFileManager.getInstance().start(path);
+        } else {
+            LogcatFileManager.getInstance().stop();
+        }
     }
 
     private void initEvent() {
@@ -104,7 +112,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onLoginFailed(int i, String s) {
-                ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                ToastUtils.showToastCentrally(MocoApplication.getInstance(), s);
             }
         });
         finishLater();

@@ -43,9 +43,13 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.FeedbackActivity"
+        <activity android:name=".view.LogActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".view.FeedbackActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".view.FeedbackContentActivity"
+        <activity
+            android:name=".view.FeedbackContentActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.SceneActionActivity"
@@ -405,6 +409,7 @@
         <service
             android:name=".utility.BLEService"
             android:enabled="true" /> <!-- 消息接收监听器 （用户可自主扩展） -->
+        <!-- 消息接收监听器 （用户可自主扩展） -->
         <receiver
             android:name=".sdk.MyMessageReceiver"
             android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->

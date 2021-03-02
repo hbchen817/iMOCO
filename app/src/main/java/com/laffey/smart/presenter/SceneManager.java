@@ -362,10 +362,10 @@ public class SceneManager {
     }
 
     // 创建模板CA场景
-    public void createCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,String mode,
-                       Handler commitFailureHandler,
-                       Handler responseErrorHandler,
-                       Handler processDataHandler) {
+    public void createCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters, String mode,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
@@ -539,10 +539,10 @@ public class SceneManager {
 
     // wyy 创建CA自动场景
     public void createCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
-                                  List<Object> conditionList, List<Object> actionList,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  Handler processDataHandler) {
+                              List<Object> conditionList, List<Object> actionList,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_CREATESCENE;
@@ -569,10 +569,10 @@ public class SceneManager {
 
     // wyy 更新CA场景
     public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, boolean enable, String mode,
-                                  List<Object> conditionList, List<Object> actionList,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  Handler processDataHandler) {
+                              List<Object> conditionList, List<Object> actionList,
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
@@ -623,9 +623,9 @@ public class SceneManager {
 
     // wyy 获取设备上支持trigger/condition/action配置的功能属性列表
     public void queryIdentifierListForCA(String iotId, int flowType,
-                                        Handler commitFailureHandler,
-                                        Handler responseErrorHandler,
-                                        Handler processDataHandler) {
+                                         Handler commitFailureHandler,
+                                         Handler responseErrorHandler,
+                                         Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_LIST;
@@ -641,9 +641,9 @@ public class SceneManager {
 
     // wyy 获取设备的trigger或condition或action功能列表与TSL定义
     public void queryTSLListForCA(String iotId, int flowType,
-                                         Handler commitFailureHandler,
-                                         Handler responseErrorHandler,
-                                         Handler processDataHandler) {
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
@@ -659,9 +659,9 @@ public class SceneManager {
 
     // wyy 根据设备ID获取物的模板
     public void queryTSLByIotId(String iotId,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  Handler processDataHandler) {
+                                Handler commitFailureHandler,
+                                Handler responseErrorHandler,
+                                Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_QUERY_DEV_TSL;
@@ -825,7 +825,7 @@ public class SceneManager {
     }
 
     // 更新模板CA场景
-    public void updateCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters,String mode,
+    public void updateCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters, String mode,
                               Handler commitFailureHandler,
                               Handler responseErrorHandler,
                               Handler processDataHandler) {
@@ -1085,11 +1085,12 @@ public class SceneManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     // 更新场景
     public void updateCAScene(EScene.sceneBaseInfoEntry baseInfo, List<EScene.responseEntry> parameters,
-                       Handler commitFailureHandler,
-                       Handler responseErrorHandler,
-                       Handler processDataHandler) {
+                              Handler commitFailureHandler,
+                              Handler responseErrorHandler,
+                              Handler processDataHandler) {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_UPDATESCENE;
@@ -1116,7 +1117,7 @@ public class SceneManager {
             actions.add(state);
             isHasAction = true;
         }
-        if(isHasAction){
+        if (isHasAction) {
             requestParameterEntry.addParameter("actions", actions);
         }
         requestParameterEntry.addParameter("sceneType", CScene.TYPE_CA);
