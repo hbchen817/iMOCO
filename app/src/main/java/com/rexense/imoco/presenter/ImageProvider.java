@@ -135,6 +135,9 @@ public class ImageProvider {
             case CTSL.PK_CONTROL_COLOR_BROAD:{
                 return R.drawable.icon_control_light;
             }
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH: {
+                return R.drawable.icon_six_scene_switch;
+            }
             default:
                 return R.drawable.icon_thsensor;
         }

@@ -15,7 +15,9 @@ import com.aliyun.iot.link.ui.component.LinkToast;
 import com.rexense.imoco.R;
 import com.rexense.imoco.presenter.MocoApplication;
 import com.rexense.imoco.sdk.Account;
+import com.rexense.imoco.utility.LogcatFileManager;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
+import com.rexense.imoco.utility.SpUtils;
 import com.rexense.imoco.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -39,6 +41,12 @@ public class StartActivity extends BaseActivity {
 
     private void initView() {
         //mDownCountTextView = findViewById(R.id.tv_count_down_splash);
+        if (SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "log_state", false)) {
+            String path = getApplicationContext().getExternalCacheDir() + "/Log/";
+            LogcatFileManager.getInstance().start(path);
+        } else {
+            LogcatFileManager.getInstance().stop();
+        }
     }
 
     private void initEvent() {
@@ -107,7 +115,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onLoginFailed(int i, String s) {
-                ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                ToastUtils.showToastCentrally(MocoApplication.getInstance(), s);
             }
         });
         finishLater();

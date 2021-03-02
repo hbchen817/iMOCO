@@ -650,4 +650,5 @@
     <string name="pls_enter_feature_suggestions">请输入功能建议</string>
     <string name="pls_enter_description_of_the_problem">请输入问题描述</string>
     <string name="submit_completed">提交完成</string>
+    <string name="alog_title">日志服务</string>
 </resources>
