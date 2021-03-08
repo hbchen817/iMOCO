@@ -3,9 +3,12 @@ package com.laffey.smart.presenter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
+import com.google.gson.Gson;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.view.ColorLightDetailActivity;
@@ -32,6 +35,12 @@ public class ActivityRouter {
     // 到详细界面
     public static void toDetail(Context context, String iotId, String productKey, int status, String name, int owned) {
         Intent intent = null;
+
+        ViseLog.d("跳转插件 iotId = " + iotId + " , productKey = " + productKey
+                + "\nBuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID
+                + "\nstatus = " + status
+                + "\nname = " + name
+                + "\nowned = " + owned);
         switch (productKey) {
             case CTSL.PK_GATEWAY:
             case CTSL.PK_GATEWAY_RG4100:
@@ -46,6 +55,7 @@ public class ActivityRouter {
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
                     Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                    //Router.getInstance().toUrl((Activity) context, code, bundle);
                 } else {
                     intent = new Intent(context, DetailOneSwitchActivity.class);
                 }
@@ -56,7 +66,8 @@ public class ActivityRouter {
                     String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                    //Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                    Router.getInstance().toUrl((Activity) context, code, bundle);
                 } else {
                     intent = new Intent(context, DetailTwoSwitchActivity.class);
                 }
@@ -68,7 +79,8 @@ public class ActivityRouter {
                     String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                    //Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                    Router.getInstance().toUrl((Activity) context, code, bundle);
                 } else {
                     intent = new Intent(context, DetailFourSwitchActivity.class);
                 }
@@ -121,9 +133,11 @@ public class ActivityRouter {
                 String code = "link://router/" + productKey;
                 Bundle bundle = new Bundle();
                 bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                //Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
+                Router.getInstance().toUrl((Activity) context, code, bundle);
                 break;
         }
+        ViseLog.d("intent != null = " + (intent != null));
         if (intent != null) {
             intent.putExtra("iotId", iotId);
             intent.putExtra("productKey", productKey);

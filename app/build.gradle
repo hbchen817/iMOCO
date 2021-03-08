@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply from: 'dependency.gradle'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
 
     signingConfigs {
@@ -27,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.laffey.smart"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
         multiDexEnabled true
@@ -39,13 +39,14 @@ android {
             targetCompatibility JavaVersion.VERSION_1_8
         }
         ndk {
-            abiFilters "arm64-v8a", "armeabi-v7a", 'armeabi'
+            abiFilters "arm64-v8a", "armeabi-v7a"/*, 'armeabi'*/
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            buildConfigField "String", "BUILD_COUNTRY", "\"CHINA\""
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

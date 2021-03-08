@@ -581,7 +581,7 @@ public class IndexFragment1 extends BaseFragment {
         this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, mGetSceneHandler);
     }
 
-    private class GetSceneHandler extends Handler{
+    private class GetSceneHandler extends Handler {
         private WeakReference<Activity> ref;
 
         public GetSceneHandler(Activity activity) {
@@ -596,7 +596,7 @@ public class IndexFragment1 extends BaseFragment {
                 // 处理获取场景列表数据
                 EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                 if (sceneList != null && sceneList.scenes != null) {
-                    ViseLog.d("count = "+sceneList.scenes.size());
+                    ViseLog.d("count = " + sceneList.scenes.size());
                     for (EScene.sceneListItemEntry item : sceneList.scenes) {
                         if (!item.description.contains("mode == CA,")) {
                             mSceneList.add(item);

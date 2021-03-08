@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -14,15 +16,18 @@ import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.utility.PermissionUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -177,6 +182,7 @@ public class IndexActivity extends BaseActivity {
             // 没有需要处理的运行时权限, 继续执行
             initView();
             initListener();
+            ViseLog.d("网络信息 " + new Gson().toJson(getActiveNetwork(IndexActivity.this)));
         }
     }
 
@@ -216,6 +222,11 @@ public class IndexActivity extends BaseActivity {
             mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_TASKS)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.GET_TASKS);
+        }
+
     }
 
     @Override
@@ -235,6 +246,8 @@ public class IndexActivity extends BaseActivity {
                     // 已经同意了运行时权限, 执行正常逻辑
                     initView();
                     initListener();
+
+                    ViseLog.d("wyy", "网络信息 " + new Gson().toJson(getActiveNetwork(IndexActivity.this)));
                 } else {
                     ToastUtils.showToastCentrally(this, "发生未知错误");
                 }
@@ -242,6 +255,27 @@ public class IndexActivity extends BaseActivity {
             default:
         }
     }
+
+    public static NetworkInfo getActiveNetwork(Context context) {
+
+        if (context == null) {
+            return null;
+        }
+
+        ConnectivityManager mConnMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (mConnMgr == null) {
+            return null;
+        }
+
+        // 获取活动网络连接信息
+
+        NetworkInfo aActiveInfo = mConnMgr.getActiveNetworkInfo();
+
+        return aActiveInfo;
+
+    }
+
 
     private void initView() {
         // 实例化几个碎片

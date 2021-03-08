@@ -1,9 +1,13 @@
 package com.laffey.smart.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.aliyun.alink.linksdk.tmp.extbone.BoneThing;
+import com.aliyun.alink.sdk.jsbridge.BonePluginRegistry;
 import com.aliyun.iot.aep.sdk.IoTSmart;
-import com.laffey.smart.contract.Constant;
+import com.aliyun.iot.aep.sdk.framework.config.GlobalConfig;
+import com.google.gson.Gson;
 import com.laffey.smart.utility.Logger;
 
 /**
@@ -17,24 +21,26 @@ public class Initializer {
         // 设置参数
         IoTSmart.InitConfig initConfig = new IoTSmart.InitConfig();
         // REGION_ALL: 支持连接全球多个接入点，如果您只在中国内地出货，请设置为“REGION_CHINA_ONLY”，表示直连中国内地接入点。
-        initConfig.setRegionType(IoTSmart.REGION_CHINA_ONLY);
+        initConfig.setRegionType(IoTSmart.REGION_ALL);
         // 对应控制台上的测试版（PRODUCT_ENV_DEV）和正式版（PRODUCT_ENV_PROD）
-        if(Constant.APPKEY.equalsIgnoreCase("29162669")){
+        /*if(Constant.APPKEY.equalsIgnoreCase("29162669")){
             // 对应控制台上的测试版（PRODUCT_ENV_DEV）
             initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_DEV);
         } else {
             // 对应控制台上的正式版（PRODUCT_ENV_PROD）
             initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_PROD);
-        }
+        }*/
+        IoTSmart.setProductScope(IoTSmart.PRODUCT_ENV_PROD);
+
         // 是否打开日志
         initConfig.setDebug(true);
 
         // 定制三方通道的离线推送，目前支持华为、小米和FCM
         IoTSmart.PushConfig pushConfig = new IoTSmart.PushConfig();
         // 替换为从FCM平台申请的id
-        pushConfig.fcmApplicationId = "fcmid";
+        //pushConfig.fcmApplicationId = "fcmid";
         // 替换为从FCM平台申请的sendid
-        pushConfig.fcmSendId = "fcmsendid";
+        //pushConfig.fcmSendId = "fcmsendid";
         // 替换为从小米平台申请的AppID
         pushConfig.xiaomiAppId = "2882303761518671822";
         // 替换为从小米平台申请的AppKey
@@ -55,6 +61,10 @@ public class Initializer {
         country.domainAbbreviation = "CN";
         IoTSmart.setCountry(country, null);
 
+        GlobalConfig.getInstance().setApiEnv(GlobalConfig.API_ENV_ONLINE);
+        GlobalConfig.getInstance().setBoneEnv(GlobalConfig.BONE_ENV_RELEASE);
+
+        Log.d("wyyLog", new Gson().toJson(initConfig));
         // 初始化（App须继承自AApplication，否则会报错）
         IoTSmart.init((MocoApplication)context.getApplicationContext(), initConfig);
         //IoTSmart.setProductScope(IoTSmart.PRODUCT_SCOPE_PUBLISHED);
