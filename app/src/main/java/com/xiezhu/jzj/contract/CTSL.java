@@ -28,11 +28,11 @@ public class CTSL {
     public static final String PK_TWO_SCENE_SWITCH          = "a14kD7IKWqp";
     public static final String PK_THREE_SCENE_SWITCH        = "a1S5xUUURz4";
     public static final String PK_FOUR_SCENE_SWITCH         = "a1uaG4drs1e";
-    public static final String PK_LIGHT                     = "a1SdpzGgZCa";
+    public static final String PK_LIGHT                     = "a1OlU25BrOu";// 调光调色 拉斐定制面板
     public static final String PK_ONE_SCENE_SWITCH          = "a1HurDIuRiW";
 
-    public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
-    public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";//调光调色面板
+    public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";// 微仕达电机pk
+    public static final String PK_CONTROL_LIGHT             = "a1SdpzGgZCa";// 调光调色面板
     public static final String PK_BLACK_ONE_SWITCH          = "a1VK0kgweyU";
     public static final String PK_BLACK_TWO_SWITCH          = "a1Hi1QQEGPm";
     public static final String PK_BLACK_THREE_SWITCH        = "a1uAwpNGcI7";
@@ -56,6 +56,8 @@ public class CTSL {
     public static final String PK_FOURWAYSWITCH_2           = "a1q9trgD6NK";// 四键开关
     public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
+
+    public static final String PK_FOUR_SCENE_SYT_SWITCH     = "a1wZ4oAtS87";// 四键随意贴
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 
