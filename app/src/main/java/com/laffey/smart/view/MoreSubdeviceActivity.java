@@ -339,7 +339,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
         List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
-        if (list == null || list.size()== 0){
+        if (list == null || list.size() == 0) {
             RelativeLayout record = (RelativeLayout) findViewById(R.id.recordLayout);
             record.setVisibility(View.GONE);
         }

@@ -185,7 +185,6 @@ public class LockDetailActivity extends DetailActivity {
                 mKeyTime = timestamp;
                 String startTime = DateFormatUtils.long2Str(timestamp, true);
                 String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
-                ViseLog.d("mIOTId ========= " + mIOTId);
                 if (mProductKey.equals(CTSL.PK_SMART_LOCK_A7)) {
                     LockManager.setTemporaryKey(mIOTId, randomKey, startTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 } else {
@@ -439,6 +438,9 @@ public class LockDetailActivity extends DetailActivity {
             super.handleMessage(msg);
             LockDetailActivity activity = mWeakReference.get();
             switch (msg.what) {
+                case Constant.MSG_CALLBACK_TEMPORARY_KEY: {// 临时密码
+                    break;
+                }
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     JSONObject value = jsonObject.getJSONObject("value");

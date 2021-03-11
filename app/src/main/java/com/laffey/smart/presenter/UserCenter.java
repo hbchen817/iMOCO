@@ -88,11 +88,12 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     //查询设备与用户的关系
     public void getByAccountAndDev(String iotId,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  Handler processDataHandler) {
+                                   Handler commitFailureHandler,
+                                   Handler responseErrorHandler,
+                                   Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
@@ -128,8 +129,30 @@ public class UserCenter {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 解绑子设备
+    public void unbindSubDevice(String productKey, String deviceName,
+                                Handler commitFailureHandler,
+                                Handler responseErrorHandler,
+                                Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = "/awss/subdevice/unbind";
+        requestParameterEntry.version = "1.0.7";
+        requestParameterEntry.addParameter("productKey", productKey);
+        requestParameterEntry.addParameter("deviceName", deviceName);
+        requestParameterEntry.callbackMessageType = 10000;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     /**
      * 创建虚拟用户
+     *
      * @param name 虚拟用户名称
      */
     public static void createVirtualUser(String name,
@@ -151,8 +174,10 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     /**
      * 删除虚拟用户
+     *
      * @param virtualUserId 虚拟用户的ID
      */
     public static void deleteVirtualUser(String virtualUserId,
@@ -174,10 +199,10 @@ public class UserCenter {
      * 查询账号下的虚拟用户
      */
     public static void queryVirtualUserListInAccount(int pageNo,//从1开始
-                                         int pageSize,
-                                         Handler commitFailureHandler,
-                                         Handler responseErrorHandler,
-                                         Handler processDataHandler) {
+                                                     int pageSize,
+                                                     Handler commitFailureHandler,
+                                                     Handler responseErrorHandler,
+                                                     Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
@@ -193,13 +218,14 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     /**
      * 查询设备下的虚拟用户列表
      */
     public static void queryVirtualUserListInDevice(String iotId,
-                                         Handler commitFailureHandler,
-                                         Handler responseErrorHandler,
-                                         Handler processDataHandler) {
+                                                    Handler commitFailureHandler,
+                                                    Handler responseErrorHandler,
+                                                    Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
@@ -249,9 +275,9 @@ public class UserCenter {
      * 提交意见反馈
      */
     public void submitFeedback(String mobileSystem, String appVersion, int type, String content, String mobileModel, String contact, String topic,
-                                      Handler commitFailureHandler,
-                                      Handler responseErrorHandler,
-                                      Handler processDataHandler) {
+                               Handler commitFailureHandler,
+                               Handler responseErrorHandler,
+                               Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;

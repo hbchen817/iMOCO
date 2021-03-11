@@ -115,7 +115,7 @@ public class LockManager {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("OTP", key);
         jsonObject.put("StartTime", startTime);
-        jsonObject.put("ValidTime", 600);
+        jsonObject.put("ValidTime", 300);
         requestParameterEntry.addParameter("args", jsonObject);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_TEMPORARY_KEY;
         //提交
