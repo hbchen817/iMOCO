@@ -157,7 +157,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.7.500' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
     implementation 'com.vise.xiaoyaoyou:viselog:1.1.2'
 
-    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
+    implementation 'com.qmuiteam:qmui:1.1.4'
     // 2.0.0-alpha10
     implementation 'com.cncoderx.wheelview:library:1.2.5'
     implementation 'com.kyleduo.switchbutton:library:2.0.3'

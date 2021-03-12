@@ -150,7 +150,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 ServiceInputData item = mServiceInputDataList.get(position);
-                /*QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(EditPropertyValueForActionActivity.this);
+                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(EditPropertyValueForActionActivity.this);
                 for (Map.Entry<String, Object> map : item.getDataTypeMap().entrySet()) {
                     builder.addItem(map.getKey());
                 }
@@ -166,9 +166,9 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         mServiceAdapter.notifyDataSetChanged();
                     }
                 });
-                builder.build().show();*/
+                builder.build().show();
 
-                List<String> strings = new ArrayList<>();
+                /*List<String> strings = new ArrayList<>();
                 for (Map.Entry<String, Object> map : item.getDataTypeMap().entrySet()) {
                     strings.add(map.getKey());
                 }
@@ -187,7 +187,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         mServiceAdapter.notifyDataSetChanged();
                     }
                 });
-                dialg.show();
+                dialg.show();*/
             }
         });
         mServiceLayoutManager = new LinearLayoutManager(this);

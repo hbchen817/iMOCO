@@ -824,7 +824,7 @@ public class NewSceneActivity extends BaseActivity {
                 break;
             }
             case R.id.scene_mode_tv: {
-                /*QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
                 for (int i = 0; i < mModeArray.length; i++) {
                     builder.addItem(mModeArray[i]);
                 }
@@ -837,9 +837,9 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                builder.build().show();*/
+                builder.build().show();
 
-                AlertDialog.Builder dialg = new AlertDialog.Builder(this);
+                /*AlertDialog.Builder dialg = new AlertDialog.Builder(this);
                 dialg.setItems(mModeArray, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -849,12 +849,12 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                dialg.show();
+                dialg.show();*/
                 break;
             }
             case R.id.status_go:
             case R.id.status_tv: {
-                /*QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
                 for (int i = 0; i < mStatusArray.length; i++) {
                     builder.addItem(mStatusArray[i]);
                 }
@@ -867,9 +867,9 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                builder.build().show();*/
+                builder.build().show();
 
-                AlertDialog.Builder dialg = new AlertDialog.Builder(this);
+                /*AlertDialog.Builder dialg = new AlertDialog.Builder(this);
                 dialg.setItems(mStatusArray, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -879,12 +879,12 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                dialg.show();
+                dialg.show();*/
                 break;
             }
             case R.id.type_go:
             case R.id.type_tv: {
-                /*QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
                 for (int i = 0; i < mTypeArray.length; i++) {
                     builder.addItem(mTypeArray[i]);
                 }
@@ -898,9 +898,9 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                builder.build().show();*/
+                builder.build().show();
 
-                AlertDialog.Builder dialg = new AlertDialog.Builder(this);
+                /*AlertDialog.Builder dialg = new AlertDialog.Builder(this);
                 dialg.setItems(mTypeArray, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -911,7 +911,7 @@ public class NewSceneActivity extends BaseActivity {
                         dialog.dismiss();
                     }
                 });
-                dialg.show();
+                dialg.show();*/
                 break;
             }
             case R.id.name_go:
