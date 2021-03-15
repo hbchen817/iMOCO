@@ -24,7 +24,7 @@ public class ConfigureNetwork {
     private short dataLength;
 
     // 构造
-    public ConfigureNetwork(Context context){
+    public ConfigureNetwork(Context context) {
         this.mContext = context;
         this.buffer = new byte[Constant.CONFIGNETWORK_BUFFER_MAXSIZE];
         this.dataLength = 0;
@@ -32,7 +32,7 @@ public class ConfigureNetwork {
 
     // 发送配网数据到网关蓝牙
     public static boolean sendDataToBLE(BLEService bleService, String data, String key, int cmd) {
-        if(data == null || data.length() == 0) {
+        if (data == null || data.length() == 0) {
             return false;
         }
 
@@ -44,24 +44,26 @@ public class ConfigureNetwork {
 
         // 生成数据帧
         byte[] value = new EConfigureNetwork.dataFrameEntry().genFrame(content_encrypt, cmd);
-        return bleService.writeCharacteristic(CBLE.READ_WRITE_SERVICE_UUID, CBLE.READ_WRITE_CHARACTERISTIC_UUID, value);
+        if (bleService != null)
+            return bleService.writeCharacteristic(CBLE.READ_WRITE_SERVICE_UUID, CBLE.READ_WRITE_CHARACTERISTIC_UUID, value);
+        return false;
     }
 
     // 解析网关蓝牙应答数据
     public void parseBLEResponseData(byte[] frame, String key, Handler handler) {
-        if(frame == null || frame.length == 0 || key == null || key.length() == 0){
+        if (frame == null || frame.length == 0 || key == null || key.length() == 0) {
             return;
         }
 
         // 将数据追加到缓存
         this.addDataToBuffer(frame);
 
-        while (this.dataLength >= Constant.CONFIGNETWORK_FRAME_MINSIZE){
+        while (this.dataLength >= Constant.CONFIGNETWORK_FRAME_MINSIZE) {
             // 构造数据帧
             EConfigureNetwork.dataFrameEntry frameEntry = new EConfigureNetwork.dataFrameEntry(this.buffer, this.dataLength);
 
             // 帧不合法则丢掉前面一个字节继续处理
-            if((frameEntry.header > 0 && frameEntry.header != Constant.CONFIGNETWORK_FRAME_HEADER) ||
+            if ((frameEntry.header > 0 && frameEntry.header != Constant.CONFIGNETWORK_FRAME_HEADER) ||
                     frameEntry.length == 0 ||
                     frameEntry.length - frameEntry.dataLength != 3 ||
                     (frameEntry.footer > 0 && frameEntry.footer != Constant.CONFIGNETWORK_FRAME_FOOTER)) {
@@ -69,7 +71,7 @@ public class ConfigureNetwork {
             }
 
             // 帧数据没收全则退出下一次再处理
-            if(-1 == frameEntry.header ||
+            if (-1 == frameEntry.header ||
                     -1 == frameEntry.length ||
                     -1 == frameEntry.cmd ||
                     -1 == frameEntry.ack ||
@@ -81,25 +83,25 @@ public class ConfigureNetwork {
             // 处理合法帧
             boolean processIsSuccess = true;
             EConfigureNetwork.parseResultEntry resultEntry = null;
-            if(frameEntry.ack == Constant.CONFIGNETWORK_FRAME_NONACK){
+            if (frameEntry.ack == Constant.CONFIGNETWORK_FRAME_NONACK) {
                 // 数据解密
                 byte[] contentBytes = AES.CBC128ZeroPaddingDecrypt(frameEntry.data, key, Constant.CONFIGNETWORK_AES_CBC_IV);
                 int dataLength = contentBytes[0] & 0xFF;
-                if(dataLength >= contentBytes.length){
+                if (dataLength >= contentBytes.length) {
                     dataLength = contentBytes.length - 1;
                 }
                 byte[] dataBytes = new byte[dataLength];
                 System.arraycopy(contentBytes, 1, dataBytes, 0, dataBytes.length);
                 String content = new String(dataBytes);
                 // 单独处理token(直接采用字节值16进制字符)
-                if(frameEntry.cmd == Constant.CONFIGNETWORK_CMD_RECEIVETOKEN){
+                if (frameEntry.cmd == Constant.CONFIGNETWORK_CMD_RECEIVETOKEN) {
                     StringBuilder sb = new StringBuilder();
-                    for(byte b: dataBytes){
+                    for (byte b : dataBytes) {
                         sb.append(String.format("%02X", b));
                     }
                     content = sb.toString();
                 }
-                if(content == null) {
+                if (content == null) {
                     processIsSuccess = false;
                 } else {
                     resultEntry = new EConfigureNetwork.parseResultEntry(frameEntry.cmd, frameEntry.ack, content);
@@ -107,7 +109,7 @@ public class ConfigureNetwork {
             } else {
                 resultEntry = new EConfigureNetwork.parseResultEntry(frameEntry.cmd, frameEntry.ack, "");
             }
-            if(handler != null && processIsSuccess) {
+            if (handler != null && processIsSuccess) {
                 Message msg = new Message();
                 msg.what = Constant.MSG_PARSE_CONFIGNETWORKFRAME;
                 msg.obj = resultEntry;
@@ -115,7 +117,7 @@ public class ConfigureNetwork {
             }
 
             // 移除处理过的数据
-            this.removeFrontDataFromBuffer((short)(frameEntry.length + 2 + 1 + 1));
+            this.removeFrontDataFromBuffer((short) (frameEntry.length + 2 + 1 + 1));
         }
 
     }
@@ -159,7 +161,7 @@ public class ConfigureNetwork {
         Logger.i(String.format("ssid: %s", ssid));
         byte[] encrypt = AES.CBC128ZeroPaddingEncrypt(ssid_bytes, pk, Constant.CONFIGNETWORK_AES_CBC_IV);
         StringBuilder sb = new StringBuilder();
-        for(byte b : encrypt){
+        for (byte b : encrypt) {
             sb.append(String.format("%02X ", b));
         }
         Logger.i(String.format("ssid_encrypt: %s", sb.toString()));
@@ -171,7 +173,7 @@ public class ConfigureNetwork {
         Logger.i(String.format("password: %s", pwd));
         encrypt = AES.CBC128ZeroPaddingEncrypt(pwd_bytes, pk, Constant.CONFIGNETWORK_AES_CBC_IV);
         sb = new StringBuilder();
-        for(byte b : encrypt){
+        for (byte b : encrypt) {
             sb.append(String.format("%02X ", b));
         }
         Logger.i(String.format("password_encrypt: %s", sb.toString()));
@@ -185,8 +187,8 @@ public class ConfigureNetwork {
     public void bindDevice(EConfigureNetwork.bindDeviceParameterEntry parameter,
                            Handler commitFailureHandler,
                            Handler responseErrorHandler,
-                           Handler processDataHandler){
-        if(processDataHandler == null){
+                           Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -206,10 +208,10 @@ public class ConfigureNetwork {
 
     // 允许子设备入网
     public void permitJoinSubDevice(String gatewayId, String subDeviceProductKey, int duration,
-                           Handler commitFailureHandler,
-                           Handler responseErrorHandler,
-                           Handler processDataHandler){
-        if(processDataHandler == null){
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -230,8 +232,8 @@ public class ConfigureNetwork {
     public void bindSubDevice(String homeId, String productKey, String subDeviceName,
                               Handler commitFailureHandler,
                               Handler responseErrorHandler,
-                              Handler processDataHandler){
-        if(processDataHandler == null){
+                              Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -250,21 +252,21 @@ public class ConfigureNetwork {
 
     // 将接收到的数据加入缓存
     private void addDataToBuffer(byte[] frame) {
-        short addLength = (short)frame.length;
-        if((this.dataLength + addLength) > Constant.CONFIGNETWORK_BUFFER_MAXSIZE) {
-            addLength = (short)(Constant.CONFIGNETWORK_BUFFER_MAXSIZE - this.dataLength);
-            if(addLength <= 0) {
+        short addLength = (short) frame.length;
+        if ((this.dataLength + addLength) > Constant.CONFIGNETWORK_BUFFER_MAXSIZE) {
+            addLength = (short) (Constant.CONFIGNETWORK_BUFFER_MAXSIZE - this.dataLength);
+            if (addLength <= 0) {
                 return;
             }
         }
         System.arraycopy(frame, 0, this.buffer, this.dataLength, addLength);
-        this.dataLength = (short)(this.dataLength + addLength);
+        this.dataLength = (short) (this.dataLength + addLength);
     }
 
     // 移除缓存前面中的数据
     private void removeFrontDataFromBuffer(short length) {
-        short newDataLength = (short)(this.dataLength - length);
-        if(newDataLength <= 0){
+        short newDataLength = (short) (this.dataLength - length);
+        if (newDataLength <= 0) {
             this.dataLength = 0;
         } else {
             System.arraycopy(this.buffer, length, this.buffer, 0, newDataLength);
