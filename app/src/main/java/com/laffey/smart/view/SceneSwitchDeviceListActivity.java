@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -207,7 +209,9 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
             @Override
             protected void convert(@NotNull BaseViewHolder baseViewHolder, EDevice.deviceEntry deviceEntry) {
                 baseViewHolder.setText(R.id.deviceName, deviceEntry.nickName);
-                baseViewHolder.setImageResource(R.id.deviceImageView, ImageProvider.genProductIcon(deviceEntry.productKey));
+                // baseViewHolder.setImageResource(R.id.deviceImageView, ImageProvider.genProductIcon(deviceEntry.productKey));
+                ImageView imageView = baseViewHolder.getView(R.id.deviceImageView);
+                Glide.with(SceneSwitchDeviceListActivity.this).load(deviceEntry.image).into(imageView);
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {

@@ -123,6 +123,7 @@ public class ShareDeviceFragment extends BaseFragment {
             itemShareDevice.setId(mapKey);
             itemShareDevice.setDeviceName(mapValue.nickName);
             itemShareDevice.setProductKey(mapValue.productKey);
+            itemShareDevice.setImage(mapValue.image);
             if (type==0&&mapValue.owned==1){
                 itemShareDevice.setStatus(1);
                 models.add(itemShareDevice);

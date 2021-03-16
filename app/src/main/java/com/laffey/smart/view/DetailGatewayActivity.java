@@ -42,6 +42,7 @@ import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -91,11 +92,13 @@ public class DetailGatewayActivity extends DetailActivity {
                 rl.setBackgroundColor(getResources().getColor(R.color.topic_color1));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
                 mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color1));
-                if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color1));
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color1));
             } else {
                 rl.setBackgroundColor(getResources().getColor(R.color.topic_color2));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
-                if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color2));
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color2));
                 mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color2));
             }
         }
@@ -116,6 +119,7 @@ public class DetailGatewayActivity extends DetailActivity {
                         entry.productKey = e.productKey;
                         entry.status = e.status;
                         entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
+                        entry.image = e.image;
                         mDeviceList.add(entry);
                     }
                     if (list.data.size() >= list.pageSize) {

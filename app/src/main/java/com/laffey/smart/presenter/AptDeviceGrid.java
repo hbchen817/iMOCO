@@ -135,10 +135,14 @@ public class AptDeviceGrid extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		//viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
-		Glide.with(mContext).load(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey))
+		String image = this.mDeviceList.get(position).image;
+		if (image != null && image.length() > 0)
+			Glide.with(mContext).load(image).into(viewHolder.icon);
+		else{
+			Glide.with(mContext).load(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey))
 				.transition(new DrawableTransitionOptions().crossFade())
 				.into(viewHolder.icon);
+		}
 		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
 		viewHolder.room.setText(this.mDeviceList.get(position).roomName);
 		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));

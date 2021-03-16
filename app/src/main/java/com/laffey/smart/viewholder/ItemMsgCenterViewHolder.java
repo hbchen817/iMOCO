@@ -35,14 +35,20 @@ public class ItemMsgCenterViewHolder extends BaseViewHolder<ItemMsgCenter> {
         }
         time.setText(model.getTime());
         btn_view.setVisibility(model.isShowBtnView()?View.VISIBLE:View.GONE);
-        int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
-        if (imgSrcId != 0){
-            msg_img.setImageResource(imgSrcId);
-        }else {
-            if(model.getProductImg() != null && model.getProductImg().length() > 0){
-                Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+
+        String image = model.getProductImg();
+        if (image != null && image.length()>0)
+            Glide.with(adapter.getmContext()).load(image).into(msg_img);
+        else {
+            int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
+            if (imgSrcId != 0) {
+                msg_img.setImageResource(imgSrcId);
             } else {
-                msg_img.setImageResource(R.drawable.notify);
+                if (model.getProductImg() != null && model.getProductImg().length() > 0) {
+                    Glide.with(adapter.getmContext()).load(model.getProductImg()).into(msg_img);
+                } else {
+                    msg_img.setImageResource(R.drawable.notify);
+                }
             }
         }
 

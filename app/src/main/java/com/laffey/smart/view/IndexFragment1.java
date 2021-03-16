@@ -678,6 +678,7 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.status = e.status;
                     deviceEntry.owned = e.owned;
                     deviceEntry.roomName = e.roomName;
+                    deviceEntry.image = e.image;
                     this.mDeviceList.add(deviceEntry);
 
                     // 分享设备处理
@@ -689,6 +690,7 @@ public class IndexFragment1 extends BaseFragment {
                         deviceEntryShare.status = e.status;
                         deviceEntryShare.owned = e.owned;
                         deviceEntryShare.roomName = e.roomName;
+                        deviceEntryShare.image = e.image;
                         this.mShareDeviceList.add(deviceEntryShare);
                     }
                 }
@@ -702,6 +704,7 @@ public class IndexFragment1 extends BaseFragment {
                     deviceEntry.status = e.status;
                     deviceEntry.owned = e.owned;
                     deviceEntry.roomName = e.roomName;
+                    deviceEntry.image = e.image;
                     this.mDeviceList.add(deviceEntry);
 
                     // 分享设备处理
@@ -713,6 +716,7 @@ public class IndexFragment1 extends BaseFragment {
                         deviceEntryShare.status = e.status;
                         deviceEntryShare.owned = e.owned;
                         deviceEntryShare.roomName = e.roomName;
+                        deviceEntryShare.image = e.image;
                         this.mShareDeviceList.add(deviceEntryShare);
                     }
                 }

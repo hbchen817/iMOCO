@@ -127,6 +127,7 @@ public class EHomeSpace {
         public String description;
         public List<String> subDeviceIotIdList;
         public List<devicePropertyEntry> propertyList;
+        public String image;
 
         // 构造
         public deviceEntry() {
@@ -150,6 +151,7 @@ public class EHomeSpace {
             this.description = "";
             this.subDeviceIotIdList = new ArrayList<String>();
             this.propertyList = new ArrayList<devicePropertyEntry>();
+            this.image = "";
         }
 
         // 添加子设备

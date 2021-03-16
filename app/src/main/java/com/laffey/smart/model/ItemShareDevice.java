@@ -13,6 +13,15 @@ public class ItemShareDevice implements Visitable {
     private String productKey;
     private int status;//右侧图片 0不显示 1 箭头 2 未选择 3 已选择
     private int type;
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getId() {
         return id;

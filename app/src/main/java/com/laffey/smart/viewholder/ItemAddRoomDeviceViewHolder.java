@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.laffey.smart.R;
 import com.laffey.smart.model.ItemAddRoomDevice;
 import com.laffey.smart.presenter.ImageProvider;
@@ -21,9 +22,14 @@ public class ItemAddRoomDeviceViewHolder extends BaseViewHolder<ItemAddRoomDevic
         ImageView device_img = (ImageView) getView(R.id.device_img);
         ImageView right_img = (ImageView) getView(R.id.right_img);// 0不显示 1 箭头 2 未选择 3 已选择
 
-        int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
-        if (imgSrcId!=0){
-            device_img.setImageResource(imgSrcId);
+        String image = model.getImage();
+        if (image != null && image.length()>0)
+            Glide.with(adapter.getmContext()).load(image).into(device_img);
+        else {
+            int imgSrcId = ImageProvider.genProductIcon(model.getProductKey());
+            if (imgSrcId != 0) {
+                device_img.setImageResource(imgSrcId);
+            }
         }
         device_name.setText(model.getDeviceName());
         right_img.setImageResource(model.getType()==0?R.drawable.add_device:R.drawable.delete_device);

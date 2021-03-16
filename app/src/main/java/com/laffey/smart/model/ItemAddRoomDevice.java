@@ -12,6 +12,15 @@ public class ItemAddRoomDevice implements Visitable {
     private String deviceName;
     private String productKey;
     private int type;//0不在此房间，1在此房间
+    private String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getId() {
         return id;
