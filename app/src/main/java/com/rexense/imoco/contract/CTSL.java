@@ -55,8 +55,8 @@ public class CTSL {
     public static final String PK_FLOORHEATING001           = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
-    public static final String PK_ANY_FOUR_SCENE_SWITCH     = "a1Qb4P7DHAv";// 四键场景开关
-    public static final String PK_ANY_TWO_SCENE_SWITCH      = "a1WBTOxm1Z5";// 二键场景开关
+    public static final String PK_ANY_FOUR_SCENE_SWITCH     = "a1Qb4P7DHAv";// 随意贴四键场景开关
+    public static final String PK_ANY_TWO_SCENE_SWITCH      = "a1WBTOxm1Z5";// 随意贴二键场景开关
 
 	public static final String PK_ONE_KEY_SWITCH            = "a1EEhmdntAu";// 一键面板开关
     public static final String PK_TWO_KEY_SWITCH            = "a1pVHRVmHqD";// 两键面板开关

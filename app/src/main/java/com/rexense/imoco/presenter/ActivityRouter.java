@@ -108,6 +108,7 @@ public class ActivityRouter {
             case CTSL.PK_SIX_SCENE_SWITCH:
                 intent = new Intent(context, SixSceneSwitchActivity.class);
                 break;
+            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
                 intent = new Intent(context, TwoSceneSwitchActivity.class);
                 break;
