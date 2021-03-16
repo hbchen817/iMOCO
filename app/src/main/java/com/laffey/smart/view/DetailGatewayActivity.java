@@ -52,6 +52,8 @@ import org.greenrobot.eventbus.Subscribe;
  * Description: 网关详细界面
  */
 public class DetailGatewayActivity extends DetailActivity {
+    private View mFakeStatusbarView;
+
     private int mAarmMode = 0;
     private TextView mLblCount, mLblAarmMode, mLblAarmModeClick;
     private ImageView mImgSecurity, mImgSecurityRound;
@@ -88,11 +90,13 @@ public class DetailGatewayActivity extends DetailActivity {
             if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
                 rl.setBackgroundColor(getResources().getColor(R.color.topic_color1));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
+                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color1));
                 if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color1));
             } else {
                 rl.setBackgroundColor(getResources().getColor(R.color.topic_color2));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
                 if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color2));
+                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color2));
             }
         }
         return true;
@@ -261,6 +265,7 @@ public class DetailGatewayActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
+        mFakeStatusbarView = (View) findViewById(R.id.fake_statusbar_view);
 
         this.mLblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
         this.mLblCount.setVisibility(View.INVISIBLE);

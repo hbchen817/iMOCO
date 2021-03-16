@@ -196,7 +196,12 @@ public class PermitJoinActivity extends BaseActivity {
                                 joinResultEntry.subDeviceName, joinResultEntry.subProductKey));
                         // 绑定子设备
                         if (joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
-                            mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                                }
+                            }, 2000);
                         }
                     }
                     break;

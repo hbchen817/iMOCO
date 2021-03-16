@@ -3,8 +3,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/moreGatewayFl"
     android:layout_width="match_parent"
-    android:background="@color/appbgcolor"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/appbgcolor">
 
     <LinearLayout
         android:id="@+id/moreGatewayLl"
@@ -21,221 +21,238 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="25dp"
-                android:layout_marginTop="5dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_function"/>
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_function" />
 
-            <RelativeLayout
-                style="@style/InputItemStyle_Low">
+            <RelativeLayout style="@style/InputItemStyle_Low">
 
                 <TextView
                     android:id="@+id/moreGatewayLblAlarmBellId"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
                     style="@style/NormalFontStyle"
-                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/moregateway_alarmbellid"/>
+                    android:gravity="center_vertical"
+                    android:text="@string/moregateway_alarmbellid" />
 
                 <TextView
                     android:id="@+id/moreGatewayLblAlarmBellIdValue"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_vertical"
                     style="@style/NormalFontStyle"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmBellId"
                     android:layout_marginRight="5dp"
-                    android:text="4"/>
+                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmBellId"
+                    android:gravity="center_vertical"
+                    android:text="4" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgAlarmBellId"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="@string/contentDescription_null"
                     android:src="@drawable/go" />
 
             </RelativeLayout>
 
-            <RelativeLayout
-                style="@style/InputItemStyle_Low">
+            <RelativeLayout style="@style/InputItemStyle_Low">
 
                 <TextView
                     android:id="@+id/moreGatewayLblBellVolume"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
                     style="@style/NormalFontStyle"
-                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/moregateway_bellvolume"/>
+                    android:gravity="center_vertical"
+                    android:text="@string/moregateway_bellvolume" />
 
                 <TextView
                     android:id="@+id/moreGatewayLblBellVolumeValue"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_vertical"
                     style="@style/NormalFontStyle"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgBellVolume"
                     android:layout_marginRight="5dp"
-                    android:text="75%"/>
+                    android:layout_toLeftOf="@+id/moreGatewayImgBellVolume"
+                    android:gravity="center_vertical"
+                    android:text="75%" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgBellVolume"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="@string/contentDescription_null"
                     android:src="@drawable/go" />
 
             </RelativeLayout>
 
-            <RelativeLayout
-                style="@style/InputItemStyle_Low">
+            <RelativeLayout style="@style/InputItemStyle_Low">
 
                 <TextView
                     android:id="@+id/moreGatewayLblBellMusicId"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
                     style="@style/NormalFontStyle"
-                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/moregateway_bellmusicid"/>
+                    android:gravity="center_vertical"
+                    android:text="@string/moregateway_bellmusicid" />
 
                 <TextView
                     android:id="@+id/moreGatewayLblBellMusicIdValue"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_vertical"
                     style="@style/NormalFontStyle"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgBellMusicId"
                     android:layout_marginRight="5dp"
-                    android:text="5"/>
+                    android:layout_toLeftOf="@+id/moreGatewayImgBellMusicId"
+                    android:gravity="center_vertical"
+                    android:text="5" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgBellMusicId"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="@string/contentDescription_null"
                     android:src="@drawable/go" />
 
             </RelativeLayout>
 
-            <RelativeLayout
-                style="@style/InputItemStyle_Low">
+            <RelativeLayout style="@style/InputItemStyle_Low">
 
                 <TextView
                     android:id="@+id/moreGatewayLblAlarmVolume"
-                    android:layout_alignParentLeft="true"
-                    android:layout_width="wrap_content"
                     style="@style/NormalFontStyle"
-                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
+                    android:layout_alignParentLeft="true"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/moregateway_alarmvolume"/>
+                    android:gravity="center_vertical"
+                    android:text="@string/moregateway_alarmvolume" />
 
                 <TextView
                     android:id="@+id/moreGatewayLblAlarmVolumeValue"
-                    android:layout_width="wrap_content"
-                    android:gravity="center_vertical"
                     style="@style/NormalFontStyle"
+                    android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmVolume"
                     android:layout_marginRight="5dp"
-                    android:text="60%"/>
+                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmVolume"
+                    android:gravity="center_vertical"
+                    android:text="60%" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgAlarmVolume"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="@string/contentDescription_null"
                     android:src="@drawable/go" />
 
             </RelativeLayout>
         </LinearLayout>
 
         <TextView
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_marginTop="5dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/moredevice_normal"/>
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:text="@string/moredevice_normal" />
 
-        <RelativeLayout
-            style="@style/InputItemStyle_Low">
+        <RelativeLayout style="@style/InputItemStyle_Low">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_name"/>
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_name" />
 
             <TextView
                 android:id="@+id/moreGatewayLblName"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
                 style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_toLeftOf="@+id/moreGatewayImgName"
                 android:layout_marginRight="5dp"
-                android:text="DeviceName"/>
+                android:layout_toLeftOf="@+id/moreGatewayImgName"
+                android:gravity="center_vertical"
+                android:text="DeviceName" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgName"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
                 android:src="@drawable/go" />
 
         </RelativeLayout>
 
-        <RelativeLayout
-            style="@style/InputItemStyle_Low">
+        <RelativeLayout style="@style/InputItemStyle_Low">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_id"/>
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_id" />
 
             <TextView
                 android:id="@+id/moreGatewayLblId"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_alignParentRight="true"
                 style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
-                android:text="id"/>
+                android:gravity="center_vertical"
+                android:text="id" />
+
+        </RelativeLayout>
+
+        <RelativeLayout style="@style/InputItemStyle_Low">
+
+            <TextView
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_bindtime" />
+
+            <TextView
+                android:id="@+id/moreGatewayLblBindTime"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="35dp"
+                android:gravity="center_vertical"
+                android:text="2020-04-27 12:16:18" />
 
         </RelativeLayout>
 
@@ -244,57 +261,33 @@
             style="@style/InputItemStyle_Low">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_room"/>
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_room" />
 
             <TextView
                 android:id="@+id/moreGatewayLblRoom"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
                 style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_toLeftOf="@+id/moreGatewayImgRoom"
                 android:layout_marginRight="5dp"
-                android:text="客厅"/>
+                android:layout_toLeftOf="@+id/moreGatewayImgRoom"
+                android:gravity="center_vertical"
+                android:text="客厅" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgRoom"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
                 android:src="@drawable/go" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            style="@style/InputItemStyle_Low">
-
-            <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
-                style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_bindtime"/>
-
-            <TextView
-                android:id="@+id/moreGatewayLblBindTime"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_alignParentRight="true"
-                style="@style/NormalFontStyle"
-                android:layout_height="50dp"
-                android:layout_marginRight="35dp"
-                android:text="2020-04-27 12:16:18"/>
 
         </RelativeLayout>
 
@@ -303,47 +296,23 @@
             style="@style/InputItemStyle_Low">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_msg"/>
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_msg" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgMsg"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
                 android:src="@drawable/go" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            style="@style/InputItemStyle_Low">
-
-            <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
-                style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
-                android:layout_height="50dp"
-                android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_version"/>
-
-            <TextView
-                android:id="@+id/moreGatewayLblVersion"
-                android:layout_width="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_alignParentRight="true"
-                style="@style/NormalFontStyle"
-                android:layout_height="50dp"
-                android:layout_marginRight="35dp"
-                android:text="1.0.0"/>
 
         </RelativeLayout>
 
@@ -352,23 +321,57 @@
             style="@style/InputItemStyle_Low">
 
             <TextView
-                android:layout_alignParentLeft="true"
-                android:layout_width="wrap_content"
                 style="@style/NormalFontStyle"
-                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
-                android:text="@string/moredevice_upgrade"/>
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_version" />
+
+            <TextView
+                android:id="@+id/moreGatewayLblVersion"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="35dp"
+                android:gravity="center_vertical"
+                android:text="1.0.0" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgUpgrade"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
                 android:src="@drawable/go" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            style="@style/InputItemStyle_Low"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_upgrade" />
+
+            <!--<ImageView
+                android:id="@+id/moreGatewayImgUpgrade"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:src="@drawable/go" />-->
 
         </RelativeLayout>
 
@@ -378,13 +381,12 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_gravity="center|bottom"
         android:layout_height="50dp"
+        android:layout_gravity="center|bottom"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp">
 

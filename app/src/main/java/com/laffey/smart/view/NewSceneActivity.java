@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -80,11 +81,11 @@ public class NewSceneActivity extends BaseActivity {
     @BindView(R.id.scene_mode_tv)
     TextView mSceneModeTV;
     @BindView(R.id.add_new_condition_iv)
-    ImageView mAddConditionIV;
+    TextView mAddConditionIV;
     @BindView(R.id.add_new_condition_tv)
     TextView mAddConditionTV;
     @BindView(R.id.add_new_action_iv)
-    ImageView mAddActionIV;
+    TextView mAddActionIV;
     @BindView(R.id.add_new_action_tv)
     TextView mAddActionTV;
     @BindView(R.id.condition_recycler)
@@ -133,6 +134,10 @@ public class NewSceneActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_scene);
         ButterKnife.bind(this);
+
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mAddConditionIV.setTypeface(iconfont);
+        mAddActionIV.setTypeface(iconfont);
 
         mSceneManager = new SceneManager(this);
         initView();
