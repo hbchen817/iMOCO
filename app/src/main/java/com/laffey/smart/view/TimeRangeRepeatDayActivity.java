@@ -17,18 +17,16 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
 import com.laffey.smart.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CustomRepeatDayActivity extends BaseActivity {
+public class TimeRangeRepeatDayActivity extends BaseActivity {
     @BindView(R.id.tv_toolbar_title)
     TextView mTitle;
     @BindView(R.id.tv_toolbar_right)
@@ -79,44 +77,14 @@ public class CustomRepeatDayActivity extends BaseActivity {
                     RepeatDay day = mDayList.get(i);
                     if (day.isChecked) {
                         isChecked = true;
-                        String dayValue = null;
-                        switch (day.getPos()+1){
-                            case 1:{
-                                dayValue = "mon";
-                                break;
-                            }
-                            case 2:{
-                                dayValue = "tue";
-                                break;
-                            }
-                            case 3:{
-                                dayValue = "wed";
-                                break;
-                            }
-                            case 4:{
-                                dayValue = "thu";
-                                break;
-                            }
-                            case 5:{
-                                dayValue = "fri";
-                                break;
-                            }
-                            case 6:{
-                                dayValue = "sat";
-                                break;
-                            }
-                            case 7:{
-                                dayValue = "sun";
-                                break;
-                            }
-                        }
+                        String dayValue = String.valueOf(day.getPos()+1);
                         if (stringBuilder.toString().length() == 0) {
                             stringBuilder.append(dayValue);
                         } else stringBuilder.append("," + dayValue);
                     }
                 }
                 if (!isChecked)
-                    ToastUtils.showLongToast(CustomRepeatDayActivity.this, R.string.choose_at_least_one_date);
+                    ToastUtils.showLongToast(TimeRangeRepeatDayActivity.this, R.string.choose_at_least_one_date);
                 else {
                     Intent intent = new Intent();
                     intent.putExtra("custom_repeat_result", stringBuilder.toString());
@@ -132,25 +100,7 @@ public class CustomRepeatDayActivity extends BaseActivity {
             if (mCustomWeekDayResult != null) {
                 String[] s = mCustomWeekDayResult.split(",");
                 for (int j = 0; j < s.length; j++) {
-                    if ("mon".equals(s[j]) && i == 0) {
-                        isContains = true;
-                        break;
-                    } else if ("tue".equals(s[j]) && i == 1) {
-                        isContains = true;
-                        break;
-                    } else if ("wed".equals(s[j]) && i == 2) {
-                        isContains = true;
-                        break;
-                    } else if ("thu".equals(s[j]) && i == 3) {
-                        isContains = true;
-                        break;
-                    } else if ("fri".equals(s[j]) && i == 4) {
-                        isContains = true;
-                        break;
-                    } else if ("sat".equals(s[j]) && i == 5) {
-                        isContains = true;
-                        break;
-                    } else if ("sun".equals(s[j]) && i == 6) {
+                    if (i == Integer.parseInt(s[j]) - 1) {
                         isContains = true;
                         break;
                     }

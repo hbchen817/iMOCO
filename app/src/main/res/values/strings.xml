@@ -17,6 +17,12 @@
     <string name="icon_add">&#xe652;</string>
     <string name="icon_add_2">&#xe68a;</string>
     <string name="icon_more">&#xe615;</string>
+    <string name="icon_timer_2">&#xe651;</string>
+    <string name="icon_calendar">&#xe7e3;</string>
+    <string name="icon_dev">&#xe617;</string>
+    <string name="icon_scene">&#xe755;</string>
+    <string name="icon_notification">&#xe608;</string>
+    <string name="icon_checked">&#xe631;</string>
 
     <string name="app_name">拉斐智能</string><!--莫科智家-->
     <string name="contentDescription_null"></string>

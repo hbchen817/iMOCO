@@ -2,6 +2,7 @@ package com.laffey.smart.view;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -55,23 +56,23 @@ public class TimeSelectorActivity extends BaseActivity {
     @BindView(R.id.once_layout)
     RelativeLayout mOnceLayout;
     @BindView(R.id.once_checked)
-    ImageView mOnceIV;
+    TextView mOnceIV;
     @BindView(R.id.everyday_layout)
     RelativeLayout mEverydayLayout;
     @BindView(R.id.everyday_checked)
-    ImageView mEverydayIV;
+    TextView mEverydayIV;
     @BindView(R.id.working_days_layout)
     RelativeLayout mWorkingDaysLayout;
     @BindView(R.id.working_days_checked)
-    ImageView mWorkingDaysIV;
+    TextView mWorkingDaysIV;
     @BindView(R.id.weekend_layout)
     RelativeLayout mWeekendLayout;
     @BindView(R.id.weakend_checked)
-    ImageView mWeakendIV;
+    TextView mWeakendIV;
     @BindView(R.id.custom_layout)
     RelativeLayout mCustomLayout;
     @BindView(R.id.custom_checked)
-    ImageView mCustomIV;
+    TextView mCustomIV;
 
     private List<String> mHourList = new ArrayList<>();
     private List<String> mMinList = new ArrayList<>();
@@ -88,6 +89,13 @@ public class TimeSelectorActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_selector);
         ButterKnife.bind(this);
+
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mOnceIV.setTypeface(iconfont);
+        mEverydayIV.setTypeface(iconfont);
+        mWorkingDaysIV.setTypeface(iconfont);
+        mWeakendIV.setTypeface(iconfont);
+        mCustomIV.setTypeface(iconfont);
 
         initStatusBar();
 
@@ -225,27 +233,27 @@ public class TimeSelectorActivity extends BaseActivity {
                     }
                 } else if (mEverydayIV.getVisibility() == View.VISIBLE) {
                     // 每天
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * *";
+                    mTimeResult = "0 " + Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * ? *";
                     mTimerEntry.setCron(mTimeResult);
-                    mTimerEntry.setCronType(Constant.TIMER_LINUX);
+                    mTimerEntry.setCronType(Constant.TIMER_QUARTZ_CRON);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 } else if (mWorkingDaysIV.getVisibility() == View.VISIBLE) {
                     // 工作日
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * 1,2,3,4,5";
+                    mTimeResult = "0 " + Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " ? * mon,tue,wed,thu,fri *";
                     mTimerEntry.setCron(mTimeResult);
-                    mTimerEntry.setCronType(Constant.TIMER_LINUX);
+                    mTimerEntry.setCronType(Constant.TIMER_QUARTZ_CRON);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 } else if (mWeakendIV.getVisibility() == View.VISIBLE) {
                     // 周末
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * 6,7";
+                    mTimeResult = "0 " + Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " ? * sat,sun *";
                     mTimerEntry.setCron(mTimeResult);
-                    mTimerEntry.setCronType(Constant.TIMER_LINUX);
+                    mTimerEntry.setCronType(Constant.TIMER_QUARTZ_CRON);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 } else if (mCustomIV.getVisibility() == View.VISIBLE) {
                     // 自定义
-                    mTimeResult = Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " * * " + mCustomWeekDayResult;
+                    mTimeResult = "0 " + Integer.valueOf(mSelectMin) + " " + Integer.valueOf(mSelectHour) + " ? * " + mCustomWeekDayResult + " *";
                     mTimerEntry.setCron(mTimeResult);
-                    mTimerEntry.setCronType(Constant.TIMER_LINUX);
+                    mTimerEntry.setCronType(Constant.TIMER_QUARTZ_CRON);
                     mTimerEntry.setTimezoneID(Constant.TIMER_ZONE_ID);
                 }
                 ViseLog.d(new Gson().toJson(mTimerEntry));
@@ -314,21 +322,41 @@ public class TimeSelectorActivity extends BaseActivity {
             mWeakendIV.setVisibility(View.GONE);
             mCustomIV.setVisibility(View.GONE);
 
-            if (Constant.TIMER_QUARTZ_CRON.equals(mTimerEntry.getCronType())){
+            /*if (Constant.TIMER_QUARTZ_CRON.equals(mTimerEntry.getCronType())) {
                 mOnceIV.setVisibility(View.VISIBLE);
             } else {
                 String[] s = mTimerEntry.getCron().split(" ");
-                if ("*".equals(s[s.length-1])){
+                if ("*".equals(s[s.length - 1])) {
                     mEverydayIV.setVisibility(View.VISIBLE);
-                } else if ("1,2,3,4,5".equals(s[s.length-1])){
+                } else if ("1,2,3,4,5".equals(s[s.length - 1])) {
                     mWorkingDaysIV.setVisibility(View.VISIBLE);
-                } else if ("6,7".equals(s[s.length-1])){
+                } else if ("6,7".equals(s[s.length - 1])) {
                     mWeakendIV.setVisibility(View.VISIBLE);
                 } else {
                     mCustomIV.setVisibility(View.VISIBLE);
-                    mCustomWeekDayResult = s[s.length-1];
+                    mCustomWeekDayResult = s[s.length - 1];
                 }
+            }*/
+
+            String[] crons = mTimerEntry.getCron().split(" ");
+            if (!"*".equals(crons[crons.length - 1])) {
+                // 执行一次
+                mOnceIV.setVisibility(View.VISIBLE);
+            } else if ("?".equals(crons[crons.length - 2])) {
+                // 每天
+                mEverydayIV.setVisibility(View.VISIBLE);
+            } else if ("mon,tue,wed,thu,fri".equals(crons[crons.length - 2])) {
+                // 工作日
+                mWorkingDaysIV.setVisibility(View.VISIBLE);
+            } else if ("sat,sun".equals(crons[crons.length - 2])) {
+                // 周末
+                mWeakendIV.setVisibility(View.VISIBLE);
+            } else {
+                // 自定义
+                mCustomIV.setVisibility(View.VISIBLE);
+                mCustomWeekDayResult = crons[crons.length - 2];
             }
+
             EventBus.getDefault().removeStickyEvent(message);
         }
     }

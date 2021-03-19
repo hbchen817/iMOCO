@@ -2,6 +2,7 @@ package com.laffey.smart.view;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,6 +26,18 @@ public class AddConditionActivity extends BaseActivity {
     RelativeLayout mDevLayout;
     @BindView(R.id.dev_divider)
     TextView mDevDividerTV;
+    @BindView(R.id.timer_iv)
+    TextView mTimerIV;
+    @BindView(R.id.timer_range_iv)
+    TextView mTimerRangeIV;
+    @BindView(R.id.dev_iv)
+    TextView mDevIV;
+    @BindView(R.id.timer_go_iv)
+    TextView mTimerGoIV;
+    @BindView(R.id.timer_range_go_iv)
+    TextView mTimerRangeGoIV;
+    @BindView(R.id.dev_go_iv)
+    TextView mDevGoIV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +50,14 @@ public class AddConditionActivity extends BaseActivity {
         mTimeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
         mTimeRangeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
         mDevDividerTV.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
+
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mTimerIV.setTypeface(iconfont);
+        mTimerRangeIV.setTypeface(iconfont);
+        mDevIV.setTypeface(iconfont);
+        mTimerGoIV.setTypeface(iconfont);
+        mTimerRangeGoIV.setTypeface(iconfont);
+        mDevGoIV.setTypeface(iconfont);
 
         initView();
     }

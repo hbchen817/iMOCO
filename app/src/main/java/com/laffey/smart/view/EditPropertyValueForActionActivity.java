@@ -3,6 +3,7 @@ package com.laffey.smart.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -87,11 +88,15 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
     private BaseQuickAdapter<ServiceInputData, BaseViewHolder> mServiceAdapter;
     private LinearLayoutManager mServiceLayoutManager;
 
+    private Typeface mIconfont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_property_value);
         ButterKnife.bind(this);
+
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
 
         mCompareTypes = new String[]{getString(R.string.equal_to)};
 
@@ -108,6 +113,9 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
         mAdapter = new BaseQuickAdapter<PropertyValue, BaseViewHolder>(R.layout.item_simple_checked, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, PropertyValue value) {
+                TextView itemChecked = holder.getView(R.id.item_checked);
+                itemChecked.setTypeface(mIconfont);
+
                 int pos = mList.indexOf(value);
                 holder.setText(R.id.item_title, value.getKey())
                         .setVisible(R.id.item_checked, value.isChecked())
@@ -291,7 +299,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         if (i == 0) {
                             stringBuilder.append(data.getName() + data.getSelectName());
                         } else {
-                            stringBuilder.append("，"+data.getName() + data.getSelectName());
+                            stringBuilder.append("，" + data.getName() + data.getSelectName());
                         }
 
                         if ("enum".equals(data.getDataType().getType()) || "bool".equals(data.getDataType().getType())) {

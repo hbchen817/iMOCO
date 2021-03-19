@@ -69,15 +69,15 @@ public class NewSceneActivity extends BaseActivity {
     @BindView(R.id.name_tv)
     TextView mSceneNameTV;
     @BindView(R.id.name_go)
-    ImageView mSceneNameIV;
+    TextView mSceneNameIV;
     @BindView(R.id.type_tv)
     TextView mSceneTypeTV;
     @BindView(R.id.type_go)
-    ImageView mSceneTypeIV;
+    TextView mSceneTypeIV;
     @BindView(R.id.status_tv)
     TextView mSceneStatusTV;
     @BindView(R.id.status_go)
-    ImageView mSceneStatusIV;
+    TextView mSceneStatusIV;
     @BindView(R.id.scene_mode_tv)
     TextView mSceneModeTV;
     @BindView(R.id.add_new_condition_iv)
@@ -129,15 +129,20 @@ public class NewSceneActivity extends BaseActivity {
 
     private boolean mValid = true;
 
+    private Typeface mIconfont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_scene);
         ButterKnife.bind(this);
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mAddConditionIV.setTypeface(iconfont);
-        mAddActionIV.setTypeface(iconfont);
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mAddConditionIV.setTypeface(mIconfont);
+        mAddActionIV.setTypeface(mIconfont);
+        mSceneNameIV.setTypeface(mIconfont);
+        mSceneTypeIV.setTypeface(mIconfont);
+        mSceneStatusIV.setTypeface(mIconfont);
 
         mSceneManager = new SceneManager(this);
         initView();
@@ -198,6 +203,8 @@ public class NewSceneActivity extends BaseActivity {
         mActionAdapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_condition_or_action, mActionList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, Object o) {
+                TextView goIcon = holder.getView(R.id.go_iv);
+                goIcon.setTypeface(mIconfont);
                 if (o instanceof ActionEntry.SendMsg) {
                     ActionEntry.SendMsg msg = (ActionEntry.SendMsg) o;
                     holder.setText(R.id.title, R.string.send_a_notification)
@@ -372,13 +379,16 @@ public class NewSceneActivity extends BaseActivity {
         mCaconditionAdapter = new BaseQuickAdapter<Object, BaseViewHolder>(R.layout.item_condition_or_action, mCaconditionList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, Object o) {
+                TextView goIcon = holder.getView(R.id.go_iv);
+                goIcon.setTypeface(mIconfont);
                 if (o instanceof CaConditionEntry.Timer) {
+                    //icon.setText(getString(R.string.icon_timer_2));
                     CaConditionEntry.Timer timer = (CaConditionEntry.Timer) o;
                     holder.setImageResource(R.id.icon_iv, R.drawable.conditon_timer)
                             .setText(R.id.title, R.string.timer_point);
                     String cronType = timer.getCronType();
                     StringBuilder stringBuilder = new StringBuilder();
-                    if (cronType.equals(Constant.TIMER_LINUX)) {
+                    /*if (cronType.equals(Constant.TIMER_LINUX)) {
                         //  * * * 每天
                         //  ? * 1,2,3,4,5 工作日
                         //  ? * 6,7 周末
@@ -403,6 +413,31 @@ public class NewSceneActivity extends BaseActivity {
                         String min = crons[1].length() == 2 ? crons[1] : "0" + crons[1];
                         stringBuilder.append(crons[6] + "年" + crons[4] + "月" + crons[3] + "日 ");
                         stringBuilder.append(hour + ":" + min + " " + getString(R.string.do_once));
+                    }*/
+
+                    String cron = timer.getCron();
+                    String[] crons = cron.split(" ");
+                    String hour = crons[2].length() == 2 ? crons[2] : "0" + crons[2];
+                    String min = crons[1].length() == 2 ? crons[1] : "0" + crons[1];
+
+                    int cronsLength = crons.length;
+                    if (!crons[cronsLength-1].equals("*")) {
+                        // 执行一次
+                        stringBuilder.append(crons[cronsLength-1] + "年" + crons[cronsLength-3] + "月" + crons[cronsLength-4] + "日 ");
+                        stringBuilder.append(hour + ":" + min + " " + getString(R.string.do_once));
+                    } else if (crons[cronsLength-2].equals("?")) {
+                        // 每天
+                        stringBuilder.append(hour + ":" + min + " " + getString(R.string.everyday));
+                    } else if (crons[cronsLength-2].equals("mon,tue,wed,thu,fri")) {
+                        // 工作日
+                        stringBuilder.append(hour + ":" + min + " " + getString(R.string.working_days));
+                    } else if (crons[cronsLength-2].equals("sat,sun")) {
+                        // 周末
+                        stringBuilder.append(hour + ":" + min + " " + getString(R.string.weekend));
+                    } else {
+                        // 自定义
+                        stringBuilder.append(hour + ":" + min + " ");
+                        stringBuilder.append(getRepeatString(crons[5]));
                     }
                     holder.setText(R.id.detail, stringBuilder.toString());
                 } else if (o instanceof CaConditionEntry.TimeRange) {
@@ -588,43 +623,43 @@ public class NewSceneActivity extends BaseActivity {
 
     private String getRepeatString(String repeat) {
         StringBuilder stringBuilder = new StringBuilder();
-        if ("1,2,3,4,5,6,7".equals(repeat))
+        if ("mon,tue,wed,thu,fri,sat,sun".equals(repeat))
             return getString(R.string.everyday);
-        else if ("1,2,3,4,5".equals(repeat))
+        else if ("mon,tue,wed,thu,fri".equals(repeat))
             return getString(R.string.working_days);
-        else if ("6,7".equals(repeat))
+        else if ("sat,sun".equals(repeat))
             return getString(R.string.weekend);
         String[] s = repeat.split(",");
         for (int i = 0; i < s.length; i++) {
             if (i == 0) {
-                if ("1".equals(s[i]))
+                if ("mon".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_1_all));
-                else if ("2".equals(s[i]))
+                else if ("tue".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_2_all));
-                else if ("3".equals(s[i]))
+                else if ("wed".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_3_all));
-                else if ("7".equals(s[i]))
+                else if ("sun".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_0_all));
-                else if ("4".equals(s[i]))
+                else if ("thu".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_4_all));
-                else if ("5".equals(s[i]))
+                else if ("fri".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_5_all));
-                else if ("6".equals(s[i]))
+                else if ("sat".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_6_all));
             } else {
-                if ("1".equals(s[i]))
+                if ("mon".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_1_all));
-                else if ("2".equals(s[i]))
+                else if ("tue".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_2_all));
-                else if ("3".equals(s[i]))
+                else if ("wed".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_3_all));
-                else if ("7".equals(s[i]))
+                else if ("sun".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_0_all));
-                else if ("4".equals(s[i]))
+                else if ("thu".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_4_all));
-                else if ("5".equals(s[i]))
+                else if ("fri".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_5_all));
-                else if ("6".equals(s[i]))
+                else if ("sat".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_6_all));
             }
         }

@@ -34,7 +34,7 @@
                     android:text="@string/name"
                     android:textSize="@dimen/sp_14" />
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/name_go"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,7 +42,20 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/dp_10"
                     android:clickable="true"
-                    android:src="@drawable/go" />
+                    android:src="@drawable/go" />-->
+
+                <TextView
+                    android:id="@+id/name_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/icon_right_arrow"
+                    android:textColor="@color/normal_font_color"
+                    android:textSize="@dimen/sp_30" />
 
                 <TextView
                     android:id="@+id/name_tv"
@@ -78,14 +91,18 @@
                     android:text="@string/type"
                     android:textSize="@dimen/sp_14" />
 
-                <ImageView
+                <TextView
                     android:id="@+id/type_go"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/dp_10"
-                    android:src="@drawable/go" />
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/icon_right_arrow"
+                    android:textColor="@color/normal_font_color"
+                    android:textSize="@dimen/sp_30" />
 
                 <TextView
                     android:id="@+id/type_tv"
@@ -118,14 +135,27 @@
                     android:text="@string/oneswitch_state"
                     android:textSize="@dimen/sp_14" />
 
-                <ImageView
+                <!--<ImageView
                     android:id="@+id/status_go"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/dp_10"
-                    android:src="@drawable/go" />
+                    android:src="@drawable/go" />-->
+
+                <TextView
+                    android:id="@+id/status_go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/dp_10"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/icon_right_arrow"
+                    android:textColor="@color/normal_font_color"
+                    android:textSize="@dimen/sp_30" />
 
                 <TextView
                     android:id="@+id/status_tv"
@@ -295,12 +325,13 @@
                 android:id="@+id/del_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/dp_10"
-                android:background="@android:color/white"
+                android:layout_gravity="bottom"
+                android:layout_margin="@dimen/dp_10"
+                android:background="@drawable/shape_button"
                 android:gravity="center"
                 android:paddingVertical="@dimen/dp_15"
                 android:text="@string/delete"
-                android:textColor="@color/red"
+                android:textColor="@android:color/white"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -88,6 +88,9 @@
             android:name=".view.CustomRepeatDayActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".view.TimeRangeRepeatDayActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.TimeSelectorActivity"
             android:screenOrientation="portrait" />
         <activity

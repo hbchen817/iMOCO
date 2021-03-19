@@ -145,7 +145,7 @@ public class UserCenter {
         requestParameterEntry.version = "1.0.7";
         requestParameterEntry.addParameter("productKey", productKey);
         requestParameterEntry.addParameter("deviceName", deviceName);
-        requestParameterEntry.callbackMessageType = 10000;
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UNBINDEVICE;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

@@ -115,7 +115,10 @@ public class MoreSubdeviceActivity extends BaseActivity {
                             }
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
-                                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                //mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+
+                                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }
                         }
                     }
@@ -382,7 +385,10 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
                 break;
             default:
-                mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                //mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+
+                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
+                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 break;
         }
     }

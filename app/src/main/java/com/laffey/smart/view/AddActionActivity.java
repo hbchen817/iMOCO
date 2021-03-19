@@ -2,6 +2,7 @@ package com.laffey.smart.view;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -24,12 +25,32 @@ public class AddActionActivity extends BaseActivity {
     LinearLayout mSceneLayout;
     @BindView(R.id.notification_action_layout)
     LinearLayout mNotificationLayout;
+    @BindView(R.id.dev_iv)
+    TextView mDevIV;
+    @BindView(R.id.scene_iv)
+    TextView mSceneIV;
+    @BindView(R.id.notification_iv)
+    TextView mNotificationIV;
+    @BindView(R.id.dev_go_iv)
+    TextView mDevGoIV;
+    @BindView(R.id.scene_go_iv)
+    TextView mSceneGoIV;
+    @BindView(R.id.notification_go_iv)
+    TextView mNotificationGoIV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_action);
         ButterKnife.bind(this);
+
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mDevIV.setTypeface(iconfont);
+        mSceneIV.setTypeface(iconfont);
+        mNotificationIV.setTypeface(iconfont);
+        mDevGoIV.setTypeface(iconfont);
+        mSceneGoIV.setTypeface(iconfont);
+        mNotificationGoIV.setTypeface(iconfont);
 
         initStatusBar();
         initView();
