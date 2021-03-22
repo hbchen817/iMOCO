@@ -14,14 +14,35 @@
         android:layout_marginHorizontal="@dimen/dp_10"
         android:src="@drawable/conditon_timer" />
 
-    <ImageView
+    <!--<TextView
+        android:id="@+id/icon_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:textColor="@color/appcolor"
+        android:textSize="@dimen/sp_30" />-->
+
+    <!--<ImageView
         android:id="@+id/go_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginHorizontal="@dimen/dp_10"
-        android:src="@drawable/go" />
+        android:src="@drawable/go" />-->
+
+    <TextView
+        android:id="@+id/go_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:text="@string/icon_right_arrow"
+        android:textColor="@color/normal_font_color"
+        android:textSize="@dimen/sp_30" />
 
     <LinearLayout
         android:layout_width="match_parent"

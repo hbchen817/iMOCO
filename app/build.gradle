@@ -162,7 +162,8 @@ dependencies {
     implementation 'com.cncoderx.wheelview:library:1.2.5'
     implementation 'com.kyleduo.switchbutton:library:2.0.3'
 
-    /*implementation 'com.google.android.gms:play-services-base:15.0.1'
-    implementation 'com.google.android.gms:play-services:11.0.4'*/
+    implementation 'com.google.android.gms:play-services-tasks:15.0.1'
+    implementation 'com.google.android.gms:play-services-basement:15.0.1'
+    implementation 'com.google.android.gms:play-services-base:15.0.1'
 }
 

@@ -3,6 +3,7 @@ package com.rexense.imoco.view;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -61,23 +62,23 @@ public class TimeRangeSelectorActivity extends BaseActivity {
     @BindView(R.id.once_layout)
     RelativeLayout mOnceLayout;
     @BindView(R.id.once_checked)
-    ImageView mOnceIV;
+    TextView mOnceIV;
     @BindView(R.id.everyday_layout)
     RelativeLayout mEverydayLayout;
     @BindView(R.id.everyday_checked)
-    ImageView mEverydayIV;
+    TextView mEverydayIV;
     @BindView(R.id.working_days_layout)
     RelativeLayout mWorkingDaysLayout;
     @BindView(R.id.working_days_checked)
-    ImageView mWorkingDaysIV;
+    TextView mWorkingDaysIV;
     @BindView(R.id.weekend_layout)
     RelativeLayout mWeekendLayout;
     @BindView(R.id.weakend_checked)
-    ImageView mWeekendIV;
+    TextView mWeekendIV;
     @BindView(R.id.custom_layout)
     RelativeLayout mCustomLayout;
     @BindView(R.id.custom_checked)
-    ImageView mCustomIV;
+    TextView mCustomIV;
 
     private AlertDialog mBeginDialog;
     private AlertDialog mEndDialog;
@@ -114,6 +115,13 @@ public class TimeRangeSelectorActivity extends BaseActivity {
         setContentView(R.layout.activity_time_range_selector);
         ButterKnife.bind(this);
 
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mOnceIV.setTypeface(iconfont);
+        mEverydayIV.setTypeface(iconfont);
+        mWorkingDaysIV.setTypeface(iconfont);
+        mWeekendIV.setTypeface(iconfont);
+        mCustomIV.setTypeface(iconfont);
+
         initStatusBar();
         initView();
 
@@ -136,7 +144,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mTimeRange.setTimezoneID(Constant.TIMER_ZONE_ID);
-                if (mAllDaySB.isChecked()){
+                if (mAllDaySB.isChecked()) {
                     mTimeRange.setFormat("HH:mm:ss");
                     mTimeRange.setBeginDate("00:00:00");
                     mTimeRange.setEndDate("23:59:59");
@@ -146,16 +154,16 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                     mTimeRange.setEndDate(mEndTimeTV.getText().toString());
                 }
                 if (mOnceIV.getVisibility() == View.VISIBLE) {
-                    if (!mAllDaySB.isChecked()){
+                    if (!mAllDaySB.isChecked()) {
                         try {
                             SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
                             String s = format2.format(new Date(System.currentTimeMillis()));
 
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                            long i = format.parse(s+" "+mBeginTimeTV.getText().toString()).getTime();
-                            long j = format.parse(s+" "+mEndTimeTV.getText().toString()).getTime();
+                            long i = format.parse(s + " " + mBeginTimeTV.getText().toString()).getTime();
+                            long j = format.parse(s + " " + mEndTimeTV.getText().toString()).getTime();
                             long n = System.currentTimeMillis();
-                            if (n >= i && n >=j && j >= i) {
+                            if (n >= i && n >= j && j >= i) {
                                 ToastUtils.showLongToast(TimeRangeSelectorActivity.this, R.string.invalid_for_past_time_period);
                                 return;
                             }
@@ -169,7 +177,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
 
                 EventBus.getDefault().postSticky(mTimeRange);
 
-                Intent intent = new Intent(TimeRangeSelectorActivity.this,NewSceneActivity.class);
+                Intent intent = new Intent(TimeRangeSelectorActivity.this, NewSceneActivity.class);
                 startActivity(intent);
             }
         });
@@ -207,7 +215,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                 break;
             }
             case R.id.everyday_layout: {
-                mRepeatDays="1,2,3,4,5,6,7";
+                mRepeatDays = "1,2,3,4,5,6,7";
                 mOnceIV.setVisibility(View.GONE);
                 mEverydayIV.setVisibility(View.VISIBLE);
                 mWorkingDaysIV.setVisibility(View.GONE);
@@ -216,7 +224,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                 break;
             }
             case R.id.working_days_layout: {
-                mRepeatDays="1,2,3,4,5";
+                mRepeatDays = "1,2,3,4,5";
                 mOnceIV.setVisibility(View.GONE);
                 mEverydayIV.setVisibility(View.GONE);
                 mWorkingDaysIV.setVisibility(View.VISIBLE);
@@ -225,7 +233,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                 break;
             }
             case R.id.weekend_layout: {
-                mRepeatDays="6,7";
+                mRepeatDays = "6,7";
                 mOnceIV.setVisibility(View.GONE);
                 mEverydayIV.setVisibility(View.GONE);
                 mWorkingDaysIV.setVisibility(View.GONE);
@@ -234,7 +242,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                 break;
             }
             case R.id.custom_layout: {
-                Intent intent = new Intent(this, CustomRepeatDayActivity.class);
+                Intent intent = new Intent(this, TimeRangeRepeatDayActivity.class);
                 intent.putExtra("custom_day", mCustomWeekDayResult);
                 startActivityForResult(intent, 1000);
                 break;
@@ -401,7 +409,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
         if (message.what == Constant.SCENE_CONDITION_TIME_RANGE_EDIT) {
             ViseLog.d(new Gson().toJson(message.obj));
             mTimeRange = (CaConditionEntry.TimeRange) message.obj;
-            if ("00:00:00".equals(mTimeRange.getBeginDate()) && "23:59:59".equals(mTimeRange.getEndDate())){
+            if ("00:00:00".equals(mTimeRange.getBeginDate()) && "23:59:59".equals(mTimeRange.getEndDate())) {
                 mAllDaySB.setChecked(true);
             } else {
                 mAllDaySB.setChecked(false);
@@ -416,13 +424,13 @@ public class TimeRangeSelectorActivity extends BaseActivity {
 
             String repeat = mTimeRange.getRepeat();
             mRepeatDays = repeat;
-            if (repeat == null || repeat.length() == 0){
+            if (repeat == null || repeat.length() == 0) {
                 mOnceIV.setVisibility(View.VISIBLE);
-            } else if ("1,2,3,4,5,6,7".equals(repeat)){
+            } else if ("1,2,3,4,5,6,7".equals(repeat)) {
                 mEverydayIV.setVisibility(View.VISIBLE);
-            } else if ("1,2,3,4,5".equals(repeat)){
+            } else if ("1,2,3,4,5".equals(repeat)) {
                 mWorkingDaysIV.setVisibility(View.VISIBLE);
-            } else if ("6,7".equals(repeat)){
+            } else if ("6,7".equals(repeat)) {
                 mWeekendIV.setVisibility(View.VISIBLE);
             } else {
                 mCustomIV.setVisibility(View.VISIBLE);

@@ -269,7 +269,7 @@ public class MoreGatewayActivity extends BaseActivity {
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 mSceneType = CScene.TYPE_MANUAL;
                                 mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                            }else {
+                            } else {
                                 // 数据获取完则设置场景列表数据
                                 mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }
@@ -618,7 +618,7 @@ public class MoreGatewayActivity extends BaseActivity {
         };
         selectRoom.setOnClickListener(selectRoomListener);
         List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
-        if (list == null || list.size()== 0){
+        if (list == null || list.size() == 0) {
             RelativeLayout record = (RelativeLayout) findViewById(R.id.recordLayout);
             record.setVisibility(View.GONE);
         }

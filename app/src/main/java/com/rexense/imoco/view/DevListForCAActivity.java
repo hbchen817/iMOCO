@@ -3,6 +3,7 @@ package com.rexense.imoco.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,13 +64,15 @@ public class DevListForCAActivity extends BaseActivity {
     private List<ResponseDevListForCA.DevItem> mList;
     private BaseQuickAdapter<ResponseDevListForCA.DevItem, BaseViewHolder> mAdapter;
 
-    private LinearLayoutManager mLayoutManager;
+    private Typeface mIconfont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dev_list_for_ca);
         ButterKnife.bind(this);
+
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
 
         initStatusBar();
         initView();
@@ -94,6 +97,9 @@ public class DevListForCAActivity extends BaseActivity {
         mAdapter = new BaseQuickAdapter<ResponseDevListForCA.DevItem, BaseViewHolder>(R.layout.item_dev, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, ResponseDevListForCA.DevItem item) {
+                TextView goTV = holder.getView(R.id.og_iv);
+                goTV.setTypeface(mIconfont);
+
                 holder.setText(R.id.dev_name_tv, item.getNickName())
                         .setVisible(R.id.divider, mList.indexOf(item) != 0);
                 ImageView imageView = holder.getView(R.id.dev_iv);
@@ -103,8 +109,8 @@ public class DevListForCAActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                ViseLog.d(mList.get(position).getIotId()+"\n"+mList.get(position).getNickName());
-                Intent intent = new Intent(DevListForCAActivity.this,IdentifierListActivity.class);
+                ViseLog.d(mList.get(position).getIotId() + "\n" + mList.get(position).getNickName());
+                Intent intent = new Intent(DevListForCAActivity.this, IdentifierListActivity.class);
                 intent.putExtra("nick_name", mList.get(position).getNickName());
                 intent.putExtra("dev_name", mList.get(position).getDeviceName());
                 intent.putExtra("dev_iot", mList.get(position).getIotId());
@@ -112,9 +118,9 @@ public class DevListForCAActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mDevRecycler.setLayoutManager(mLayoutManager);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mDevRecycler.setLayoutManager(layoutManager);
         mDevRecycler.setAdapter(mAdapter);
 
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -122,22 +128,22 @@ public class DevListForCAActivity extends BaseActivity {
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mPageNo = 1;
                 mList.clear();
-                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(),mPageNo,PAGE_SIZE,mCommitFailureHandler,mResponseErrorHandler,mHandler);
+                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
         mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 mPageNo++;
-                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(),mPageNo,PAGE_SIZE,mCommitFailureHandler,mResponseErrorHandler,mHandler);
+                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(),mPageNo,PAGE_SIZE,mCommitFailureHandler,mResponseErrorHandler,mHandler);
+        mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
-    private class CallbackHandler extends Handler{
+    private class CallbackHandler extends Handler {
         private WeakReference<Activity> weakRf;
 
         public CallbackHandler(Activity activity) {
@@ -148,16 +154,16 @@ public class DevListForCAActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             if (weakRf.get() == null) return;
-            switch (msg.what){
-                case Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA:{
+            switch (msg.what) {
+                case Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA: {
                     // 获取支持TCA的设备列表
-                    JSONObject jsonObject = JSON.parseObject((String)msg.obj);
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     ViseLog.d(new Gson().toJson(jsonObject));
-                    ResponseDevListForCA responseEntry = new Gson().fromJson(new Gson().toJson(jsonObject),ResponseDevListForCA.class);
+                    ResponseDevListForCA responseEntry = new Gson().fromJson(new Gson().toJson(jsonObject), ResponseDevListForCA.class);
                     mList.addAll(responseEntry.getData());
-                    if (responseEntry.getData().size() >= PAGE_SIZE){
+                    if (responseEntry.getData().size() >= PAGE_SIZE) {
                         mPageNo++;
-                        mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(),mPageNo,PAGE_SIZE,mCommitFailureHandler,mResponseErrorHandler,mHandler);
+                        mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                     } else {
                         if (responseEntry.getData().size() == 0)
                             mPageNo--;

@@ -12,6 +12,7 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!-- 大字体样式 -->
@@ -77,7 +78,7 @@
     <!-- 录入条目样式 -->
     <style name="InputItemStyle">
         <item name="android:background">@drawable/shape_white_solid</item>
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -88,10 +89,12 @@
     <style name="InputItemStyle_Low">
         <item name="android:background">@drawable/shape_white_solid</item>
         <item name="android:layout_marginTop">4dp</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:paddingBottom">1dp</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <!-- 状态条目样式 -->
@@ -106,15 +109,20 @@
 
     <style name="Login" parent="@style/OpenAccountDefault">
         <item name="ali_sdk_openaccount_attrs_login_register_text_color">@color/appcolor</item>
-        <item name="ali_sdk_openaccount_attrs_login_reset_password_text_color">@color/appcolor</item>
+        <item name="ali_sdk_openaccount_attrs_login_reset_password_text_color">@color/appcolor
+        </item>
         <item name="ali_sdk_openaccount_attrs_login_other_plateform_login_text_color">#999999</item>
-        <item name="ali_sdk_openaccount_attrs_title_bar_title">@string/ali_sdk_openaccount_text_login</item>
+        <item name="ali_sdk_openaccount_attrs_title_bar_title">
+            @string/ali_sdk_openaccount_text_login
+        </item>
         <item name="ali_sdk_openaccount_attrs_title_bar_visibility">invisible</item>
-        <item name="ali_sdk_openaccount_attrs_login_oauth_plateform">taobao|qq|weibo|weixin|alipay</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_plateform">taobao|qq|weibo|weixin|alipay
+        </item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>
         <item name="ali_sdk_openaccount_attrs_next_step_bg">@drawable/shape_appcolor</item>
     </style>
+
     <style name="Register" parent="@style/OpenAccountDefault">
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>

@@ -1663,12 +1663,14 @@ public class SceneManager {
     private void addTriggerProduct(String productKey, int sceneModelCode, List<EProduct.configListEntry> productList, List<EScene.triggerEntry> triggers) {
         List<ETSL.stateEntry> list = CodeMapper.getPropertyTriggerState(this.mContext, productKey, sceneModelCode);
         String name = ProductHelper.getProductName(productKey, productList);
+        String image = ProductHelper.getProductImage(productKey, productList);
         if (list != null && list.size() > 0) {
             for (ETSL.stateEntry state : list) {
                 EScene.triggerEntry triggerEntry = new EScene.triggerEntry();
                 triggerEntry.name = name;
                 triggerEntry.productKey = productKey;
                 triggerEntry.state = state;
+                triggerEntry.image = image;
                 triggers.add(triggerEntry);
             }
         }
@@ -1685,6 +1687,7 @@ public class SceneManager {
                 triggerEntry.name = entry.nickName;
                 triggerEntry.deviceName = entry.deviceName;
                 triggerEntry.state = sate;
+                triggerEntry.image = entry.image;
                 triggers.add(triggerEntry);
             }
         }
@@ -1694,12 +1697,14 @@ public class SceneManager {
     private void addConditionStateProduct(String productKey, int sceneModelCode, List<EProduct.configListEntry> productList, List<EScene.conditionStateEntry> conditionStateEntries) {
         List<ETSL.stateEntry> list = CodeMapper.getPropertyConditionState(this.mContext, productKey, sceneModelCode);
         String name = ProductHelper.getProductName(productKey, productList);
+        String image = ProductHelper.getProductImage(productKey, productList);
         if (list != null && list.size() > 0) {
             for (ETSL.stateEntry state : list) {
                 EScene.conditionStateEntry conditionStateEntry = new EScene.conditionStateEntry();
                 conditionStateEntry.name = name;
                 conditionStateEntry.productKey = productKey;
                 conditionStateEntry.state = state;
+                conditionStateEntry.image = image;
                 conditionStateEntries.add(conditionStateEntry);
             }
         }
@@ -1716,6 +1721,7 @@ public class SceneManager {
                 conditionStateEntry.name = entry.nickName;
                 conditionStateEntry.deviceName = entry.deviceName;
                 conditionStateEntry.state = sate;
+                conditionStateEntry.image = entry.image;
                 conditionStateEntries.add(conditionStateEntry);
             }
         }
@@ -1726,12 +1732,14 @@ public class SceneManager {
         List<ETSL.stateEntry> states = CodeMapper.getPropertyResponseState(this.mContext, productKey, sceneModelCode);
         List<ETSL.serviceEntry> services = CodeMapper.getServiceResponseAction(this.mContext, productKey, sceneModelCode);
         String name = ProductHelper.getProductName(productKey, productList);
+        String image = ProductHelper.getProductImage(productKey, productList);
         if (states != null && states.size() > 0) {
             for (ETSL.stateEntry state : states) {
                 EScene.responseEntry responseEntry = new EScene.responseEntry();
                 responseEntry.productKey = productKey;
                 responseEntry.name = name;
                 responseEntry.state = state;
+                responseEntry.image = image;
                 responses.add(responseEntry);
             }
         }
@@ -1759,6 +1767,7 @@ public class SceneManager {
                     responseEntry.name = entry.nickName;
                     responseEntry.deviceName = entry.deviceName;
                     responseEntry.state = state;
+                    responseEntry.image = entry.image;
                     responses.add(responseEntry);
                 }
             }

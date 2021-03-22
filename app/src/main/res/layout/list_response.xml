@@ -16,8 +16,7 @@
 			android:layout_height="40dp"
 			android:layout_alignParentLeft="true"
 			android:layout_centerVertical="true"
-			android:background="@drawable/icon_button"
-			android:contentDescription="@string/contentDescription_null"/>
+			android:contentDescription="@string/contentDescription_null"/><!--android:background="@drawable/icon_button"-->
 
 		<TextView
 			android:id="@+id/responseListLblName"

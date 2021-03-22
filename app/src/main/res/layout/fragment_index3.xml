@@ -15,198 +15,218 @@
         android:layout_marginTop="@dimen/dp_10"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_9">
+
         <TextView
             android:id="@+id/user_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_18"
-            android:text="15288888888"/>
+            android:textSize="@dimen/sp_18" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/user_account"
             android:layout_marginTop="@dimen/dp_8"
+            android:text="@string/fragment3_edit_myinfo"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_12"
-            android:text="@string/fragment3_edit_myinfo"/>
+            android:textSize="@dimen/sp_12" />
+
         <ImageView
             android:id="@+id/head_img"
             android:layout_width="@dimen/dp_50"
             android:layout_height="@dimen/dp_50"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:visibility="gone"
-            android:src="@drawable/headimg"/>
+            android:layout_centerVertical="true"
+            android:src="@drawable/headimg"
+            android:visibility="gone" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/advice_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_10"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
 
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
             android:src="@drawable/advice_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_advice_feedback"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_advice_feedback"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/msg_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
 
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
             android:src="@drawable/msg_center_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_msg_center"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_msg_center"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/scene_log_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
 
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
             android:src="@drawable/scene_log_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_scene_log"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_scene_log"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/share_device_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
+
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:src="@drawable/share_device_img"/>
+            android:src="@drawable/share_device_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_share_device"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_share_device"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/service_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
+
         <ImageView
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:src="@drawable/more_service_img"/>
+            android:src="@drawable/more_service_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_more_service"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_more_service"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/aboutus_view"
+        style="@style/InputItemStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/InputItemStyle"
         android:paddingHorizontal="@dimen/dp_14"
-        android:paddingVertical="@dimen/dp_8">
+        android:paddingVertical="@dimen/dp_10">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_30"
             android:src="@drawable/about_us_img" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_40"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/dp_40"
+            android:text="@string/fragment3_about_us"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/fragment3_about_us"/>
+            android:textSize="@dimen/sp_14" />
+
         <ImageView
             android:layout_width="@dimen/dp_20"
             android:layout_height="@dimen/dp_20"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/go"
-            android:layout_alignParentRight="true"/>
+            android:src="@drawable/go" />
     </RelativeLayout>
 </LinearLayout>

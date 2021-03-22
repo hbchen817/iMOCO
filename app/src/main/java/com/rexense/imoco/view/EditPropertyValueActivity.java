@@ -3,6 +3,7 @@ package com.rexense.imoco.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -79,6 +80,8 @@ public class EditPropertyValueActivity extends BaseActivity {
 
     private boolean isUpate = true;
 
+    private Typeface mIconfont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,8 @@ public class EditPropertyValueActivity extends BaseActivity {
         mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
 
         mCompareTypeWV.setCurrentIndex(2);
+
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
 
         initStatusBar();
         tvToolbarRight.setText(getString(R.string.nick_name_save));
@@ -105,6 +110,9 @@ public class EditPropertyValueActivity extends BaseActivity {
         mAdapter = new BaseQuickAdapter<PropertyValue, BaseViewHolder>(R.layout.item_simple_checked, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, PropertyValue value) {
+                TextView itemChecked = holder.getView(R.id.item_checked);
+                itemChecked.setTypeface(mIconfont);
+
                 int pos = mList.indexOf(value);
                 holder.setText(R.id.item_title, value.getKey())
                         .setVisible(R.id.item_checked, value.isChecked())
@@ -142,7 +150,7 @@ public class EditPropertyValueActivity extends BaseActivity {
                         property.setCompareType(mCompareTypes[mCompareTypeWV.getCurrentIndex()]);
                         property.setCompareValue(result);
                         mIdentifier.setObject(property);
-                        mIdentifier.setDesc(mIdentifier.getName()  + getCompareTypeString(property.getCompareType()) + compareValue+ mUnitTV.getText().toString());
+                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(property.getCompareType()) + compareValue + mUnitTV.getText().toString());
 
                         isUpate = false;
                         EventBus.getDefault().postSticky(mIdentifier);
@@ -200,7 +208,7 @@ public class EditPropertyValueActivity extends BaseActivity {
 
                         mIdentifier.setValueName(mEventValue.getName());
                         mIdentifier.setObject(event);
-                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType())+compareValue + mUnitTV.getText().toString());
+                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mUnitTV.getText().toString());
 
                         isUpate = false;
                         EventBus.getDefault().postSticky(mIdentifier);

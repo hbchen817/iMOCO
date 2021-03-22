@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.model.EScene;
@@ -93,7 +94,10 @@ public class AptSceneParameter extends BaseAdapter {
 			viewHolder.select.setTag(position);
 			viewHolder.noHas = (TextView) convertView.findViewById(R.id.triggerlistLblNohas);
 			convertView.setTag(viewHolder);
-			viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).triggerEntry.productKey));
+			if (this.mParameterList.get(position).triggerEntry.image != null && this.mParameterList.get(position).triggerEntry.image.length() > 0)
+				Glide.with(mContext).load(this.mParameterList.get(position).triggerEntry.image).into(viewHolder.icon);
+			else
+				viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).triggerEntry.productKey));
 			viewHolder.name.setText(this.mParameterList.get(position).triggerEntry.name);
 			if(this.mParameterList.get(position).triggerEntry.state != null) {
 				viewHolder.state.setText(this.mParameterList.get(position).triggerEntry.state.value);
@@ -159,7 +163,11 @@ public class AptSceneParameter extends BaseAdapter {
 			viewHolder.select.setTag(position);
 			viewHolder.noHas = (TextView) convertView.findViewById(R.id.triggerlistLblNohas);
 			convertView.setTag(viewHolder);
-			viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).conditionStateEntry.productKey));
+			String image = this.mParameterList.get(position).conditionStateEntry.image;
+			if (image != null && image.length() > 0)
+				Glide.with(mContext).load(image).into(viewHolder.icon);
+			else
+				viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).conditionStateEntry.productKey));
 			viewHolder.name.setText(this.mParameterList.get(position).conditionStateEntry.name);
 			if(this.mParameterList.get(position).conditionStateEntry.state != null) {
 				viewHolder.state.setText(this.mParameterList.get(position).conditionStateEntry.state.value);
@@ -196,7 +204,11 @@ public class AptSceneParameter extends BaseAdapter {
 			viewHolder.select.setTag(position);
 			viewHolder.noHas = (TextView) convertView.findViewById(R.id.responselistLblNohas);
 			convertView.setTag(viewHolder);
-			viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).responseEntry.productKey));
+			String image = this.mParameterList.get(position).responseEntry.image;
+			if (image != null && image.length() > 0)
+				Glide.with(mContext).load(image).into(viewHolder.icon);
+			else
+				viewHolder.icon.setBackgroundResource(ImageProvider.genProductIcon(this.mParameterList.get(position).responseEntry.productKey));
 			viewHolder.name.setText(this.mParameterList.get(position).responseEntry.name);
 			// 处理属性状态
 			if(this.mParameterList.get(position).responseEntry.state != null) {

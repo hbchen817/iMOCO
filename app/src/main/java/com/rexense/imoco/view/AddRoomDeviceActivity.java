@@ -155,6 +155,7 @@ public class AddRoomDeviceActivity extends BaseActivity {
                 itemAddRoomDevice.setId(mapValue.iotId);
                 itemAddRoomDevice.setDeviceName(mapValue.nickName);
                 itemAddRoomDevice.setProductKey(mapValue.productKey);
+                itemAddRoomDevice.setImage(mapValue.image);
                 if (mapValue.roomId.equals(roomId)) {
                     itemAddRoomDevice.setType(1);
                     models1.add(itemAddRoomDevice);

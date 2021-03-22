@@ -19,55 +19,59 @@
             android:id="@+id/margin_layout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_10"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent" />
 
         <RelativeLayout
             android:id="@+id/time_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
             android:background="@drawable/ripple_bg"
+            android:clickable="true"
             android:orientation="horizontal">
 
-            <ImageView
+            <TextView
                 android:id="@+id/timer_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/dp_10"
-                android:src="@drawable/conditon_timer"/>
+                android:text="@string/icon_timer_2"
+                android:textColor="@color/appcolor"
+                android:textSize="@dimen/sp_30" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/timer_go_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/go"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginHorizontal="@dimen/dp_10"/>
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:text="@string/icon_right_arrow"
+                android:textColor="@color/normal_font_color"
+                android:textSize="@dimen/sp_30" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/timer_iv"
                 android:layout_toLeftOf="@id/timer_go_iv"
+                android:layout_toRightOf="@id/timer_iv"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:textSize="@dimen/sp_14"
-                    android:text="@string/timer_point"/>
+                    android:text="@string/timer_point"
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_10"
-                    android:textSize="@dimen/sp_11"
+                    android:text="@string/timer_point_txt"
                     android:textColor="@color/darkgrey"
-                    android:text="@string/timer_point_txt"/>
+                    android:textSize="@dimen/sp_11" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -75,49 +79,53 @@
             android:id="@+id/time_range_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
             android:background="@drawable/ripple_bg"
+            android:clickable="true"
             android:orientation="horizontal">
 
-            <ImageView
+            <TextView
                 android:id="@+id/timer_range_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/dp_10"
-                android:src="@drawable/condition_time_range"/>
+                android:text="@string/icon_calendar"
+                android:textColor="@color/appcolor"
+                android:textSize="@dimen/sp_30" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/timer_range_go_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/go"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginHorizontal="@dimen/dp_10"/>
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:text="@string/icon_right_arrow"
+                android:textColor="@color/normal_font_color"
+                android:textSize="@dimen/sp_30" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/timer_range_iv"
                 android:layout_toLeftOf="@id/timer_range_go_iv"
+                android:layout_toRightOf="@id/timer_range_iv"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:textSize="@dimen/sp_14"
-                    android:text="@string/time_range"/>
+                    android:text="@string/time_range"
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_10"
-                    android:textSize="@dimen/sp_11"
+                    android:text="@string/time_range_txt"
                     android:textColor="@color/darkgrey"
-                    android:text="@string/time_range_txt"/>
+                    android:textSize="@dimen/sp_11" />
             </LinearLayout>
 
             <TextView
@@ -131,49 +139,53 @@
             android:id="@+id/dev_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
             android:background="@drawable/ripple_bg"
+            android:clickable="true"
             android:orientation="horizontal">
 
-            <ImageView
+            <TextView
                 android:id="@+id/dev_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="@dimen/dp_10"
-                android:src="@drawable/condition_dev"/>
+                android:text="@string/icon_dev"
+                android:textColor="@color/appcolor"
+                android:textSize="@dimen/sp_30" />
 
-            <ImageView
+            <TextView
                 android:id="@+id/dev_go_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/go"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginHorizontal="@dimen/dp_10"/>
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:text="@string/icon_right_arrow"
+                android:textColor="@color/normal_font_color"
+                android:textSize="@dimen/sp_30" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/dev_iv"
                 android:layout_toLeftOf="@id/dev_go_iv"
+                android:layout_toRightOf="@id/dev_iv"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
-                    android:textSize="@dimen/sp_14"
-                    android:text="@string/dev_status"/>
+                    android:text="@string/dev_status"
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_5"
                     android:layout_marginBottom="@dimen/dp_10"
-                    android:textSize="@dimen/sp_11"
+                    android:text="@string/dev_status_txt"
                     android:textColor="@color/darkgrey"
-                    android:text="@string/dev_status_txt"/>
+                    android:textSize="@dimen/sp_11" />
             </LinearLayout>
 
             <TextView

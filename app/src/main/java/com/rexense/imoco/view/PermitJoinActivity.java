@@ -205,7 +205,7 @@ public class PermitJoinActivity extends BaseActivity {
                                 public void run() {
                                     mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                                 }
-                            }, 3000);
+                            }, 2000);
                         }
                     }
                     break;

@@ -19,6 +19,7 @@ import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.TimeUtils;
 import com.rexense.imoco.utility.Utility;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -180,6 +181,7 @@ public class CloudDataParser {
                 device.status = item.getIntValue("status");
                 device.nodeType = item.getString("nodeType");
                 device.description = item.getString("description");
+                device.image = item.getString("productImage");
 
                 subDeviceList = item.getJSONArray("subDeviceIotIdList");
                 if(subDeviceList != null){
@@ -310,6 +312,8 @@ public class CloudDataParser {
                     device.nickName = device.productName;
                 }
                 device.image = item.getString("productImage");
+                if (device.image == null || device.image.length() == 0)
+                    device.image = item.getString("image");
                 device.status = item.getIntValue("status");
                 device.nodeType = item.getString("nodeType");
                 if(item.getDate("bindTime") != null) {
@@ -511,6 +515,7 @@ public class CloudDataParser {
                     itemMsgCenter.setContent(body);
                 }
                 itemMsgCenter.setTime(TimeUtils.getYmdhms(msgJson.getLong("gmtModified")));
+                itemMsgCenter.setProductImg(msgJson.getString("productImage"));
 
                 JSONObject extData = msgJson.getJSONObject("extData");
                 if (extData!=null){
@@ -610,6 +615,7 @@ public class CloudDataParser {
                 deviceEntry.deviceName = ProductHelper.replaceBrand(deviceEntry.deviceName);
                 deviceEntry.nodeType = jsonObject.getString("nodeType");
                 deviceEntry.nickName = jsonObject.getString("nickName");
+                deviceEntry.image = jsonObject.getString("productImage");
                 if(TextUtils.isEmpty(deviceEntry.nickName)){
                     deviceEntry.nickName = jsonObject.getString("productName");
                 }

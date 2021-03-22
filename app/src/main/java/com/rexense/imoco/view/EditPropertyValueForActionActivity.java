@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,11 +91,15 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
     private BaseQuickAdapter<ServiceInputData, BaseViewHolder> mServiceAdapter;
     private LinearLayoutManager mServiceLayoutManager;
 
+    private Typeface mIconfont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_property_value);
         ButterKnife.bind(this);
+
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
 
         mCompareTypes = new String[]{getString(R.string.equal_to)};
 
@@ -111,6 +116,9 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
         mAdapter = new BaseQuickAdapter<PropertyValue, BaseViewHolder>(R.layout.item_simple_checked, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, PropertyValue value) {
+                TextView itemChecked = holder.getView(R.id.item_checked);
+                itemChecked.setTypeface(mIconfont);
+
                 int pos = mList.indexOf(value);
                 holder.setText(R.id.item_title, value.getKey())
                         .setVisible(R.id.item_checked, value.isChecked())
@@ -167,27 +175,6 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                     }
                 });
                 builder.build().show();
-
-                /*List<String> strings = new ArrayList<>();
-                for (Map.Entry<String, Object> map : item.getDataTypeMap().entrySet()) {
-                    strings.add(map.getKey());
-                }
-                String[] strings1 = (String[]) strings.toArray();
-                AlertDialog.Builder dialg = new AlertDialog.Builder(EditPropertyValueForActionActivity.this);
-                dialg.setItems(strings1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String tag = strings.get(which);
-                        ViseLog.d(tag);
-                        Map<String, Object> map = item.getDataTypeMap();
-                        String value = (String) map.get(tag);
-                        mServiceInputDataList.get(position).setSelectValue(value);
-                        mServiceInputDataList.get(position).setSelectName(tag);
-                        dialog.dismiss();
-                        mServiceAdapter.notifyDataSetChanged();
-                    }
-                });
-                dialg.show();*/
             }
         });
         mServiceLayoutManager = new LinearLayoutManager(this);

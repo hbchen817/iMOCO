@@ -124,6 +124,7 @@ public class EScene {
         public String deviceName;
         public ETSL.stateEntry state;
         public boolean isSelected;
+        public String image;
 
         // 构造
         public triggerEntry(){
@@ -133,6 +134,7 @@ public class EScene {
             this.deviceName = "";
             this.state = null;
             this.isSelected = false;
+            this.image = "";
         }
     }
 
@@ -529,6 +531,7 @@ public class EScene {
         public ETSL.stateEntry state;
         public ETSL.serviceEntry service;
         public boolean isSelected;
+        public String image;
 
         // 构造
         public responseEntry(){
@@ -539,6 +542,7 @@ public class EScene {
             this.state = null;
             this.service = null;
             this.isSelected = false;
+            this.image = "";
         }
     }
 

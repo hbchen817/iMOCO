@@ -2,6 +2,7 @@ package com.rexense.imoco.view;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -41,11 +42,15 @@ public class CustomRepeatDayActivity extends BaseActivity {
 
     private String mCustomWeekDayResult = null;
 
+    private Typeface mIconfont;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_repeat_day);
         ButterKnife.bind(this);
+
+        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
 
         initStatusBar();
         mCustomWeekDayResult = getIntent().getStringExtra("custom_day");
@@ -74,9 +79,40 @@ public class CustomRepeatDayActivity extends BaseActivity {
                     RepeatDay day = mDayList.get(i);
                     if (day.isChecked) {
                         isChecked = true;
+                        String dayValue = null;
+                        switch (day.getPos()+1){
+                            case 1:{
+                                dayValue = "mon";
+                                break;
+                            }
+                            case 2:{
+                                dayValue = "tue";
+                                break;
+                            }
+                            case 3:{
+                                dayValue = "wed";
+                                break;
+                            }
+                            case 4:{
+                                dayValue = "thu";
+                                break;
+                            }
+                            case 5:{
+                                dayValue = "fri";
+                                break;
+                            }
+                            case 6:{
+                                dayValue = "sat";
+                                break;
+                            }
+                            case 7:{
+                                dayValue = "sun";
+                                break;
+                            }
+                        }
                         if (stringBuilder.toString().length() == 0) {
-                            stringBuilder.append(String.valueOf(day.getPos() + 1));
-                        } else stringBuilder.append("," + String.valueOf(day.getPos() + 1));
+                            stringBuilder.append(dayValue);
+                        } else stringBuilder.append("," + dayValue);
                     }
                 }
                 if (!isChecked)
@@ -96,7 +132,25 @@ public class CustomRepeatDayActivity extends BaseActivity {
             if (mCustomWeekDayResult != null) {
                 String[] s = mCustomWeekDayResult.split(",");
                 for (int j = 0; j < s.length; j++) {
-                    if (i == Integer.parseInt(s[j]) - 1) {
+                    if ("mon".equals(s[j]) && i == 0) {
+                        isContains = true;
+                        break;
+                    } else if ("tue".equals(s[j]) && i == 1) {
+                        isContains = true;
+                        break;
+                    } else if ("wed".equals(s[j]) && i == 2) {
+                        isContains = true;
+                        break;
+                    } else if ("thu".equals(s[j]) && i == 3) {
+                        isContains = true;
+                        break;
+                    } else if ("fri".equals(s[j]) && i == 4) {
+                        isContains = true;
+                        break;
+                    } else if ("sat".equals(s[j]) && i == 5) {
+                        isContains = true;
+                        break;
+                    } else if ("sun".equals(s[j]) && i == 6) {
                         isContains = true;
                         break;
                     }
@@ -108,6 +162,8 @@ public class CustomRepeatDayActivity extends BaseActivity {
         mRepeatAdapter = new BaseQuickAdapter<RepeatDay, BaseViewHolder>(R.layout.item_simple_checked, mDayList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, RepeatDay day) {
+                TextView itemChecked = holder.getView(R.id.item_checked);
+                itemChecked.setTypeface(mIconfont);
                 holder.setText(R.id.item_title, day.getName())
                         .setVisible(R.id.item_checked, day.isChecked())
                         .setVisible(R.id.item_divider, day.getPos() != 0);
