@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/moreGatewayFl"
     android:layout_width="match_parent"
@@ -14,402 +13,383 @@
 
         <include layout="@layout/include_title" />
 
-        <LinearLayout
-            android:id="@+id/function_settings"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_alignParentLeft="true"
+            <RelativeLayout
+                android:id="@+id/unbind_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="center|bottom"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_function" />
-
-            <RelativeLayout style="@style/InputItemStyle_Low">
-
-                <TextView
-                    android:id="@+id/moreGatewayLblAlarmBellId"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/moregateway_alarmbellid" />
-
-                <TextView
-                    android:id="@+id/moreGatewayLblAlarmBellIdValue"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmBellId"
-                    android:gravity="center_vertical"
-                    android:text="4" />
+                android:layout_marginRight="10dp">
 
                 <ImageView
-                    android:id="@+id/moreGatewayImgAlarmBellId"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
+                    android:id="@+id/moreImgUnbind"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
-                    android:src="@drawable/go" />
+                    android:background="@drawable/shape_button"
+                    android:contentDescription="@string/contentDescription_null" />
 
+                <TextView
+                    android:id="@+id/moreLblUnbind"
+                    style="@style/NormalWhiteFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/moredevice_unbind"
+                    android:textColor="#ffffff" />
             </RelativeLayout>
 
-            <RelativeLayout style="@style/InputItemStyle_Low">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/unbind_layout">
 
-                <TextView
-                    android:id="@+id/moreGatewayLblBellVolume"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/moregateway_bellvolume" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/moreGatewayLblBellVolumeValue"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgBellVolume"
-                    android:gravity="center_vertical"
-                    android:text="75%" />
+                    <LinearLayout
+                        android:id="@+id/function_settings"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/moreGatewayImgBellVolume"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
-                    android:src="@drawable/go" />
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="25dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_function" />
 
-            </RelativeLayout>
+                        <RelativeLayout style="@style/InputItemStyle_Low">
 
-            <RelativeLayout style="@style/InputItemStyle_Low">
+                            <TextView
+                                android:id="@+id/moreGatewayLblAlarmBellId"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:text="@string/moregateway_alarmbellid" />
 
-                <TextView
-                    android:id="@+id/moreGatewayLblBellMusicId"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/moregateway_bellmusicid" />
+                            <TextView
+                                android:id="@+id/moreGatewayLblAlarmBellIdValue"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_toStartOf="@+id/moreGatewayImgAlarmBellId"
+                                android:gravity="center_vertical"
+                                android:text="4" />
 
-                <TextView
-                    android:id="@+id/moreGatewayLblBellMusicIdValue"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgBellMusicId"
-                    android:gravity="center_vertical"
-                    android:text="5" />
+                            <ImageView
+                                android:id="@+id/moreGatewayImgAlarmBellId"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="@string/contentDescription_null"
+                                android:src="@drawable/go" />
+                        </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/moreGatewayImgBellMusicId"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
-                    android:src="@drawable/go" />
+                        <RelativeLayout style="@style/InputItemStyle_Low">
 
-            </RelativeLayout>
+                            <TextView
+                                android:id="@+id/moreGatewayLblBellVolume"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:text="@string/moregateway_bellvolume" />
 
-            <RelativeLayout style="@style/InputItemStyle_Low">
+                            <TextView
+                                android:id="@+id/moreGatewayLblBellVolumeValue"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_toStartOf="@+id/moreGatewayImgBellVolume"
+                                android:gravity="center_vertical" />
 
-                <TextView
-                    android:id="@+id/moreGatewayLblAlarmVolume"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/moregateway_alarmvolume" />
+                            <ImageView
+                                android:id="@+id/moreGatewayImgBellVolume"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="@string/contentDescription_null"
+                                android:src="@drawable/go" />
+                        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/moreGatewayLblAlarmVolumeValue"
-                    style="@style/NormalFontStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/moreGatewayImgAlarmVolume"
-                    android:gravity="center_vertical"
-                    android:text="60%" />
+                        <RelativeLayout style="@style/InputItemStyle_Low">
 
-                <ImageView
-                    android:id="@+id/moreGatewayImgAlarmVolume"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/contentDescription_null"
-                    android:src="@drawable/go" />
+                            <TextView
+                                android:id="@+id/moreGatewayLblBellMusicId"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:text="@string/moregateway_bellmusicid" />
 
-            </RelativeLayout>
-        </LinearLayout>
+                            <TextView
+                                android:id="@+id/moreGatewayLblBellMusicIdValue"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_toStartOf="@+id/moreGatewayImgBellMusicId"
+                                android:gravity="center_vertical" />
 
-        <TextView
-            style="@style/NormalFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:gravity="center_vertical"
-            android:text="@string/moredevice_normal" />
+                            <ImageView
+                                android:id="@+id/moreGatewayImgBellMusicId"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="@string/contentDescription_null"
+                                android:src="@drawable/go" />
+                        </RelativeLayout>
 
-        <RelativeLayout style="@style/InputItemStyle_Low">
+                        <RelativeLayout style="@style/InputItemStyle_Low">
 
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_name" />
+                            <TextView
+                                android:id="@+id/moreGatewayLblAlarmVolume"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:gravity="center_vertical"
+                                android:text="@string/moregateway_alarmvolume" />
 
-            <TextView
-                android:id="@+id/moreGatewayLblName"
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/moreGatewayImgName"
-                android:gravity="center_vertical"
-                android:text="DeviceName" />
+                            <TextView
+                                android:id="@+id/moreGatewayLblAlarmVolumeValue"
+                                style="@style/NormalFontStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_toStartOf="@+id/moreGatewayImgAlarmVolume"
+                                android:gravity="center_vertical" />
 
-            <ImageView
-                android:id="@+id/moreGatewayImgName"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:src="@drawable/go" />
+                            <ImageView
+                                android:id="@+id/moreGatewayImgAlarmVolume"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="@string/contentDescription_null"
+                                android:src="@drawable/go" />
+                        </RelativeLayout>
+                    </LinearLayout>
 
+                    <TextView
+                        style="@style/NormalFontStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="25dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/moredevice_normal" />
+
+                    <RelativeLayout style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_name" />
+
+                        <TextView
+                            android:id="@+id/moreGatewayLblName"
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_toStartOf="@+id/moreGatewayImgName"
+                            android:gravity="center_vertical" />
+
+                        <ImageView
+                            android:id="@+id/moreGatewayImgName"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/contentDescription_null"
+                            android:src="@drawable/go" />
+                    </RelativeLayout>
+
+                    <RelativeLayout style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_id" />
+
+                        <TextView
+                            android:id="@+id/moreGatewayLblId"
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="35dp"
+                            android:gravity="center_vertical" />
+                    </RelativeLayout>
+
+                    <RelativeLayout style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_bindtime" />
+
+                        <TextView
+                            android:id="@+id/moreGatewayLblBindTime"
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="35dp"
+                            android:gravity="center_vertical" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/moreGatewayRLRoom"
+                        style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_room" />
+
+                        <TextView
+                            android:id="@+id/moreGatewayLblRoom"
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_toStartOf="@+id/moreGatewayImgRoom"
+                            android:gravity="center_vertical" />
+
+                        <ImageView
+                            android:id="@+id/moreGatewayImgRoom"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/contentDescription_null"
+                            android:src="@drawable/go" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/recordLayout"
+                        style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_msg" />
+
+                        <ImageView
+                            android:id="@+id/moreGatewayImgMsg"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/contentDescription_null"
+                            android:src="@drawable/go" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/upgrade_view"
+                        style="@style/InputItemStyle_Low">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_version" />
+
+                        <TextView
+                            android:id="@+id/moreGatewayLblVersion"
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="35dp"
+                            android:gravity="center_vertical" />
+
+                        <ImageView
+                            android:id="@+id/moreGatewayImgUpgrade"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:contentDescription="@string/contentDescription_null"
+                            android:src="@drawable/go" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        style="@style/InputItemStyle_Low"
+                        android:visibility="gone">
+
+                        <TextView
+                            style="@style/NormalFontStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/moredevice_upgrade" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </ScrollView>
         </RelativeLayout>
-
-        <RelativeLayout style="@style/InputItemStyle_Low">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_id" />
-
-            <TextView
-                android:id="@+id/moreGatewayLblId"
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="35dp"
-                android:gravity="center_vertical"
-                android:text="id" />
-
-        </RelativeLayout>
-
-        <RelativeLayout style="@style/InputItemStyle_Low">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_bindtime" />
-
-            <TextView
-                android:id="@+id/moreGatewayLblBindTime"
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="35dp"
-                android:gravity="center_vertical"
-                android:text="2020-04-27 12:16:18" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/moreGatewayRLRoom"
-            style="@style/InputItemStyle_Low">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_room" />
-
-            <TextView
-                android:id="@+id/moreGatewayLblRoom"
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/moreGatewayImgRoom"
-                android:gravity="center_vertical"
-                android:text="客厅" />
-
-            <ImageView
-                android:id="@+id/moreGatewayImgRoom"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:src="@drawable/go" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/recordLayout"
-            style="@style/InputItemStyle_Low">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_msg" />
-
-            <ImageView
-                android:id="@+id/moreGatewayImgMsg"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:src="@drawable/go" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/upgrade_view"
-            style="@style/InputItemStyle_Low">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_version" />
-
-            <TextView
-                android:id="@+id/moreGatewayLblVersion"
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="35dp"
-                android:gravity="center_vertical"
-                android:text="1.0.0" />
-
-            <ImageView
-                android:id="@+id/moreGatewayImgUpgrade"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:src="@drawable/go" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            style="@style/InputItemStyle_Low"
-            android:visibility="gone">
-
-            <TextView
-                style="@style/NormalFontStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/moredevice_upgrade" />
-
-            <!--<ImageView
-                android:id="@+id/moreGatewayImgUpgrade"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/contentDescription_null"
-                android:src="@drawable/go" />-->
-
-        </RelativeLayout>
-
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"></LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <ImageView
-            android:id="@+id/moreImgUnbind"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/shape_button"
-            android:contentDescription="@string/contentDescription_null" />
-
-        <TextView
-            android:id="@+id/moreLblUnbind"
-            style="@style/NormalWhiteFontStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/moredevice_unbind"
-            android:textColor="#ffffff" />
-
-    </RelativeLayout>
 
     <include layout="@layout/include_oneitemwheelpicker" />
 </FrameLayout>
