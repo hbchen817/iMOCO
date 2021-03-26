@@ -130,7 +130,6 @@ public class AptDeviceList extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         String image = this.mDeviceList.get(position).image;
-        ViseLog.d("image = " + image);
         if (image != null && image.length() > 0)
             Glide.with(mContext).load(image).into(viewHolder.icon);
         else {

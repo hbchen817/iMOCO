@@ -824,6 +824,44 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    //获取设备扩展信息
+    public void getExtendedProperty(String iotId,
+                                    String dataKey, int tag,
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    Handler processDataHandler) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_GET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = tag;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 删除设备扩展属性信息
+    public void delExtendedProperty(String iotId,
+                                    String dataKey,
+                                    Handler commitFailureHandler,
+                                    Handler responseErrorHandler,
+                                    Handler processDataHandler) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_DEL;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL;
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     // 更新模板CA场景
     public void updateCAModel(EScene.sceneBaseInfoEntry baseInfo, List<EScene.parameterEntry> parameters, String mode,
                               Handler commitFailureHandler,

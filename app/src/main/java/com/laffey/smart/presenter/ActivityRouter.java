@@ -13,17 +13,30 @@ import com.laffey.smart.BuildConfig;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.view.ColorLightDetailActivity;
 import com.laffey.smart.view.DetailFourSwitchActivity;
+import com.laffey.smart.view.DetailFourSwitchActivity2;
 import com.laffey.smart.view.DetailGatewayActivity;
 import com.laffey.smart.view.DetailOneSwitchActivity;
+import com.laffey.smart.view.DetailOneSwitchActivity2;
 import com.laffey.smart.view.DetailSensorActivity;
+import com.laffey.smart.view.DetailThreeSwitchActivity;
 import com.laffey.smart.view.DetailTwoSwitchActivity;
+import com.laffey.smart.view.DetailTwoSwitchActivity2;
 import com.laffey.smart.view.FourSceneSwitchActivity;
+import com.laffey.smart.view.FourSceneSwitchActivity2;
 import com.laffey.smart.view.LockDetailActivity;
 import com.laffey.smart.view.OneKeySceneDetailActivity;
+import com.laffey.smart.view.OneKeySceneDetailActivity2;
+import com.laffey.smart.view.OneWayCurtainsDetailActivity;
+import com.laffey.smart.view.OneWayWindowCurtainsActivity;
 import com.laffey.smart.view.SixSceneSwitchActivity;
+import com.laffey.smart.view.SixSceneSwitchActivity2;
 import com.laffey.smart.view.SixTwoSceneSwitchActivity;
+import com.laffey.smart.view.SixTwoSceneSwitchActivity2;
 import com.laffey.smart.view.ThreeSceneSwitchActivity;
+import com.laffey.smart.view.ThreeSceneSwitchActivity2;
 import com.laffey.smart.view.TwoSceneSwitchActivity;
+import com.laffey.smart.view.TwoSceneSwitchActivity2;
+import com.laffey.smart.view.TwoWayCurtainsDetailActivity;
 import com.vise.log.ViseLog;
 
 /**
@@ -51,11 +64,11 @@ public class ActivityRouter {
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    String code = "link://router/" + productKey;
+                    /*String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
-                    //Router.getInstance().toUrl((Activity) context, code, bundle);
+                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);*/
+                    intent = new Intent(context, DetailOneSwitchActivity2.class);
                 } else {
                     intent = new Intent(context, DetailOneSwitchActivity.class);
                 }
@@ -63,19 +76,27 @@ public class ActivityRouter {
             case CTSL.PK_TWOWAYSWITCH:
                 // 两键开关处理
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    String code = "link://router/" + productKey;
+                    /*String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    //Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
-                    Router.getInstance().toUrl((Activity) context, code, bundle);
+                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);*/
+
+                    intent = new Intent(context, DetailTwoSwitchActivity2.class);
                 } else {
                     intent = new Intent(context, DetailTwoSwitchActivity.class);
                 }
                 break;
-            case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_2: {
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    intent = new Intent(context, DetailFourSwitchActivity2.class);
+                } else {
+                    intent = new Intent(context, DetailFourSwitchActivity.class);
+                }
+                break;
+            }
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                /*if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                     String code = "link://router/" + productKey;
                     Bundle bundle = new Bundle();
                     bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
@@ -83,7 +104,9 @@ public class ActivityRouter {
                     Router.getInstance().toUrl((Activity) context, code, bundle);
                 } else {
                     intent = new Intent(context, DetailFourSwitchActivity.class);
-                }
+                }*/
+
+                intent = new Intent(context, DetailFourSwitchActivity.class);
                 break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
@@ -112,23 +135,53 @@ public class ActivityRouter {
                 intent = new Intent(context, ColorLightDetailActivity.class);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
-                intent = new Intent(context, OneKeySceneDetailActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, OneKeySceneDetailActivity2.class);
+                else intent = new Intent(context, OneKeySceneDetailActivity.class);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
+                else intent = new Intent(context, SixTwoSceneSwitchActivity.class);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
-                intent = new Intent(context, SixSceneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, SixSceneSwitchActivity2.class);
+                else intent = new Intent(context, SixSceneSwitchActivity.class);
                 break;
             case CTSL.PK_TWO_SCENE_SWITCH:
-                intent = new Intent(context, TwoSceneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, TwoSceneSwitchActivity2.class);
+                else intent = new Intent(context, TwoSceneSwitchActivity.class);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
-                intent = new Intent(context, ThreeSceneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, ThreeSceneSwitchActivity2.class);
+                else intent = new Intent(context, ThreeSceneSwitchActivity.class);
                 break;
             case CTSL.PK_FOUR_SCENE_SWITCH:
-                intent = new Intent(context, FourSceneSwitchActivity.class);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, FourSceneSwitchActivity2.class);
+                else intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;
+            case CTSL.PK_THREE_KEY_SWITCH: {
+                // 三键开关
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, DetailThreeSwitchActivity.class);
+                break;
+            }
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
+                // 单路窗帘
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, OneWayCurtainsDetailActivity.class);
+                break;
+            }
+            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS: {
+                // 双路窗帘
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
+                break;
+            }
             default:
                 String code = "link://router/" + productKey;
                 Bundle bundle = new Bundle();

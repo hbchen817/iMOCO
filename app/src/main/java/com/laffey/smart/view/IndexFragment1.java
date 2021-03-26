@@ -596,7 +596,6 @@ public class IndexFragment1 extends BaseFragment {
                 // 处理获取场景列表数据
                 EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                 if (sceneList != null && sceneList.scenes != null) {
-                    ViseLog.d("count = " + sceneList.scenes.size());
                     for (EScene.sceneListItemEntry item : sceneList.scenes) {
                         if (!item.description.contains("mode == CA,")) {
                             mSceneList.add(item);

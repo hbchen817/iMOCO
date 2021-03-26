@@ -85,6 +85,24 @@ public class ToastUtils {
     }
 
     /**
+     * 在屏幕弹短吐司
+     */
+    public static void showShortToast(Context context, int message) {
+        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        toast.setText(context.getResources().getString(message));
+        toast.show();
+    }
+
+    /**
+     * 在屏幕弹短吐司
+     */
+    public static void showShortToast(Context context, String message) {
+        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        toast.setText(message);
+        toast.show();
+    }
+
+    /**
      * 显示服务端返回的信息
      */
     public static void showRespMsg(Context context, String message) {

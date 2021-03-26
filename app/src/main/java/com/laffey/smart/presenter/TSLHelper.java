@@ -15,6 +15,7 @@ import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.sdk.TSL;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.Utility;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class TSLHelper {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_GETTSLPROPERTY;
-        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.version = "1.0.4";
         requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTSLPROPERTY;
         //提交

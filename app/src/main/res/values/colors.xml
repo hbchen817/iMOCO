@@ -35,6 +35,7 @@
     <color name="darkgrey">#6C6C6C</color>
     <color name="grey">#ACACAC</color>
     <color name="blue">#0074A6</color>
+    <color name="blue2">#1c8ce4</color>
     <color name="darkblue">#0000FF</color>
     <color name="all_c">#cccccc</color>
     <color name="all_3">#333333</color>
@@ -67,4 +68,6 @@
     <color name="divider">#69d1d2d6</color>
     <color name="sensor_detail_bg">#263f68</color>
     <color name="login_bg_2_color">#eda94d</color>
+    <color name="gray2">#565353</color>
+    <color name="gray3">#8f8f90</color>
 </resources>

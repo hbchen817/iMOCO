@@ -38,6 +38,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -144,6 +145,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
+                        ViseLog.d("处理获取拓展数据 = " + (String) msg.obj);
                         mExtendedJsonObject = JSON.parseObject((String) msg.obj);
                         if (!mExtendedJsonObject.isEmpty()) {
                             //更换绑定场景
@@ -219,7 +221,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                 i = i % mSceneBgs.length();
                 baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name);
                 baseViewHolder.setGone(R.id.editMask, mClickPosition != baseViewHolder.getAdapterPosition());
-                baseViewHolder.setImageResource(R.id.image, mSceneBgs.getResourceId(i,0));
+                baseViewHolder.setImageResource(R.id.image, mSceneBgs.getResourceId(i, 0));
             }
         };
         mAdapter.addChildClickViewIds(R.id.editBtn, R.id.bindBtn);

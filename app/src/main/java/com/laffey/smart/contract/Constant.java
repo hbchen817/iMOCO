@@ -155,8 +155,9 @@ public class Constant {
     // 根据设备ID获取物的模板
     public static final String API_QUERY_DEV_TSL                    = "/thing/tsl/get";
     // 提交意见反馈
-    public static final String API_FEEDBACK_ADD                    = "/feedback/add";
-
+    public static final String API_FEEDBACK_ADD                     = "/feedback/add";
+    // 删除设备扩展属性信息
+    public static final String API_EXTENDED_PROPERTY_DEL            = "/thing/extended/property/delete";
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER                ="link://router/cloudtime";
@@ -255,6 +256,7 @@ public class Constant {
     public static final int MSG_CALLBACK_UPDATE_SCENE               = 167;
 	public static final int MSG_CALLBACK_DELETE_USER                = 168;
     public static final int MSG_CALLBACK_SUBMIT_FEEDBACK            = 169;
+    public static final int MSG_CALLBACK_EXTENDED_PROPERTY_DEL      = 170;
 
     // 定义长连接回调消息常量
     public static final int MSG_CALLBACK_LNCONNECTSTATENOTIFY       = 200;
@@ -321,5 +323,9 @@ public class Constant {
     public static final String SCENE_ACTION_TRIGGER                 = "action/scene/trigger";
     public static final String SCENE_ACTION_PROPERTY                = "action/device/setProperty";
     public static final String SCENE_ACTION_SERVICE                 = "action/device/invokeService";
+
+    public static final String ICON_FONT_TTF                        = "iconfont/jk/iconfont.ttf";
+
+    public static final String TAG_DEV_KEY_NICKNAME                 = "devKeyNickName";
 }
 
