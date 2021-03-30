@@ -26,6 +26,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.ActionEntry;
 import com.laffey.smart.demoTest.CaConditionEntry;
 import com.laffey.smart.demoTest.IdentifierItemForCA;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
@@ -151,7 +152,6 @@ public class IdentifierListForActionActivity extends BaseActivity {
                     if (result.substring(0, 1).equals("[")) {
                         result = "{\"data\":" + result + "}";
                     }
-                    ViseLog.d(new Gson().toJson(JSON.parseObject(result)));
                     JSONObject o = JSON.parseObject(result);
                     JSONArray a = o.getJSONArray("data");
                     for (int i = 0; i < a.size(); i++) {
@@ -162,7 +162,17 @@ public class IdentifierListForActionActivity extends BaseActivity {
                             // 属性
                             ActionEntry.Property property = new ActionEntry.Property();
                             property.setIotId(mDevIot);
-                            property.setPropertyName(o1.getString("identifier"));
+                            String identifier = o1.getString("identifier");
+                            property.setPropertyName(identifier);
+
+                            JSONObject object = DeviceBuffer.getExtendedInfo(mDevIot);
+                            if (object != null) {
+                                String name = object.getString(identifier);
+                                if (name != null) {
+                                    item.setName(name);
+                                }
+                            }
+
                             item.setObject(property);
                         } else if (item.getType() == 2){
                             // 服务

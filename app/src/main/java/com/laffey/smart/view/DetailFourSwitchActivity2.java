@@ -25,6 +25,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
@@ -333,6 +334,7 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                     mStateName1.setText(object.getString(CTSL.FWS_P_PowerSwitch_1));
                     mStateName2.setText(object.getString(CTSL.FWS_P_PowerSwitch_2));
                     mStateName3.setText(object.getString(CTSL.FWS_P_PowerSwitch_3));
@@ -346,12 +348,15 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
                     mStateName2.setText(mKeyName2);
                     mStateName3.setText(mKeyName3);
                     mStateName4.setText(mKeyName4);
+                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
                     ToastUtils.showShortToast(DetailFourSwitchActivity2.this, R.string.set_success);
                     break;
                 }
             }
         }
     }
+
+    private JSONObject mResultObj;
 
     // 显示按键名称修改对话框
     private void showKeyNameDialogEdit(int resId) {
@@ -401,6 +406,22 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
         confirmView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (nameEt.getText().toString().length() > 10
+                        && mStateName1.getText().toString().length() > 10
+                        && mStateName2.getText().toString().length() > 10
+                        && mStateName3.getText().toString().length() > 10
+                        && mStateName4.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(DetailFourSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    return;
+                } else if (nameEt.getText().toString().length() == 0
+                        && mStateName1.getText().toString().length() == 0
+                        && mStateName2.getText().toString().length() == 0
+                        && mStateName3.getText().toString().length() == 0
+                        && mStateName4.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(DetailFourSwitchActivity2.this, R.string.key_name_cannot_be_empty);
+                    return;
+                }
+
                 QMUITipDialogUtil.showLoadingDialg(DetailFourSwitchActivity2.this, R.string.is_setting);
                 switch (resId) {
                     case R.id.detailTwoSwitchLblStateName1: {
@@ -441,6 +462,7 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
                 jsonObject.put(CTSL.FWS_P_PowerSwitch_2, mKeyName2);
                 jsonObject.put(CTSL.FWS_P_PowerSwitch_3, mKeyName3);
                 jsonObject.put(CTSL.FWS_P_PowerSwitch_4, mKeyName4);
+                mResultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 dialog.dismiss();
             }

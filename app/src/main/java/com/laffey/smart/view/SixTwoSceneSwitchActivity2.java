@@ -27,6 +27,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
@@ -412,21 +413,21 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             @Override
             public void onClick(View v) {
                 if (nameEt.getText().toString().length() > 10
-                        && mKey1TV.getText().toString().length() > 10
-                        && mKey2TV.getText().toString().length() > 10
-                        && mKey3TV.getText().toString().length() > 10
-                        && mKey4TV.getText().toString().length() > 10
-                        && mKey5TV.getText().toString().length() > 10
-                        && mKey6TV.getText().toString().length() > 10) {
+                        || mKey1TV.getText().toString().length() > 10
+                        || mKey2TV.getText().toString().length() > 10
+                        || mKey3TV.getText().toString().length() > 10
+                        || mKey4TV.getText().toString().length() > 10
+                        || mKey5TV.getText().toString().length() > 10
+                        || mKey6TV.getText().toString().length() > 10) {
                     ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
                     return;
                 } else if (nameEt.getText().toString().length() == 0
-                        && mKey1TV.getText().toString().length() == 0
-                        && mKey2TV.getText().toString().length() == 0
-                        && mKey3TV.getText().toString().length() == 0
-                        && mKey4TV.getText().toString().length() == 0
-                        && mKey5TV.getText().toString().length() == 0
-                        && mKey6TV.getText().toString().length() == 0) {
+                        || mKey1TV.getText().toString().length() == 0
+                        || mKey2TV.getText().toString().length() == 0
+                        || mKey3TV.getText().toString().length() == 0
+                        || mKey4TV.getText().toString().length() == 0
+                        || mKey5TV.getText().toString().length() == 0
+                        || mKey6TV.getText().toString().length() == 0) {
                     ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.key_name_cannot_be_empty);
                     return;
                 }
@@ -501,6 +502,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_4, mKeyName4);
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mKeyName5);
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mKeyName6);
+                resultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 dialog.dismiss();
             }
@@ -512,6 +514,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             }
         });
     }
+
+    private JSONObject resultObj;
 
     @Override
     public boolean onLongClick(View view) {
@@ -588,6 +592,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
                     mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
                     mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
@@ -599,6 +604,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     mKey4TV.setText(mKeyName4);
                     mKey5TV.setText(mKeyName5);
                     mKey6TV.setText(mKeyName6);
+                    DeviceBuffer.addExtendedInfo(mIOTId, resultObj);
                     ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.set_success);
                     break;
                 }

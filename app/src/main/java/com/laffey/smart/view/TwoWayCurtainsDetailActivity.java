@@ -25,6 +25,7 @@ import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
@@ -90,6 +91,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
+        ViseLog.d(new Gson().toJson(propertyEntry));
         if (!super.updateState(propertyEntry)) {
             return false;
         }
@@ -218,8 +220,8 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
             switch (msg.what) {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
-                    ViseLog.d((String) msg.obj);
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                     mKeyName1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
                     mKeyName2TV.setText(object.getString(CTSL.TWC_InnerCurtainOperation));
                     mTitle1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
@@ -233,6 +235,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
                     mTitle1TV.setText(mKeyName1);
                     mKeyName2TV.setText(mKeyName2);
                     mTitle2TV.setText(mKeyName2);
+                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
                     ToastUtils.showShortToast(TwoWayCurtainsDetailActivity.this, R.string.set_success);
                     break;
                 }
@@ -326,6 +329,8 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
         }
     }
 
+    private JSONObject mResultObj;
+
     // 显示按键名称修改对话框
     private void showKeyNameDialogEdit(int resId) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
@@ -364,6 +369,18 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
         confirmView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (nameEt.getText().toString().length() > 10
+                        && mKeyName1TV.getText().toString().length() > 10
+                        && mKeyName2TV.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(TwoWayCurtainsDetailActivity.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    return;
+                } else if (nameEt.getText().toString().length() == 0
+                        && mKeyName1TV.getText().toString().length() == 0
+                        && mKeyName2TV.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(TwoWayCurtainsDetailActivity.this, R.string.key_name_cannot_be_empty);
+                    return;
+                }
+
                 QMUITipDialogUtil.showLoadingDialg(TwoWayCurtainsDetailActivity.this, R.string.is_setting);
                 switch (resId) {
                     case R.id.key_1_tv: {
@@ -382,6 +399,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.TWC_CurtainConrtol, mKeyName1);
                 jsonObject.put(CTSL.TWC_InnerCurtainOperation, mKeyName2);
+                mResultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 dialog.dismiss();
             }

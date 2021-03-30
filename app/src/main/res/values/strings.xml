@@ -688,4 +688,8 @@
     <string name="four_way_powerswitch">电源开关4路</string>
     <string name="length_of_key_name_cannot_be_greater_than_10">按键名称长度不能大于10</string>
     <string name="key_name_cannot_be_empty">按键名称不能为空</string>
+    <string name="report_of_key_info">按键信息上报</string>
+    <string name="trigger_buttons">触发按键：</string>
+    <string name="trigger_buttons_2">触发按键</string>
+    <string name="server_is_busy_and_try_again_later">服务器繁忙，请稍后再试</string>
 </resources>

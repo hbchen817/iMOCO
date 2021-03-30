@@ -25,6 +25,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
@@ -243,6 +244,8 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         }
     }
 
+    private JSONObject mResultObj;
+
     // 显示按键名称修改对话框
     private void showKeyNameDialogEdit(int resId) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
@@ -281,6 +284,18 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         confirmView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (nameEt.getText().toString().length() > 10
+                        && mKeyName1TV.getText().toString().length() > 10
+                        && mKeyName2TV.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(TwoSceneSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    return;
+                } else if (nameEt.getText().toString().length() == 0
+                        && mKeyName1TV.getText().toString().length() == 0
+                        && mKeyName2TV.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(TwoSceneSwitchActivity2.this, R.string.key_name_cannot_be_empty);
+                    return;
+                }
+
                 QMUITipDialogUtil.showLoadingDialg(TwoSceneSwitchActivity2.this, R.string.is_setting);
                 switch (resId) {
                     case R.id.key_1_tv: {
@@ -299,6 +314,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_1, mKeyName1);
                 jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_2, mKeyName2);
+                mResultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 dialog.dismiss();
             }
@@ -392,6 +408,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                     mKeyName1TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_1));
                     mKeyName2TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_2));
                     break;
@@ -401,6 +418,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     QMUITipDialogUtil.dismiss();
                     mKeyName1TV.setText(mKeyName1);
                     mKeyName2TV.setText(mKeyName2);
+                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
                     ToastUtils.showShortToast(TwoSceneSwitchActivity2.this, R.string.set_success);
                     break;
                 }

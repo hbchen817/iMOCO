@@ -1,109 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content" >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-	<RelativeLayout
-		android:id="@+id/deviceGridRelItem"
-		android:background="@drawable/shape_frame_item"
-		android:layout_marginLeft="6dp"
-		android:layout_marginBottom="6dp"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" >
+    <RelativeLayout
+        android:id="@+id/deviceGridRelItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/shape_frame_item">
 
-		<TextView
-			android:id="@+id/deviceGridLblName"
-			style="@style/NormalFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_marginTop="4dp"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="50dp"
-			android:text="@string/devicelist_name" />
+        <TextView
+            android:id="@+id/deviceGridLblName"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="50dp"
+            android:text="@string/devicelist_name" />
 
-		<TextView
-			android:id="@+id/deviceGridLblRoom"
-			style="@style/SmallFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignTop="@id/deviceGridLblName"
-			android:layout_alignParentRight="true"
-			android:layout_marginTop="3dp"
-			android:layout_marginRight="10dp"
-			android:text="@string/room_livingroom" />
+        <TextView
+            android:id="@+id/deviceGridLblRoom"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/deviceGridLblName"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/room_livingroom" />
 
-		<ImageView
-			android:id="@+id/deviceGridImgIcon"
-			android:layout_width="45dp"
-			android:layout_height="45dp"
-			android:layout_alignParentLeft="true"
-			android:layout_alignBottom="@id/deviceGridSpaSpace"
-			android:layout_marginBottom="5dp"
-			android:layout_marginLeft="6dp"
-			android:contentDescription="@string/contentDescription_null"/><!--android:src="@drawable/icon_button"-->
+        <ImageView
+            android:id="@+id/deviceGridImgIcon"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignBottom="@id/deviceGridSpaSpace"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="6dp"
+            android:layout_marginBottom="5dp"
+            android:contentDescription="@string/contentDescription_null" /><!--android:src="@drawable/icon_button"-->
 
-		<TextView
-			android:id="@+id/deviceGridLblStatus"
-			style="@style/SmallFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/deviceGridSpaSpace"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="10dp"
-			android:layout_marginBottom="10dp"
-			android:text="@string/devicelist_status" />
+        <TextView
+            android:id="@+id/deviceGridLblStatus"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/deviceGridSpaSpace"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:maxLines="1"
+            android:text="@string/devicelist_status" />
 
-		<TextView
-			android:id="@+id/deviceGridLblState"
-			style="@style/SmallFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@id/deviceGridLblTime"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="10dp"
-			android:layout_marginBottom="3dp"
-			android:text="@string/devicelist_status" />
+        <TextView
+            android:id="@+id/deviceGridLblState"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/deviceGridLblTime"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:maxLines="1"
+            android:text="@string/devicelist_status" />
 
-		<TextView
-			android:id="@+id/deviceGridLblTime"
-			style="@style/NormalFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/deviceGridSpaSpace"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="10dp"
-			android:layout_marginBottom="10dp"
-			android:textStyle="bold"
-			android:alpha="0.5"
-			android:text="13:56" />
+        <TextView
+            android:id="@+id/deviceGridLblTime"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/deviceGridSpaSpace"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:alpha="0.5"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:maxLines="1"
+            android:text="13:56"
+            android:textStyle="bold" />
 
-		<TextView
-			android:id="@+id/deviceGridLblState1"
-			style="@style/SmallFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_above="@id/deviceGridLblState2"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="10dp"
-			android:layout_marginBottom="3dp"
-			android:text="@string/devicelist_status" />
+        <TextView
+            android:id="@+id/deviceGridLblState1"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/deviceGridLblState2"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:maxLines="1"
+            android:text="@string/devicelist_status" />
 
-		<TextView
-			android:id="@+id/deviceGridLblState2"
-			style="@style/SmallFontStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBottom="@id/deviceGridSpaSpace"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="10dp"
-			android:layout_marginBottom="10dp"
-			android:text="13:56" />
+        <TextView
+            android:id="@+id/deviceGridLblState2"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/deviceGridSpaSpace"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:gravity="right"
+            android:text="13:56" />
 
-		<Space android:id="@+id/deviceGridSpaSpace"
-			android:layout_alignParentRight="true"
-			android:layout_width="wrap_content"
-			android:layout_height="110dp" />
-	</RelativeLayout>
+        <Space
+            android:id="@+id/deviceGridSpaSpace"
+            android:layout_width="wrap_content"
+            android:layout_height="110dp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
 
 </LinearLayout>

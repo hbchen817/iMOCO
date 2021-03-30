@@ -327,5 +327,10 @@ public class Constant {
     public static final String ICON_FONT_TTF                        = "iconfont/jk/iconfont.ttf";
 
     public static final String TAG_DEV_KEY_NICKNAME                 = "devKeyNickName";
+
+    public static final String KEY_NICK_NAME_PK                     = CTSL.PK_SIX_TWO_SCENE_SWITCH + " , "
+            + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , "
+            + CTSL.PK_FOUR_SCENE_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2 + " , " + CTSL.PK_ONE_SCENE_SWITCH + " , " + CTSL.PK_THREE_SCENE_SWITCH + " , "
+            + CTSL.PK_TWO_SCENE_SWITCH + " , " + CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , " + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS;
 }
 

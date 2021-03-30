@@ -25,6 +25,7 @@ import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
@@ -225,6 +226,7 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                     mKeyName1TV.setText(object.getString(CTSL.WC_CurtainConrtol));
                     mTitleTV.setText(object.getString(CTSL.WC_CurtainConrtol));
                     break;
@@ -234,12 +236,15 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
                     QMUITipDialogUtil.dismiss();
                     mKeyName1TV.setText(mKeyName);
                     mTitleTV.setText(mKeyName);
+                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
                     ToastUtils.showShortToast(OneWayCurtainsDetailActivity.this, R.string.set_success);
                     break;
                 }
             }
         }
     }
+
+    private JSONObject mResultObj;
 
     // 显示按键名称修改对话框
     private void showKeyNameDialogEdit() {
@@ -267,10 +272,21 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
         confirmView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (nameEt.getText().toString().length() > 10
+                        && mKeyName1TV.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(OneWayCurtainsDetailActivity.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    return;
+                } else if (nameEt.getText().toString().length() == 0
+                        && mKeyName1TV.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(OneWayCurtainsDetailActivity.this, R.string.key_name_cannot_be_empty);
+                    return;
+                }
+
                 QMUITipDialogUtil.showLoadingDialg(OneWayCurtainsDetailActivity.this, R.string.is_setting);
                 mKeyName = nameEt.getText().toString();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.WC_CurtainConrtol, mKeyName);
+                mResultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 dialog.dismiss();
             }

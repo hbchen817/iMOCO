@@ -25,6 +25,7 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.CaConditionEntry;
 import com.laffey.smart.demoTest.IdentifierItemForCA;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -161,15 +162,29 @@ public class IdentifierListActivity extends BaseActivity {
                             CaConditionEntry.Property property = new CaConditionEntry.Property();
                             property.setProductKey(mProductKey);
                             property.setDeviceName(mDevName);
-                            property.setPropertyName(o1.getString("identifier"));
+                            String identifier = o1.getString("identifier");
+                            property.setPropertyName(identifier);
+
+                            JSONObject object = DeviceBuffer.getExtendedInfo(mDevIot);
+                            if (object != null) {
+                                String name = object.getString(identifier);
+                                if (name != null) {
+                                    item.setName(name);
+                                }
+                            }
+
                             item.setObject(property);
-                        } else if (item.getType() == 3){
+                        } else if (item.getType() == 3) {
                             // 事件
                             CaConditionEntry.Event event = new CaConditionEntry.Event();
                             event.setProductKey(mProductKey);
                             event.setDeviceName(mDevName);
                             event.setEventCode(o1.getString("identifier"));
                             item.setObject(event);
+
+                            if (Constant.KEY_NICK_NAME_PK.contains(mProductKey)) {
+                                item.setName(getString(R.string.trigger_buttons_2));
+                            }
                         }
                         item.setIotId(mDevIot);
                         item.setNickName(mNickName);

@@ -111,7 +111,6 @@ public class DevListForActionActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                ViseLog.d(mList.get(position).getIotId() + "\n" + mList.get(position).getNickName());
                 Intent intent = new Intent(DevListForActionActivity.this, IdentifierListForActionActivity.class);
                 intent.putExtra("nick_name", mList.get(position).getNickName());
                 intent.putExtra("dev_name", mList.get(position).getDeviceName());

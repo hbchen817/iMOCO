@@ -378,6 +378,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
 
     private void unbindDevice() {
+        DeviceBuffer.removeExtendedInfo(mIOTId);
         mSceneManager.delExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, null, null, null);
         switch (mProductKey) {
             case CTSL.PK_LIGHT:

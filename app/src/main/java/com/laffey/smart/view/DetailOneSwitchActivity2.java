@@ -29,6 +29,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
@@ -245,10 +246,19 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
         confirmView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (nameEt.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(DetailOneSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    return;
+                } else if (nameEt.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(DetailOneSwitchActivity2.this, R.string.key_name_cannot_be_empty);
+                    return;
+                }
+
                 QMUITipDialogUtil.showLoadingDialg(DetailOneSwitchActivity2.this, R.string.is_setting);
                 mKeyName = nameEt.getText().toString();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.OWS_P_PowerSwitch_1, mKeyName);
+                mResultObj = jsonObject;
                 mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mhandler);
                 dialog.dismiss();
             }
@@ -260,6 +270,8 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
             }
         });
     }
+
+    private JSONObject mResultObj;
 
     private class MyHandler extends Handler {
         private WeakReference<Activity> ref;
@@ -279,6 +291,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
             } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
                 QMUITipDialogUtil.dismiss();
                 mStateName.setText(mKeyName);
+                DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
                 ToastUtils.showShortToast(DetailOneSwitchActivity2.this, R.string.set_success);
             } else if (msg.what == Constant.MSG_CALLBACK_IDENTIFIER_LIST) {
                 String result = (String) msg.obj;
@@ -297,6 +310,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
                 }
             } else if (msg.what == TAG_GET_EXTENDED_PRO) {
                 JSONObject object = JSONObject.parseObject((String) msg.obj);
+                DeviceBuffer.addExtendedInfo(mIOTId, object);
                 mStateName.setText(object.getString(CTSL.OWS_P_PowerSwitch_1));
             }
         }
