@@ -682,10 +682,10 @@
     <string name="powerswitch_2">电源开关_2</string>
     <string name="powerswitch_3">电源开关_3</string>
     <string name="powerswitch_4">电源开关_4</string>
-    <string name="one_way_powerswitch">电源开关1路</string>
-    <string name="two_way_powerswitch">电源开关2路</string>
-    <string name="three_way_powerswitch">电源开关3路</string>
-    <string name="four_way_powerswitch">电源开关4路</string>
+    <string name="one_way_powerswitch">开关1路</string>
+    <string name="two_way_powerswitch">开关2路</string>
+    <string name="three_way_powerswitch">开关3路</string>
+    <string name="four_way_powerswitch">开关4路</string>
     <string name="length_of_key_name_cannot_be_greater_than_10">按键名称长度不能大于10</string>
     <string name="key_name_cannot_be_empty">按键名称不能为空</string>
     <string name="report_of_key_info">按键信息上报</string>

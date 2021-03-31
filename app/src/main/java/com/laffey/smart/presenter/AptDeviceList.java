@@ -21,6 +21,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
+import com.laffey.smart.model.ETSL;
 import com.vise.log.ViseLog;
 
 /**
@@ -194,24 +195,37 @@ public class AptDeviceList extends BaseAdapter {
                     if (Constant.KEY_NICK_NAME_PK.contains(deviceEntry.productKey)) {
                         JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
                         if (jsonObject != null) {
-                            String name0 = jsonObject.getString(deviceEntry.stateTimes.get(0).name);
-                            String name1 = jsonObject.getString(deviceEntry.stateTimes.get(1).name);
+                            int switchPos1 = 0;
+                            int switchPos2 = 0;
+                            for (int i = 0; i < deviceEntry.stateTimes.size(); i++) {
+                                ETSL.stateTimeEntry timeEntry = deviceEntry.stateTimes.get(i);
+                                if (CTSL.FWS_P_PowerSwitch_1.equals(timeEntry.name)) {
+                                    switchPos1 = i;
+                                    continue;
+                                } else if (CTSL.FWS_P_PowerSwitch_2.equals(timeEntry.name)) {
+                                    switchPos2 = i;
+                                    continue;
+                                }
+                            }
+
+                            String name0 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos1).name);
+                            String name1 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos2).name);
                             String state0 = null, state1 = null;
                             if (name0 != null && name1 != null) {
-                                if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
                                     // 打开
-                                    state0 = deviceEntry.stateTimes.get(0).time + " " + name0 + mContext.getString(R.string.oneswitch_state_on);
-                                } else if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                    state0 = deviceEntry.stateTimes.get(switchPos1).time + " " + name0 + mContext.getString(R.string.oneswitch_state_on);
+                                } else if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
                                     // 关闭
-                                    state0 = deviceEntry.stateTimes.get(0).time + " " + name0 + mContext.getString(R.string.oneswitch_state_off);
+                                    state0 = deviceEntry.stateTimes.get(switchPos1).time + " " + name0 + mContext.getString(R.string.oneswitch_state_off);
                                 }
 
-                                if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
                                     // 打开
-                                    state1 = deviceEntry.stateTimes.get(1).time + " " + name1 + mContext.getString(R.string.oneswitch_state_on);
-                                } else if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                    state1 = deviceEntry.stateTimes.get(switchPos2).time + " " + name1 + mContext.getString(R.string.oneswitch_state_on);
+                                } else if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
                                     // 关闭
-                                    state1 = deviceEntry.stateTimes.get(1).time + " " + name1 + mContext.getString(R.string.oneswitch_state_off);
+                                    state1 = deviceEntry.stateTimes.get(switchPos2).time + " " + name1 + mContext.getString(R.string.oneswitch_state_off);
                                 }
                                 state = state0 + "  /  " + state1;
                                 if (state0 != null && state1 != null)

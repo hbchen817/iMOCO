@@ -115,7 +115,9 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toRightOf="@id/deviceGridImgIcon"
+            android:ellipsize="end"
             android:gravity="right"
+            android:maxLines="1"
             android:text="13:56" />
 
         <Space
