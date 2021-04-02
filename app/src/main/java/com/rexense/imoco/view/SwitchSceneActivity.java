@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -108,7 +109,7 @@ public class SwitchSceneActivity extends BaseActivity {
     @Subscribe
     public void actionChoose(List<ItemAction> itemActions) {
         Iterator<ItemAction> iterator = itemActions.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             ItemAction itemAction = iterator.next();
             for (int j = 0; j < mList.size(); j++) {
                 ItemAction itemAction1 = mList.get(j);
@@ -124,6 +125,18 @@ public class SwitchSceneActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    private String getDevIcon(String pk) {
+        Map<String, EDevice.deviceEntry> entryMap = DeviceBuffer.getAllDeviceInformation();
+        Iterator<Map.Entry<String, EDevice.deviceEntry>> entries = entryMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, EDevice.deviceEntry> entry = entries.next();
+            if (pk.equals(entry.getValue().productKey)) {
+                return entry.getValue().image;
+            }
+        }
+        return null;
+    }
+
     private void initAdapter() {
         mAdapter = new BaseQuickAdapter<ItemAction, BaseViewHolder>(R.layout.item_action, mList) {
 
@@ -131,7 +144,9 @@ public class SwitchSceneActivity extends BaseActivity {
             protected void convert(@NotNull BaseViewHolder baseViewHolder, ItemAction visitable) {
                 baseViewHolder.setText(R.id.actionDeviceName, visitable.getDeviceName());
                 baseViewHolder.setText(R.id.actionContent, visitable.getActionName() + visitable.getActionKey());
-                baseViewHolder.setImageResource(R.id.actionImage, ImageProvider.genProductIcon(visitable.getProductKey()));
+                //baseViewHolder.setImageResource(R.id.actionImage, ImageProvider.genProductIcon(visitable.getProductKey()));
+                ImageView image = baseViewHolder.getView(R.id.actionImage);
+                Glide.with(SwitchSceneActivity.this).load(getDevIcon(visitable.getProductKey())).into(image);
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {

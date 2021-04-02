@@ -15,12 +15,14 @@ import com.rexense.imoco.view.DetailOneSwitchActivity;
 import com.rexense.imoco.view.DetailSensorActivity;
 import com.rexense.imoco.view.DetailTwoSwitchActivity;
 import com.rexense.imoco.view.FourSceneSwitchActivity;
+import com.rexense.imoco.view.FullScreenSwitchActivity;
 import com.rexense.imoco.view.LockDetailActivity;
 import com.rexense.imoco.view.OneKeySceneDetailActivity;
 import com.rexense.imoco.view.SixFourSceneSwitchActivity;
 import com.rexense.imoco.view.SixSceneSwitchActivity;
 import com.rexense.imoco.view.ThreeSceneSwitchActivity;
 import com.rexense.imoco.view.TwoSceneSwitchActivity;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -119,6 +121,12 @@ public class ActivityRouter {
             case CTSL.PK_FOUR_SCENE_SWITCH:
                 intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;
+            case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+                // 全面屏开关
+                ViseLog.d("iotId = " + iotId + " , productKey = " + productKey);
+                intent = new Intent(context, FullScreenSwitchActivity.class);
+                break;
+            }
             default:
                 String code = "link://router/" + productKey;
                 Bundle bundle = new Bundle();

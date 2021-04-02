@@ -3,36 +3,38 @@
     <!-- 设置进度条背景 -->
     <item android:id="@android:id/background">
         <shape>
-            <solid android:color="#D7D5D7"/>
-            <size android:height="@dimen/dp_40"/>
+            <solid android:color="#D7D5D7" />
+            <size android:height="@dimen/dp_40" />
             <!-- 设置进度条的圆角 -->
-            <corners android:radius="@dimen/dp_5"/>
+            <corners android:radius="@dimen/dp_5" />
         </shape>
     </item>
-<!--    &lt;!&ndash; 设置进度条的二级进度 &ndash;&gt;-->
-<!--    <item android:id="@android:id/secondaryProgress">-->
-<!--        <clip>-->
-<!--            <shape>-->
-<!--                <solid android:color="#3A6293"/>-->
-<!--                <stroke android:color="#979797"-->
-<!--                    android:width="@dimen/dp_1"/>-->
-<!--                <size android:height="@dimen/dp_40"/>-->
-<!--                <corners android:radius="@dimen/dp_5"/>-->
-<!--            </shape>-->
-<!--        </clip>-->
-<!--    </item>-->
+    <!--    &lt;!&ndash; 设置进度条的二级进度 &ndash;&gt;-->
+    <!--    <item android:id="@android:id/secondaryProgress">-->
+    <!--        <clip>-->
+    <!--            <shape>-->
+    <!--                <solid android:color="#3A6293"/>-->
+    <!--                <stroke android:color="#979797"-->
+    <!--                    android:width="@dimen/dp_1"/>-->
+    <!--                <size android:height="@dimen/dp_40"/>-->
+    <!--                <corners android:radius="@dimen/dp_5"/>-->
+    <!--            </shape>-->
+    <!--        </clip>-->
+    <!--    </item>-->
     <!-- 正常的进度设置 -->
     <item android:id="@android:id/progress">
         <clip>
-            <shape
-                android:shape="rectangle">
-                <gradient android:startColor="#ECB49B"
+            <shape android:shape="rectangle">
+                <gradient
                     android:angle="0"
-                    android:endColor="#FE4E40"/>
-                <stroke android:color="#979797"
-                    android:width="@dimen/dp_1"/>
-                <size android:height="@dimen/dp_40"/>
-                <corners android:radius="@dimen/dp_5"/>
+                    android:endColor="#FE4E40"
+                    android:startColor="#ECB49B" />
+                <!--<stroke
+                    android:color="@color/appbgcolor"
+                    android:width="@dimen/dp_1"/>-->
+
+                <size android:height="@dimen/dp_40" />
+                <corners android:radius="@dimen/dp_5" />
             </shape>
         </clip>
     </item>

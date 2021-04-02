@@ -36,6 +36,7 @@ public class ToastUtils {
             }
         }, delay);
     }
+
     /**
      * 在屏幕正中间弹短吐司
      */
@@ -80,6 +81,24 @@ public class ToastUtils {
      */
     public static void showLongToast(Context context, String message) {
         Toast toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        toast.setText(message);
+        toast.show();
+    }
+
+    /**
+     * 在屏幕弹短吐司
+     */
+    public static void showToast(Context context, int message) {
+        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        toast.setText(context.getResources().getString(message));
+        toast.show();
+    }
+
+    /**
+     * 在屏幕弹短吐司
+     */
+    public static void showToast(Context context, String message) {
+        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
         toast.setText(message);
         toast.show();
     }

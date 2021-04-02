@@ -43,8 +43,14 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.LogActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".view.FloorHeatingForFSSActivity"></activity>
+        <activity android:name=".view.NewAirForFSSActivity" />
+        <activity android:name=".view.AirConditionerForFSSActivity" />
+        <activity android:name=".view.SceneListForFSSActivity" />
+        <activity android:name=".view.FullScreenSwitchActivity" />
+        <activity
+            android:name=".view.LogActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.FeedbackActivity"
             android:screenOrientation="portrait" />
@@ -100,18 +106,14 @@
         <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
-            android:value="103546039" />
-        <!-- huawei push end -->
-
+            android:value="103546039" /> <!-- huawei push end -->
         <!-- vivo push start -->
         <meta-data
             android:name="com.vivo.push.api_key"
             android:value="2e62c1883af9e74ff145082e05e0db2a" />
         <meta-data
             android:name="com.vivo.push.app_id"
-            android:value="105330794" />
-        <!-- vivo push start -->
-
+            android:value="105330794" /> <!-- vivo push start -->
         <activity
             android:name=".view.StartActivity"
             android:launchMode="singleTop"

@@ -21,6 +21,7 @@ import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.utility.StatusBarUtils;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -98,6 +99,11 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_FOUR_SCENE_SWITCH:
                 setContentView(R.layout.activity_four_key_scene);
                 break;
+            case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+                // 全面屏
+                setContentView(R.layout.activity_full_screen_switch);
+                break;
+            }
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);
@@ -135,7 +141,6 @@ public class DetailActivity extends BaseActivity {
                 intent.putExtra("iotId", mIOTId);
                 intent.putExtra("productKey", mProductKey);
                 intent.putExtra("name", mName);
-                Log.i("lzm", "this.mName2" + mName);
                 intent.putExtra("owned", mOwned);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
             }
@@ -209,6 +214,7 @@ public class DetailActivity extends BaseActivity {
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
                     JSONObject items = JSON.parseObject((String) msg.obj);
+                    ViseLog.d(items);
                     if (items != null) {
                         TSLHelper.parseProperty(mProductKey, items, propertyEntry);
                         updateState(propertyEntry);
@@ -228,6 +234,7 @@ public class DetailActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知回调
+                    ViseLog.d("实时 = " + (String) msg.obj);
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     updateState(propertyEntry);
                     break;

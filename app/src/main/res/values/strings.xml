@@ -23,6 +23,17 @@
     <string name="icon_scene">&#xe755;</string>
     <string name="icon_notification">&#xe608;</string>
     <string name="icon_checked">&#xe631;</string>
+    <string name="icon_subtraction">&#xe632;</string>
+    <string name="icon_add_3">&#xe616;</string>
+    <string name="icon_heating">&#xe63b;</string>
+    <string name="icon_refrigeration">&#xe609;</string>
+    <string name="icon_air_supply">&#xe779;</string>
+    <string name="icon_dehumidification">&#xe686;</string>
+    <string name="icon_low_wind">&#xe690;</string>
+    <string name="icon_mid_wind">&#xe696;</string>
+    <string name="icon_high_wind">&#xe68d;</string>
+    <string name="icon_switch2">&#xe64e;</string>
+    <string name="icon_switch3">&#xe6a1;</string>
 
     <string name="app_name">莫科智家</string>
     <string name="contentDescription_null"></string>
@@ -54,6 +65,7 @@
     <string name="main_onekeyscene">一键执行场景</string>
     <string name="main_scenename">场景名称</string>
     <string name="main_scene_execute_hint">执行了%s场景</string>
+    <string name="main_scene_execute_hint_2">执行了场景：%s</string>
 
     <string name="scene_scene">推荐场景</string>
     <string name="scene_my">我的场景</string>
@@ -257,7 +269,7 @@
     <string name="moregateway_bellmusicid">门铃音乐</string>
     <string name="moregateway_alarmvolume">报警音量</string>
     <string name="moregateway_editname">修改设备名称</string>
-    
+
     <string name="moregateway_4100_ZB_Band">ZB带宽</string>
     <string name="moregateway_4100_NETWORK_KEY">网络密钥</string>
     <string name="moregateway_4100_ZB_CO_MAC">ZB设备MAC地址</string>
@@ -659,4 +671,8 @@
     <string name="pls_enter_description_of_the_problem">请输入问题描述</string>
     <string name="submit_completed">提交完成</string>
     <string name="alog_title">日志服务</string>
+    <string name="air_conditioner">空调</string>
+    <string name="new_air">新风</string>
+    <string name="room_temperature">室温</string>
+    <string name="heating">制热</string>
 </resources>
