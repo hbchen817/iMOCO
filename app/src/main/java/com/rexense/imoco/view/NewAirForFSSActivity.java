@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.model.ETSL;
+import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.TSLHelper;
 
 import butterknife.BindView;
@@ -33,6 +34,8 @@ public class NewAirForFSSActivity extends DetailActivity {
     TextView mHighWindIC;
     @BindView(R.id.switch_ic)
     TextView mSwitchIC;
+    @BindView(R.id.timing_ic)
+    TextView mTimingIC;
     @BindView(R.id.low_wind_tv)
     TextView mLowWindTV;
     @BindView(R.id.mid_wind_tv)
@@ -43,6 +46,8 @@ public class NewAirForFSSActivity extends DetailActivity {
     TextView mSwitchTV;
     @BindView(R.id.fanmode_show_tv)
     TextView mFanModeShowTV;
+    @BindView(R.id.timing_tv)
+    TextView mTimingTV;
     @BindView(R.id.low_wind_layout)
     RelativeLayout mLowWindLayout;
     @BindView(R.id.mid_wind_layout)
@@ -51,6 +56,8 @@ public class NewAirForFSSActivity extends DetailActivity {
     RelativeLayout mHighWindLayout;
     @BindView(R.id.switch_layout)
     RelativeLayout mSwitchLayout;
+    @BindView(R.id.timing_layout)
+    RelativeLayout mTimingLayout;
 
     private int mFanMode = 0;//0: 低风 1: 中风 2: 高风
     private int mPowerSwitch = 3;// 3: 关闭 4: 打开
@@ -118,9 +125,10 @@ public class NewAirForFSSActivity extends DetailActivity {
         mMidWindIC.setTypeface(iconfont);
         mHighWindIC.setTypeface(iconfont);
         mSwitchIC.setTypeface(iconfont);
+        mTimingIC.setTypeface(iconfont);
     }
 
-    @OnClick({R.id.low_wind_layout, R.id.mid_wind_layout, R.id.high_wind_layout, R.id.switch_layout})
+    @OnClick({R.id.low_wind_layout, R.id.mid_wind_layout, R.id.high_wind_layout, R.id.switch_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.low_wind_layout: {
@@ -150,6 +158,12 @@ public class NewAirForFSSActivity extends DetailActivity {
                     // 打开
                     mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
                 }
+                break;
+            }
+            case R.id.timing_layout: {
+                // 定时
+                if (mPowerSwitch == 4)
+                    PluginHelper.cloudTimer(NewAirForFSSActivity.this, mIOTId, mProductKey);
                 break;
             }
         }
@@ -260,6 +274,8 @@ public class NewAirForFSSActivity extends DetailActivity {
                 // 关闭
                 mSwitchIC.setTextColor(getResources().getColor(R.color.all_8_2));
                 mSwitchTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                mTimingIC.setTextColor(getResources().getColor(R.color.all_8_2));
+                mTimingTV.setTextColor(getResources().getColor(R.color.all_8_2));
 
                 if (mFanMode == 0) {
                     mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
@@ -299,6 +315,8 @@ public class NewAirForFSSActivity extends DetailActivity {
                 // 打开
                 mSwitchIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
                 mSwitchTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                mTimingIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                mTimingTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
 
                 if (mFanMode == 0) {
                     mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);

@@ -176,18 +176,15 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
                 android:layout_weight="1">
 
                 <RelativeLayout
                     android:id="@+id/switch_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/dp_10"
                     android:background="@drawable/shape_corner"
                     android:paddingHorizontal="@dimen/dp_30"
                     android:paddingVertical="@dimen/dp_10">
@@ -215,7 +212,38 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/timing_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:background="@drawable/shape_corner"
+                    android:paddingHorizontal="@dimen/dp_30"
+                    android:paddingVertical="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/timing_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_timer"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/timing_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/timing_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/detail_state_timer"
+                        android:textColor="@color/index_imgcolor" />
+                </RelativeLayout>
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

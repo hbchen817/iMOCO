@@ -210,7 +210,9 @@
                 android:id="@+id/switch_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/dp_10"
                 android:background="@drawable/only_stroke"
                 android:paddingHorizontal="@dimen/dp_30"
                 android:paddingVertical="@dimen/dp_10">
@@ -234,36 +236,39 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/timer"
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/dp_30"
-            android:layout_weight="1"
-            android:background="@drawable/only_stroke"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/icon_timer"
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginHorizontal="@dimen/dp_20"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="@string/icon_timer"
-                android:textColor="#F45D31"
-                android:textSize="@dimen/dp_30" />
-
-            <TextView
+            <RelativeLayout
+                android:id="@+id/timing_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:text="@string/detail_state_timer"
-                android:textColor="@color/all_3" />
-        </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:background="@drawable/only_stroke"
+                android:paddingHorizontal="@dimen/dp_30"
+                android:paddingVertical="@dimen/dp_10">
+
+                <TextView
+                    android:id="@+id/timing_ic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/icon_timer"
+                    android:textColor="@color/orange3"
+                    android:textSize="@dimen/sp_30" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/timing_ic"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/detail_state_timer"
+                    android:textColor="@color/all_3" />
+            </RelativeLayout>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

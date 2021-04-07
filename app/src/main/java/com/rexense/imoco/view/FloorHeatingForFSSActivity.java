@@ -1,8 +1,5 @@
 package com.rexense.imoco.view;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -13,12 +10,11 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.model.ETSL;
+import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.TSLHelper;
-import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,6 +29,8 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
     TextView mTopbarTitle;
     @BindView(R.id.icon_switch)
     TextView mSwitchIC;
+    @BindView(R.id.timing_ic)
+    TextView mTimingIC;
     @BindView(R.id.temperature_value)
     AlignTextView mTemValue;
     @BindView(R.id.temperatureSeekBar)
@@ -47,6 +45,8 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
     TextView mTemValue2TV;
     @BindView(R.id.switch_layout)
     RelativeLayout mSwitchLayout;
+    @BindView(R.id.timing_layout)
+    RelativeLayout mTimingLayout;
 
     private int mPowerSwitch = 0;// 0: 关闭  1: 打开
     private int mTargetTem = 0;
@@ -113,6 +113,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
     private void initView() {
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
         mSwitchIC.setTypeface(iconfont);
+        mTimingIC.setTypeface(iconfont);
 
         mTemSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -145,7 +146,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
         mTopbarMore.setVisibility(View.GONE);
     }
 
-    @OnClick({R.id.switch_layout})
+    @OnClick({R.id.switch_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.switch_layout: {
@@ -156,6 +157,13 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
                 } else {
                     // 打开
                     mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+                }
+                break;
+            }
+            case R.id.timing_layout: {
+                // 定时
+                if (mPowerSwitch == 1) {
+                    PluginHelper.cloudTimer(FloorHeatingForFSSActivity.this, mIOTId, mProductKey);
                 }
                 break;
             }
@@ -177,6 +185,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
                 mTemValue2TV.setTextColor(getResources().getColor(R.color.orange3));
                 mTemUnit1TV.setTextColor(getResources().getColor(R.color.orange3));
                 mTemUnit2TV.setTextColor(getResources().getColor(R.color.orange3));
+                mTimingIC.setTextColor(getResources().getColor(R.color.orange3));
                 mTemSeekBar.setEnabled(false);
                 break;
             }
@@ -188,6 +197,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
                 mTemValue2TV.setTextColor(getResources().getColor(R.color.orange2));
                 mTemUnit1TV.setTextColor(getResources().getColor(R.color.orange2));
                 mTemUnit2TV.setTextColor(getResources().getColor(R.color.orange2));
+                mTimingIC.setTextColor(getResources().getColor(R.color.orange2));
                 mTemSeekBar.setEnabled(true);
                 break;
             }

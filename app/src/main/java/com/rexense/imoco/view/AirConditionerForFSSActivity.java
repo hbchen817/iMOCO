@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.model.ETSL;
+import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.TSLHelper;
 import com.vise.log.ViseLog;
 
@@ -47,12 +48,18 @@ public class AirConditionerForFSSActivity extends DetailActivity {
     TextView mTargetTemTV;
     @BindView(R.id.current_tem_tv)
     TextView mCurrentTemTV;
+    @BindView(R.id.timing_ic)
+    TextView mTimingIC;
+    @BindView(R.id.timing_tv)
+    TextView mTimingTV;
     @BindView(R.id.switch_layout)
     RelativeLayout mSwitchLayout;
     @BindView(R.id.workmode_layout)
     RelativeLayout mWorkModeLayout;
     @BindView(R.id.fanmode_layout)
     RelativeLayout mFanModeLayout;
+    @BindView(R.id.timing_layout)
+    RelativeLayout mTimingLayout;
 
     private int mTargetTem = 20;
     private String[] mWorkModes;
@@ -139,6 +146,7 @@ public class AirConditionerForFSSActivity extends DetailActivity {
         mWorkModeIC.setTypeface(iconfont);
         mSwitchIC.setTypeface(iconfont);
         mFanModeIC.setTypeface(iconfont);
+        mTimingIC.setTypeface(iconfont);
 
         mWorkModes = getResources().getStringArray(R.array.work_modes);
         mWorkModeICs = getResources().getStringArray(R.array.work_mode_ics);
@@ -170,7 +178,7 @@ public class AirConditionerForFSSActivity extends DetailActivity {
         mTopbarMore.setVisibility(View.GONE);
     }
 
-    @OnClick({R.id.switch_layout, R.id.sub_tv, R.id.add_tv, R.id.workmode_layout, R.id.fanmode_layout})
+    @OnClick({R.id.switch_layout, R.id.sub_tv, R.id.add_tv, R.id.workmode_layout, R.id.fanmode_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.switch_layout: {
@@ -228,6 +236,13 @@ public class AirConditionerForFSSActivity extends DetailActivity {
                 }
                 break;
             }
+            case R.id.timing_layout: {
+                // 定时
+                if (mSwitchIC.getCurrentTextColor() == getResources().getColor(R.color.index_imgcolor)) {
+                    PluginHelper.cloudTimer(AirConditionerForFSSActivity.this, mIOTId, mProductKey);
+                }
+                break;
+            }
         }
     }
 
@@ -246,6 +261,8 @@ public class AirConditionerForFSSActivity extends DetailActivity {
                 mWorkModeTV.setTextColor(getResources().getColor(R.color.all_8_2));
                 mFanModeIC.setTextColor(getResources().getColor(R.color.all_8_2));
                 mFanModeTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                mTimingIC.setTextColor(getResources().getColor(R.color.all_8_2));
+                mTimingTV.setTextColor(getResources().getColor(R.color.all_8_2));
                 mSubTV.setTextColor(getResources().getColor(R.color.white2));
                 mAddTV.setTextColor(getResources().getColor(R.color.white2));
                 mTargetTemShowTV.setTextColor(getResources().getColor(R.color.white2));
@@ -260,6 +277,8 @@ public class AirConditionerForFSSActivity extends DetailActivity {
                 mWorkModeTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
                 mFanModeIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
                 mFanModeTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                mTimingIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                mTimingTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
                 mSubTV.setTextColor(getResources().getColor(R.color.white));
                 mAddTV.setTextColor(getResources().getColor(R.color.white));
                 mTargetTemShowTV.setTextColor(getResources().getColor(R.color.white));

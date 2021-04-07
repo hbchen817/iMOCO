@@ -12,8 +12,8 @@ public class CTSL {
     // 定义设备ProductKey常量
     public static final String PK_GATEWAY = "a1GuwJkxdQx";
     public static final String PK_GATEWAY_RG4100 = "b17wpNLgyIe";
-    public static final String PK_ONEWAYSWITCH = "a1X2BnFW2fx";
-    public static final String PK_TWOWAYSWITCH = "a1C9G2We8Da";
+    public static final String PK_ONEWAYSWITCH = "a1bnR9v7x8A";// 一键面板开关
+    public static final String PK_TWOWAYSWITCH = "a1PayKSlmqB";// 两键面板开关
     public static final String PK_GASSENSOR = "a1Kwz77cZAu";
     public static final String PK_SMOKESENSOR = "a1pSa8eunPc";
     public static final String PK_TEMHUMSENSOR = "a1TG5jEuQCN";
@@ -53,7 +53,7 @@ public class CTSL {
     public static final String PK_FOURWAYSWITCH = "a1pOIRmMTGF";// 四键开关
     public static final String PK_FOURWAYSWITCH_2 = "a1q9trgD6NK";// 四键开关
     public static final String PK_FLOORHEATING001 = "a1R4ZpwDMM8";// 拉菲地暖(电机)
-    public static final String PK_THREE_KEY_SWITCH = "a1orzEATqCz";// 三键面板开关
+    public static final String PK_THREE_KEY_SWITCH = "a1LhbjbKi3K";// 三键面板开关
 
     public static final String PK_ANY_FOUR_SCENE_SWITCH = "a1Qb4P7DHAv";// 随意贴四键场景开关
     public static final String PK_ANY_TWO_SCENE_SWITCH = "a1WBTOxm1Z5";// 随意贴二键场景开关
@@ -78,8 +78,6 @@ public class CTSL {
         t_bool,
         t_enum
     }
-
-    ;
 
     // 定义公共属性常量
     public static final String P_P_BatteryPercentage = "BatteryPercentage";
