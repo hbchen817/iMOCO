@@ -2,13 +2,16 @@ package com.laffey.smart.utility;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.presenter.MocoApplication;
 
 import java.io.File;
@@ -27,7 +30,6 @@ import java.util.Map;
  * UncaughtException处理类,当程序发生Uncaught异常的时候,有该类来接管程序,并记录发送错误报告.
  *
  * @author user
- *
  */
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
@@ -45,11 +47,15 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     //用于格式化日期,作为日志文件名的一部分
     private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-    /** 保证只有一个CrashHandler实例 */
+    /**
+     * 保证只有一个CrashHandler实例
+     */
     private CrashHandler() {
     }
 
-    /** 获取CrashHandler实例 ,单例模式 */
+    /**
+     * 获取CrashHandler实例 ,单例模式
+     */
     public static CrashHandler getInstance() {
         return INSTANCE;
     }
@@ -116,6 +122,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     /**
      * 收集设备参数信息
+     *
      * @param ctx
      */
     public void collectDeviceInfo(Context ctx) {
@@ -147,7 +154,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      * 保存错误信息到文件中
      *
      * @param ex
-     * @return	返回文件名称,便于将文件传送到服务器
+     * @return 返回文件名称, 便于将文件传送到服务器
      */
     private String saveCrashInfo2File(Throwable ex) {
 
@@ -174,12 +181,19 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = MocoApplication.sContext.getExternalCacheDir()+"/crash/";
+                String path = MocoApplication.sContext.getExternalCacheDir() + "/crash/";
+
+                if (BuildConfig.DEBUG) {
+                    String name = BuildConfig.APPLICATION_ID.replace(".", "_");
+                    path = Environment.getExternalStorageDirectory() + "/" + name + "_crash_log/";
+                }
 
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
+                if (BuildConfig.DEBUG)
+                    notifySystemToScan(path);
                 FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());
                 fos.close();
@@ -189,5 +203,14 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             Log.e(TAG, "an error occured while writing file...", e);
         }
         return null;
+    }
+
+    public static void notifySystemToScan(String filePath) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File file = new File(filePath);
+
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        MocoApplication.sContext.sendBroadcast(intent);
     }
 }

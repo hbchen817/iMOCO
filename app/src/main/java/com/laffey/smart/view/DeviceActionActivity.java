@@ -21,11 +21,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ItemAction;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +136,7 @@ public class DeviceActionActivity extends BaseActivity {
         });
     }
 
-    private static class MyHandler extends Handler {
+    private class MyHandler extends Handler {
         final WeakReference<DeviceActionActivity> mWeakReference;
 
         public MyHandler(DeviceActionActivity activity) {
@@ -169,15 +172,22 @@ public class DeviceActionActivity extends BaseActivity {
                                             case "enum":
                                             case "bool":
                                                 for (Map.Entry<String, Object> map : specs.entrySet()) {
+                                                    String identifier = property.getString("identifier").trim();
+                                                    String name = null;
+
+                                                    name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
+                                                    if (name == null)
+                                                        name = property.getString("name").trim();
+
                                                     ItemAction<String> itemAction = new ItemAction<String>();
-                                                    itemAction.setActionName(property.getString("name").trim());
-                                                    itemAction.setIdentifier(property.getString("identifier").trim());
+                                                    itemAction.setActionName(name);
+                                                    itemAction.setIdentifier(identifier);
                                                     itemAction.setActionKey((String) map.getValue());
                                                     itemAction.setActionValue(map.getKey());
                                                     itemAction.setIotId(activity.mIotID);
                                                     itemAction.setDeviceName(activity.mDeviceName);
                                                     itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
-                                                    activity.mList.add(itemAction);
+                                                    mList.add(itemAction);
                                                 }
                                                 break;
                                             default:

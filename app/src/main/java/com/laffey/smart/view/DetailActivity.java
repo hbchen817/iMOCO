@@ -66,9 +66,8 @@ public class DetailActivity extends BaseActivity {
                     setContentView(R.layout.activity_detail_oneswitch);
                 break;
             case CTSL.PK_TWOWAYSWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    setContentView(R.layout.activity_detail_twoswitch_2);
-                } else setContentView(R.layout.activity_detail_twoswitch);
+                //setContentView(R.layout.activity_detail_twoswitch);
+                setContentView(R.layout.activity_detail_twoswitch_2);
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
                 // 四键开关
@@ -127,11 +126,17 @@ public class DetailActivity extends BaseActivity {
                     setContentView(R.layout.activity_three_key_scene_2);
                 else setContentView(R.layout.activity_three_key_scene);
                 break;
+            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     setContentView(R.layout.activity_four_key_scene_2);
                 else setContentView(R.layout.activity_four_key_scene);
                 break;
+			case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+                // 全面屏
+                setContentView(R.layout.activity_full_screen_switch);
+                break;
+            }
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);
@@ -169,7 +174,6 @@ public class DetailActivity extends BaseActivity {
                 intent.putExtra("iotId", mIOTId);
                 intent.putExtra("productKey", mProductKey);
                 intent.putExtra("name", mName);
-                Log.i("lzm", "this.mName2" + mName);
                 intent.putExtra("owned", mOwned);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
             }
@@ -262,6 +266,7 @@ public class DetailActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知回调
+                    ViseLog.d("实时 = " + (String) msg.obj);
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     updateState(propertyEntry);
                     break;

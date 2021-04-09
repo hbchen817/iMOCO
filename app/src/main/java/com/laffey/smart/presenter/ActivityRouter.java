@@ -37,6 +37,7 @@ import com.laffey.smart.view.ThreeSceneSwitchActivity2;
 import com.laffey.smart.view.TwoSceneSwitchActivity;
 import com.laffey.smart.view.TwoSceneSwitchActivity2;
 import com.laffey.smart.view.TwoWayCurtainsDetailActivity;
+import com.rexense.imoco.view.FullScreenSwitchActivity;
 import com.vise.log.ViseLog;
 
 /**
@@ -86,6 +87,7 @@ public class ActivityRouter {
                     intent = new Intent(context, DetailTwoSwitchActivity.class);
                 }
                 break;
+			case CTSL.PK_FOURWAYSWITCH:
             case CTSL.PK_FOURWAYSWITCH_2: {
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                     intent = new Intent(context, DetailFourSwitchActivity2.class);
@@ -94,20 +96,6 @@ public class ActivityRouter {
                 }
                 break;
             }
-            case CTSL.PK_FOURWAYSWITCH:
-                // 四键开关处理
-                /*if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    String code = "link://router/" + productKey;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    //Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);
-                    Router.getInstance().toUrl((Activity) context, code, bundle);
-                } else {
-                    intent = new Intent(context, DetailFourSwitchActivity.class);
-                }*/
-
-                intent = new Intent(context, DetailFourSwitchActivity.class);
-                break;
             case CTSL.PK_DOORSENSOR:
                 // 门磁传感器处理
             case CTSL.PK_WATERSENSOR:
@@ -149,6 +137,7 @@ public class ActivityRouter {
                     intent = new Intent(context, SixSceneSwitchActivity2.class);
                 else intent = new Intent(context, SixSceneSwitchActivity.class);
                 break;
+            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     intent = new Intent(context, TwoSceneSwitchActivity2.class);
@@ -159,11 +148,17 @@ public class ActivityRouter {
                     intent = new Intent(context, ThreeSceneSwitchActivity2.class);
                 else intent = new Intent(context, ThreeSceneSwitchActivity.class);
                 break;
+            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     intent = new Intent(context, FourSceneSwitchActivity2.class);
                 else intent = new Intent(context, FourSceneSwitchActivity.class);
                 break;
+			case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+                // 全面屏开关
+                intent = new Intent(context, FullScreenSwitchActivity.class);
+                break;
+            }
             case CTSL.PK_THREE_KEY_SWITCH: {
                 // 三键开关
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))

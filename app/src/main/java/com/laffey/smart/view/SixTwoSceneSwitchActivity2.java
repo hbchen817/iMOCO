@@ -581,8 +581,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
-                    Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
-                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
+                    ToastUtils.showShortToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint_2),
+                            sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName));
                     break;
                 case TAG_GET_EXTENDED_PRO: {
                     JSONObject object = JSONObject.parseObject((String) msg.obj);

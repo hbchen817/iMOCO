@@ -62,4 +62,45 @@
         <item>@drawable/scene_bg_5</item>
         <item>@drawable/scene_bg_6</item>
     </integer-array>
+
+    <string-array name="scene_item_names">
+        <item>回家</item>
+        <item>离家</item>
+        <item>会客</item>
+        <item>影音</item>
+        <item>全开</item>
+        <item>全关</item>
+        <item>开窗帘</item>
+        <item>关窗帘</item>
+        <item>暂停</item>
+        <item>阅读</item>
+        <item>睡眠</item>
+        <item>起床</item>
+    </string-array>
+
+    <string-array name="work_modes">
+        <item>制冷</item>
+        <item>制热</item>
+        <item>送风</item>
+        <item>除湿</item>
+    </string-array>
+
+    <string-array name="work_mode_ics">
+        <item>@string/icon_refrigeration</item>
+        <item>@string/icon_heating</item>
+        <item>@string/icon_air_supply</item>
+        <item>@string/icon_dehumidification</item>
+    </string-array>
+
+    <string-array name="fan_modes">
+        <item>低风</item>
+        <item>中风</item>
+        <item>高风</item>
+    </string-array>
+
+    <string-array name="fan_mode_ics">
+        <item>@string/icon_low_wind</item>
+        <item>@string/icon_mid_wind</item>
+        <item>@string/icon_high_wind</item>
+    </string-array>
 </resources>

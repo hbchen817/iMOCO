@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -107,7 +108,7 @@ public class SwitchSceneActivity extends BaseActivity {
     @Subscribe
     public void actionChoose(List<ItemAction> itemActions) {
         Iterator<ItemAction> iterator = itemActions.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             ItemAction itemAction = iterator.next();
             for (int j = 0; j < mList.size(); j++) {
                 ItemAction itemAction1 = mList.get(j);
@@ -123,6 +124,18 @@ public class SwitchSceneActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    private String getDevIcon(String pk) {
+        Map<String, EDevice.deviceEntry> entryMap = DeviceBuffer.getAllDeviceInformation();
+        Iterator<Map.Entry<String, EDevice.deviceEntry>> entries = entryMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, EDevice.deviceEntry> entry = entries.next();
+            if (pk.equals(entry.getValue().productKey)) {
+                return entry.getValue().image;
+            }
+        }
+        return null;
+    }
+
     private void initAdapter() {
         mAdapter = new BaseQuickAdapter<ItemAction, BaseViewHolder>(R.layout.item_action, mList) {
 
@@ -130,7 +143,9 @@ public class SwitchSceneActivity extends BaseActivity {
             protected void convert(@NotNull BaseViewHolder baseViewHolder, ItemAction visitable) {
                 baseViewHolder.setText(R.id.actionDeviceName, visitable.getDeviceName());
                 baseViewHolder.setText(R.id.actionContent, visitable.getActionName() + visitable.getActionKey());
-                baseViewHolder.setImageResource(R.id.actionImage, ImageProvider.genProductIcon(visitable.getProductKey()));
+                //baseViewHolder.setImageResource(R.id.actionImage, ImageProvider.genProductIcon(visitable.getProductKey()));
+                ImageView image = baseViewHolder.getView(R.id.actionImage);
+                Glide.with(SwitchSceneActivity.this).load(getDevIcon(visitable.getProductKey())).into(image);
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -254,12 +269,19 @@ public class SwitchSceneActivity extends BaseActivity {
                     for (int j = 0; j < actionsJson.size(); j++) {
                         JSONObject jsonObject = JSON.parseObject(actionsJson.getString(j));
                         JSONObject params = jsonObject.getJSONObject("params");
+
+                        String identifier = params.getString("identifier");
+                        String name = null;
+                        name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
+                        if (name == null)
+                            name = params.getString("localizedPropertyName");
+
                         ItemAction<String> itemAction = new ItemAction<>();
                         itemAction.setIotId(params.getString("iotId"));
-                        itemAction.setIdentifier(params.getString("identifier"));
+                        itemAction.setIdentifier(identifier);
                         itemAction.setProductKey(params.getString("productKey"));
                         itemAction.setActionKey(params.getString("localizedCompareValueName"));
-                        itemAction.setActionName(params.getString("localizedPropertyName"));
+                        itemAction.setActionName(name);
                         itemAction.setActionValue(params.getString("compareValue"));
                         mSceneManager.getDeviceAction(params.getString("iotId"), mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         EDevice.deviceEntry device = DeviceBuffer.getDeviceInformation(params.getString("iotId"));
@@ -280,7 +302,13 @@ public class SwitchSceneActivity extends BaseActivity {
                             for (int j = 0; j < properties.size(); j++) {
                                 JSONObject jsonObject = properties.getJSONObject(j);
                                 if (jsonObject.getString("identifier").equals(itemAction.getIdentifier())) {
-                                    itemAction.setActionName(jsonObject.getString("name").trim());
+
+                                    String identifier = itemAction.getIdentifier();
+                                    String name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
+                                    if (name == null)
+                                        name = jsonObject.getString("name").trim();
+
+                                    itemAction.setActionName(name);
                                     JSONObject dataType = jsonObject.getJSONObject("dataType");
                                     JSONObject specs = dataType.getJSONObject("specs");
                                     switch (dataType.getString("type")) {

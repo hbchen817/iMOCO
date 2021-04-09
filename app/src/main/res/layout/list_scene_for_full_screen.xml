@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <!--<TextView
+        android:id="@+id/divider_left"
+        android:layout_width="@dimen/dp_10"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />-->
+
+    <RelativeLayout
+        android:id="@+id/scene_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_frame_item">
+
+        <ImageView
+            android:id="@+id/scene_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/tab_2_press" />
+
+        <TextView
+            android:id="@+id/key_name_tv"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="@dimen/dp_40"
+            android:layout_toRightOf="@+id/scene_icon" />
+
+        <TextView
+            android:id="@+id/scene_name_tv"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/key_name_tv"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/scene_icon" />
+
+        <ImageView
+            android:id="@+id/scene_edit_iv"
+            android:layout_width="@dimen/dp_30"
+            android:layout_height="@dimen/dp_30"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/go"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <!--<TextView
+        android:id="@+id/divider_right"
+        android:layout_width="@dimen/dp_10"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:visibility="gone" />-->
+</LinearLayout>

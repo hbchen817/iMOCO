@@ -66,7 +66,6 @@ public class BaseActivity extends FragmentActivity {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("提交接口[%s]成功, 但是响应发生错误:", responseErrorEntry.path));
-                ViseLog.d(new Gson().toJson(responseErrorEntry));
                 if (responseErrorEntry.parameters != null && responseErrorEntry.parameters.size() > 0) {
                     for (Map.Entry<String, Object> entry : responseErrorEntry.parameters.entrySet()) {
                         sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString()));

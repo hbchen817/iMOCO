@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue2"
+    android:orientation="vertical"
+    tools:context=".view.AirConditionerForFSSActivity">
+
+    <include layout="@layout/include_detail" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8"
+            android:background="@drawable/shape_blue_gradient"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <TextView
+                        android:id="@+id/target_tem_show_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="--"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/dp_100" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/target_tem_show_tv"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/target_temperature"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/unit_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/target_tem_show_tv"
+                        android:text="@string/centigrade"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/sp_30" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <LinearLayout
+                        android:id="@+id/current_tem_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/current_tem_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:text="--"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/sp_20" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/centigrade"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/sp_20" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/current_tem_layout"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/room_temperature"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/sub_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:padding="@dimen/dp_10"
+                        android:text="@string/icon_subtraction"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/sp_20" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/target_tem_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="--"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/unit_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/target_tem_tv"
+                        android:layout_toRightOf="@id/target_tem_tv"
+                        android:text="@string/centigrade"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/add_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:padding="@dimen/dp_10"
+                        android:text="@string/icon_add_3"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/sp_20" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/workmode_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/workmode_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_heating"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/workmode_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/workmode_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/heating" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/timing_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/timing_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:text="@string/icon_timer"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/timing_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/timing_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/detail_state_timer" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/fanmode_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/fanmode_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_mid_wind"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/fanmode_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/fanmode_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/fan_speed_mid" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <!--<RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/workmode_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_round_black"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/workmode_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_heating"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/workmode_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/workmode_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/heating" />
+                </RelativeLayout>
+            </RelativeLayout>-->
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/switch_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_round_black"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/switch_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        android:text="@string/icon_switch"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/switch_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/switch_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/on_off" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!--<RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/fanmode_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_round_black"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/fanmode_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_mid_wind"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/fanmode_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/fanmode_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/fan_speed_mid" />
+                </RelativeLayout>
+            </RelativeLayout>-->
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

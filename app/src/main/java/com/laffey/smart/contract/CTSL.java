@@ -55,6 +55,9 @@ public class CTSL {
     public static final String PK_FLOORHEATING001 = "a1R4ZpwDMM8";// 拉菲地暖(电机)
     public static final String PK_THREE_KEY_SWITCH = "a1orzEATqCz";// 三键面板开关
 
+    public static final String PK_ANY_FOUR_SCENE_SWITCH = "a1Qb4P7DHAv";// 随意贴四键场景开关
+    public static final String PK_ANY_TWO_SCENE_SWITCH = "a1WBTOxm1Z5";// 随意贴二键场景开关
+
     public static final String PK_ONE_KEY_SWITCH = "a1EEhmdntAu";// 一键面板开关
     public static final String PK_TWO_KEY_SWITCH = "a1pVHRVmHqD";// 两键面板开关
 
@@ -64,6 +67,8 @@ public class CTSL {
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "a12uBMtiWKz";// 单路窗帘
     public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
+
+    public static final String TEST_PK_FULL_SCREEN_SWITCH = "a1EnbCHcEHj";// 全面屏开关
 
     // 定义属性类型
     public static enum PTYPE {
@@ -227,6 +232,12 @@ public class CTSL {
     public static final String SCENE_SWITCH_KEY_CODE_4 = "4";
     public static final String SCENE_SWITCH_KEY_CODE_5 = "5";
     public static final String SCENE_SWITCH_KEY_CODE_6 = "6";
+    public static final String SCENE_SWITCH_KEY_CODE_7 = "7";
+    public static final String SCENE_SWITCH_KEY_CODE_8 = "8";
+    public static final String SCENE_SWITCH_KEY_CODE_9 = "9";
+    public static final String SCENE_SWITCH_KEY_CODE_10 = "10";
+    public static final String SCENE_SWITCH_KEY_CODE_11 = "11";
+    public static final String SCENE_SWITCH_KEY_CODE_12 = "12";
 
     // 定义四键开关属性常量
     public static final String FWS_P_PowerSwitch_1 = "PowerSwitch_1";
@@ -367,6 +378,30 @@ public class CTSL {
         }
     };
 
+    // 全面屏开关 TargetTemperature_3
+    public static final String FSS_CurrentTemperature_1 = "CurrentTemperature_1";
+    public static final String FSS_TargetTemperature_1 = "TargetTemperature_1";
+    public static final String FSS_WorkMode_1 = "WorkMode_1";
+    public static final String FSS_PowerSwitch_1 = "PowerSwitch_1";
+    public static final String FSS_WindSpeed_1 = "WindSpeed_1";
+    public static final String FSS_PowerSwitch_2 = "PowerSwitch_2";
+    public static final String FSS_WindSpeed_2 = "WindSpeed_2";
+    public static final String FSS_PowerSwitch_3 = "PowerSwitch_3";
+    public static final String FSS_TargetTemperature_3 = "TargetTemperature_3";
+    public static final Map<String, PTYPE> FSS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(FSS_CurrentTemperature_1, PTYPE.t_double);
+            put(FSS_TargetTemperature_1, PTYPE.t_double);
+            put(FSS_WorkMode_1, PTYPE.t_enum);
+            put(FSS_PowerSwitch_1, PTYPE.t_bool);
+            put(FSS_WindSpeed_1, PTYPE.t_enum);
+            put(FSS_PowerSwitch_2, PTYPE.t_bool);
+            put(FSS_WindSpeed_2, PTYPE.t_enum);
+            put(FSS_PowerSwitch_3, PTYPE.t_bool);
+            put(FSS_TargetTemperature_3, PTYPE.t_double);
+        }
+    };
+
     // 定义水浸传感器属性常量
     public static final String WS_P_WaterSensorState = "WaterSensorState";
     public static final Map<String, PTYPE> WS_Properties = new HashMap<String, PTYPE>() {
@@ -440,7 +475,7 @@ public class CTSL {
             put(PK_FLOORHEATING001, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
             put(PK_SMART_LOCK_A7, SL_Properties);
-            put(TEST_PK_ONEWAYWINDOWCURTAINS, WC_Properties);
+			put(TEST_PK_ONEWAYWINDOWCURTAINS, WC_Properties);
             put(TEST_PK_TWOWAYWINDOWCURTAINS, TWC_Properties);
             put(PK_SIX_SCENE_SWITCH, PSS_Properties);
             put(PK_OUTLET, PK_OUTLET_Properties);
@@ -448,6 +483,7 @@ public class CTSL {
             put(PK_ONE_SCENE_SWITCH, POS_Properties);
             put(PK_THREE_SCENE_SWITCH, PTS_Properties);
             put(PK_TWO_SCENE_SWITCH, P2S_Properties);
+            put(TEST_PK_FULL_SCREEN_SWITCH, FSS_Properties);
         }
     };
 
