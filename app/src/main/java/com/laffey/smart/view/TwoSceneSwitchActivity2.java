@@ -400,7 +400,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
-                    ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint),
+                    ToastUtils.showShortToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint_2),
                             activity.getExecuteScene()));
                     //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
 //                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
