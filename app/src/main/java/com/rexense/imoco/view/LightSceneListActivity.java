@@ -2,6 +2,8 @@ package com.rexense.imoco.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -56,6 +58,7 @@ public class LightSceneListActivity extends BaseActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         mTitle.setText("场景列表");
+        initStatusBar();
         mIotId = getIntent().getStringExtra("extra");
         this.mSceneManager = new SceneManager(this);
         initAdapter();
@@ -63,6 +66,15 @@ public class LightSceneListActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         getList();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
 
@@ -90,7 +102,8 @@ public class LightSceneListActivity extends BaseActivity {
 
             @Override
             protected void convert(@NotNull BaseViewHolder baseViewHolder, EScene.sceneListItemEntry sceneListItemEntry) {
-                baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name);
+                baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name)
+                        .setVisible(R.id.editMask, false);
             }
         };
         mAdapter.setOnItemClickListener((adapter, view, position) -> {

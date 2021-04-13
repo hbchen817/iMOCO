@@ -164,7 +164,6 @@ public class IndexFragment2 extends BaseFragment {
                                 }
                             }
                         }
-                        RefreshData.refreshHomeSceneListData();
                     }
                 });
 

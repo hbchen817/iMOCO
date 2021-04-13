@@ -323,6 +323,106 @@ public class CodeMapper {
         }
     }
 
+    // 处理属性状态
+    public static ETSL.stateEntry processSwitchPropertyState(Context context, String productKey, String propertyName, String propertyValue) {
+        if (productKey == null || propertyName == null || propertyValue == null || propertyValue.length() == 0) {
+            return null;
+        }
+
+        // 电池电量处理
+        if (propertyName.equals(CTSL.P_P_BatteryPercentage)) {
+            return new ETSL.stateEntry(context.getString(R.string.detailsensor_power), propertyName, propertyValue + "%", propertyValue);
+        }
+
+        String mapName = "", mapValue = "";
+        switch (productKey) {
+            case CTSL.PK_ONEWAYSWITCH:
+                // 一路开关状态
+                if (propertyName.equals(CTSL.OWS_P_PowerSwitch_1)) {
+                    mapName = context.getString(R.string.oneswitch_state);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                }
+                break;
+            case CTSL.PK_TWOWAYSWITCH:
+                // 两路开关状态
+                if (propertyName.equals(CTSL.TWS_P_PowerSwitch_1)) {
+                    mapName = context.getString(R.string.twoswitch_state_1);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.TWS_P_PowerSwitch_2)) {
+                    mapName = context.getString(R.string.twoswitch_state_2);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                }
+                break;
+            case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH:
+                // 四路开关状态
+                if (propertyName.equals(CTSL.FWS_P_PowerSwitch_1)) {
+                    mapName = context.getString(R.string.twoswitch_state_1);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_2)) {
+                    mapName = context.getString(R.string.twoswitch_state_2);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_3)) {
+                    mapName = context.getString(R.string.fourswitch_state_3);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.FWS_P_PowerSwitch_4)) {
+                    mapName = context.getString(R.string.fourswitch_state_4);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                }
+                break;
+            case CTSL.PK_THREE_KEY_SWITCH:
+                // 三路开关状态
+                if (propertyName.equals(CTSL.TWS_P3_PowerSwitch_1)) {
+                    mapName = context.getString(R.string.twoswitch_state_1);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.TWS_P3_PowerSwitch_2)) {
+                    mapName = context.getString(R.string.twoswitch_state_2);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                } else if (propertyName.equals(CTSL.TWS_P3_PowerSwitch_3)) {
+                    mapName = context.getString(R.string.fourswitch_state_3);
+                    mapValue = context.getString(R.string.oneswitch_state_off);
+                    if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
+                        mapValue = context.getString(R.string.oneswitch_state_on);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        if (mapName != null && mapValue != null && mapName.length() > 0 && mapValue.length() > 0) {
+            return new ETSL.stateEntry(mapName, propertyName, mapValue, propertyValue);
+        } else {
+            return null;
+        }
+    }
+
     // 获取属性触发状态
     public static List<ETSL.stateEntry> getPropertyTriggerState(Context context, String productKey, int sceneModelCode) {
         List<ETSL.stateEntry> list = new ArrayList<ETSL.stateEntry>();

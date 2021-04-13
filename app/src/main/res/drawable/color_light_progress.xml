@@ -3,23 +3,23 @@
     <!-- 设置进度条背景 -->
     <item android:id="@android:id/background">
         <shape>
-            <solid android:color="#95A9C4"/>
-            <stroke android:color="#979797"
-                android:width="@dimen/dp_1"/>
-            <size android:height="@dimen/dp_40"/>
+            <solid android:color="@color/blue5" />
+            <!--<stroke android:color="#979797"
+                android:width="@dimen/dp_1"/>-->
+            <size android:height="@dimen/dp_40" />
             <!-- 设置进度条的圆角 -->
-            <corners android:radius="@dimen/dp_5"/>
+            <corners android:radius="@dimen/dp_5" />
         </shape>
     </item>
     <!-- 设置进度条的二级进度 -->
     <item android:id="@android:id/secondaryProgress">
         <clip>
             <shape>
-                <solid android:color="#3A6293"/>
-                <stroke android:color="#979797"
-                    android:width="@dimen/dp_1"/>
-                <size android:height="@dimen/dp_40"/>
-                <corners android:radius="@dimen/dp_5"/>
+                <solid android:color="@color/blue4" />
+                <!--<stroke android:color="#979797"
+                    android:width="@dimen/dp_1"/>-->
+                <size android:height="@dimen/dp_40" />
+                <corners android:radius="@dimen/dp_5" />
             </shape>
         </clip>
     </item>
@@ -27,11 +27,11 @@
     <item android:id="@android:id/progress">
         <clip>
             <shape>
-                <solid android:color="#3A6293"/>
-                <stroke android:color="#979797"
-                    android:width="@dimen/dp_1"/>
-                <size android:height="@dimen/dp_40"/>
-                <corners android:radius="@dimen/dp_5"/>
+                <solid android:color="@color/blue4" />
+                <!--<stroke android:color="#979797"
+                    android:width="@dimen/dp_1"/>-->
+                <size android:height="@dimen/dp_40" />
+                <corners android:radius="@dimen/dp_5" />
             </shape>
         </clip>
     </item>

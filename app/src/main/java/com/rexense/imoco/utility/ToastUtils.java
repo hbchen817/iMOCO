@@ -88,7 +88,7 @@ public class ToastUtils {
     /**
      * 在屏幕弹短吐司
      */
-    public static void showToast(Context context, int message) {
+    public static void showShortToast(Context context, int message) {
         Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
         toast.setText(context.getResources().getString(message));
         toast.show();
@@ -97,7 +97,7 @@ public class ToastUtils {
     /**
      * 在屏幕弹短吐司
      */
-    public static void showToast(Context context, String message) {
+    public static void showShortToast(Context context, String message) {
         Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
         toast.setText(message);
         toast.show();

@@ -1,6 +1,7 @@
 package com.rexense.imoco.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -25,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
@@ -156,6 +158,33 @@ public class SwitchSceneActivity extends BaseActivity {
                 DeviceActionActivity.start(mActivity, itemAction.getIotId(), itemAction.getDeviceName());
             }
         });
+        mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                android.app.AlertDialog alert = new android.app.AlertDialog.Builder(SwitchSceneActivity.this).create();
+                alert.setIcon(R.drawable.dialog_quest);
+                alert.setTitle(R.string.dialog_title);
+                alert.setMessage(getResources().getString(R.string.do_you_really_want_to_delete_the_action));
+                //添加否按钮
+                alert.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                //添加是按钮
+                alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int pos) {
+                        mList.remove(position);
+                        adapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+                return false;
+            }
+        });
     }
 
     // 显示设备名称修改对话框
@@ -270,12 +299,19 @@ public class SwitchSceneActivity extends BaseActivity {
                     for (int j = 0; j < actionsJson.size(); j++) {
                         JSONObject jsonObject = JSON.parseObject(actionsJson.getString(j));
                         JSONObject params = jsonObject.getJSONObject("params");
+
+                        String iotID = params.getString("iotId");
+                        String identifier = params.getString("identifier");
+                        String name = DeviceBuffer.getExtendedInfo(iotID).getString(identifier);
+                        if (name == null)
+                            name = params.getString("localizedPropertyName");
+
                         ItemAction<String> itemAction = new ItemAction<>();
                         itemAction.setIotId(params.getString("iotId"));
-                        itemAction.setIdentifier(params.getString("identifier"));
+                        itemAction.setIdentifier(identifier);
                         itemAction.setProductKey(params.getString("productKey"));
                         itemAction.setActionKey(params.getString("localizedCompareValueName"));
-                        itemAction.setActionName(params.getString("localizedPropertyName"));
+                        itemAction.setActionName(name);
                         itemAction.setActionValue(params.getString("compareValue"));
                         mSceneManager.getDeviceAction(params.getString("iotId"), mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         EDevice.deviceEntry device = DeviceBuffer.getDeviceInformation(params.getString("iotId"));
@@ -296,7 +332,13 @@ public class SwitchSceneActivity extends BaseActivity {
                             for (int j = 0; j < properties.size(); j++) {
                                 JSONObject jsonObject = properties.getJSONObject(j);
                                 if (jsonObject.getString("identifier").equals(itemAction.getIdentifier())) {
-                                    itemAction.setActionName(jsonObject.getString("name").trim());
+
+                                    String identifier = itemAction.getIdentifier();
+                                    String name = DeviceBuffer.getExtendedInfo(itemAction.getIotId()).getString(identifier);
+                                    if (name == null)
+                                        name = jsonObject.getString("name").trim();
+
+                                    itemAction.setActionName(name);
                                     JSONObject dataType = jsonObject.getJSONObject("dataType");
                                     JSONObject specs = dataType.getJSONObject("specs");
                                     switch (dataType.getString("type")) {

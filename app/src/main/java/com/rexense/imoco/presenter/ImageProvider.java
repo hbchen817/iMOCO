@@ -113,8 +113,8 @@ public class ImageProvider {
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH: {// 四键随意贴
                 return R.drawable.icon_four_switch_white;
             }
-			case CTSL.PK_ONE_SCENE_SWITCH:
-                return R.drawable.icon_oneswitch;
+            case CTSL.PK_ONE_SCENE_SWITCH:
+                return R.drawable.icon_one_scene_switch;
             case CTSL.PK_AIRCOMDITION_TWO:
             case CTSL.PK_FAU:
             case CTSL.PK_FLOORHEATING001:
@@ -124,15 +124,15 @@ public class ImageProvider {
                 return R.drawable.icon_outlet;
             case CTSL.PK_SIX_SCENE_SWITCH:
                 return R.drawable.icon_six_scene_switch;
-            case CTSL.PK_THREE_SCENE_SWITCH:{
+            case CTSL.PK_THREE_SCENE_SWITCH: {
                 return R.drawable.icon_three_scene_switch;
             }
             case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:
-            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:{
+            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
                 // 窗帘电机
                 return R.drawable.icon_dianji;
             }
-            case CTSL.PK_CONTROL_COLOR_BROAD:{
+            case CTSL.PK_CONTROL_COLOR_BROAD: {
                 return R.drawable.icon_control_light;
             }
             case CTSL.PK_SIX_TWO_SCENE_SWITCH: {
@@ -210,9 +210,11 @@ public class ImageProvider {
                 // 一键开关处理
                 if (property.equals(CTSL.OWS_P_PowerSwitch_1)) {
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.one_scene_pressed;// state_oneswitch_on
+                        return R.drawable.one_scene_pressed_2;// state_oneswitch_on
+                        //return R.drawable.one_scene_pressed;
                     } else {
-                        return R.drawable.one_scene_normal;// state_oneswitch_off
+                        return R.drawable.one_scene_normal_2;
+                        //return R.drawable.one_scene_normal;// state_oneswitch_off
                     }
                 }
             case CTSL.PK_TWOWAYSWITCH:
@@ -220,19 +222,105 @@ public class ImageProvider {
                 if (property.equals(CTSL.TWS_P_PowerSwitch_1)) {
                     // 第一路处理
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_twoswitch_1_on;
+                        return R.drawable.state_switch_pressed;
+                        //return R.drawable.state_twoswitch_1_on;
                     } else {
-                        return R.drawable.state_twoswitch_1_off;
+                        return R.drawable.state_switch_normal;
+                        //return R.drawable.state_twoswitch_1_off;
                     }
                 } else if (property.equals(CTSL.TWS_P_PowerSwitch_2)) {
                     // 第二路处理
                     if (state.equals(CTSL.S_P_PowerSwitch_On)) {
-                        return R.drawable.state_twoswitch_2_on;
+                        return R.drawable.state_switch_pressed;
+                        //return R.drawable.state_twoswitch_2_on;
                     } else {
-                        return R.drawable.state_twoswitch_2_off;
+                        return R.drawable.state_switch_normal;
+                        //return R.drawable.state_twoswitch_2_off;
+                    }
+                }
+            case CTSL.PK_THREE_KEY_SWITCH:
+                // 三键开关处理
+                if (property.equals(CTSL.TWS_P3_PowerSwitch_1)) {
+                    // 第一路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_pressed;
+                        //return R.drawable.state_twoswitch_1_on;
+                    } else {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_normal;
+                        //return R.drawable.state_twoswitch_1_off;
+                    }
+                } else if (property.equals(CTSL.TWS_P3_PowerSwitch_2)) {
+                    // 第二路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_pressed;
+                        //return R.drawable.state_twoswitch_2_on;
+                    } else {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_normal;
+                        //return R.drawable.state_twoswitch_2_off;
+                    }
+                } else if (property.equals(CTSL.TWS_P3_PowerSwitch_3)) {
+                    // 第三路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_pressed;
+                        //return R.drawable.state_twoswitch_2_on;
+                    } else {
+                        //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                        return R.drawable.state_switch_normal;
+                        //return R.drawable.state_twoswitch_2_off;
                     }
                 }
             case CTSL.PK_FOURWAYSWITCH_2:
+                // 四键开关处理
+                if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {
+                    // 第一路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_top_on;
+                        return R.drawable.state_fourswitch_1_off;
+                    } else {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_top_off;
+                        return R.drawable.state_fourswitch_1_on;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_2)) {
+                    // 第二路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_bottom_on;
+                        return R.drawable.state_fourswitch_3_off;
+                    } else {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_bottom_off;
+                        return R.drawable.state_fourswitch_3_on;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_3)) {
+                    // 第三路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_top_on;
+                        return R.drawable.state_fourswitch_2_off;
+                    } else {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_top_off;
+                        return R.drawable.state_fourswitch_2_on;
+                    }
+                } else if (property.equals(CTSL.FWS_P_PowerSwitch_4)) {
+                    // 第四路处理
+                    if (state.equals(CTSL.S_P_PowerSwitch_On)) {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_bottom_on;
+                        return R.drawable.state_fourswitch_4_off;
+                    } else {
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                            return R.drawable.state_switch_bottom_off;
+                        return R.drawable.state_fourswitch_4_on;
+                    }
+                }
             case CTSL.PK_FOURWAYSWITCH:
                 // 四键开关处理
                 if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {

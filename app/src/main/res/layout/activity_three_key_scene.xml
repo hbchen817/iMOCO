@@ -58,8 +58,6 @@
             android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -78,7 +76,6 @@
             android:text="@string/key_two_status"
             android:textColor="#565353" />
 
-
         <TextView
             android:id="@+id/mSceneContentText2"
             android:layout_width="wrap_content"
@@ -86,8 +83,6 @@
             android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -106,7 +101,6 @@
             android:text="@string/key_three_status"
             android:textColor="#565353" />
 
-
         <TextView
             android:id="@+id/mSceneContentText3"
             android:layout_width="wrap_content"
@@ -114,8 +108,5 @@
             android:paddingVertical="@dimen/dp_20"
             android:text="@string/no_bind_scene"
             android:textColor="#565353" />
-
-
     </LinearLayout>
-
 </LinearLayout>

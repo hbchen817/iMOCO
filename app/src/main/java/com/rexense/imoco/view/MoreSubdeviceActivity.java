@@ -38,6 +38,7 @@ import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.utility.Dialog;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -62,6 +63,10 @@ public class MoreSubdeviceActivity extends BaseActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL: {
+                    ViseLog.d((String) msg.obj);
+                    break;
+                }
                 case Constant.MSG_CALLBACK_GETHOMEROOMLIST:
                     // 处理获取家房间列表回调
                     mRoomListEntry = CloudDataParser.processHomeRoomList((String) msg.obj);
@@ -373,6 +378,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
 
     private void unbindDevice() {
+        DeviceBuffer.removeExtendedInfo(mIOTId);
+        mSceneManager.delExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, null, null, null);
         switch (mProductKey) {
             case CTSL.PK_LIGHT:
             case CTSL.PK_ONE_SCENE_SWITCH:

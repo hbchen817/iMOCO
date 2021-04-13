@@ -115,8 +115,6 @@ public class SceneMaintainActivity extends BaseActivity {
         this.mName = intent.getStringExtra("name");
         this.mSceneId = intent.getStringExtra("sceneId");
 
-        ViseLog.d("mOperateType = "+mOperateType+"\nmSceneModelCode = "+mSceneModelCode+"\nmSceneNumber = "+mSceneNumber+"\nmName = "+mName+"\nmSceneId = "+mSceneId);
-
         TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
         ImageView icon = (ImageView) findViewById(R.id.sceneMaintainImgIcon);
         this.mLblName = (TextView) findViewById(R.id.sceneMaintainLblName);
@@ -294,7 +292,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String) msg.obj);
-                    ViseLog.d(new Gson().toJson(mConfigProductList));
+
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
                     if (mOperateType == CScene.OPERATE_UPDATE) {

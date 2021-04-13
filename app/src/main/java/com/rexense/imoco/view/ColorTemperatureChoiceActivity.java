@@ -3,6 +3,8 @@ package com.rexense.imoco.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.SeekBar;
@@ -39,6 +41,9 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color_temperature_choice);
         ButterKnife.bind(this);
+
+        initStatusBar();
+
         mTypeName = findViewById(R.id.mTypeName);
         mMaxValue = findViewById(R.id.mMaxValue);
         mMinValue = findViewById(R.id.minValue);
@@ -63,6 +68,14 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
         }
     }
 
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
+    }
 
     public static void start(Activity context, int temperature) {
         Intent intent = new Intent(context, ColorTemperatureChoiceActivity.class);

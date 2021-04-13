@@ -2,6 +2,8 @@ package com.rexense.imoco.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -28,9 +30,20 @@ public class LightActionChoiceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_action_choice);
         ButterKnife.bind(this);
+
+        initStatusBar();
+
         EventBus.getDefault().register(this);
         mTitle.setText("选择动作");
+    }
 
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Subscribe

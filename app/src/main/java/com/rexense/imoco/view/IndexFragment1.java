@@ -127,6 +127,9 @@ public class IndexFragment1 extends BaseFragment {
     private String mIotId;
 
     private GetSceneHandler mGetSceneHandler;
+    private final int TAG_GET_EXTENDED_PRO = 10000;
+
+    private boolean mRefreshExtendedBuffer = true;
 
     @Override
     protected int setLayout() {
@@ -351,6 +354,10 @@ public class IndexFragment1 extends BaseFragment {
         super.notifyFailureOrError(type);
         if (this.mProgressDialog != null) {
             this.mProgressDialog.dismiss();
+        }
+        if (type == 10360) {
+            mSceneList.clear();
+            setSceneList(mSceneList);
         }
     }
 
@@ -603,7 +610,6 @@ public class IndexFragment1 extends BaseFragment {
                 // 处理获取场景列表数据
                 EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                 if (sceneList != null && sceneList.scenes != null) {
-                    ViseLog.d("count = " + sceneList.scenes.size());
                     for (EScene.sceneListItemEntry item : sceneList.scenes) {
                         if (!item.description.contains("mode == CA,")) {
                             mSceneList.add(item);
@@ -658,11 +664,15 @@ public class IndexFragment1 extends BaseFragment {
         int total = this.mDeviceList == null ? 0 : this.mDeviceList.size();
         if (total > 0) {
             for (EDevice.deviceEntry device : this.mDeviceList) {
+                if (Constant.KEY_NICK_NAME_PK.contains(device.productKey) && mRefreshExtendedBuffer)
+                    mSceneManager.getExtendedProperty(device.iotId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, null,
+                            new ExtendedHandler(mActivity, device.iotId));
                 if (device.status == Constant.CONNECTION_STATUS_ONLINE) {
                     online++;
                 }
             }
         }
+        mRefreshExtendedBuffer = false;
         mLblDeviceDescription.setText(String.format(getString(R.string.main_device_description), total, online));
     }
 
@@ -747,7 +757,7 @@ public class IndexFragment1 extends BaseFragment {
 
         allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
         shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
-        this.deviceCount();
+        deviceCount();
     }
 
     // 同步房间列表数据
@@ -939,7 +949,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
+                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint_2), itemEntry.name));
                             break;
                         }
                     }
@@ -1113,5 +1123,25 @@ public class IndexFragment1 extends BaseFragment {
     @Subscribe
     public void onRefreshRoomName(RefreshRoomName refreshRoomName) {
         startGetRoomList();
+    }
+
+    private class ExtendedHandler extends Handler {
+        private WeakReference<Activity> ref;
+        private String iotId;
+
+        public ExtendedHandler(Activity activity, String iotId) {
+            ref = new WeakReference<>(activity);
+            this.iotId = iotId;
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == TAG_GET_EXTENDED_PRO) {
+                JSONObject object = JSONObject.parseObject((String) msg.obj);
+                DeviceBuffer.addExtendedInfo(iotId, object);
+            }
+        }
     }
 }

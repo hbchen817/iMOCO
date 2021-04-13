@@ -1,5 +1,6 @@
 package com.rexense.imoco.presenter;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Point;
 import android.text.TextUtils;
@@ -34,6 +35,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.LogcatTree;
 
+import java.util.List;
+
 //import leakcanary.LeakCanary;
 
 /**
@@ -56,8 +59,8 @@ public class MocoApplication extends AApplication {
 
         //设置日志级别
         if (!BuildConfig.DEBUG) {
-        Logger.setLogLevel(2);
-        CrashReport.initCrashReport(getApplicationContext(), "9b346e3393", BuildConfig.DEBUG);
+        	Logger.setLogLevel(2);
+        	CrashReport.initCrashReport(getApplicationContext(), "9b346e3393", BuildConfig.DEBUG);
         }
 
         //安装MultiDex
@@ -146,7 +149,21 @@ public class MocoApplication extends AApplication {
         SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
     }
 
-    private void initLog(){
+    public static String getProcessName(Context cxt, int pid) {
+        ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return null;
+    }
+
+    private void initLog() {
         HiLogManager.init(new HiLogConfig() {
             @Override
             public JsonParser injectJsonParser() {
@@ -177,7 +194,7 @@ public class MocoApplication extends AApplication {
             public int stackTraceDepth() {
                 return 0;
             }
-        },new HiConsolePrinter(), HiFilePrinter.getInstance( getFilesDir().getPath()+"/HiLog", 7 * 24 * 60 * 60 * 1000));
+        }, new HiConsolePrinter(), HiFilePrinter.getInstance(getFilesDir().getPath() + "/HiLog", 7 * 24 * 60 * 60 * 1000));
     }
 
     // 根据屏幕大小获取场景水平列表的列宽

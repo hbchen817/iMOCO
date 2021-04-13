@@ -34,12 +34,14 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.demoTest.ActionEntry;
 import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.demoTest.IdentifierItemForCA;
 import com.rexense.imoco.demoTest.SceneCatalogIdCache;
 import com.rexense.imoco.model.EScene;
+import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
@@ -422,17 +424,17 @@ public class NewSceneActivity extends BaseActivity {
                     String min = crons[1].length() == 2 ? crons[1] : "0" + crons[1];
 
                     int cronsLength = crons.length;
-                    if (!crons[cronsLength-1].equals("*")) {
+                    if (!crons[cronsLength - 1].equals("*")) {
                         // 执行一次
-                        stringBuilder.append(crons[cronsLength-1] + "年" + crons[cronsLength-3] + "月" + crons[cronsLength-4] + "日 ");
+                        stringBuilder.append(crons[cronsLength - 1] + "年" + crons[cronsLength - 3] + "月" + crons[cronsLength - 4] + "日 ");
                         stringBuilder.append(hour + ":" + min + " " + getString(R.string.do_once));
-                    } else if (crons[cronsLength-2].equals("?")) {
+                    } else if (crons[cronsLength - 2].equals("?")) {
                         // 每天
                         stringBuilder.append(hour + ":" + min + " " + getString(R.string.everyday));
-                    } else if (crons[cronsLength-2].equals("mon,tue,wed,thu,fri")) {
+                    } else if (crons[cronsLength - 2].equals("mon,tue,wed,thu,fri")) {
                         // 工作日
                         stringBuilder.append(hour + ":" + min + " " + getString(R.string.working_days));
-                    } else if (crons[cronsLength-2].equals("sat,sun")) {
+                    } else if (crons[cronsLength - 2].equals("sat,sun")) {
                         // 周末
                         stringBuilder.append(hour + ":" + min + " " + getString(R.string.weekend));
                     } else {
@@ -964,7 +966,6 @@ public class NewSceneActivity extends BaseActivity {
                 }
                 case Constant.MSG_CALLBACK_UPDATE_SCENE: {
                     //JSONObject object = JSON.parseObject((String) msg.obj);
-                    ViseLog.d(new Gson().toJson(msg.obj));
                     QMUITipDialogUtil.dismiss();
                     QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scene_updated_successfully);
                     new Handler().postDelayed(new Runnable() {
@@ -1033,8 +1034,18 @@ public class NewSceneActivity extends BaseActivity {
                             } else if (Constant.SCENE_CONDITION_PROPERTY.equals(uri)) {
                                 // 设备状态
                                 IdentifierItemForCA item = new IdentifierItemForCA();
-                                item.setIotId(object1.getJSONObject("params").getString("iotId"));
+                                String iotId = object1.getJSONObject("params").getString("iotId");
+                                item.setIotId(iotId);
                                 item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
+
+                                JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
+                                if (jsonObject != null) {
+                                    String keyNickName = jsonObject.getString(object1.getJSONObject("params").getString("propertyName"));
+                                    if (keyNickName != null) {
+                                        item.setName(keyNickName);
+                                    }
+                                }
+
                                 item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
                                 String eventCode = object1.getJSONObject("params").getString("localizedEventCode");
                                 if (eventCode == null) item.setType(1);
@@ -1072,6 +1083,35 @@ public class NewSceneActivity extends BaseActivity {
                                     compareTypeName = getString(R.string.is_not_equal_to);
 
                                 item.setDesc(localizedEventCode + localizedPropertyName + compareTypeName + compareValue.toString());
+
+                                String productKey = object1.getJSONObject("params").getString("productKey");
+                                String iotId = object1.getJSONObject("params").getString("iotId");
+                                if (Constant.KEY_NICK_NAME_PK.contains(productKey)) {
+                                    String key = compareValue.toString();
+                                    JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
+                                    if (jsonObject != null) {
+                                        String keyName = jsonObject.getString(key);
+                                        item.setDesc(getString(R.string.trigger_buttons) + keyName);
+                                    } else {
+                                        if ("1".equals(key)) {
+                                            if (CTSL.PK_ONE_SCENE_SWITCH.equals(key))
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_0));
+                                            else
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_1));
+                                        } else if ("2".equals(key)) {
+                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_2));
+                                        } else if ("3".equals(key)) {
+                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_3));
+                                        } else if ("4".equals(key)) {
+                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_4));
+                                        } else if ("5".equals(key)) {
+                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_5));
+                                        } else if ("6".equals(key)) {
+                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_6));
+                                        }
+                                    }
+                                }
+
                                 item.setIotId(object1.getJSONObject("params").getString("iotId"));
                                 item.setName(localizedEventCode);
                                 item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
@@ -1134,8 +1174,19 @@ public class NewSceneActivity extends BaseActivity {
                                 ActionEntry.Property property = new ActionEntry.Property();
 
                                 IdentifierItemForCA item = new IdentifierItemForCA();
-                                item.setIotId(object1.getJSONObject("params").getString("iotId"));
+                                String iotId = object1.getJSONObject("params").getString("iotId");
+                                item.setIotId(iotId);
                                 item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
+
+                                JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
+                                String propertyName = object1.getJSONObject("params").getString("propertyName");
+                                if (jsonObject != null) {
+                                    String keyNickName = jsonObject.getString(propertyName);
+                                    if (keyNickName != null) {
+                                        item.setName(keyNickName);
+                                    }
+                                }
+
                                 item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
                                 item.setType(1);
                                 item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));

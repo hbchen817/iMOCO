@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.rexense.imoco.R;
@@ -16,6 +17,8 @@ import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EHomeSpace;
+import com.rexense.imoco.model.ETSL;
+import com.rexense.imoco.utility.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +140,21 @@ public class AptDeviceGrid extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        if (position >= mDeviceList.size()) {
+            viewHolder.name.setText("--");
+            viewHolder.room.setText("--");
+            viewHolder.status.setText("--");
+
+            viewHolder.state.setVisibility(View.GONE);
+            viewHolder.state1.setVisibility(View.GONE);
+            viewHolder.state2.setVisibility(View.GONE);
+            viewHolder.time.setVisibility(View.GONE);
+            ToastUtils.showShortToast(mContext, R.string.server_is_busy_and_try_again_later);
+            return convertView;
+        }
+
         String image = this.mDeviceList.get(position).image;
+        EDevice.deviceEntry deviceEntry = mDeviceList.get(position);
         if (image != null && image.length() > 0)
             Glide.with(mContext).load(image).into(viewHolder.icon);
         else {
@@ -173,27 +190,169 @@ public class AptDeviceGrid extends BaseAdapter {
                     viewHolder.state.setVisibility(View.VISIBLE);
                     viewHolder.time.setVisibility(View.VISIBLE);
                     viewHolder.state.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
+                    if (CTSL.PK_ONEWAYSWITCH.equals(deviceEntry.productKey)) {
+                        JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
+                        if (jsonObject != null) {
+                            String name = jsonObject.getString(CTSL.OWS_P_PowerSwitch_1);
+                            if (name != null) {
+                                if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                    // 打开
+                                    viewHolder.state.setText(name + mContext.getString(R.string.oneswitch_state_on));
+                                } else if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                    // 关闭
+                                    viewHolder.state.setText(name + mContext.getString(R.string.oneswitch_state_off));
+                                }
+                            }
+                        }
+                    }
                     viewHolder.time.setText(this.mDeviceList.get(position).stateTimes.get(0).time);
                 }
                 // 有多种状态的处理
                 // 目前只显示前两种状态
-                int stateTimesCount = this.mDeviceList.get(position).stateTimes.size();
+                EDevice.deviceEntry devItem = mDeviceList.get(position);
+                int stateTimesCount = devItem.stateTimes.size();
                 if (stateTimesCount >= 2) {
                     viewHolder.state1.setVisibility(View.VISIBLE);
                     viewHolder.state2.setVisibility(View.VISIBLE);
                     if (stateTimesCount == 2) {
-                        viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+                        viewHolder.state1.setText(devItem.stateTimes.get(0).value + " / " + devItem.stateTimes.get(0).time);
+                        viewHolder.state2.setText(devItem.stateTimes.get(1).value + " / " + devItem.stateTimes.get(1).time);
+                        if (CTSL.PK_TWOWAYSWITCH.equals(deviceEntry.productKey)) {
+                            JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
+                            if (jsonObject != null) {
+                                String name1 = jsonObject.getString(deviceEntry.stateTimes.get(0).name);
+                                if (name1 != null) {
+                                    if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + devItem.stateTimes.get(0).time;
+                                        viewHolder.state1.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + devItem.stateTimes.get(0).time;
+                                        viewHolder.state1.setText(txt);
+                                    }
+                                }
+                                String name2 = jsonObject.getString(deviceEntry.stateTimes.get(1).name);
+                                if (name2 != null) {
+                                    if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + devItem.stateTimes.get(1).time;
+                                        viewHolder.state2.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + devItem.stateTimes.get(1).time;
+                                        viewHolder.state2.setText(txt);
+                                    }
+                                }
+                            }
+                        } else if (CTSL.PK_LIGHT.equals(deviceEntry.productKey)) {
+                            // 调光调色面板
+                            String stateContent1 = "亮度 " + devItem.stateTimes.get(0).value + "% / " + devItem.stateTimes.get(0).time;
+                            String stateContent2 = "色温 " + devItem.stateTimes.get(1).value + "K / " + devItem.stateTimes.get(1).time;
+                            viewHolder.state1.setText(stateContent1);
+                            viewHolder.state2.setText(stateContent2);
+                        }
                     } else if (stateTimesCount == 3) {
-                        //viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-                        //viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value);
                         viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
-                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + "\n...");
+                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + "");
+                        if (CTSL.PK_THREE_KEY_SWITCH.equals(deviceEntry.productKey)) {
+                            JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
+                            if (jsonObject != null) {
+                                int switchPos1 = 0;
+                                int switchPos2 = 0;
+                                for (int i = 0; i < deviceEntry.stateTimes.size(); i++) {
+                                    ETSL.stateTimeEntry timeEntry = deviceEntry.stateTimes.get(i);
+                                    if (CTSL.TWS_P3_PowerSwitch_1.equals(timeEntry.name)) {
+                                        switchPos1 = i;
+                                        continue;
+                                    } else if (CTSL.TWS_P3_PowerSwitch_2.equals(timeEntry.name)) {
+                                        switchPos2 = i;
+                                        continue;
+                                    }
+                                }
+
+                                String name1 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos1).name);
+                                String name2 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos2).name);
+                                if (name1 != null) {
+                                    if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos1).time;
+                                        viewHolder.state1.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos1).time;
+                                        viewHolder.state1.setText(txt);
+                                    }
+                                }
+                                if (name2 != null) {
+                                    if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos2).time + "";
+                                        viewHolder.state2.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos2).time + "";
+                                        viewHolder.state2.setText(txt);
+                                    }
+                                }
+                            }
+                        }
                     } else {
-						/*viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).value);
-						viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + " / " + this.mDeviceList.get(position).stateTimes.get(3).value);*/
                         viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);
-                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(2).value + "\n...");
+                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + "");
+                        if (CTSL.PK_FOURWAYSWITCH_2.equals(deviceEntry.productKey)) {
+                            JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
+                            if (jsonObject != null) {
+                                int switchPos1 = 0;
+                                int switchPos2 = 0;
+                                for (int i = 0; i < deviceEntry.stateTimes.size(); i++) {
+                                    ETSL.stateTimeEntry timeEntry = deviceEntry.stateTimes.get(i);
+                                    if (CTSL.FWS_P_PowerSwitch_1.equals(timeEntry.name)) {
+                                        switchPos1 = i;
+                                        continue;
+                                    } else if (CTSL.FWS_P_PowerSwitch_2.equals(timeEntry.name)) {
+                                        switchPos2 = i;
+                                        continue;
+                                    }
+                                }
+                                String name1 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos1).name);
+                                String name2 = jsonObject.getString(deviceEntry.stateTimes.get(switchPos2).name);
+                                if (name1 != null) {
+                                    if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos1).time;
+                                        viewHolder.state1.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(switchPos1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name1 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos1).time;
+                                        viewHolder.state1.setText(txt);
+                                    }
+                                }
+                                if (name2 != null) {
+                                    if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
+                                        // 打开
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_on) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos2).time + "";
+                                        viewHolder.state2.setText(txt);
+                                    } else if (deviceEntry.stateTimes.get(switchPos2).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
+                                        // 关闭
+                                        String txt = name2 + mContext.getString(R.string.oneswitch_state_off) +
+                                                " / " + deviceEntry.stateTimes.get(switchPos2).time + "";
+                                        viewHolder.state2.setText(txt);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

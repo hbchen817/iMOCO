@@ -4,49 +4,75 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/appbgcolor"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include layout="@layout/include_detail_black" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_350">
+        android:layout_height="wrap_content"
+        android:background="#71A0F9"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/device_image_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_350"
-            android:background="#71A0F9" />
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/dp_250"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_16"
-            android:text="@string/open_curtains" />
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/device_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/window_device" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/status"
-            android:layout_centerHorizontal="true"
-            android:textColor="#EAEAEA"
-            android:text="@string/window_curtains_switch" />
+            android:layout_below="@id/device_image_view"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:orientation="horizontal">
 
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/open_curtains"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/status"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/curtains_control"
+                    android:textColor="#EAEAEA" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/key_1_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_20"
-        android:layout_marginTop="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_40"
-        android:text="@string/window_curtains_switch"
+        android:layout_marginTop="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingBottom="@dimen/dp_20"
+        android:text="@string/curtains_control"
         android:textColor="@color/all_3" />
 
     <LinearLayout
@@ -57,12 +83,12 @@
         android:padding="@dimen/dp_4">
 
         <TextView
-            android:id="@+id/close_curtains"
+            android:id="@+id/stop_curtains"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/close_curtains"
+            android:text="@string/stop_curtains_2"
             android:textColor="@color/all_3" />
 
         <TextView
@@ -76,14 +102,94 @@
             android:textColor="@color/all_3" />
 
         <TextView
-            android:id="@+id/stop_curtains"
+            android:id="@+id/close_curtains"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/stop_curtains"
+            android:text="@string/close_curtains"
             android:textColor="@color/all_3" />
-
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:id="@+id/timer_layout"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_white_solid">
+
+                <TextView
+                    android:id="@+id/timer_ic_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/icon_locking"
+                    android:textColor="@color/blue2"
+                    android:textSize="@dimen/sp_25" />
+
+                <TextView
+                    style="@style/StateFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/detail_state_timer"
+                    android:textColor="@color/blue2" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/back_light_layout"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_white_solid">
+
+                <TextView
+                    android:id="@+id/back_light_ic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/icon_backlight"
+                    android:textColor="@color/blue2"
+                    android:textSize="@dimen/sp_25" />
+
+                <TextView
+                    android:id="@+id/back_light_tv"
+                    style="@style/StateFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/backlight"
+                    android:textColor="@color/blue2" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

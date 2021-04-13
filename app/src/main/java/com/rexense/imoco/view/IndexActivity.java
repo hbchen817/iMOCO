@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -226,6 +228,11 @@ public class IndexActivity extends BaseActivity {
             mPermissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_TASKS)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.GET_TASKS);
+        }
+
     }
 
     @Override
@@ -252,6 +259,27 @@ public class IndexActivity extends BaseActivity {
             default:
         }
     }
+
+    public static NetworkInfo getActiveNetwork(Context context) {
+
+        if (context == null) {
+            return null;
+        }
+
+        ConnectivityManager mConnMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (mConnMgr == null) {
+            return null;
+        }
+
+        // 获取活动网络连接信息
+
+        NetworkInfo aActiveInfo = mConnMgr.getActiveNetworkInfo();
+
+        return aActiveInfo;
+
+    }
+
 
     private void initView() {
         // 实例化几个碎片

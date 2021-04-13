@@ -26,6 +26,7 @@ import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.demoTest.ActionEntry;
 import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.demoTest.IdentifierItemForCA;
+import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
@@ -151,7 +152,6 @@ public class IdentifierListForActionActivity extends BaseActivity {
                     if (result.substring(0, 1).equals("[")) {
                         result = "{\"data\":" + result + "}";
                     }
-                    ViseLog.d(new Gson().toJson(JSON.parseObject(result)));
                     JSONObject o = JSON.parseObject(result);
                     JSONArray a = o.getJSONArray("data");
                     for (int i = 0; i < a.size(); i++) {
@@ -162,7 +162,17 @@ public class IdentifierListForActionActivity extends BaseActivity {
                             // 属性
                             ActionEntry.Property property = new ActionEntry.Property();
                             property.setIotId(mDevIot);
-                            property.setPropertyName(o1.getString("identifier"));
+                            String identifier = o1.getString("identifier");
+                            property.setPropertyName(identifier);
+
+                            JSONObject object = DeviceBuffer.getExtendedInfo(mDevIot);
+                            if (object != null) {
+                                String name = object.getString(identifier);
+                                if (name != null) {
+                                    item.setName(name);
+                                }
+                            }
+
                             item.setObject(property);
                         } else if (item.getType() == 2){
                             // 服务

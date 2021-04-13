@@ -97,7 +97,10 @@ public class BaseActivity extends FragmentActivity {
 //                    });
                 }
                 //非OTA信息查询失败才作提示
-                if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)) {
+                if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)
+                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401) {
+                    // 6401: 拓扑关系不存在
+                    // 403：请求被禁止
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                     Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 }

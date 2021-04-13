@@ -25,9 +25,11 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.cncoderx.wheelview.Wheel3DView;
 import com.google.gson.Gson;
 import com.rexense.imoco.R;
+import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.demoTest.IdentifierItemForCA;
+import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
@@ -217,32 +219,60 @@ public class EditPropertyValueActivity extends BaseActivity {
                         startActivity(intent);
                     } else if (mValueRV.getVisibility() == View.VISIBLE) {
                         CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
-                        PropertyValue value = new PropertyValue();
-                        for (int i = 0; i < mList.size(); i++) {
-                            if (mList.get(i).isChecked()) {
-                                value = mList.get(i);
-                                break;
+                        if (Constant.KEY_NICK_NAME_PK.contains(event.getProductKey())) {
+                            PropertyValue value = new PropertyValue();
+                            for (int i = 0; i < mList.size(); i++) {
+                                if (mList.get(i).isChecked()) {
+                                    value = mList.get(i);
+                                    break;
+                                }
                             }
+                            Object compareValue = Integer.parseInt(value.getValue());
+
+                            event.setProductKey(event.getProductKey());
+                            event.setDeviceName(event.getDeviceName());
+                            event.setEventCode(event.getEventCode());
+                            event.setCompareType("==");
+                            event.setCompareValue(compareValue);
+
+                            mIdentifier.setObject(event);
+                            // mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mUnitTV.getText().toString());
+                            mIdentifier.setDesc(getString(R.string.trigger_buttons) + value.getKey());
+
+                            isUpate = false;
+                            EventBus.getDefault().postSticky(mIdentifier);
+
+                            Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                            startActivity(intent);
+                        } else {
+                            PropertyValue value = new PropertyValue();
+                            for (int i = 0; i < mList.size(); i++) {
+                                if (mList.get(i).isChecked()) {
+                                    value = mList.get(i);
+                                    break;
+                                }
+                            }
+
+                            String compareValue = value.getValue();
+                            Object result = 0;
+                            if (value.getValue() == null) {
+                                ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
+                                return;
+                            }
+                            if (compareValue.contains("."))
+                                result = Double.parseDouble(compareValue);
+                            else result = Integer.parseInt(compareValue);
+
+                            event.setCompareValue(result);
+                            mIdentifier.setValueName(value.getKey());
+                            mIdentifier.setObject(event);
+
+                            isUpate = false;
+                            EventBus.getDefault().postSticky(mIdentifier);
+
+                            Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                            startActivity(intent);
                         }
-
-                        String compareValue = value.getValue();
-                        Object result = 0;
-                        if (value.getValue() == null) {
-                            ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
-                            return;
-                        }
-                        if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
-                        else result = Integer.parseInt(compareValue);
-
-                        event.setCompareValue(result);
-                        mIdentifier.setValueName(value.getKey());
-                        mIdentifier.setObject(event);
-
-                        isUpate = false;
-                        EventBus.getDefault().postSticky(mIdentifier);
-
-                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                        startActivity(intent);
                     }
                 }
             }
@@ -285,6 +315,13 @@ public class EditPropertyValueActivity extends BaseActivity {
         if (!isUpate) return;
         mIdentifier = item;
         mTitle.setText(mIdentifier.getName().trim());
+
+        if (mIdentifier.getObject() instanceof CaConditionEntry.Event) {
+            CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
+            if (Constant.KEY_NICK_NAME_PK.contains(event.getProductKey())) {
+                mTitle.setText(getString(R.string.trigger_buttons_2));
+            }
+        }
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mSceneManager.queryTSLListForCA(item.getIotId(), 0, mCommitFailureHandler, mResponseErrorHandler, mHandler);
@@ -422,7 +459,163 @@ public class EditPropertyValueActivity extends BaseActivity {
                                     JSONObject outputData = outputDatas.getJSONObject(0);
                                     JSONObject dataType = outputData.getJSONObject("dataType");
                                     mNameTV.setText(outputData.getString("name"));
-                                    if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
+
+                                    if (Constant.KEY_NICK_NAME_PK.contains(event.getProductKey())) {
+                                        mList.clear();
+                                        mValueRV.setVisibility(View.VISIBLE);
+                                        mEventLayout.setVisibility(View.GONE);
+                                        ((CaConditionEntry.Event) mIdentifier.getObject()).setPropertyName(outputData.getString("identifier"));
+                                        ((CaConditionEntry.Event) mIdentifier.getObject()).setCompareType("==");
+
+                                        JSONObject object = DeviceBuffer.getExtendedInfo(mIdentifier.getIotId());
+                                        if (CTSL.PK_SIX_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value5 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 5) {
+                                                value5.setChecked(true);
+                                            }
+                                            value5.setKey(object != null ? object.getString("5") : getString(R.string.key_5));
+                                            value5.setValue("5");
+                                            mList.add(value5);
+
+                                            PropertyValue value6 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 6) {
+                                                value6.setChecked(true);
+                                            }
+                                            value6.setKey(object != null ? object.getString("6") : getString(R.string.key_6));
+                                            value6.setValue("6");
+                                            mList.add(value6);
+                                        } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("1") : getString(R.string.key_1));
+                                            value1.setValue("1");
+                                            mList.add(value1);
+
+                                            PropertyValue value2 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 2) {
+                                                value2.setChecked(true);
+                                            }
+                                            value2.setKey(object != null ? object.getString("2") : getString(R.string.key_2));
+                                            value2.setValue("2");
+                                            mList.add(value2);
+
+                                            PropertyValue value3 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 3) {
+                                                value3.setChecked(true);
+                                            }
+                                            value3.setKey(object != null ? object.getString("3") : getString(R.string.key_3));
+                                            value3.setValue("3");
+                                            mList.add(value3);
+
+                                            PropertyValue value4 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 4) {
+                                                value4.setChecked(true);
+                                            }
+                                            value4.setKey(object != null ? object.getString("4") : getString(R.string.key_4));
+                                            value4.setValue("4");
+                                            mList.add(value4);
+
+                                            PropertyValue value5 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 5) {
+                                                value5.setChecked(true);
+                                            }
+                                            value5.setKey(object != null ? object.getString("5") : getString(R.string.key_5));
+                                            value5.setValue("5");
+                                            mList.add(value5);
+
+                                            PropertyValue value6 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 6) {
+                                                value6.setChecked(true);
+                                            }
+                                            value6.setKey(object != null ? object.getString("6") : getString(R.string.key_6));
+                                            value6.setValue("6");
+                                            mList.add(value6);
+                                        } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("1") : getString(R.string.key_1));
+                                            value1.setValue("1");
+                                            mList.add(value1);
+
+                                            PropertyValue value2 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 2) {
+                                                value2.setChecked(true);
+                                            }
+                                            value2.setKey(object != null ? object.getString("2") : getString(R.string.key_2));
+                                            value2.setValue("2");
+                                            mList.add(value2);
+
+                                            PropertyValue value3 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 3) {
+                                                value3.setChecked(true);
+                                            }
+                                            value3.setKey(object != null ? object.getString("3") : getString(R.string.key_3));
+                                            value3.setValue("3");
+                                            mList.add(value3);
+
+                                            PropertyValue value4 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 4) {
+                                                value4.setChecked(true);
+                                            }
+                                            value4.setKey(object != null ? object.getString("4") : getString(R.string.key_4));
+                                            value4.setValue("4");
+                                            mList.add(value4);
+                                        } else if (CTSL.PK_ONE_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("1") : getString(R.string.key_1));
+                                            value1.setValue("1");
+                                            mList.add(value1);
+                                        } else if (CTSL.PK_THREE_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("1") : getString(R.string.key_1));
+                                            value1.setValue("1");
+                                            mList.add(value1);
+
+                                            PropertyValue value2 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 2) {
+                                                value2.setChecked(true);
+                                            }
+                                            value2.setKey(object != null ? object.getString("2") : getString(R.string.key_2));
+                                            value2.setValue("2");
+                                            mList.add(value2);
+
+                                            PropertyValue value3 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 3) {
+                                                value3.setChecked(true);
+                                            }
+                                            value3.setKey(object != null ? object.getString("3") : getString(R.string.key_3));
+                                            value3.setValue("3");
+                                            mList.add(value3);
+                                        } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("1") : getString(R.string.key_1));
+                                            value1.setValue("1");
+                                            mList.add(value1);
+
+                                            PropertyValue value2 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 2) {
+                                                value2.setChecked(true);
+                                            }
+                                            value2.setKey(object != null ? object.getString("2") : getString(R.string.key_2));
+                                            value2.setValue("2");
+                                            mList.add(value2);
+                                        }
+
+                                        mAdapter.notifyDataSetChanged();
+                                    } else if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
                                         mValueRV.setVisibility(View.GONE);
                                         mEventLayout.setVisibility(View.VISIBLE);
                                         mEventValue = new EventValue();

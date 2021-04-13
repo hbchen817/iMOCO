@@ -34,6 +34,7 @@
     <string name="icon_high_wind">&#xe68d;</string>
     <string name="icon_switch2">&#xe64e;</string>
     <string name="icon_switch3">&#xe6a1;</string>
+    <string name="icon_backlight">&#xe9e2;</string>
 
     <string name="app_name">莫科智家</string>
     <string name="contentDescription_null"></string>
@@ -495,12 +496,14 @@
     <string name="devices_belong_this_room">在此房间的设备</string>
 
     <string name="curtains">窗帘</string>
+    <string name="curtains_control">窗帘控制</string>
     <string name="one_curtains">一路窗帘</string>
     <string name="two_curtains">二路窗帘</string>
     <string name="window_curtains_switch">窗帘开关</string>
     <string name="close_curtains">关闭窗帘</string>
     <string name="open_curtains">打开窗帘</string>
     <string name="stop_curtains">停止窗帘</string>
+    <string name="stop_curtains_2">暂停窗帘</string>
     <string name="key_status">按键状态</string>
     <string name="key_one_status">按键一状态</string>
     <string name="key_two_status">按键二状态</string>
@@ -671,8 +674,39 @@
     <string name="pls_enter_description_of_the_problem">请输入问题描述</string>
     <string name="submit_completed">提交完成</string>
     <string name="alog_title">日志服务</string>
+    <string name="power_switch">电源开关</string>
+    <string name="backlight">背光</string>
+    <string name="key_name_edit">修改按键名称</string>
+    <string name="pls_input_key_name">请输入按键名称</string>
+    <string name="not_the_editor">未编辑</string>
+    <string name="key_1">按键1</string>
+    <string name="key_2">按键2</string>
+    <string name="key_3">按键3</string>
+    <string name="key_4">按键4</string>
+    <string name="key_5">按键5</string>
+    <string name="key_6">按键6</string>
+    <string name="key_0">按键</string>
+
+    <string name="is_setting">正在设置</string>
+    <string name="set_success">设置成功</string>
     <string name="air_conditioner">空调</string>
     <string name="new_air">新风</string>
     <string name="room_temperature">室温</string>
     <string name="heating">制热</string>
+
+    <string name="powerswitch_1">电源开关_1</string>
+    <string name="powerswitch_2">电源开关_2</string>
+    <string name="powerswitch_3">电源开关_3</string>
+    <string name="powerswitch_4">电源开关_4</string>
+    <string name="one_way_powerswitch">开关1路</string>
+    <string name="two_way_powerswitch">开关2路</string>
+    <string name="three_way_powerswitch">开关3路</string>
+    <string name="four_way_powerswitch">开关4路</string>
+    <string name="length_of_key_name_cannot_be_greater_than_10">按键名称长度不能大于10</string>
+    <string name="key_name_cannot_be_empty">按键名称不能为空</string>
+    <string name="report_of_key_info">按键信息上报</string>
+    <string name="trigger_buttons">触发按键：</string>
+    <string name="trigger_buttons_2">触发按键</string>
+    <string name="server_is_busy_and_try_again_later">服务器繁忙，请稍后再试</string>
+    <string name="pls_turn_on_switch_first">请先打开开关</string>
 </resources>

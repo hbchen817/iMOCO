@@ -60,6 +60,7 @@ public class SixSceneSwitchActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+
         mMyHandler = new MyHandler(this);
         initView();
         getScenes();

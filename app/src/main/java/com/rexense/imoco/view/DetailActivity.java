@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.presenter.DeviceBuffer;
@@ -58,18 +59,36 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_detail_sensor);
                 break;
             case CTSL.PK_ONEWAYSWITCH:
-                setContentView(R.layout.activity_detail_oneswitch);
+                setContentView(R.layout.activity_detail_oneswitch_2);
+                // setContentView(R.layout.activity_detail_oneswitch);
                 break;
             case CTSL.PK_TWOWAYSWITCH:
-                setContentView(R.layout.activity_detail_twoswitch);
+                setContentView(R.layout.activity_detail_twoswitch_2);
+                //setContentView(R.layout.activity_detail_twoswitch);
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
+                // 四键开关
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    setContentView(R.layout.activity_detail_fourswitch_2);
+                } else setContentView(R.layout.activity_detail_fourswitch);
+                break;
             case CTSL.PK_FOURWAYSWITCH:
                 setContentView(R.layout.activity_detail_fourswitch);
                 break;
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
+                // 单路窗帘
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;
+            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS: {
+                // 双路窗帘
+                setContentView(R.layout.activity_two_way_curtains);
+                break;
+            }
+            case CTSL.PK_THREE_KEY_SWITCH: {
+                // 三键开关
+                setContentView(R.layout.activity_detail_threeswitch);
+                break;
+            }
             case CTSL.PK_SMART_LOCK_A7:
             case CTSL.PK_SMART_LOCK:
                 StatusBarUtils.getStatusBarHeight(this);
@@ -80,24 +99,35 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_color_light);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
-                setContentView(R.layout.activity_one_key_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_one_key_scene_2);
+                else setContentView(R.layout.activity_one_key_scene);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-//                setContentView(R.layout.activity_six_two_scene);
-                setContentView(R.layout.activity_six_four_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_six_two_scene_2);
+                else setContentView(R.layout.activity_six_two_scene);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
-                setContentView(R.layout.activity_six_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_six_scene_2);
+                else setContentView(R.layout.activity_six_scene);
                 break;
             case CTSL.PK_TWO_SCENE_SWITCH:
-                setContentView(R.layout.activity_two_key_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_two_key_scene_2);
+                else setContentView(R.layout.activity_two_key_scene);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
-                setContentView(R.layout.activity_three_key_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_three_key_scene_2);
+                else setContentView(R.layout.activity_three_key_scene);
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
-                setContentView(R.layout.activity_four_key_scene);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    setContentView(R.layout.activity_four_key_scene_2);
+                else setContentView(R.layout.activity_four_key_scene);
                 break;
             case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
                 // 全面屏
@@ -214,7 +244,6 @@ public class DetailActivity extends BaseActivity {
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
                     JSONObject items = JSON.parseObject((String) msg.obj);
-                    ViseLog.d(items);
                     if (items != null) {
                         TSLHelper.parseProperty(mProductKey, items, propertyEntry);
                         updateState(propertyEntry);

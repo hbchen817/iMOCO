@@ -125,21 +125,74 @@ public class CTSL {
 
     // 定义一键开关属性常量
     public static final String OWS_P_PowerSwitch_1 = "PowerSwitch_1";
+    public static final String OWS_P_BackLightMode = "BackLightMode";
     public static final Map<String, PTYPE> OWS_Properties = new HashMap<String, PTYPE>() {
         {
             put(OWS_P_PowerSwitch_1, PTYPE.t_bool);
+            put(OWS_P_BackLightMode, PTYPE.t_enum);
         }
     };
+
+    // 定义三开六场景开关属性常量
+    public static final String PSS_BackLightMode = "backLight";
+    public static final Map<String, PTYPE> PSS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(PSS_BackLightMode, PTYPE.t_enum);
+        }
+    };
+
+    // 定义一场景开关属性常量
+    public static final String POS_BackLight = "backLight";
+    public static final Map<String, PTYPE> POS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(POS_BackLight, PTYPE.t_enum);
+        }
+    };
+
+    // 定义大三开场景开关属性常量
+    public static final String PTS_BackLight = "backLight";
+    public static final Map<String, PTYPE> PTS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(PTS_BackLight, PTYPE.t_enum);
+        }
+    };
+
+    // 定义大二开场景开关属性常量
+    public static final String P2S_BackLight = "backLight";
+    public static final Map<String, PTYPE> P2S_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(P2S_BackLight, PTYPE.t_bool);
+        }
+    };
+
+    // 定义二开四场景开关属性常量
+    public static final String PFS_BackLight = "backLight";
+    public static final Map<String, PTYPE> PFS_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(PFS_BackLight, PTYPE.t_enum);
+        }
+    };
+
     public static String S_P_PowerSwitch_On = "1";
     public static String S_P_PowerSwitch_Off = "0";
 
     // 定义两键开关属性常量
     public static final String TWS_P_PowerSwitch_1 = "PowerSwitch_1";
     public static final String TWS_P_PowerSwitch_2 = "PowerSwitch_2";
+    public static final String TWS_P_BackLightMode = "BackLightMode";
     public static final Map<String, PTYPE> TWS_Properties = new HashMap<String, PTYPE>() {
         {
             put(TWS_P_PowerSwitch_1, PTYPE.t_bool);
             put(TWS_P_PowerSwitch_2, PTYPE.t_bool);
+            put(TWS_P_BackLightMode, PTYPE.t_enum);
+        }
+    };
+
+    // 定义二三极插座属性常量
+    public static final String PK_OUTLET_Backlight = "backlight";
+    public static final Map<String, PTYPE> PK_OUTLET_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(PK_OUTLET_Backlight, PTYPE.t_enum);
         }
     };
 
@@ -162,12 +215,14 @@ public class CTSL {
     public static final String SIX_SCENE_SWITCH_P_POWER_4 = "PowerSwitch_4";
     public static final String SIX_SCENE_SWITCH_KEY_CODE_1 = "5";
     public static final String SIX_SCENE_SWITCH_KEY_CODE_2 = "6";
+    public static final String SIX_SCENE_SWITCH_BackLight = "backLight";
     public static final Map<String, PTYPE> SIX_SCENE_SWITCH_Properties = new HashMap<String, PTYPE>() {
         {
             put(SIX_SCENE_SWITCH_P_POWER_1, PTYPE.t_int32);
             put(SIX_SCENE_SWITCH_P_POWER_2, PTYPE.t_int32);
             put(SIX_SCENE_SWITCH_P_POWER_3, PTYPE.t_int32);
             put(SIX_SCENE_SWITCH_P_POWER_4, PTYPE.t_int32);
+            put(SIX_SCENE_SWITCH_BackLight, PTYPE.t_bool);
         }
     };
 
@@ -189,12 +244,36 @@ public class CTSL {
     public static final String FWS_P_PowerSwitch_2 = "PowerSwitch_2";
     public static final String FWS_P_PowerSwitch_3 = "PowerSwitch_3";
     public static final String FWS_P_PowerSwitch_4 = "PowerSwitch_4";
+    public static final String FWS_P_BackLightMode = "BackLightMode";
     public static final Map<String, PTYPE> FWS_Properties = new HashMap<String, PTYPE>() {
         {
             put(FWS_P_PowerSwitch_1, PTYPE.t_bool);
             put(FWS_P_PowerSwitch_2, PTYPE.t_bool);
             put(FWS_P_PowerSwitch_3, PTYPE.t_bool);
             put(FWS_P_PowerSwitch_4, PTYPE.t_bool);
+            put(FWS_P_BackLightMode, PTYPE.t_enum);
+        }
+    };
+
+    // 单路窗帘
+    public static final String WC_CurtainConrtol = "curtainConrtol";
+    public static final String WC_BackLight = "backLight";
+    public static final Map<String, PTYPE> WC_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(WC_CurtainConrtol, PTYPE.t_enum);
+            put(WC_BackLight, PTYPE.t_enum);
+        }
+    };
+
+    // 双路窗帘
+    public static final String TWC_CurtainConrtol = "curtainConrtol";
+    public static final String TWC_InnerCurtainOperation = "InnerCurtainOperation";
+    public static final String TWC_BackLight = "backLight";
+    public static final Map<String, PTYPE> TWC_Properties = new HashMap<String, PTYPE>() {
+        {
+            put(TWC_CurtainConrtol, PTYPE.t_enum);
+            put(TWC_InnerCurtainOperation, PTYPE.t_enum);
+            put(TWC_BackLight, PTYPE.t_enum);
         }
     };
 
@@ -238,11 +317,13 @@ public class CTSL {
     public static final String TWS_P3_PowerSwitch_1 = "PowerSwitch_1";
     public static final String TWS_P3_PowerSwitch_2 = "PowerSwitch_2";
     public static final String TWS_P3_PowerSwitch_3 = "PowerSwitch_3";
+    public static final String TWS_P3_BackLightMode = "BackLightMode";
     public static final Map<String, PTYPE> TWS_3_Properties = new HashMap<String, PTYPE>() {
         {
             put(TWS_P3_PowerSwitch_1, PTYPE.t_bool);
             put(TWS_P3_PowerSwitch_2, PTYPE.t_bool);
             put(TWS_P3_PowerSwitch_3, PTYPE.t_bool);
+            put(TWS_P3_BackLightMode, PTYPE.t_enum);
         }
     };
 
@@ -394,6 +475,14 @@ public class CTSL {
             put(PK_FLOORHEATING001, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
             put(PK_SMART_LOCK_A7, SL_Properties);
+			put(TEST_PK_ONEWAYWINDOWCURTAINS, WC_Properties);
+            put(TEST_PK_TWOWAYWINDOWCURTAINS, TWC_Properties);
+            put(PK_SIX_SCENE_SWITCH, PSS_Properties);
+            put(PK_OUTLET, PK_OUTLET_Properties);
+            put(PK_FOUR_SCENE_SWITCH, PFS_Properties);
+            put(PK_ONE_SCENE_SWITCH, POS_Properties);
+            put(PK_THREE_SCENE_SWITCH, PTS_Properties);
+            put(PK_TWO_SCENE_SWITCH, P2S_Properties);
             put(TEST_PK_FULL_SCREEN_SWITCH, FSS_Properties);
         }
     };
@@ -406,6 +495,11 @@ public class CTSL {
     // 定义状态常量
     public static final int STATUS_ON = 1;
     public static final int STATUS_OFF = 0;
+
+    // 窗帘状态常量
+    public static final int WC_STATUS_STOP = 0;
+    public static final int WC_STATUS_OPEN = 1;
+    public static final int WC_STATUS_CLOSE = 2;
 
     // 定义控制类型
     public static enum ControlType {
