@@ -232,6 +232,11 @@ public class AptDeviceList extends BaseAdapter {
                                     viewHolder.status.setText(state);
                             }
                         }
+                    } else if (CTSL.PK_LIGHT.equals(deviceEntry.productKey)) {
+                        // 调光调色面板
+                        state = deviceEntry.stateTimes.get(0).time + " 亮度 " + deviceEntry.stateTimes.get(0).value + "%  /  " +
+                                deviceEntry.stateTimes.get(1).time + " 色温 " + deviceEntry.stateTimes.get(1).value + "K";
+                        viewHolder.status.setText(state);
                     }
                 }
             }

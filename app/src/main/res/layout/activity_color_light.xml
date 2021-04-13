@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include layout="@layout/include_detail_black" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -137,12 +137,12 @@
     <SeekBar
         android:id="@+id/lightnessProgressBar"
         android:layout_width="match_parent"
-        android:thumb="@null"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_5"
-        android:progress="50"
         android:max="100"
-        android:progressDrawable="@drawable/color_light_progress" />
+        android:progress="50"
+        android:progressDrawable="@drawable/color_light_progress"
+        android:thumb="@null" />
 
     <LinearLayout
         android:id="@+id/temperatureLayout"
@@ -177,15 +177,15 @@
             android:textColor="#3A6293"
             android:textSize="@dimen/sp_14"
             android:textStyle="bold"
-            tools:text="6000" />
+            tools:text="--" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="K"
             android:textColor="#3A6293"
             android:textSize="@dimen/sp_14"
-            android:textStyle="bold"
-            android:text="K" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -207,13 +207,13 @@
 
     <View
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginBottom="@dimen/dp_20"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_20">
 
         <LinearLayout
             android:id="@+id/timer_view"
@@ -226,12 +226,18 @@
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
 
-            <ImageView
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:src="@drawable/clock" />
+            <TextView
+                android:id="@+id/timer_ic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/icon_timer"
+                android:textColor="@color/blue4"
+                android:textSize="@dimen/sp_30" />
 
             <TextView
+                android:id="@+id/timer_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
@@ -250,17 +256,23 @@
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
 
-            <ImageView
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:src="@drawable/type" />
+            <TextView
+                android:id="@+id/scene_ic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/icon_scene"
+                android:textColor="@color/blue4"
+                android:textSize="@dimen/sp_30" />
 
             <TextView
+                android:id="@+id/scene_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
                 android:text="@string/rb_tab_two_desc"
-                android:textColor="#3A6293"
+                android:textColor="@color/blue4"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
 
@@ -275,12 +287,18 @@
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
 
-            <ImageView
-                android:layout_width="@dimen/dp_30"
-                android:layout_height="@dimen/dp_30"
-                android:src="@drawable/switch_on_off" />
+            <TextView
+                android:id="@+id/switch_ic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/icon_switch"
+                android:textColor="@color/blue4"
+                android:textSize="@dimen/sp_30" />
 
             <TextView
+                android:id="@+id/switch_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"

@@ -46,51 +46,33 @@ public class MocoApplication extends AApplication {
         sContext = getApplicationContext();
 
         String processName = getProcessName(this, android.os.Process.myPid());
-        Log.d("wyyLog", "processName = " + processName);
-        if (!"com.laffey.smart".equals(processName)) {
-            return;
-        }
 
-        Log.d("wyyLog", "CrashHandler start");
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
-        Log.d("wyyLog", "CrashHandler end");
 
-        Log.d("wyyLog", "CrashReport start");
         //设置日志级别
-        /*if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             Logger.setLogLevel(2);
             Bugly.init(getApplicationContext(), "e66b11bc4e", BuildConfig.DEBUG);
-        }*/
-        Log.d("wyyLog", "CrashReport end");
+        }
 
-        Log.d("wyyLog", "MultiDex start");
         //安装MultiDex
         MultiDex.install(this);
         Logger.d("The MultiDex installing completed.");
-        Log.d("wyyLog", "MultiDex end");
 
-        Log.d("wyyLog", "SystemParameter.initProcess start");
         // 系统参数初始化
         SystemParameter.initProcess(this);
-        Log.d("wyyLog", "SystemParameter.initProcess end");
 
-        Log.d("wyyLog", "Initializer.sdkProcess start");
         // 初始化SDK
         Initializer.sdkProcess(this);
-        Log.d("wyyLog", "Initializer.sdkProcess end");
 
-        Log.d("wyyLog", "登录页为自定制的登录页 start");
         //登录页为自定制的登录页
         OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
         }
-        Log.d("wyyLog", "登录页为自定制的登录页 end");
 
-        Log.d("wyyLog", "initLog start");
         initLog();
-        Log.d("wyyLog", "initLog end");
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
 //            final String TAG = "APIGatewaySDKDele";
@@ -151,18 +133,14 @@ public class MocoApplication extends AApplication {
 //            }
 //        });
 
-        Log.d("wyyLog", "ViseLog start");
         ViseLog.getLogConfig()
-                .configAllowLog(/*BuildConfig.DEBUG*/true)
+                .configAllowLog(BuildConfig.DEBUG)
                 .configShowBorders(true)
                 .configTagPrefix("wyylog")
                 .configLevel(Log.VERBOSE);
         ViseLog.plant(new LogcatTree());
-        Log.d("wyyLog", "ViseLog end");
 
-        Log.d("wyyLog", "SystemParameter.getInstance().setSceneItemWidth start");
         SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
-        Log.d("wyyLog", "SystemParameter.getInstance().setSceneItemWidth end");
     }
 
     public static String getProcessName(Context cxt, int pid) {

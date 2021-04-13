@@ -209,13 +209,14 @@ public class AptDeviceGrid extends BaseAdapter {
                 }
                 // 有多种状态的处理
                 // 目前只显示前两种状态
-                int stateTimesCount = this.mDeviceList.get(position).stateTimes.size();
+                EDevice.deviceEntry devItem = mDeviceList.get(position);
+                int stateTimesCount = devItem.stateTimes.size();
                 if (stateTimesCount >= 2) {
                     viewHolder.state1.setVisibility(View.VISIBLE);
                     viewHolder.state2.setVisibility(View.VISIBLE);
                     if (stateTimesCount == 2) {
-                        viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value + " / " + this.mDeviceList.get(position).stateTimes.get(0).time);
-                        viewHolder.state2.setText(this.mDeviceList.get(position).stateTimes.get(1).value + " / " + this.mDeviceList.get(position).stateTimes.get(1).time);
+                        viewHolder.state1.setText(devItem.stateTimes.get(0).value + " / " + devItem.stateTimes.get(0).time);
+                        viewHolder.state2.setText(devItem.stateTimes.get(1).value + " / " + devItem.stateTimes.get(1).time);
                         if (CTSL.PK_TWOWAYSWITCH.equals(deviceEntry.productKey)) {
                             JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
                             if (jsonObject != null) {
@@ -224,12 +225,12 @@ public class AptDeviceGrid extends BaseAdapter {
                                     if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
                                         // 打开
                                         String txt = name1 + mContext.getString(R.string.oneswitch_state_on) +
-                                                " / " + this.mDeviceList.get(position).stateTimes.get(0).time;
+                                                " / " + devItem.stateTimes.get(0).time;
                                         viewHolder.state1.setText(txt);
                                     } else if (deviceEntry.stateTimes.get(0).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
                                         // 关闭
                                         String txt = name1 + mContext.getString(R.string.oneswitch_state_off) +
-                                                " / " + this.mDeviceList.get(position).stateTimes.get(0).time;
+                                                " / " + devItem.stateTimes.get(0).time;
                                         viewHolder.state1.setText(txt);
                                     }
                                 }
@@ -238,16 +239,22 @@ public class AptDeviceGrid extends BaseAdapter {
                                     if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_on))) {
                                         // 打开
                                         String txt = name2 + mContext.getString(R.string.oneswitch_state_on) +
-                                                " / " + this.mDeviceList.get(position).stateTimes.get(1).time;
+                                                " / " + devItem.stateTimes.get(1).time;
                                         viewHolder.state2.setText(txt);
                                     } else if (deviceEntry.stateTimes.get(1).value.contains(mContext.getString(R.string.oneswitch_state_off))) {
                                         // 关闭
                                         String txt = name2 + mContext.getString(R.string.oneswitch_state_off) +
-                                                " / " + this.mDeviceList.get(position).stateTimes.get(1).time;
+                                                " / " + devItem.stateTimes.get(1).time;
                                         viewHolder.state2.setText(txt);
                                     }
                                 }
                             }
+                        } else if (CTSL.PK_LIGHT.equals(deviceEntry.productKey)) {
+                            // 调光调色面板
+                            String stateContent1 = "亮度 " + devItem.stateTimes.get(0).value + "% / " + devItem.stateTimes.get(0).time;
+                            String stateContent2 = "色温 " + devItem.stateTimes.get(1).value + "K / " + devItem.stateTimes.get(1).time;
+                            viewHolder.state1.setText(stateContent1);
+                            viewHolder.state2.setText(stateContent2);
                         }
                     } else if (stateTimesCount == 3) {
                         viewHolder.state1.setText(this.mDeviceList.get(position).stateTimes.get(0).value);

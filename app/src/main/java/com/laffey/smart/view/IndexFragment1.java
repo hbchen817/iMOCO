@@ -65,7 +65,6 @@ import com.laffey.smart.utility.Utility;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -208,6 +207,7 @@ public class IndexFragment1 extends BaseFragment {
 
     @Override
     protected void init() {
+
     }
 
     private void initView() {
@@ -347,6 +347,10 @@ public class IndexFragment1 extends BaseFragment {
         super.notifyFailureOrError(type);
         if (this.mProgressDialog != null) {
             this.mProgressDialog.dismiss();
+        }
+        if (type == 10360) {
+            mSceneList.clear();
+            setSceneList(mSceneList);
         }
     }
 
@@ -938,7 +942,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint), itemEntry.name));
+                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint_2), itemEntry.name));
                             break;
                         }
                     }

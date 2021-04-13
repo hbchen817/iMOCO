@@ -101,7 +101,11 @@ public abstract class BaseFragment extends Fragment {
                 }
                 //Toast.makeText(getActivity(), String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 Toast.makeText(getActivity(), TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
-                notifyFailureOrError(2);
+                if (responseErrorEntry.code == 10360) {
+					// 场景不存在
+                    notifyFailureOrError(10360);
+                } else
+                    notifyFailureOrError(2);
             }
             return false;
         }
@@ -112,7 +116,7 @@ public abstract class BaseFragment extends Fragment {
     protected void notifyFailureOrError(int type) {
     }
 
-    protected void dismissQMUIDialog(){
+    protected void dismissQMUIDialog() {
 
     }
 

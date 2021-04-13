@@ -1,6 +1,9 @@
 package com.laffey.smart.view;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
@@ -33,7 +37,9 @@ import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.viewholder.CommonAdapter;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,6 +63,18 @@ public class ColorLightDetailActivity extends DetailActivity {
     TextView mKText;
     @BindView(R.id.colorTemperature)
     TextView mColorTemperatureText;
+    @BindView(R.id.switch_ic)
+    TextView mSwitchIC;
+    @BindView(R.id.switch_tv)
+    TextView mSwitchTV;
+    @BindView(R.id.scene_ic)
+    TextView mSceneIC;
+    @BindView(R.id.scene_tv)
+    TextView mSceneTV;
+    @BindView(R.id.timer_ic)
+    TextView mTimerIC;
+    @BindView(R.id.timer_tv)
+    TextView mTimerTV;
     @BindView(R.id.lightnessProgressBar)
     SeekBar mLightnessProgressBar;
     @BindView(R.id.recycle_view)
@@ -78,27 +96,46 @@ public class ColorLightDetailActivity extends DetailActivity {
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS).length() > 0) {
             mLightness = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-//            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_BRIGHTNESS, propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-//            if (stateEntry != null) {
             mLightnessText.setText(String.valueOf(mLightness));
+            mLightnessProgressBar.setOnSeekBarChangeListener(null);
             mLightnessProgressBar.setProgress(mLightness);
-//            }
+            mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE).length() > 0) {
             mColorTemperature = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE));
-//            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_COLOR_TEMPERATURE, propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE));
-//            if (stateEntry != null) {
             mKText.setText(String.valueOf(mColorTemperature));
             mColorTemperatureText.setText(String.valueOf(mColorTemperature));
-//            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER).length() > 0) {
             mState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER));
-            ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.LIGHT_P_POWER, propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER));
-            if (stateEntry != null) {
-
+            if (mState == 0) {
+                // 关闭
+                mLightnessText.setTextColor(getResources().getColor(R.color.blue4_2));
+                mKText.setTextColor(getResources().getColor(R.color.blue4_2));
+                mLightnessProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.color_light_progress_2));
+                mLightnessProgressBar.setEnabled(false);
+                mSwitchIC.setTextColor(getResources().getColor(R.color.blue4_2));
+                mSwitchTV.setTextColor(getResources().getColor(R.color.blue4_2));
+                mSceneIC.setTextColor(getResources().getColor(R.color.blue4_2));
+                mSceneTV.setTextColor(getResources().getColor(R.color.blue4_2));
+                mTimerIC.setTextColor(getResources().getColor(R.color.blue4_2));
+                mTimerTV.setTextColor(getResources().getColor(R.color.blue4_2));
+                mColorTemperatureText.setTextColor(getResources().getColor(R.color.blue4_2));
+            } else {
+                // 打开
+                mLightnessText.setTextColor(getResources().getColor(R.color.blue4));
+                mKText.setTextColor(getResources().getColor(R.color.blue4));
+                mLightnessProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.color_light_progress));
+                mLightnessProgressBar.setEnabled(true);
+                mSwitchIC.setTextColor(getResources().getColor(R.color.blue4));
+                mSwitchTV.setTextColor(getResources().getColor(R.color.blue4));
+                mSceneIC.setTextColor(getResources().getColor(R.color.blue4));
+                mSceneTV.setTextColor(getResources().getColor(R.color.blue4));
+                mTimerIC.setTextColor(getResources().getColor(R.color.blue4));
+                mTimerTV.setTextColor(getResources().getColor(R.color.blue4));
+                mColorTemperatureText.setTextColor(getResources().getColor(R.color.blue4));
             }
         }
         return true;
@@ -108,13 +145,29 @@ public class ColorLightDetailActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mSwitchIC.setTypeface(iconfont);
+        mSceneIC.setTypeface(iconfont);
+        mTimerIC.setTypeface(iconfont);
+
         EventBus.getDefault().register(this);
         this.mTSLHelper = new TSLHelper(this);
         this.mSceneManager = new SceneManager(this);
         mBackView.setImageResource(R.drawable.back_default);
         mTitleText.setTextColor(getResources().getColor(R.color.all_3));
         initView();
+        initStatusBar();
         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
     }
 
     @Subscribe
@@ -132,24 +185,25 @@ public class ColorLightDetailActivity extends DetailActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            mLightnessText.setText(String.valueOf(progress));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_BRIGHTNESS}, new String[]{"" + mLightnessProgressBar.getProgress()});
+        }
+    };
+
     private void initView() {
-        mLightnessProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                mLightnessText.setText(String.valueOf(i));
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_BRIGHTNESS}, new String[]{"" + i});
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         mRecycleView.setLayoutManager(linearLayoutManager);
@@ -160,6 +214,10 @@ public class ColorLightDetailActivity extends DetailActivity {
         mAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mState == CTSL.STATUS_OFF) {
+                    ToastUtils.showShortToast(ColorLightDetailActivity.this, R.string.pls_turn_on_switch_first);
+                    return;
+                }
                 int index = (int) view.getTag();
                 mSceneManager.executeScene(((ItemColorLightScene) mList.get(index)).getId(), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
@@ -232,10 +290,12 @@ public class ColorLightDetailActivity extends DetailActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.timer_view:
-                PluginHelper.cloudTimer(ColorLightDetailActivity.this, mIOTId, CTSL.PK_LIGHT);
+                if (mState == CTSL.STATUS_ON)
+                    PluginHelper.cloudTimer(ColorLightDetailActivity.this, mIOTId, CTSL.PK_LIGHT);
                 break;
             case R.id.scene_view:
-                LightSceneListActivity.start(mActivity, mIOTId);
+                if (mState == CTSL.STATUS_ON)
+                    LightSceneListActivity.start(mActivity, mIOTId);
                 break;
             case R.id.switch_view:
                 if (mState == CTSL.STATUS_ON) {
@@ -245,7 +305,8 @@ public class ColorLightDetailActivity extends DetailActivity {
                 }
                 break;
             case R.id.temperatureLayout:
-                ColorTemperatureChoiceActivity.start(this, mColorTemperature);
+                if (mState == CTSL.STATUS_ON)
+                    ColorTemperatureChoiceActivity.start(this, mColorTemperature);
                 break;
         }
     }

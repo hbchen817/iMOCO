@@ -28,7 +28,7 @@ public class CTSL {
     public static final String PK_TWO_SCENE_SWITCH = "a14kD7IKWqp";
     public static final String PK_THREE_SCENE_SWITCH = "a1S5xUUURz4";
     public static final String PK_FOUR_SCENE_SWITCH = "a1uaG4drs1e";
-    public static final String PK_LIGHT = "a1SdpzGgZCa";
+    public static final String PK_LIGHT = "a1OlU25BrOu";// 调光调色面板
     public static final String PK_ONE_SCENE_SWITCH = "a1HurDIuRiW";
 
     public static final String PK_WSD_ELE = "a1DnAUOVHtX";//微仕达电机pk
