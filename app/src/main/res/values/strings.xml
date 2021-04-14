@@ -100,7 +100,7 @@
     <string name="homespace_defaulthome">我的家</string>
 
     <string name="api_commitfailure">调用接口[%s]失败! %s</string>
-    <string name="api_commitfailure_hint">提交获取数据请求失败!</string>
+    <string name="api_commitfailure_hint">调用接口失败!</string>
     <string name="api_responseerror">调用接口[%s]成功, 但是响应发生错误! %s</string>
     <string name="api_responseerror_hint">获取数据失败！请重新登录或确保当前账号没有在其它地方登录。</string>
 
