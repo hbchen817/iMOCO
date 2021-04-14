@@ -27,6 +27,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
 
@@ -52,6 +53,11 @@ public class BindSuccessActivity extends BaseActivity {
     private int mOwned = 1;
     private int mStatus;
 
+    private String mDeviceName = "";
+
+    private ProcessDataHandler mProcessHandler;
+    private TSLHelper mTSLHelper;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,17 +66,20 @@ public class BindSuccessActivity extends BaseActivity {
         mTitle.setText(R.string.bind_result);
         mIotId = getIntent().getStringExtra(EXTRA_IOT_ID);
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
+        mDeviceName = mNickName;
         mUserCenter = new UserCenter(this);
-        Log.i("lzm", "nickName" + mNickName);
-        if (mNickName.contains(getString(R.string.app_brand))){
-            mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
-            mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-        }
+        ViseLog.d("nickName " + mNickName);
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
         mOkView.setTypeface(iconfont);
-        TSLHelper helper = new TSLHelper(this);
-        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
-        mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        if (mNickName.contains(getString(R.string.app_brand))) {
+            mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+            mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        } else {
+            mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
+        mProcessHandler = new ProcessDataHandler(this);
+        mTSLHelper = new TSLHelper(this);
+        mTSLHelper.getBaseInformation(mIotId, null, null, mProcessHandler);
 
         initStatusBar();
     }
@@ -127,21 +136,21 @@ public class BindSuccessActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
-                    Log.i("lzm", "nickname change success "+ (String)msg.obj);
+                    ViseLog.d("nickname change success " + (String) msg.obj);
                     // 更新设备缓存备注名称
                     DeviceBuffer.updateDeviceNickName(mIotId, mNickName);
                     break;
                 case Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV:
+                    // 查询用户和设备的关系
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    Log.i("lzm", "MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV"+ msg.obj);
                     mNickName = jsonObject.getString("productName");
-                    if (mNickName.contains(getString(R.string.app_brand))){
-                        mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                    if (mNickName.contains(getString(R.string.app_brand))) {
+                        mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
                         mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
                     break;
@@ -161,6 +170,7 @@ public class BindSuccessActivity extends BaseActivity {
             case R.id.current_test_btn:
                 if (mPK == null) {
                     ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
+                    mTSLHelper.getBaseInformation(mIotId, null, null, mProcessHandler);
                 } else {
                     ActivityRouter.toDetail(this, mIotId, mPK,
                             mStatus, mNickName, mOwned);
@@ -168,7 +178,17 @@ public class BindSuccessActivity extends BaseActivity {
                 }
                 break;
             case R.id.edit_name_btn:
-                showDeviceNameDialogEdit();
+                if (mDeviceName.equals(mNickName)) {
+                    ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
+                    if (mNickName.contains(getString(R.string.app_brand))) {
+                        mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                        mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
+                } else {
+                    showDeviceNameDialogEdit();
+                }
                 break;
             default:
                 break;
@@ -182,7 +202,7 @@ public class BindSuccessActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private static class ProcessDataHandler extends Handler {
+    private class ProcessDataHandler extends Handler {
         final WeakReference<BindSuccessActivity> mWeakReference;
 
         public ProcessDataHandler(BindSuccessActivity activity) {
@@ -193,6 +213,7 @@ public class BindSuccessActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             BindSuccessActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
                     JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);

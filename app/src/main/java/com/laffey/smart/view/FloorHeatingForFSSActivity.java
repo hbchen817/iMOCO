@@ -23,6 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class FloorHeatingForFSSActivity extends DetailActivity {
+    @BindView(R.id.includeDetailRl)
+    RelativeLayout mTopbarRoot;
     @BindView(R.id.includeDetailImgMore)
     ImageView mTopbarMore;
     @BindView(R.id.includeDetailImgBack)
@@ -145,6 +147,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
+        mTopbarRoot.setBackgroundColor(Color.WHITE);
         mTopbarMore.setVisibility(View.GONE);
     }
 

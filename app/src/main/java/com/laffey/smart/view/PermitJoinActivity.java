@@ -29,6 +29,7 @@ import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.Utility;
 import com.laffey.smart.widget.ComCircularProgress;
+import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -186,13 +187,13 @@ public class PermitJoinActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
-                    Log.i("lzm", "(String) msg.obj" + (String) msg.obj);
+                    ViseLog.d("(String) msg.obj " + (String) msg.obj);
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
                     mSubDeviceName = joinResultEntry.subDeviceName;
                     mSubDeviceIotId = joinResultEntry.subIotId;
                     if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
                             joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
-                        Logger.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
+                        ViseLog.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
                                 joinResultEntry.subDeviceName, joinResultEntry.subProductKey));
                         // 绑定子设备
                         if (joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
