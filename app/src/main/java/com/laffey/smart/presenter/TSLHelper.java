@@ -35,10 +35,10 @@ public class TSLHelper {
 
     // 获取物的基本信息
     public void getBaseInformation(String iotId,
-                            Handler commitFailureHandler,
-                            Handler responseErrorHandler,
-                            Handler processDataHandler) {
-        if(processDataHandler == null){
+                                   Handler commitFailureHandler,
+                                   Handler responseErrorHandler,
+                                   Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -58,7 +58,7 @@ public class TSLHelper {
                             Handler commitFailureHandler,
                             Handler responseErrorHandler,
                             Handler processDataHandler) {
-        if(processDataHandler == null){
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -75,10 +75,10 @@ public class TSLHelper {
 
     // 获取属性时间线数据（消息记录）
     public void getPropertyTimelineData(String iotId, String property, long startTime, long endTime, int maxCount, String order,
-                            Handler commitFailureHandler,
-                            Handler responseErrorHandler,
-                            Handler processDataHandler) {
-        if(processDataHandler == null){
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -100,10 +100,10 @@ public class TSLHelper {
 
     // 获取事件时间线数据（消息记录）
     public void getEventTimelineData(String iotId, String event, int contentType, long startTime, long endTime, int maxCount, String order,
-                            Handler commitFailureHandler,
-                            Handler responseErrorHandler,
-                            Handler processDataHandler) {
-        if(processDataHandler == null){
+                                     Handler commitFailureHandler,
+                                     Handler responseErrorHandler,
+                                     Handler processDataHandler) {
+        if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
         }
@@ -127,17 +127,16 @@ public class TSLHelper {
 
     // 解析属性
     public static void parseProperty(String productKey, JSONObject propertyItems, ETSL.propertyEntry propertyEntry) {
-        if(propertyItems == null)
-        {
+        if (propertyItems == null) {
             return;
         }
 
         // 如果有对应的属性配置文件则进行解析
-        if(CTSL.propertyProfile.containsKey(productKey)) {
+        if (CTSL.propertyProfile.containsKey(productKey)) {
             JSONObject item;
-            for(String key : CTSL.propertyProfile.get(productKey).keySet()) {
+            for (String key : CTSL.propertyProfile.get(productKey).keySet()) {
                 item = propertyItems.getJSONObject(key);
-                if(item != null){
+                if (item != null) {
                     propertyEntry.addProperty(key, item.getString("value"));
                     propertyEntry.addTime(key, item.getLong("time"));
                 }
@@ -153,14 +152,14 @@ public class TSLHelper {
     // 设置属性
     public void setProperty(String iotId, String productKey, String[] keys, String[] values, CTSL.ControlType controlType) {
         // 如果属性没有配置则退出
-        if(!CTSL.propertyProfile.containsKey(productKey)) {
+        if (!CTSL.propertyProfile.containsKey(productKey)) {
             return;
         }
 
         // 生成设置属性条目JSON字符串
         String items = genSetPropertyItems(productKey, keys, values);
 
-        if(CTSL.ControlType.APIChanel == controlType) {
+        if (CTSL.ControlType.APIChanel == controlType) {
             // 设置请求参数
             EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
             requestParameterEntry.path = Constant.API_PATH_SETTSLPROPERTY;
@@ -170,7 +169,7 @@ public class TSLHelper {
             //提交
             new APIChannel().commit(requestParameterEntry, null, null, null);
         } else {
-            if(!RealtimeDataReceiver.getIsConnected()) {
+            if (!RealtimeDataReceiver.getIsConnected()) {
                 Toast.makeText(this.mContext, this.mContext.getString(R.string.longconnection_disconnected), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -210,6 +209,7 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_1, this.mContext.getString(R.string.twoswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_2, this.mContext.getString(R.string.twoswitch_state_2), Constant.CONTENTTYPE_PROPERTY));
                 break;
+            case CTSL.PK_FOURWAYSWITCH_2:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四路开关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.FWS_P_PowerSwitch_1, this.mContext.getString(R.string.twoswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
@@ -269,18 +269,18 @@ public class TSLHelper {
 
     // 处理属性消息记录
     public List<ETSL.messageRecordEntry> processPropertyMessageRecord(String productKey, List<ETSL.propertyTimelineEntry> timelineEntries) {
-        if(timelineEntries == null || timelineEntries.size() == 0) {
+        if (timelineEntries == null || timelineEntries.size() == 0) {
             return null;
         }
 
         List<ETSL.messageRecordEntry> list = new ArrayList<ETSL.messageRecordEntry>();
-        for(ETSL.propertyTimelineEntry entry : timelineEntries) {
+        for (ETSL.propertyTimelineEntry entry : timelineEntries) {
             ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this.mContext, productKey, entry.property, entry.data);
-            if(stateEntry != null) {
+            if (stateEntry != null) {
                 ETSL.messageRecordEntry messageRecordEntry = new ETSL.messageRecordEntry(
                         "2",
                         Utility.timeStampToYMDString(entry.timestamp),
-                        Utility.timeStampToHMSString(entry.timestamp) + stateEntry.name +this.mContext.getString(R.string.messagerecord_is) + stateEntry.value);
+                        Utility.timeStampToHMSString(entry.timestamp) + stateEntry.name + this.mContext.getString(R.string.messagerecord_is) + stateEntry.value);
                 list.add(messageRecordEntry);
             }
         }
@@ -289,14 +289,14 @@ public class TSLHelper {
 
     // 处理事件消息记录
     public List<ETSL.messageRecordEntry> processEventMessageRecord(String productKey, List<ETSL.eventTimelineEntry> timelineEntries) {
-        if(timelineEntries == null || timelineEntries.size() == 0) {
+        if (timelineEntries == null || timelineEntries.size() == 0) {
             return null;
         }
 
         List<ETSL.messageRecordEntry> list = new ArrayList<ETSL.messageRecordEntry>();
-        for(ETSL.eventTimelineEntry entry : timelineEntries) {
+        for (ETSL.eventTimelineEntry entry : timelineEntries) {
             ETSL.eventEntry eventEntry = CodeMapper.processEvent(this.mContext, productKey, entry.event, entry.data);
-            if(eventEntry != null) {
+            if (eventEntry != null) {
                 ETSL.messageRecordEntry messageRecordEntry = new ETSL.messageRecordEntry(
                         "2",
                         Utility.timeStampToYMDString(entry.timestamp),
@@ -313,8 +313,8 @@ public class TSLHelper {
         List<String> v_keys = new ArrayList<String>();
         List<String> v_values = new ArrayList<String>();
         List<CTSL.PTYPE> v_types = new ArrayList<CTSL.PTYPE>();
-        for(int i = 0; i < keys.length; i++) {
-            if(CTSL.propertyProfile.get(productKey).containsKey(keys[i])) {
+        for (int i = 0; i < keys.length; i++) {
+            if (CTSL.propertyProfile.get(productKey).containsKey(keys[i])) {
                 v_keys.add(keys[i]);
                 v_values.add(values[i]);
                 v_types.add(CTSL.propertyProfile.get(productKey).get(keys[i]));
@@ -323,8 +323,8 @@ public class TSLHelper {
 
         StringBuilder items = new StringBuilder();
         items.append("{");
-        for(int x = 0; x < v_keys.size(); x++) {
-            if(items.toString().length() > 1) {
+        for (int x = 0; x < v_keys.size(); x++) {
+            if (items.toString().length() > 1) {
                 items.append(",");
             }
             items.append(String.format("\"%s\":", v_keys.get(x)));

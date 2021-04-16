@@ -254,7 +254,7 @@ public class SceneListForFSSActivity extends DetailActivity {
                         mSceneAdapter.notifyDataSetChanged();
                     }
                 } else if (responseErrorEntry.code == 10360) {
-                    // 场景不存在 mClickedPos
+                    // 场景不存在
                     ToastUtils.showShortToast(SceneListForFSSActivity.this, R.string.scene_does_not_exist);
                     String autoSceneId = mList.get(mClickedPos).getAsId();
                     mSceneManager.deleteScene(autoSceneId, null, null, null);

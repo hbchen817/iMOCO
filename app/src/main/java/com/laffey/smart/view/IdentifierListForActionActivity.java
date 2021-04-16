@@ -174,7 +174,7 @@ public class IdentifierListForActionActivity extends BaseActivity {
                             }
 
                             item.setObject(property);
-                        } else if (item.getType() == 2){
+                        } else if (item.getType() == 2) {
                             // 服务
                             ActionEntry.InvokeService service = new ActionEntry.InvokeService();
                             service.setIotId(mDevIot);
@@ -189,7 +189,7 @@ public class IdentifierListForActionActivity extends BaseActivity {
                     QMUITipDialogUtil.dismiss();
                     mIdentifierRL.finishLoadMore(true);
                     mIdentifierRL.finishRefresh(true);
-                    if (a.size() == 0){
+                    if (a.size() == 0) {
                         ToastUtils.showLongToast(IdentifierListForActionActivity.this, R.string.this_device_has_no_scene_action);
                     }
                     break;

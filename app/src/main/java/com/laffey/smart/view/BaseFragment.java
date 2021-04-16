@@ -1,6 +1,7 @@
 package com.laffey.smart.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,7 +53,7 @@ public abstract class BaseFragment extends Fragment {
                 Logger.e(sb.toString());
                 String exceptionInfo = commitFailEntry.exception != null ? commitFailEntry.exception.getMessage() : "";
                 //Toast.makeText(getActivity(), String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
-                Toast.makeText(getActivity(), getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
                 notifyFailureOrError(1);
             }
             return false;
@@ -100,9 +101,9 @@ public abstract class BaseFragment extends Fragment {
 //                    });
                 }
                 //Toast.makeText(getActivity(), String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
-                Toast.makeText(getActivity(), TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                Toast.makeText(mActivity, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 if (responseErrorEntry.code == 10360) {
-					// 场景不存在
+                    // 场景不存在
                     notifyFailureOrError(10360);
                 } else
                     notifyFailureOrError(2);
@@ -140,6 +141,12 @@ public abstract class BaseFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
+
     /**
      * Fragment所依赖的Activity的上下文
      */
@@ -152,7 +159,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 获取碎片所依附的活动的上下文环境
-        mActivity = getActivity();
+        //mActivity = getActivity();
 
         rootView = inflater.inflate(setLayout(), container, false);
 

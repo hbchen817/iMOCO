@@ -103,6 +103,7 @@ public class BindSuccessActivity extends BaseActivity {
         titleTv.setText(getString(R.string.moregateway_editname));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setText(mNickName);
+        nameEt.setSelection(mNickName.length());
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
@@ -124,6 +125,8 @@ public class BindSuccessActivity extends BaseActivity {
                     mNewNickName = nameStr;
                     mUserCenter.setDeviceNickName(mIotId, nameStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     mNickName = mNewNickName;
+                } else {
+                    ToastUtils.showShortToast(BindSuccessActivity.this, R.string.dev_name_cannot_be_empty);
                 }
             }
         });

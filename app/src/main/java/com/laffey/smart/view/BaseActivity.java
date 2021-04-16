@@ -102,9 +102,12 @@ public class BaseActivity extends FragmentActivity {
                         && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401) {
                     // 6401: 拓扑关系不存在
                     // 403：请求被禁止
+                    // 28700: 设备未和用户绑定
+                    // 10360: scene rule not exist
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                     Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 }
+                notifyResponseError(responseErrorEntry.code);
                 notifyFailureOrError(2);
             }
             return false;
@@ -113,6 +116,9 @@ public class BaseActivity extends FragmentActivity {
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {
+    }
+
+    protected void notifyResponseError(int type) {
     }
 
     protected void dismissQMUIDialog() {

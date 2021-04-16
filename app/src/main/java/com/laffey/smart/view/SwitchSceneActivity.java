@@ -301,9 +301,12 @@ public class SwitchSceneActivity extends BaseActivity {
 
                         String iotID = params.getString("iotId");
                         String identifier = params.getString("identifier");
-                        String name = DeviceBuffer.getExtendedInfo(iotID).getString(identifier);
-                        if (name == null)
-                            name = params.getString("localizedPropertyName");
+                        String name = params.getString("localizedPropertyName");
+                        if (DeviceBuffer.getExtendedInfo(iotID) != null) {
+                            String n = DeviceBuffer.getExtendedInfo(iotID).getString(identifier);
+                            if (n != null)
+                                name = n;
+                        }
 
                         ItemAction<String> itemAction = new ItemAction<>();
                         itemAction.setIotId(params.getString("iotId"));
@@ -365,6 +368,17 @@ public class SwitchSceneActivity extends BaseActivity {
             return false;
         }
     });
+
+    @Override
+    protected void notifyResponseError(int type) {
+        super.notifyResponseError(type);
+        if (type == 28700) {
+            // 设备未和用户绑定
+            if (mScene != null) {
+                new SceneManager(this).deleteScene(mScene.id, null, null, processDataHandler);
+            }
+        }
+    }
 
     @OnClick({R.id.nameLayout, R.id.addBtn, R.id.deleteButton, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {

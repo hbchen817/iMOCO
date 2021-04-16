@@ -102,6 +102,9 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     private String mKeyName5;
     private String mKeyName6;
 
+    private String mPressedKey = "1";
+    private DelSceneHandler mDelSceneHandler;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -160,6 +163,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
         mMyHandler = new MyHandler(this);
         mTSLHelper = new TSLHelper(this);
+        mDelSceneHandler = new DelSceneHandler(this);
         initView();
         initKeyNickName();
         getScenes();
@@ -294,6 +298,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 break;
             case R.id.mSceneContentText2:
                 if (mFirstManualSceneId != null) {
+                    mPressedKey = "5";
                     mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
@@ -301,6 +306,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 break;
             case R.id.mSceneContentText5:
                 if (mSecondManualSceneId != null) {
+                    mPressedKey = "6";
                     mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
@@ -352,6 +358,44 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             }
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void notifyResponseError(int type) {
+        super.notifyResponseError(type);
+        if (type == 10360) {
+            // scene rule not exist
+            mSceneManager.getExtendedProperty(mIOTId, mPressedKey, null, null, mDelSceneHandler);
+        }
+    }
+
+    private class DelSceneHandler extends Handler {
+        private WeakReference<Activity> ref;
+
+        public DelSceneHandler(Activity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
+                if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    String keyNo = jsonObject.getString("keyNo");
+                    if (keyNo != null && keyNo.equals(mPressedKey)) {
+                        String autoSceneId = jsonObject.getString("asId");
+                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
+                mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
+                        null, mDelSceneHandler);
+            } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
+                getScenes();
+            }
         }
     }
 

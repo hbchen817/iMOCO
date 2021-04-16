@@ -72,6 +72,9 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
     private final int TAG_GET_EXTENDED_PRO = 10000;
     private String mKeyName;
 
+    private String mPressedKey = "1";
+    private DelSceneHandler mDelSceneHandler;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -106,6 +109,7 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
         mBackLightIc.setTypeface(iconfont);
 
         mTSLHelper = new TSLHelper(this);
+        mDelSceneHandler = new DelSceneHandler(this);
 
         EventBus.getDefault().register(this);
         mMyHandler = new MyHandler(this);
@@ -195,6 +199,7 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
         switch (view.getId()) {
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
+                    mPressedKey = "1";
                     mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 } else {
@@ -203,6 +208,7 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
                 break;
             case R.id.device_image_view:
                 if (mManualIDs[0] != null) {
+                    mPressedKey = "1";
                     mExecuteScene = mSceneContentText1.getText().toString();
                     mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 }
@@ -223,6 +229,44 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
             }
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void notifyResponseError(int type) {
+        super.notifyResponseError(type);
+        if (type == 10360) {
+            // scene rule not exist
+            mSceneManager.getExtendedProperty(mIOTId, mPressedKey, null, null, mDelSceneHandler);
+        }
+    }
+
+    private class DelSceneHandler extends Handler {
+        private WeakReference<Activity> ref;
+
+        public DelSceneHandler(Activity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
+                if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    String keyNo = jsonObject.getString("keyNo");
+                    if (keyNo != null && keyNo.equals(mPressedKey)) {
+                        String autoSceneId = jsonObject.getString("asId");
+                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
+                mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
+                        null, mDelSceneHandler);
+            } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
+                getScenes();
+            }
         }
     }
 
