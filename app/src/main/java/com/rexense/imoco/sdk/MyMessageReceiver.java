@@ -93,7 +93,7 @@ public class MyMessageReceiver extends MessageReceiver {
             builder.setChannelId(channel.getId());
         }
         Notification notification = builder.build();
-        mNotificationId +=1;
+        mNotificationId += 1;
         notifyManager.notify(mNotificationId, notification);
     }
 }

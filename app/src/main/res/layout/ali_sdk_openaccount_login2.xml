@@ -10,20 +10,25 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ImageView
                     android:id="@+id/loginImgBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scaleType="fitXY"
-                    android:src="@drawable/login_bg_2"/>
+                    android:src="@drawable/login_bg_2" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -89,8 +94,8 @@
                             android:layout_weight="1"
                             android:clickable="true"
                             android:focusable="true"
-                            android:textColor="@color/appfontcolor"
                             android:text="@string/ali_sdk_openaccount_text_free_register"
+                            android:textColor="@color/appfontcolor"
                             android:textSize="16sp" />
 
                         <TextView
@@ -115,47 +120,50 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:visibility="gone">
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/dp_1"
-                            android:background="@color/fontgrey"
-                            android:layout_weight="1"/>
+                            android:layout_weight="1"
+                            android:background="@color/fontgrey" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/dp_10"
-                            android:text="@string/other_login_method"/>
+                            android:text="@string/other_login_method" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/dp_1"
-                            android:background="@color/fontgrey"
-                            android:layout_weight="1"/>
+                            android:layout_weight="1"
+                            android:background="@color/fontgrey" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/login_with_sms_code"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="10dp"
-                        android:textAlignment="center"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:clickable="true"
-                        android:visibility="gone"
                         android:text="@string/login_by_sms"
-                        android:textSize="@dimen/sp_13" />
+                        android:textAlignment="center"
+                        android:textSize="@dimen/sp_13"
+                        android:visibility="gone" />
 
                     <View
                         android:layout_width="wrap_content"
-                        android:visibility="gone"
-                        android:layout_height="@dimen/dp_20" />
+                        android:layout_height="@dimen/dp_20"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_marginBottom="@dimen/dp_10"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:gravity="center">
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:gravity="center"
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -189,8 +197,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <!--            <TextView-->
                         <!--                android:id="@+id/authcode_login"-->
@@ -234,8 +242,8 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-                        android:visibility="gone"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:visibility="gone" />
 
 
                     <!--            <TextView-->
@@ -252,10 +260,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="40dp"
-                        android:visibility="gone"
                         android:gravity="center_horizontal|bottom"
-                        android:orientation="horizontal">
-
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
 
                         <!--            <ImageView-->

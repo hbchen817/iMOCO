@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detailOneSwitchLl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
+    android:orientation="vertical"
+    android:paddingBottom="5dp">
+
+    <include layout="@layout/include_detail_black" />
+
+    <ImageView
+        android:id="@+id/detailOneSwitchImgOperate"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@string/contentDescription_null"
+        android:src="@drawable/one_scene_normal_2" />
+    <!--state_oneswitch_off-->
+
+    <RelativeLayout
+        android:id="@+id/detailOneSwitchRLState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_50"
+        android:layout_marginRight="@dimen/dp_20"
+        android:background="@drawable/shape_state_item_white">
+
+        <TextView
+            android:id="@+id/detailOneSwitchLblStateName"
+            android:layout_width="@dimen/dp_150"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:paddingTop="@dimen/dp_15"
+            android:paddingBottom="@dimen/dp_15"
+            android:text="@string/power_switch"
+            android:textSize="@dimen/sp_15"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/detailOneSwitchLblStateValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:text="----"
+            android:textSize="@dimen/sp_15"
+            android:typeface="sans" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:id="@+id/detailOneSwitchRLTimer"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_white_solid">
+
+                <TextView
+                    android:id="@+id/timer_ic_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/icon_locking"
+                    android:textColor="@color/blue2"
+                    android:textSize="@dimen/sp_25" />
+
+                <TextView
+                    style="@style/StateFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/detail_state_timer"
+                    android:textColor="@color/blue2" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:id="@+id/back_light_layout"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_white_solid">
+
+                <TextView
+                    android:id="@+id/back_light_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/icon_backlight"
+                    android:textColor="@color/blue2"
+                    android:textSize="@dimen/sp_25" />
+
+                <TextView
+                    android:id="@+id/back_light_txt"
+                    style="@style/StateFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/backlight"
+                    android:textColor="@color/blue2" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -126,6 +126,8 @@ public class BindSuccessActivity extends BaseActivity {
                     mNewNickName = nameStr;
                     mUserCenter.setDeviceNickName(mIotId, nameStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     mNickName = mNewNickName;
+                } else {
+                    ToastUtils.showShortToast(BindSuccessActivity.this, R.string.dev_name_cannot_be_empty);
                 }
             }
         });

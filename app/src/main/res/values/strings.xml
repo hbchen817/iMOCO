@@ -709,4 +709,5 @@
     <string name="trigger_buttons_2">触发按键</string>
     <string name="server_is_busy_and_try_again_later">服务器繁忙，请稍后再试</string>
     <string name="pls_turn_on_switch_first">请先打开开关</string>
+    <string name="dev_name_cannot_be_empty">设备名称不能为空</string>
 </resources>

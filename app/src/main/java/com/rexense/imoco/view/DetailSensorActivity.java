@@ -141,6 +141,23 @@ public class DetailSensorActivity extends DetailActivity {
             mStateValue2 = (TextView) findViewById(R.id.detailSensorLblStateValue2);
         }
         initStatusBar();
+
+        if (CTSL.PK_DOORSENSOR.equals(mProductKey)){
+            // 门磁
+            mStateIcon.setImageResource(R.drawable.state_icon_door);
+        } else if (CTSL.PK_SMOKESENSOR.equals(mProductKey)) {
+            // 烟雾传感器
+            mStateIcon.setImageResource(R.drawable.state_icon_smoke);
+        } else if (CTSL.PK_WATERSENSOR.equals(mProductKey)) {
+            // 水浸传感器
+            mStateIcon.setImageResource(R.drawable.state_icon_water);
+        } else if (CTSL.PK_GASSENSOR.equals(mProductKey)) {
+            // 燃气传感器
+            mStateIcon.setImageResource(R.drawable.state_icon_gas);
+        } else if (CTSL.PK_PIRSENSOR.equals(mProductKey)) {
+            // 人体红外传感器
+            mStateIcon.setImageResource(R.drawable.state_icon_pir);
+        }
     }
 
     // 嵌入式状态栏

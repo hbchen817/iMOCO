@@ -184,7 +184,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                     EventBus.getDefault().post(new SceneBindEvent(mList.get(mBindPosition).name));
                     finish();
                     break;
-                case Constant.MSG_CALLBACK_UPDATESCENE:
+                case Constant.MSG_CALLBACK_UPDATESCENE: {
                     mAutoSceneID = (String) msg.obj;
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("asId", mAutoSceneID);
@@ -193,6 +193,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                     jsonObject.put("msId", mList.get(mBindPosition).id);
                     mSceneManager.setExtendedProperty(mIotId, mKeyCode, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     break;
+                }
                 default:
                     break;
             }

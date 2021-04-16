@@ -630,7 +630,7 @@ public class SceneManager {
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_LIST;
-        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.version = "1.0.4";
         requestParameterEntry.addParameter("iotId", iotId);
         requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
 
