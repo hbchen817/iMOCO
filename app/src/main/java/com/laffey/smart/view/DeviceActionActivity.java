@@ -175,9 +175,11 @@ public class DeviceActionActivity extends BaseActivity {
                                                     String identifier = property.getString("identifier").trim();
                                                     String name = null;
 
-                                                    name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
-                                                    if (name == null)
-                                                        name = property.getString("name").trim();
+                                                    if (DeviceBuffer.getExtendedInfo(mIotID) != null) {
+                                                        name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
+                                                        if (name == null)
+                                                            name = property.getString("name").trim();
+                                                    } else name = property.getString("name").trim();
 
                                                     ItemAction<String> itemAction = new ItemAction<String>();
                                                     itemAction.setActionName(name);

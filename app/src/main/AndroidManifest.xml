@@ -45,6 +45,22 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
+
+        <activity
+            android:name=".view.FloorHeatingForFSSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.NewAirForFSSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AirConditionerForFSSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SceneListForFSSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.FullScreenSwitchActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.LogActivity"
             android:screenOrientation="portrait" />
@@ -100,7 +116,8 @@
             android:name=".view.NewSceneActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
+        <activity android:name=".demoTest.DemoEditSceneActivity" />
+        <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="103546039" /> <!-- huawei push end -->

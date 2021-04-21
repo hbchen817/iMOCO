@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
 import com.laffey.smart.R;
 import com.laffey.smart.presenter.MocoApplication;
+import com.laffey.smart.view.MsgCenterActivity;
 
 import java.util.Date;
 import java.util.Map;
@@ -38,6 +40,12 @@ public class MyMessageReceiver extends MessageReceiver {
     @Override
     public void onNotificationOpened(Context context, String title, String summary, String extraMap) {
         Log.e("MyMessageReceiver", "onNotificationOpened, title: " + title + ", summary: " + summary + ", extraMap:" + extraMap);
+        if (title != null && title.contains("向您共享设备")) {
+            Intent intent = new Intent(context, MsgCenterActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("current_pos", 1);
+            context.startActivity(intent);
+        }
     }
 
     @Override
