@@ -1,4 +1,4 @@
-package com.laffey.smart.demoTest;
+package com.rexense.imoco.demoTest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

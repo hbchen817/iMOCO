@@ -337,9 +337,13 @@ public class SwitchSceneActivity extends BaseActivity {
                                 if (jsonObject.getString("identifier").equals(itemAction.getIdentifier())) {
 
                                     String identifier = itemAction.getIdentifier();
-                                    String name = DeviceBuffer.getExtendedInfo(itemAction.getIotId()).getString(identifier);
-                                    if (name == null)
-                                        name = jsonObject.getString("name").trim();
+                                    String name = null;
+
+                                    if (DeviceBuffer.getExtendedInfo(itemAction.getIotId()) != null) {
+                                        name = DeviceBuffer.getExtendedInfo(itemAction.getIotId()).getString(identifier);
+                                        if (name == null)
+                                            name = jsonObject.getString("name").trim();
+                                    } else name = jsonObject.getString("name").trim();
 
                                     itemAction.setActionName(name);
                                     JSONObject dataType = jsonObject.getJSONObject("dataType");

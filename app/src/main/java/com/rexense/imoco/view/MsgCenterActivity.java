@@ -43,18 +43,19 @@ public class MsgCenterActivity extends BaseActivity {
 
     private MsgCenterManager msgCenterManager;
     String[] type = new String[3];
-    private String[] msgTypeArr = {"device","share","announcement"};
-    private int currentPosition=0;
+    private String[] msgTypeArr = {"device", "share", "announcement"};
+    private int currentPosition = 0;
     private DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
-            if (currentPosition==1){
+            if (currentPosition == 1) {
                 msgCenterManager.clearShareNoticeList(mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            }else {
+            } else {
                 msgCenterManager.clearMsgList(msgTypeArr[currentPosition], mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         }
     };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,8 @@ public class MsgCenterActivity extends BaseActivity {
         ButterKnife.bind(this);
         tvToolbarRight.setText(getString(R.string.msg_center_clear));
         tvToolbarTitle.setText(getString(R.string.fragment3_msg_center));
+
+        currentPosition = getIntent().getIntExtra("current_pos", 0);
 
         type[0] = getString(R.string.msg_center_device);
         type[1] = getString(R.string.msg_center_share);
@@ -87,11 +90,11 @@ public class MsgCenterActivity extends BaseActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_CLEARMESSAGERECORD:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.msg_center_clear_success));
                     EventBus.getDefault().post(new RefreshMsgCenter(0));
                     break;
                 case Constant.MSG_CALLBACK_CLEARSHARENOTICELIST:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.msg_center_clear_success));
                     EventBus.getDefault().post(new RefreshMsgCenter(1));
                     break;
                 default:
@@ -105,15 +108,15 @@ public class MsgCenterActivity extends BaseActivity {
     void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_toolbar_right:
-                String confirmMsg="";
-                if (currentPosition==0){
+                String confirmMsg = "";
+                if (currentPosition == 0) {
                     confirmMsg = getString(R.string.msg_center_clear_device_msg);
-                }else if (currentPosition==1){
+                } else if (currentPosition == 1) {
                     confirmMsg = getString(R.string.msg_center_clear_share_msg);
-                }else if (currentPosition==2){
+                } else if (currentPosition == 2) {
                     confirmMsg = getString(R.string.msg_center_clear_notice_msg);
                 }
-                DialogUtils.showEnsureDialog(mActivity,clearMsgListener,confirmMsg,"");
+                DialogUtils.showEnsureDialog(mActivity, clearMsgListener, confirmMsg, "");
                 break;
         }
     }
@@ -122,7 +125,7 @@ public class MsgCenterActivity extends BaseActivity {
         viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(type.length);
-        viewPager.setCurrentItem(0);
+        viewPager.setCurrentItem(currentPosition);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -166,4 +169,9 @@ public class MsgCenterActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
 }

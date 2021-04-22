@@ -18,6 +18,7 @@ import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
 import com.rexense.imoco.R;
 import com.rexense.imoco.presenter.MocoApplication;
+import com.rexense.imoco.view.MsgCenterActivity;
 
 import java.util.Date;
 import java.util.Map;
@@ -42,6 +43,12 @@ public class MyMessageReceiver extends MessageReceiver {
     @Override
     public void onNotificationOpened(Context context, String title, String summary, String extraMap) {
         Log.e("MyMessageReceiver", "onNotificationOpened, title: " + title + ", summary: " + summary + ", extraMap:" + extraMap);
+        if (title != null && title.contains("向您共享设备")) {
+            Intent intent = new Intent(context, MsgCenterActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("current_pos", 1);
+            context.startActivity(intent);
+        }
     }
 
     @Override

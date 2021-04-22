@@ -351,7 +351,9 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String keyNo = jsonObject.getString("keyNo");
                     if (keyNo != null && keyNo.equals(mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                        mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
+                                null, mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {

@@ -35,6 +35,7 @@ import com.rexense.imoco.view.ThreeSceneSwitchActivity2;
 import com.rexense.imoco.view.TwoSceneSwitchActivity;
 import com.rexense.imoco.view.TwoSceneSwitchActivity2;
 import com.rexense.imoco.view.TwoWayCurtainsDetailActivity;
+import com.rexense.imoco.view.USixSceneSwitchActivity2;
 import com.vise.log.ViseLog;
 
 /**
@@ -104,6 +105,10 @@ public class ActivityRouter {
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                 intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
                 break;
+            case CTSL.PK_U_SIX_SCENE_SWITCH:
+                intent = new Intent(context, USixSceneSwitchActivity2.class);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
             case CTSL.PK_SIX_SCENE_SWITCH:
                 intent = new Intent(context, SixSceneSwitchActivity2.class);
                 break;

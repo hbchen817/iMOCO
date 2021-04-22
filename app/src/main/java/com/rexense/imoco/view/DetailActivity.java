@@ -66,14 +66,10 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_detail_twoswitch_2);
                 //setContentView(R.layout.activity_detail_twoswitch);
                 break;
+            case CTSL.PK_FOURWAYSWITCH:
             case CTSL.PK_FOURWAYSWITCH_2:
                 // 四键开关
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    setContentView(R.layout.activity_detail_fourswitch_2);
-                } else setContentView(R.layout.activity_detail_fourswitch);
-                break;
-            case CTSL.PK_FOURWAYSWITCH:
-                setContentView(R.layout.activity_detail_fourswitch);
+                setContentView(R.layout.activity_detail_fourswitch_2);
                 break;
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
                 // 单路窗帘
@@ -99,35 +95,42 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_color_light);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_one_key_scene_2);
-                else setContentView(R.layout.activity_one_key_scene);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                setContentView(R.layout.activity_one_key_scene_2);
+                //else setContentView(R.layout.activity_one_key_scene);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_six_two_scene_2);
-                else setContentView(R.layout.activity_six_two_scene);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                setContentView(R.layout.activity_six_two_scene_2);
+                //else setContentView(R.layout.activity_six_two_scene);
+                break;
+            case CTSL.PK_U_SIX_SCENE_SWITCH:
+                setContentView(R.layout.activity_u_six_scene_2);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+                setContentView(R.layout.activity_six_scene_3);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_six_scene_2);
-                else setContentView(R.layout.activity_six_scene);
+                setContentView(R.layout.activity_six_scene_2);
                 break;
+            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_two_key_scene_2);
-                else setContentView(R.layout.activity_two_key_scene);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                setContentView(R.layout.activity_two_key_scene_2);
+                //else setContentView(R.layout.activity_two_key_scene);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_three_key_scene_2);
-                else setContentView(R.layout.activity_three_key_scene);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                setContentView(R.layout.activity_three_key_scene_2);
+                //else setContentView(R.layout.activity_three_key_scene);
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
+                setContentView(R.layout.activity_four_key_scene_3);
+                break;
             case CTSL.PK_FOUR_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    setContentView(R.layout.activity_four_key_scene_2);
-                else setContentView(R.layout.activity_four_key_scene);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                setContentView(R.layout.activity_four_key_scene_2);
+                //else setContentView(R.layout.activity_four_key_scene);
                 break;
             case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
                 // 全面屏

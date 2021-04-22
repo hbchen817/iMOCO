@@ -118,6 +118,12 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
 
         initStatusBar();
         initKeyNickName();
+
+        if (CTSL.PK_TWO_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.VISIBLE);
+        } else if (CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.GONE);
+        }
     }
 
     private void initKeyNickName() {
@@ -277,7 +283,9 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     String keyNo = jsonObject.getString("keyNo");
                     if (keyNo != null && keyNo.equals(mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                        mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
+                                null, mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {

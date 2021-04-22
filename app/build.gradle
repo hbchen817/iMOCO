@@ -44,10 +44,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BRAND", "\"iMOCO\"")
+        }
         release {
             minifyEnabled false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BRAND", "\"iMOCO\"")
         }
     }
 

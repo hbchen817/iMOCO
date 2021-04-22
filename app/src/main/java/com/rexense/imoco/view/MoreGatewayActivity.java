@@ -201,6 +201,7 @@ public class MoreGatewayActivity extends BaseActivity {
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
+                                case CTSL.PK_ANY_TWO_SCENE_SWITCH:
                                 case CTSL.PK_TWO_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
@@ -212,6 +213,7 @@ public class MoreGatewayActivity extends BaseActivity {
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
+                                case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
                                 case CTSL.PK_FOUR_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
@@ -219,6 +221,8 @@ public class MoreGatewayActivity extends BaseActivity {
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
+                                case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+                                case CTSL.PK_U_SIX_SCENE_SWITCH:
                                 case CTSL.PK_SIX_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
