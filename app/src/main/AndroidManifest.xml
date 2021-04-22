@@ -209,6 +209,10 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".view.USixSceneSwitchActivity2"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.TwoSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
@@ -218,6 +222,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.SixTwoSceneSwitchActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SixFourSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity

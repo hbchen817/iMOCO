@@ -26,7 +26,6 @@ import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.DeviceBuffer;
-import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
@@ -45,7 +44,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 
-public class SixSceneSwitchActivity2 extends DetailActivity {
+public class USixSceneSwitchActivity2 extends DetailActivity {
 
     @BindView(R.id.mSceneContentText1)
     TextView mSceneContentText1;//1
@@ -351,9 +350,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String keyNo = jsonObject.getString("keyNo");
                     if (keyNo != null && keyNo.equals(mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, null);
-                        mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
-                                null, mDelSceneHandler);
+                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
@@ -431,7 +428,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                         && mKey4TV.getText().toString().length() > 10
                         && mKey5TV.getText().toString().length() > 10
                         && mKey6TV.getText().toString().length() > 10) {
-                    ToastUtils.showShortToast(SixSceneSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                    ToastUtils.showShortToast(USixSceneSwitchActivity2.this, R.string.length_of_key_name_cannot_be_greater_than_10);
                     return;
                 } else if (nameEt.getText().toString().length() == 0
                         && mKey1TV.getText().toString().length() == 0
@@ -440,11 +437,11 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                         && mKey4TV.getText().toString().length() == 0
                         && mKey5TV.getText().toString().length() == 0
                         && mKey6TV.getText().toString().length() == 0) {
-                    ToastUtils.showShortToast(SixSceneSwitchActivity2.this, R.string.key_name_cannot_be_empty);
+                    ToastUtils.showShortToast(USixSceneSwitchActivity2.this, R.string.key_name_cannot_be_empty);
                     return;
                 }
 
-                QMUITipDialogUtil.showLoadingDialg(SixSceneSwitchActivity2.this, R.string.is_setting);
+                QMUITipDialogUtil.showLoadingDialg(USixSceneSwitchActivity2.this, R.string.is_setting);
                 switch (resId) {
                     case R.id.key_1_tv: {
                         // 按键1
@@ -571,16 +568,16 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
     }
 
     private class MyHandler extends Handler {
-        final WeakReference<SixSceneSwitchActivity2> mWeakReference;
+        final WeakReference<USixSceneSwitchActivity2> mWeakReference;
 
-        public MyHandler(SixSceneSwitchActivity2 activity) {
+        public MyHandler(USixSceneSwitchActivity2 activity) {
             mWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            SixSceneSwitchActivity2 activity = mWeakReference.get();
+            USixSceneSwitchActivity2 activity = mWeakReference.get();
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -702,7 +699,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     mKey5TV.setText(mKeyName5);
                     mKey6TV.setText(mKeyName6);
                     DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                    ToastUtils.showShortToast(SixSceneSwitchActivity2.this, R.string.set_success);
+                    ToastUtils.showShortToast(USixSceneSwitchActivity2.this, R.string.set_success);
                     break;
                 }
                 default:

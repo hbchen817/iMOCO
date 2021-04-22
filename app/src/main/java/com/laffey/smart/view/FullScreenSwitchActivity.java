@@ -1,4 +1,4 @@
-package com.rexense.imoco.view;
+package com.laffey.smart.view;
 
 import android.content.Intent;
 import android.graphics.Color;

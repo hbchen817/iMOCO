@@ -31,7 +31,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
-import com.rexense.imoco.widget.GridItemDecoration;
+import com.laffey.smart.widget.GridItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;

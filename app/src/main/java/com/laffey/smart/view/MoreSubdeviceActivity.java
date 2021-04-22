@@ -391,6 +391,10 @@ public class MoreSubdeviceActivity extends BaseActivity {
             case CTSL.PK_THREE_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
             case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
+            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
+            case CTSL.PK_U_SIX_SCENE_SWITCH:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                 mSceneType = CScene.TYPE_AUTOMATIC;
                 mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50, mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);

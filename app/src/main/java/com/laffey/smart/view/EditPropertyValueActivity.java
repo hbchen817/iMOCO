@@ -484,7 +484,9 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value6.setKey(object != null ? object.getString("6") : getString(R.string.key_6));
                                             value6.setValue("6");
                                             mList.add(value6);
-                                        } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(event.getProductKey())) {
+                                        } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(event.getProductKey())
+                                                || CTSL.PK_U_SIX_SCENE_SWITCH.equals(event.getProductKey())
+                                                || CTSL.PK_SIX_SCENE_SWITCH_YQSXB.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -532,7 +534,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value6.setKey(object != null ? object.getString("6") : getString(R.string.key_6));
                                             value6.setValue("6");
                                             mList.add(value6);
-                                        } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(event.getProductKey())) {
+                                        } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_ANY_FOUR_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -596,7 +599,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value3.setKey(object != null ? object.getString("3") : getString(R.string.key_3));
                                             value3.setValue("3");
                                             mList.add(value3);
-                                        } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
+                                        } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);

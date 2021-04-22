@@ -262,7 +262,9 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String keyNo = jsonObject.getString("keyNo");
                     if (keyNo != null && keyNo.equals(mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                        mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
+                                null, mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
@@ -378,7 +380,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
-                                    activity.mManualIDs[1] = null;
+                                    activity.mManualIDs[0] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_2;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,

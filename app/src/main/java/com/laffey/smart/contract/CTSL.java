@@ -25,6 +25,8 @@ public class CTSL {
     public static final String PK_SMART_LOCK = "a1SlrD1NHyW";//临时密码StartDate
     public static final String PK_SIX_TWO_SCENE_SWITCH = "a1q6m3k0GkW";// a1zf8jfGzTX
     public static final String PK_SIX_SCENE_SWITCH = "a1MLvTtRmWo";
+    public static final String PK_U_SIX_SCENE_SWITCH = "a1KFQudxYT4";// 鸿雁U型场景开关
+    public static final String PK_SIX_SCENE_SWITCH_YQSXB = "a1mox25h8ec";// 粤奇胜肖邦六场景开关
     public static final String PK_TWO_SCENE_SWITCH = "a14kD7IKWqp";
     public static final String PK_THREE_SCENE_SWITCH = "a1S5xUUURz4";
     public static final String PK_FOUR_SCENE_SWITCH = "a1uaG4drs1e";

@@ -37,7 +37,8 @@ import com.laffey.smart.view.ThreeSceneSwitchActivity2;
 import com.laffey.smart.view.TwoSceneSwitchActivity;
 import com.laffey.smart.view.TwoSceneSwitchActivity2;
 import com.laffey.smart.view.TwoWayCurtainsDetailActivity;
-import com.rexense.imoco.view.FullScreenSwitchActivity;
+import com.laffey.smart.view.USixSceneSwitchActivity2;
+import com.laffey.smart.view.FullScreenSwitchActivity;
 import com.vise.log.ViseLog;
 
 /**
@@ -64,36 +65,15 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    /*String code = "link://router/" + productKey;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);*/
-                    intent = new Intent(context, DetailOneSwitchActivity2.class);
-                } else {
-                    intent = new Intent(context, DetailOneSwitchActivity.class);
-                }
+                intent = new Intent(context, DetailOneSwitchActivity2.class);
                 break;
             case CTSL.PK_TWOWAYSWITCH:
                 // 两键开关处理
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    /*String code = "link://router/" + productKey;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
-                    Router.getInstance().toUrlForResult((Activity) context, code, 1, bundle);*/
-
-                    intent = new Intent(context, DetailTwoSwitchActivity2.class);
-                } else {
-                    intent = new Intent(context, DetailTwoSwitchActivity.class);
-                }
+                intent = new Intent(context, DetailTwoSwitchActivity2.class);
                 break;
-			case CTSL.PK_FOURWAYSWITCH:
+            case CTSL.PK_FOURWAYSWITCH:
             case CTSL.PK_FOURWAYSWITCH_2: {
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                    intent = new Intent(context, DetailFourSwitchActivity2.class);
-                } else {
-                    intent = new Intent(context, DetailFourSwitchActivity.class);
-                }
+                intent = new Intent(context, DetailFourSwitchActivity2.class);
                 break;
             }
             case CTSL.PK_DOORSENSOR:
@@ -123,58 +103,50 @@ public class ActivityRouter {
                 intent = new Intent(context, ColorLightDetailActivity.class);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, OneKeySceneDetailActivity2.class);
-                else intent = new Intent(context, OneKeySceneDetailActivity.class);
+                intent = new Intent(context, OneKeySceneDetailActivity2.class);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
-                else intent = new Intent(context, SixTwoSceneSwitchActivity.class);
+                intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
                 break;
+            case CTSL.PK_U_SIX_SCENE_SWITCH:
+                intent = new Intent(context, USixSceneSwitchActivity2.class);
+                break;
+            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
             case CTSL.PK_SIX_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, SixSceneSwitchActivity2.class);
-                else intent = new Intent(context, SixSceneSwitchActivity.class);
+                intent = new Intent(context, SixSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, TwoSceneSwitchActivity2.class);
-                else intent = new Intent(context, TwoSceneSwitchActivity.class);
+                intent = new Intent(context, TwoSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, ThreeSceneSwitchActivity2.class);
-                else intent = new Intent(context, ThreeSceneSwitchActivity.class);
+                intent = new Intent(context, ThreeSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, FourSceneSwitchActivity2.class);
-                else intent = new Intent(context, FourSceneSwitchActivity.class);
+                intent = new Intent(context, FourSceneSwitchActivity2.class);
                 break;
-			case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+            case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
                 // 全面屏开关
+                ViseLog.d("iotId = " + iotId + " , productKey = " + productKey);
                 intent = new Intent(context, FullScreenSwitchActivity.class);
                 break;
             }
             case CTSL.PK_THREE_KEY_SWITCH: {
                 // 三键开关
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, DetailThreeSwitchActivity.class);
+                intent = new Intent(context, DetailThreeSwitchActivity.class);
                 break;
             }
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
                 // 单路窗帘
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, OneWayCurtainsDetailActivity.class);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                intent = new Intent(context, OneWayCurtainsDetailActivity.class);
                 break;
             }
             case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS: {
                 // 双路窗帘
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-                    intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
+                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
                 break;
             }
             default:

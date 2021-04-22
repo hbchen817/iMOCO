@@ -1,4 +1,4 @@
-package com.rexense.imoco.widget;
+package com.laffey.smart.widget;
 
 import android.graphics.Rect;
 import android.view.View;

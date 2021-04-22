@@ -171,6 +171,11 @@ public class AptSceneList extends BaseAdapter {
         viewHolder.edit.setTag(position);
         convertView.setTag(viewHolder);
 
+        if (mDeleteList == null || position >= mDeleteList.size()) {
+            viewHolder.name.setText("--");
+            viewHolder.type.setText("--");
+            return convertView;
+        }
         viewHolder.name.setText(this.mSceneList.get(position).name);
         viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
         if (this.mDeleteList.get(position).isDeleted) {
