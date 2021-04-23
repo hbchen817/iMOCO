@@ -275,14 +275,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
             rlRoom.setVisibility(View.GONE);
         }
 
-        // 获取房间与绑定时间
-        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
-        if (deviceEntry != null) {
-            mRoomName = deviceEntry.roomName;
-            mBindTime = deviceEntry.bindTime;
-            mLblMACAddress = (TextView) findViewById(R.id.moreSubdeviceLblMACAddress);
-            mLblMACAddress.setText(deviceEntry.deviceName);
-        }
+        initStatusBar();
 
         // 回退处理
         ImageView imgBack = (ImageView) findViewById(R.id.includeTitleImgBack);
@@ -292,6 +285,33 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 finish();
             }
         });
+
+        TextView lblUnbind = (TextView) findViewById(R.id.moreSubdeviceLblUnbind);
+        ImageView imgUnbind = (ImageView) findViewById(R.id.moreSubdeviceImgUnbind);
+
+        // 获取房间与绑定时间
+        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+        if (deviceEntry != null) {
+            mRoomName = deviceEntry.roomName;
+            mBindTime = deviceEntry.bindTime;
+            mLblMACAddress = (TextView) findViewById(R.id.moreSubdeviceLblMACAddress);
+            mLblMACAddress.setText(deviceEntry.deviceName);
+        } else {
+            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+            lblUnbind.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                }
+            });
+            imgUnbind.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                }
+            });
+            return;
+        }
 
         mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
         mWheelPickerLayout.setVisibility(View.GONE);
@@ -346,8 +366,6 @@ public class MoreSubdeviceActivity extends BaseActivity {
                 builder.create().show();
             }
         };
-        TextView lblUnbind = (TextView) findViewById(R.id.moreSubdeviceLblUnbind);
-        ImageView imgUnbind = (ImageView) findViewById(R.id.moreSubdeviceImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
         List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
@@ -376,8 +394,6 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mHomeSpaceManager.getHomeRoomList(SystemParameter.getInstance().getHomeId(), 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         mSceneManager = new SceneManager(this);
         mUserCenter = new UserCenter(this);
-
-        initStatusBar();
     }
 
 

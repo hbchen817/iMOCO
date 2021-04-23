@@ -244,6 +244,10 @@ public class IndexFragment1 extends BaseFragment {
 
                 Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
                 startActivity(intent);
+
+                /*Intent intent = new Intent(mActivity, ChoiceRemoteProductActivity.class);
+                startActivity(intent);*/
+
                 /*Intent intent = new Intent(mActivity, FullScreenSwitchActivity.class);
                 intent.putExtra("iotId", "iotId");
                 intent.putExtra("productKey", "productKey");

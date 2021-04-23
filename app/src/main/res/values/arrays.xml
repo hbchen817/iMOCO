@@ -103,4 +103,16 @@
         <item>@string/icon_mid_wind</item>
         <item>@string/icon_high_wind</item>
     </string-array>
+
+    <integer-array name="remote_product_ics">
+        <item>@drawable/icon_tv</item>
+        <item>@drawable/icon_air_conditioner</item>
+        <item>@drawable/icon_fan</item>
+    </integer-array>
+
+    <string-array name="remote_product_titles">
+        <item>@string/tv</item>
+        <item>@string/air_conditioner</item>
+        <item>@string/fan</item>
+    </string-array>
 </resources>
