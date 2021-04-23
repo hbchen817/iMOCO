@@ -234,5 +234,7 @@
             android:textColor="#ffffff" />
     </RelativeLayout>
 
-    <include layout="@layout/include_oneitemwheelpicker" />
+    <include
+        layout="@layout/include_oneitemwheelpicker"
+        android:visibility="gone" />
 </FrameLayout>

@@ -137,12 +137,13 @@ public class ProductGuidanceActivity extends BaseActivity {
 
         if (!mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             // 加载引导内容
-            this.mGuidanceCopywriting.setText(this.mGuidances.get(stepIndex).dnCopywriting);
-            this.mOperateCopywriting.setText(this.mGuidances.get(stepIndex).buttonCopywriting);
-            if (this.mCurrentStepIndex == this.mStepCount - 1) {
-                this.mChbIsRead.setVisibility(View.VISIBLE);
+            mGuidanceCopywriting.setText(mGuidances.get(stepIndex).dnCopywriting);
+            mOperateCopywriting.setText(mGuidances.get(stepIndex).buttonCopywriting);
+            if (mCurrentStepIndex == mStepCount - 1) {
+                mChbIsRead.setVisibility(View.VISIBLE);
             }
-            Glide.with(this).load(mGuidances.get(stepIndex).dnGuideIcon).transition(new DrawableTransitionOptions().crossFade()).into(mGuidanceIcon);
+            if (!isDestroyed())
+                Glide.with(this).load(mGuidances.get(stepIndex).dnGuideIcon).transition(new DrawableTransitionOptions().crossFade()).into(mGuidanceIcon);
         }
     }
 
@@ -197,8 +198,9 @@ public class ProductGuidanceActivity extends BaseActivity {
             mGuidanceCopywriting.setText(R.string.gateway_guidance);
             mChbIsRead.setVisibility(View.VISIBLE);
             mOperateCopywriting.setText(R.string.dialog_confirm);
-            Glide.with(this).load(R.drawable.icon_gateway_fton)
-                    .transition(new DrawableTransitionOptions().crossFade()).into(this.mGuidanceIcon);
+            if (!isDestroyed())
+                Glide.with(this).load(R.drawable.icon_gateway_fton)
+                        .transition(new DrawableTransitionOptions().crossFade()).into(this.mGuidanceIcon);
         }
 
         initStatusBar();

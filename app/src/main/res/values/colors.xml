@@ -66,6 +66,7 @@
     <color name="appgreen">#0EBD7A</color>
     <color name="appgreen_2">#660EBD7A</color>
     <color name="transparent_color">#00000000</color>
+    <color name="transparent_color_2">#55000000</color>
 
     <color name="srlAccentColor">#E20025</color>
     <color name="srlPrimaryColor">#062855</color>

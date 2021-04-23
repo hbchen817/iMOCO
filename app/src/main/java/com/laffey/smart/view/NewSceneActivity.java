@@ -451,7 +451,7 @@ public class NewSceneActivity extends BaseActivity {
                     String repeat = timeRange.getRepeat();
 
                     StringBuilder stringBuilder = new StringBuilder();
-                    if ("HH:mm:ss".equals(timeRange.getFormat()))
+                    if ("23:59:59".equals(timeRange.getEndDate()))
                         stringBuilder.append(getString(R.string.all_the_day));
                     else stringBuilder.append(beginTime + "-" + endTime);
                     if (repeat == null || repeat.length() == 0) {

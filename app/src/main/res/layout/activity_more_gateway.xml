@@ -49,7 +49,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/moreGatewayImgAlarmBellId"
                     android:gravity="center_vertical"
-                    android:text="4" />
+                    android:text="--" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgAlarmBellId"
@@ -83,7 +83,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/moreGatewayImgBellVolume"
                     android:gravity="center_vertical"
-                    android:text="75%" />
+                    android:text="--" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgBellVolume"
@@ -117,7 +117,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/moreGatewayImgBellMusicId"
                     android:gravity="center_vertical"
-                    android:text="5" />
+                    android:text="--" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgBellMusicId"
@@ -151,7 +151,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/moreGatewayImgAlarmVolume"
                     android:gravity="center_vertical"
-                    android:text="60%" />
+                    android:text="--" />
 
                 <ImageView
                     android:id="@+id/moreGatewayImgAlarmVolume"
@@ -195,7 +195,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/moreGatewayImgName"
                 android:gravity="center_vertical"
-                android:text="DeviceName" />
+                android:text="--" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgName"
@@ -228,7 +228,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:gravity="center_vertical"
-                android:text="id" />
+                android:text="--" />
 
         </RelativeLayout>
 
@@ -251,7 +251,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:gravity="center_vertical"
-                android:text="2020-04-27 12:16:18" />
+                android:text="--" />
 
         </RelativeLayout>
 
@@ -276,7 +276,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/moreGatewayImgRoom"
                 android:gravity="center_vertical"
-                android:text="客厅" />
+                android:text="--" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgRoom"
@@ -336,7 +336,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="35dp"
                 android:gravity="center_vertical"
-                android:text="1.0.0" />
+                android:text="--" />
 
             <ImageView
                 android:id="@+id/moreGatewayImgUpgrade"
@@ -380,7 +380,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -410,5 +410,7 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/include_oneitemwheelpicker" />
+    <include
+        layout="@layout/include_oneitemwheelpicker"
+        android:visibility="gone" />
 </FrameLayout>

@@ -149,9 +149,9 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                     mTimeRange.setBeginDate("00:00:00");
                     mTimeRange.setEndDate("23:59:59");
                 } else {
-                    mTimeRange.setFormat("HH:mm");
-                    mTimeRange.setBeginDate(mBeginTimeTV.getText().toString());
-                    mTimeRange.setEndDate(mEndTimeTV.getText().toString());
+                    mTimeRange.setFormat("HH:mm:ss");
+                    mTimeRange.setBeginDate(mBeginTimeTV.getText().toString() + ":00");
+                    mTimeRange.setEndDate(mEndTimeTV.getText().toString() + ":00");
                 }
                 if (mOnceIV.getVisibility() == View.VISIBLE) {
                     if (!mAllDaySB.isChecked()) {
@@ -159,7 +159,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                             SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
                             String s = format2.format(new Date(System.currentTimeMillis()));
 
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             long i = format.parse(s + " " + mBeginTimeTV.getText().toString()).getTime();
                             long j = format.parse(s + " " + mEndTimeTV.getText().toString()).getTime();
                             long n = System.currentTimeMillis();
@@ -413,8 +413,12 @@ public class TimeRangeSelectorActivity extends BaseActivity {
                 mAllDaySB.setChecked(true);
             } else {
                 mAllDaySB.setChecked(false);
-                mBeginTimeTV.setText(mTimeRange.getBeginDate());
-                mEndTimeTV.setText(mTimeRange.getEndDate());
+                String beginDate = mTimeRange.getBeginDate();
+                beginDate = beginDate.substring(beginDate.lastIndexOf(":00"), beginDate.length());
+                String endDate = mTimeRange.getEndDate();
+                endDate = endDate.substring(endDate.lastIndexOf(":00"), endDate.length());
+                mBeginTimeTV.setText(beginDate);
+                mEndTimeTV.setText(endDate);
             }
             mOnceIV.setVisibility(View.GONE);
             mEverydayIV.setVisibility(View.GONE);

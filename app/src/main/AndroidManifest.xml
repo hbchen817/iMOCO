@@ -45,7 +45,12 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-
+        <activity
+            android:name=".view.ChoiceBrandActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.ChoiceRemoteProductActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.FloorHeatingForFSSActivity"
             android:screenOrientation="portrait" />

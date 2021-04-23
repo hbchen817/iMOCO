@@ -207,7 +207,6 @@ public class IndexFragment1 extends BaseFragment {
 
     @Override
     protected void init() {
-
     }
 
     private void initView() {
@@ -242,8 +241,17 @@ public class IndexFragment1 extends BaseFragment {
 
                 Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
                 startActivity(intent);
-//                ActivityRouter.toDetail(mActivity, "", CTSL.PK_SMART_LOCK,
-//                        1, "测试", 1);
+
+                /*Intent intent = new Intent(mActivity, ChoiceRemoteProductActivity.class);
+                startActivity(intent);*/
+
+                /*Intent intent = new Intent(mActivity, FullScreenSwitchActivity.class);
+                intent.putExtra("iotId", "iotId");
+                intent.putExtra("productKey", "productKey");
+                intent.putExtra("status", 1);
+                intent.putExtra("name", "全面屏");
+                intent.putExtra("owned", 1);
+                startActivity(intent);*/
             }
         });
 

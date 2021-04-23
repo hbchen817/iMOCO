@@ -487,18 +487,12 @@ public class MoreGatewayActivity extends BaseActivity {
         this.mTSLHelper = new TSLHelper(this);
 
         currentVersionTv = (TextView) findViewById(R.id.moreGatewayLblVersion);
-        // 获取房间与绑定时间
-        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
-        if (deviceEntry != null) {
-            this.mRoomName = deviceEntry.roomName;
-            this.mBindTime = deviceEntry.bindTime;
+        initStatusBar();
+
+        mFunctionSettingsLayout = (LinearLayout) findViewById(R.id.function_settings);
+        if (CTSL.PK_GATEWAY_RG4100.equals(mProductKey)) {
+            mFunctionSettingsLayout.setVisibility(View.GONE);
         }
-
-        TextView lblDeviceId = (TextView) findViewById(R.id.moreGatewayLblId);
-        lblDeviceId.setText(deviceEntry.deviceName);
-
-        this.mLblTitle = (TextView) findViewById(R.id.includeTitleLblTitle);
-        this.mLblTitle.setText(this.mName);
 
         // 回退处理
         ImageView imgBack = (ImageView) findViewById(R.id.includeTitleImgBack);
@@ -509,12 +503,43 @@ public class MoreGatewayActivity extends BaseActivity {
             }
         });
 
+        TextView lblDeviceId = (TextView) findViewById(R.id.moreGatewayLblId);
+        mLblTitle = (TextView) findViewById(R.id.includeTitleLblTitle);
+        mLblTitle.setText(mName);
+
+        TextView lblUnbind = (TextView) findViewById(R.id.moreLblUnbind);
+        ImageView imgUnbind = (ImageView) findViewById(R.id.moreImgUnbind);
+
+        // 获取房间与绑定时间
+        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
+        if (deviceEntry != null) {
+            mRoomName = deviceEntry.roomName;
+            mBindTime = deviceEntry.bindTime;
+        } else {
+            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+            lblUnbind.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showShortToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
+                }
+            });
+            imgUnbind.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showShortToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
+                }
+            });
+            return;
+        }
+
+        lblDeviceId.setText(deviceEntry.deviceName);
+
         // 分享设备不能进行升级,故不显示
-        if (this.mOwned == 0) {
+        if (mOwned == 0) {
             RelativeLayout upgrade = (RelativeLayout) findViewById(R.id.upgrade_view);
             upgrade.setVisibility(View.GONE);
         }
-        this.upgradeView = findViewById(R.id.upgrade_view);
+        upgradeView = findViewById(R.id.upgrade_view);
         upgradeView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -531,30 +556,31 @@ public class MoreGatewayActivity extends BaseActivity {
             }
         });
 
-        this.mAlarmBellId = (TextView) findViewById(R.id.moreGatewayLblAlarmBellId);
-        this.mBellVolume = (TextView) findViewById(R.id.moreGatewayLblBellVolume);
-        this.mBellMusicId = (TextView) findViewById(R.id.moreGatewayLblBellMusicId);
-        this.mAlarmVolume = (TextView) findViewById(R.id.moreGatewayLblAlarmVolume);
+        mAlarmBellId = (TextView) findViewById(R.id.moreGatewayLblAlarmBellId);
+        mBellVolume = (TextView) findViewById(R.id.moreGatewayLblBellVolume);
+        mBellMusicId = (TextView) findViewById(R.id.moreGatewayLblBellMusicId);
+        mAlarmVolume = (TextView) findViewById(R.id.moreGatewayLblAlarmVolume);
 
-        this.mAlarmBellIdValue = (TextView) findViewById(R.id.moreGatewayLblAlarmBellIdValue);
-        this.mBellVolumeValue = (TextView) findViewById(R.id.moreGatewayLblBellVolumeValue);
-        this.mBellMusicIdValue = (TextView) findViewById(R.id.moreGatewayLblBellMusicIdValue);
-        this.mAlarmVolumeValue = (TextView) findViewById(R.id.moreGatewayLblAlarmVolumeValue);
+        mAlarmBellIdValue = (TextView) findViewById(R.id.moreGatewayLblAlarmBellIdValue);
+        mBellVolumeValue = (TextView) findViewById(R.id.moreGatewayLblBellVolumeValue);
+        mBellMusicIdValue = (TextView) findViewById(R.id.moreGatewayLblBellMusicIdValue);
+        mAlarmVolumeValue = (TextView) findViewById(R.id.moreGatewayLblAlarmVolumeValue);
 
-        this.mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
-        this.mWheelPickerLayout.setVisibility(View.GONE);
-        this.mWheelPickerValue = (TextView) findViewById(R.id.oneItemWheelPickerLblValue);
-        this.mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
-        this.mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
-        this.mLblRoomName = (TextView) findViewById(R.id.moreGatewayLblRoom);
-        this.mLblRoomName.setText(this.mRoomName);
-        this.mFunctionSettingsLayout = (LinearLayout) findViewById(R.id.function_settings);
-
-        if (CTSL.PK_GATEWAY_RG4100.equals(mProductKey)) {
-            this.mFunctionSettingsLayout.setVisibility(View.GONE);
-        }
-
+        mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
+        mWheelPickerLayout.setVisibility(View.GONE);
+        mWheelPickerValue = (TextView) findViewById(R.id.oneItemWheelPickerLblValue);
+        mWheelPickerLayout = (RelativeLayout) findViewById(R.id.oneItemWheelPickerRLPicker);
+        mWheelPicker = (WheelPicker) findViewById(R.id.oneItemWheelPickerWPPicker);
+        mLblRoomName = (TextView) findViewById(R.id.moreGatewayLblRoom);
+        mLblRoomName.setText(mRoomName);
         TextView bindTime = (TextView) findViewById(R.id.moreGatewayLblBindTime);
+        ImageView setAlarmBellId = (ImageView) findViewById(R.id.moreGatewayImgAlarmBellId);
+        ImageView setBellVolume = (ImageView) findViewById(R.id.moreGatewayImgBellVolume);
+        ImageView setBellMusicId = (ImageView) findViewById(R.id.moreGatewayImgBellMusicId);
+        ImageView setAlarmVolume = (ImageView) findViewById(R.id.moreGatewayImgAlarmVolume);
+        mLblNewNickName = (TextView) findViewById(R.id.moreGatewayLblName);
+        ImageView inputNickName = (ImageView) findViewById(R.id.moreGatewayImgName);
+
         bindTime.setText(this.mBindTime);
 
         // 报警铃音设置事件处理
@@ -564,7 +590,6 @@ public class MoreGatewayActivity extends BaseActivity {
                 setWheelPicker(1, mAlarmBellIdValue.getText().toString());
             }
         };
-        ImageView setAlarmBellId = (ImageView) findViewById(R.id.moreGatewayImgAlarmBellId);
         setAlarmBellId.setOnClickListener(setAlarmBellIdListener);
 
         // 门铃音量设置事件处理
@@ -575,7 +600,6 @@ public class MoreGatewayActivity extends BaseActivity {
                 setWheelPicker(2, volume);
             }
         };
-        ImageView setBellVolume = (ImageView) findViewById(R.id.moreGatewayImgBellVolume);
         setBellVolume.setOnClickListener(setBellVolumeListener);
 
         // 门铃音乐设置事件处理
@@ -585,7 +609,6 @@ public class MoreGatewayActivity extends BaseActivity {
                 setWheelPicker(3, mBellMusicIdValue.getText().toString());
             }
         };
-        ImageView setBellMusicId = (ImageView) findViewById(R.id.moreGatewayImgBellMusicId);
         setBellMusicId.setOnClickListener(setBellMusicIdListener);
 
         // 报警音量设置事件处理
@@ -596,13 +619,10 @@ public class MoreGatewayActivity extends BaseActivity {
                 setWheelPicker(4, volume);
             }
         };
-        ImageView setAlarmVolume = (ImageView) findViewById(R.id.moreGatewayImgAlarmVolume);
         setAlarmVolume.setOnClickListener(setAlarmVolumeListener);
 
         // 修改设备名称事件处理
-        this.mLblNewNickName = (TextView) findViewById(R.id.moreGatewayLblName);
-        this.mLblNewNickName.setText(mName);
-        ImageView inputNickName = (ImageView) findViewById(R.id.moreGatewayImgName);
+        mLblNewNickName.setText(mName);
         inputNickName.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -660,8 +680,6 @@ public class MoreGatewayActivity extends BaseActivity {
                 builder.create().show();
             }
         };
-        TextView lblUnbind = (TextView) findViewById(R.id.moreLblUnbind);
-        ImageView imgUnbind = (ImageView) findViewById(R.id.moreImgUnbind);
         lblUnbind.setOnClickListener(unBindListener);
         imgUnbind.setOnClickListener(unBindListener);
 
@@ -684,7 +702,6 @@ public class MoreGatewayActivity extends BaseActivity {
         if (mOwned > 0) {
             OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
-        initStatusBar();
     }
 
     // 嵌入式状态栏
