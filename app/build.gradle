@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.rexense.imoco"
+        applicationId "com.rexense.wholehouse"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 3

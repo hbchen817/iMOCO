@@ -10,7 +10,7 @@
 
     <include layout="@layout/include_title" />
 
-    <com.rexense.imoco.widget.ComRoundCornerImageView
+    <com.rexense.wholehouse.widget.ComRoundCornerImageView
         android:id="@+id/sceneMaintainImgIcon"
         android:layout_width="match_parent"
         android:src="@drawable/scene_unmanned_off"

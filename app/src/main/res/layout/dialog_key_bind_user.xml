@@ -181,7 +181,7 @@
             android:layout_marginTop="@dimen/dp_10"
             android:background="@color/all_c" />
 
-        <com.rexense.imoco.datepicker.PickerView
+        <com.rexense.wholehouse.datepicker.PickerView
             android:id="@+id/picker"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_150"/>

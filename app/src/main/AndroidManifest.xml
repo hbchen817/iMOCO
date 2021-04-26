@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.rexense.imoco">
+    package="com.rexense.wholehouse">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -30,7 +30,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name=".presenter.MocoApplication"
+        android:name="com.rexense.wholehouse.presenter.MocoApplication"
         android:allowBackup="false"
         android:appComponentFactory="@string/app_name"
         android:icon="@mipmap/ic_launcher"
@@ -44,82 +44,82 @@
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
         <activity
-            android:name=".view.ChoiceBrandActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceBrandActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceRemoteProductActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceRemoteProductActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FloorHeatingForFSSActivity"
+            android:name="com.rexense.wholehouse.view.FloorHeatingForFSSActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NewAirForFSSActivity"
+            android:name="com.rexense.wholehouse.view.NewAirForFSSActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AirConditionerForFSSActivity"
+            android:name="com.rexense.wholehouse.view.AirConditionerForFSSActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SceneListForFSSActivity"
+            android:name="com.rexense.wholehouse.view.SceneListForFSSActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FullScreenSwitchActivity"
+            android:name="com.rexense.wholehouse.view.FullScreenSwitchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LogActivity"
+            android:name="com.rexense.wholehouse.view.LogActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FeedbackActivity"
+            android:name="com.rexense.wholehouse.view.FeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FeedbackContentActivity"
+            android:name="com.rexense.wholehouse.view.FeedbackContentActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SceneActionActivity"
+            android:name="com.rexense.wholehouse.view.SceneActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NotificationActionActivity"
+            android:name="com.rexense.wholehouse.view.NotificationActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AddActionActivity"
+            android:name="com.rexense.wholehouse.view.AddActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.EditPropertyValueActivity"
+            android:name="com.rexense.wholehouse.view.EditPropertyValueActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.EditPropertyValueForActionActivity"
+            android:name="com.rexense.wholehouse.view.EditPropertyValueForActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.IdentifierListActivity"
+            android:name="com.rexense.wholehouse.view.IdentifierListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.IdentifierListForActionActivity"
+            android:name="com.rexense.wholehouse.view.IdentifierListForActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DevListForCAActivity"
+            android:name="com.rexense.wholehouse.view.DevListForCAActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DevListForActionActivity"
+            android:name="com.rexense.wholehouse.view.DevListForActionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TimeRangeSelectorActivity"
+            android:name="com.rexense.wholehouse.view.TimeRangeSelectorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.CustomRepeatDayActivity"
+            android:name="com.rexense.wholehouse.view.CustomRepeatDayActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TimeRangeRepeatDayActivity"
+            android:name="com.rexense.wholehouse.view.TimeRangeRepeatDayActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TimeSelectorActivity"
+            android:name="com.rexense.wholehouse.view.TimeSelectorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AddConditionActivity"
+            android:name="com.rexense.wholehouse.view.AddConditionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NewSceneActivity"
+            android:name="com.rexense.wholehouse.view.NewSceneActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
+        <activity android:name="com.rexense.wholehouse.demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="103546039" /> <!-- huawei push end -->
@@ -131,7 +131,7 @@
             android:name="com.vivo.push.app_id"
             android:value="105330794" /> <!-- vivo push start -->
         <activity
-            android:name=".view.StartActivity"
+            android:name="com.rexense.wholehouse.view.StartActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
@@ -142,349 +142,349 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".demoTest.DemoTestActivity"
+            android:name="com.rexense.wholehouse.demoTest.DemoTestActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.OneWayWindowCurtainsActivity"
+            android:name="com.rexense.wholehouse.view.OneWayWindowCurtainsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.IndexActivity"
+            android:name="com.rexense.wholehouse.view.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".view.SceneMaintainActivity"
+            android:name="com.rexense.wholehouse.view.SceneMaintainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ColorTemperatureChoiceActivity"
+            android:name="com.rexense.wholehouse.view.ColorTemperatureChoiceActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LightSceneActivity"
+            android:name="com.rexense.wholehouse.view.LightSceneActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LightSceneListActivity"
+            android:name="com.rexense.wholehouse.view.LightSceneListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SwitchSceneListActivity"
+            android:name="com.rexense.wholehouse.view.SwitchSceneListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SwitchSceneActivity"
+            android:name="com.rexense.wholehouse.view.SwitchSceneActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SceneSwitchDeviceListActivity"
+            android:name="com.rexense.wholehouse.view.SceneSwitchDeviceListActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DeviceActionActivity"
+            android:name="com.rexense.wholehouse.view.DeviceActionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FourSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.FourSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FourSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.FourSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ThreeSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.ThreeSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ThreeSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.ThreeSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SixSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.SixSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SixSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.SixSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.USixSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.USixSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TwoSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.TwoSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TwoSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.TwoSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SixTwoSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.SixTwoSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SixFourSceneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.SixFourSceneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SixTwoSceneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.SixTwoSceneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LightActionChoiceActivity"
+            android:name="com.rexense.wholehouse.view.LightActionChoiceActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ScanGatewayByNetActivity"
+            android:name="com.rexense.wholehouse.view.ScanGatewayByNetActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.BindSuccessActivity"
+            android:name="com.rexense.wholehouse.view.BindSuccessActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LockDetailActivity"
+            android:name="com.rexense.wholehouse.view.LockDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.OneKeySceneActivity"
+            android:name="com.rexense.wholehouse.view.OneKeySceneActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.EditSceneBindActivity"
+            android:name="com.rexense.wholehouse.view.EditSceneBindActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ColorLightDetailActivity"
+            android:name="com.rexense.wholehouse.view.ColorLightDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FloorHeatingDetailActivity"
+            android:name="com.rexense.wholehouse.view.FloorHeatingDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.FreshAirDetailActivity"
+            android:name="com.rexense.wholehouse.view.FreshAirDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.BindSceneActivity"
+            android:name="com.rexense.wholehouse.view.BindSceneActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.UserManagerActivity"
+            android:name="com.rexense.wholehouse.view.UserManagerActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.CreateUserActivity"
+            android:name="com.rexense.wholehouse.view.CreateUserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.EditUserActivity"
+            android:name="com.rexense.wholehouse.view.EditUserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.HistoryActivity"
+            android:name="com.rexense.wholehouse.view.HistoryActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.KeyManagerActivity"
+            android:name="com.rexense.wholehouse.view.KeyManagerActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.OneWayCurtainsDetailActivity"
+            android:name="com.rexense.wholehouse.view.OneWayCurtainsDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.OneKeySceneDetailActivity"
+            android:name="com.rexense.wholehouse.view.OneKeySceneDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.OneKeySceneDetailActivity2"
+            android:name="com.rexense.wholehouse.view.OneKeySceneDetailActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TwoWayCurtainsDetailActivity"
+            android:name="com.rexense.wholehouse.view.TwoWayCurtainsDetailActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SetTimeActivity"
+            android:name="com.rexense.wholehouse.view.SetTimeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceProductActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceProductActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ScanBLEActivity"
+            android:name="com.rexense.wholehouse.view.ScanBLEActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceWiFiActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceWiFiActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ConfigureNetworkActivity"
+            android:name="com.rexense.wholehouse.view.ConfigureNetworkActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceGatewayActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceGatewayActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.EditKeyActivity"
+            android:name="com.rexense.wholehouse.view.EditKeyActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ProductGuidanceActivity"
+            android:name="com.rexense.wholehouse.view.ProductGuidanceActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.PermitJoinActivity"
+            android:name="com.rexense.wholehouse.view.PermitJoinActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailOneSwitchActivity"
+            android:name="com.rexense.wholehouse.view.DetailOneSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailOneSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.DetailOneSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailTwoSwitchActivity"
+            android:name="com.rexense.wholehouse.view.DetailTwoSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailTwoSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.DetailTwoSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailThreeSwitchActivity"
+            android:name="com.rexense.wholehouse.view.DetailThreeSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailFourSwitchActivity"
+            android:name="com.rexense.wholehouse.view.DetailFourSwitchActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailFourSwitchActivity2"
+            android:name="com.rexense.wholehouse.view.DetailFourSwitchActivity2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailGatewayActivity"
+            android:name="com.rexense.wholehouse.view.DetailGatewayActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DetailSensorActivity"
+            android:name="com.rexense.wholehouse.view.DetailSensorActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MoreGatewayActivity"
+            android:name="com.rexense.wholehouse.view.MoreGatewayActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MoreSubdeviceActivity"
+            android:name="com.rexense.wholehouse.view.MoreSubdeviceActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MessageRecordActivity"
+            android:name="com.rexense.wholehouse.view.MessageRecordActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ChoiceContentActivity"
+            android:name="com.rexense.wholehouse.view.ChoiceContentActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.OALoginActivity"
+            android:name="com.rexense.wholehouse.view.OALoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Login"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name="com.rexense.wholehouse.view.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.LoginWithSmsCodeActivity"
+            android:name="com.rexense.wholehouse.view.LoginWithSmsCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.ResetPasswordActivity"
+            android:name="com.rexense.wholehouse.view.ResetPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.ResetPasswordFillPasswordActivity"
+            android:name="com.rexense.wholehouse.view.ResetPasswordFillPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.RegisterFillPasswordActivity"
+            android:name="com.rexense.wholehouse.view.RegisterFillPasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Register"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".view.MyInfoActivity"
+            android:name="com.rexense.wholehouse.view.MyInfoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DeleteAccountActivity"
+            android:name="com.rexense.wholehouse.view.DeleteAccountActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NickNameActivity"
+            android:name="com.rexense.wholehouse.view.NickNameActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MsgCenterActivity"
+            android:name="com.rexense.wholehouse.view.MsgCenterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.ShareDeviceActivity"
+            android:name="com.rexense.wholehouse.view.ShareDeviceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.DeviceQrcodeActivity"
+            android:name="com.rexense.wholehouse.view.DeviceQrcodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SceneLogActivity"
+            android:name="com.rexense.wholehouse.view.SceneLogActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MoreServiceActivity"
+            android:name="com.rexense.wholehouse.view.MoreServiceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AboutUsActivity"
+            android:name="com.rexense.wholehouse.view.AboutUsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TmallSpiritActivity"
+            android:name="com.rexense.wholehouse.view.TmallSpiritActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.TmallSpiritActivity1"
+            android:name="com.rexense.wholehouse.view.TmallSpiritActivity1"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.H5Activity"
+            android:name="com.rexense.wholehouse.view.H5Activity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.RoomDeviceActivity"
+            android:name="com.rexense.wholehouse.view.RoomDeviceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.UpgradeFirmwareActivity"
+            android:name="com.rexense.wholehouse.view.UpgradeFirmwareActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AddRoomDeviceActivity"
+            android:name="com.rexense.wholehouse.view.AddRoomDeviceActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".utility.BLEService"
+            android:name="com.rexense.wholehouse.utility.BLEService"
             android:enabled="true" /> <!-- 消息接收监听器 （用户可自主扩展） -->
         <!-- 消息接收监听器 （用户可自主扩展） -->
         <receiver
-            android:name=".sdk.MyMessageReceiver"
+            android:name="com.rexense.wholehouse.sdk.MyMessageReceiver"
             android:exported="false"> <!-- 为保证receiver安全，建议设置不可导出，如需对其他应用开放可通过android：permission进行限制 -->
             <intent-filter>
                 <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
