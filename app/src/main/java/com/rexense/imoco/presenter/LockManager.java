@@ -139,6 +139,24 @@ public class LockManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    //远程开门
+    public static void switchService(String iotId,
+                                     Handler commitFailureHandler,
+                                     Handler responseErrorHandler,
+                                     @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "OnOffService_1");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("OnOff", 1);
+        requestParameterEntry.addParameter("args", jsonObject);
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     public static void filterUnbindKey(String iotId,
                                        String keyID,
                                        int keyType,

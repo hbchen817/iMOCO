@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -93,17 +95,29 @@ public class ChoiceBrandActivity extends BaseActivity {
         mToolbarTitle.setText(R.string.configproduct_title);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.search_ic})
+    @OnClick({R.id.iv_toolbar_left, R.id.clear_ic})
     protected void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_toolbar_left: {
                 finish();
                 break;
             }
-            case R.id.search_ic: {
+            case R.id.clear_ic: {
                 mSearchET.setText("");
+                mClearIcon.setVisibility(View.INVISIBLE);
+                hideSoftInput();
                 break;
             }
+        }
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    private void hideSoftInput() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm.isActive()) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 }
