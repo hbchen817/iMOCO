@@ -182,7 +182,6 @@ public class IndexActivity extends BaseActivity {
             // 没有需要处理的运行时权限, 继续执行
             initView();
             initListener();
-            ViseLog.d("网络信息 " + new Gson().toJson(getActiveNetwork(IndexActivity.this)));
         }
     }
 
@@ -246,8 +245,6 @@ public class IndexActivity extends BaseActivity {
                     // 已经同意了运行时权限, 执行正常逻辑
                     initView();
                     initListener();
-
-                    ViseLog.d("wyy", "网络信息 " + new Gson().toJson(getActiveNetwork(IndexActivity.this)));
                 } else {
                     ToastUtils.showToastCentrally(this, "发生未知错误");
                 }

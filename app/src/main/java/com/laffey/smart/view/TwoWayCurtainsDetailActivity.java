@@ -87,6 +87,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     private MyHandler mHandler;
     private String mKeyName1;
     private String mKeyName2;
+    private int mBackLightState = 1;
 
     // 更新状态
     @Override
@@ -324,6 +325,11 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
             case R.id.back_light_layout: {
                 // 背光
                 ViseLog.d("背光");
+                if (mBackLightState == CTSL.STATUS_OFF) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+                }
                 break;
             }
         }

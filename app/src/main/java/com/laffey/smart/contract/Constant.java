@@ -6,6 +6,9 @@ package com.laffey.smart.contract;
  * Description: 常量
  */
 public class Constant {
+    // 包名
+    public static String PACKAGE_NAME = "com.laffey.smart";
+
     // 测试环境APPKEY
     //public static final String APPKEY                               = "29162669";
     //public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";
@@ -333,5 +336,13 @@ public class Constant {
             + CTSL.PK_FOUR_SCENE_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2 + " , " + CTSL.PK_ONE_SCENE_SWITCH + " , " + CTSL.PK_THREE_SCENE_SWITCH + " , "
             + CTSL.PK_TWO_SCENE_SWITCH + " , " + CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , " + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ANY_TWO_SCENE_SWITCH
             + " , " + CTSL.PK_ANY_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH_YQSXB;
+
+    public static final String JD_APP_ID                            = "apidemo";
+    public static final String JD_DEV_ID                            = "test_device1";
+    public static final String JD_URL                               = "http://demo.jdshtech.com/open/m.php";
+
+    public static final int REMOTE_CONTROL_TV                       = 2;// 电视
+    public static final int REMOTE_CONTROL_AIR_CONDITIONER          = 7;// 空调
+    public static final int REMOTE_CONTROL_FAN                      = 6;// 风扇
 }
 

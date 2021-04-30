@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,7 +63,7 @@ public class ChoiceRemoteProductActivity extends BaseActivity {
                 item.setTid("6");
             mList.add(item);
         }
-        mAdapter = new BaseQuickAdapter<ProductItem, BaseViewHolder>(R.layout.item_remote_product, mList) {
+        mAdapter = new BaseQuickAdapter<ProductItem, BaseViewHolder>(/*R.layout.item_remote_product*/R.layout.item_remote_product_grid, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, ProductItem item) {
                 holder.setImageResource(R.id.item_icon, item.getIcon())
@@ -78,10 +79,11 @@ public class ChoiceRemoteProductActivity extends BaseActivity {
             }
         });
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        /*LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);*/
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mProductRV.setLayoutManager(layoutManager);
-        mProductRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        //mProductRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         mProductRV.setAdapter(mAdapter);
     }
 

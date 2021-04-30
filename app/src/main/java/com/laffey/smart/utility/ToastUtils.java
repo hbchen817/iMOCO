@@ -36,6 +36,7 @@ public class ToastUtils {
             }
         }, delay);
     }
+
     /**
      * 在屏幕正中间弹短吐司
      */

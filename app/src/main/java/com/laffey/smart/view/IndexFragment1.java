@@ -65,6 +65,7 @@ import com.laffey.smart.utility.Utility;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -875,6 +876,7 @@ public class IndexFragment1 extends BaseFragment {
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
+                    //ViseLog.d("------------" + (String) msg.obj);
                     EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList((String) msg.obj);
                     if (homeDeviceList != null && homeDeviceList.data != null) {
                         // 向缓存追加家列表数据
