@@ -6,6 +6,9 @@ package com.rexense.imoco.contract;
  * Description: 常量
  */
 public class Constant {
+    // 包名
+    public static String PACKAGE_NAME = "com.laffey.smart";
+
     // 测试环境APPKEY
     //public static final String APPKEY                               = "29162669";
     //public static final String APPSECRET                            = "26cb74538029f05eca1fe104e62af59c";

@@ -97,6 +97,8 @@ public class NewSceneActivity extends BaseActivity {
     RelativeLayout mAddConditionLayout;
     @BindView(R.id.condition_layout)
     LinearLayout mConditionLayout;
+    @BindView(R.id.action_layout)
+    LinearLayout mActionLayout;
     @BindView(R.id.action_recycler)
     RecyclerView mActionRV;
     @BindView(R.id.add_action_layout)
@@ -159,7 +161,6 @@ public class NewSceneActivity extends BaseActivity {
         mHandler = new CallbackHandler(this);
         if (mSceneId != null && mSceneId.length() > 0) {
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-            mDelTV.setVisibility(View.VISIBLE);
             mCatalogIdLayout.setVisibility(View.GONE);
             mSceneManager.querySceneDetail(mSceneId, mCatalogId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
         } else {
@@ -171,6 +172,8 @@ public class NewSceneActivity extends BaseActivity {
             mSceneStatusTV.setText(getString(R.string.scene_maintain_startusing));
             mSceneTypeTV.setText(R.string.scenetype_automatic);
             mSceneModeTV.setText(R.string.satisfy_any_of_the_following_conditions);
+            mConditionLayout.setVisibility(View.VISIBLE);
+            mActionLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -256,7 +259,10 @@ public class NewSceneActivity extends BaseActivity {
                     }
                     String desc = "";
                     if (item.getDesc() == null || item.getDesc().length() == 0) {
-                        desc = item.getName().trim() + item.getValueName();
+                        if (item.getValueName() == null) {
+                            desc = item.getName().trim();
+                        } else
+                            desc = item.getName().trim() + item.getValueName();
                     } else
                         desc = item.getDesc();
 
@@ -937,307 +943,314 @@ public class NewSceneActivity extends BaseActivity {
         @Override
         public void handleMessage(@NonNull Message msg) {
             if (weakRf.get() == null) return;
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_DELETESCENE: {
-                    QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.delete_the_success);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            QMUITipDialogUtil.dismiss();
-                            Intent intent = new Intent();
-                            intent.putExtra("scene_id", mSceneId);
-                            setResult(100, intent);
-                            finish();
-                        }
-                    }, 1000);
-                    break;
-                }
-                case Constant.MSG_CALLBACK_CREATESCENE: {
-                    SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                    QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scenario_created_successfully);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            QMUITipDialogUtil.dismiss();
-                            finish();
-                        }
-                    }, 1000);
-                    break;
-                }
-                case Constant.MSG_CALLBACK_UPDATE_SCENE: {
-                    //JSONObject object = JSON.parseObject((String) msg.obj);
-                    QMUITipDialogUtil.dismiss();
-                    QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scene_updated_successfully);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            QMUITipDialogUtil.dismiss();
-                            Intent intent = new Intent();
-                            intent.putExtra("catalog_id", mCatalogId);
-                            intent.putExtra("description", mSceneId);
-                            intent.putExtra("enable", mEnable);
-                            intent.putExtra("id", mSceneId);
-                            intent.putExtra("name", mSceneName);
-                            intent.putExtra("valid", mValid);
-                            setResult(101, intent);
+            try {
+                switch (msg.what) {
+                    case Constant.MSG_CALLBACK_DELETESCENE: {
+                        QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.delete_the_success);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                QMUITipDialogUtil.dismiss();
+                                Intent intent = new Intent();
+                                intent.putExtra("scene_id", mSceneId);
+                                setResult(100, intent);
+                                finish();
+                            }
+                        }, 1000);
+                        break;
+                    }
+                    case Constant.MSG_CALLBACK_CREATESCENE: {
+                        SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                        QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scenario_created_successfully);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                QMUITipDialogUtil.dismiss();
+                                finish();
+                            }
+                        }, 1000);
+                        break;
+                    }
+                    case Constant.MSG_CALLBACK_UPDATE_SCENE: {
+                        //JSONObject object = JSON.parseObject((String) msg.obj);
+                        QMUITipDialogUtil.dismiss();
+                        QMUITipDialogUtil.showSuccessDialog(NewSceneActivity.this, R.string.scene_updated_successfully);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                QMUITipDialogUtil.dismiss();
+                                Intent intent = new Intent();
+                                intent.putExtra("catalog_id", mCatalogId);
+                                intent.putExtra("description", mSceneId);
+                                intent.putExtra("enable", mEnable);
+                                intent.putExtra("id", mSceneId);
+                                intent.putExtra("name", mSceneName);
+                                intent.putExtra("valid", mValid);
+                                setResult(101, intent);
 
-                            finish();
-                        }
-                    }, 1000);
-                    break;
-                }
-                case Constant.MSG_CALLBACK_QUERYSCENEDETAIL: {
-                    QMUITipDialogUtil.dismiss();
-                    JSONObject object = JSON.parseObject((String) msg.obj);
-                    ViseLog.d(new Gson().toJson(object));
-                    mValid = object.getBoolean("valid");
-                    mSceneName = object.getString("name");
-                    mTitle.setText(mSceneName);
-                    mSceneNameTV.setText(mSceneName);
+                                finish();
+                            }
+                        }, 1000);
+                        break;
+                    }
+                    case Constant.MSG_CALLBACK_QUERYSCENEDETAIL: {
+                        QMUITipDialogUtil.dismiss();
+                        JSONObject object = JSON.parseObject((String) msg.obj);
+                        ViseLog.d(new Gson().toJson(object));
+                        mValid = object.getBoolean("valid");
+                        mSceneName = object.getString("name");
+                        mTitle.setText(mSceneName);
+                        mSceneNameTV.setText(mSceneName);
 
-                    mSceneTypeTV.setText(CScene.TYPE_MANUAL.equals(mCatalogId) ?
-                            R.string.scenetype_manual : R.string.scenetype_automatic);
-                    mConditionLayout.setVisibility(CScene.TYPE_MANUAL.equals(mCatalogId) ? View.GONE : View.VISIBLE);
+                        mSceneTypeTV.setText(CScene.TYPE_MANUAL.equals(mCatalogId) ?
+                                R.string.scenetype_manual : R.string.scenetype_automatic);
+                        mConditionLayout.setVisibility(CScene.TYPE_MANUAL.equals(mCatalogId) ? View.GONE : View.VISIBLE);
+                        mActionLayout.setVisibility(View.VISIBLE);
+                        mDelTV.setVisibility(View.VISIBLE);
 
-                    mEnable = object.getBoolean("enable");
-                    mSceneStatusTV.setText(mEnable ?
-                            getString(R.string.scene_maintain_startusing) : getString(R.string.scene_maintain_stopusing));
+                        mEnable = object.getBoolean("enable");
+                        mSceneStatusTV.setText(mEnable ?
+                                getString(R.string.scene_maintain_startusing) : getString(R.string.scene_maintain_stopusing));
 
-                    mSceneMode = object.getString("mode");
-                    if ("any".equals(mSceneMode))
-                        mSceneModeTV.setText(R.string.satisfy_any_of_the_following_conditions);
-                    else
-                        mSceneModeTV.setText(R.string.satisfy_all_of_the_following_conditions);
+                        mSceneMode = object.getString("mode");
+                        if ("any".equals(mSceneMode))
+                            mSceneModeTV.setText(R.string.satisfy_any_of_the_following_conditions);
+                        else
+                            mSceneModeTV.setText(R.string.satisfy_all_of_the_following_conditions);
 
-                    JSONArray conditions = JSON.parseArray(object.getString("caConditionsJson"));
-                    if (conditions.size() > 0) {
-                        for (int i = 0; i < conditions.size(); i++) {
-                            String s = conditions.getString(i);
-                            JSONObject object1 = JSON.parseObject(s);
-                            String uri = object1.getString("uri");
-                            if (Constant.SCENE_CONDITION_TIMER.equals(uri)) {
-                                // 时间点
-                                CaConditionEntry.Timer timer = new CaConditionEntry.Timer();
-                                timer.setCron(object1.getJSONObject("params").getString("cron"));
-                                timer.setCronType(object1.getJSONObject("params").getString("cronType"));
-                                timer.setTimezoneID(object1.getJSONObject("params").getString("timezoneID"));
-                                mCaconditionList.add(timer);
-                            } else if (Constant.SCENE_CONDITION_TIME_RANGE.equals(uri)) {
-                                // 时间段
-                                CaConditionEntry.TimeRange timeRange = new CaConditionEntry.TimeRange();
-                                timeRange.setRepeat(object1.getJSONObject("params").getString("repeat"));
-                                timeRange.setTimezoneID(object1.getJSONObject("params").getString("timezoneID"));
-                                timeRange.setEndDate(object1.getJSONObject("params").getString("endDate"));
-                                timeRange.setBeginDate(object1.getJSONObject("params").getString("beginDate"));
-                                timeRange.setFormat(object1.getJSONObject("params").getString("format"));
-                                mCaconditionList.add(timeRange);
-                            } else if (Constant.SCENE_CONDITION_PROPERTY.equals(uri)) {
-                                // 设备状态
-                                IdentifierItemForCA item = new IdentifierItemForCA();
-                                String iotId = object1.getJSONObject("params").getString("iotId");
-                                item.setIotId(iotId);
-                                item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
+                        JSONArray conditions = JSON.parseArray(object.getString("caConditionsJson"));
+                        if (conditions.size() > 0) {
+                            for (int i = 0; i < conditions.size(); i++) {
+                                String s = conditions.getString(i);
+                                JSONObject object1 = JSON.parseObject(s);
+                                String uri = object1.getString("uri");
+                                if (Constant.SCENE_CONDITION_TIMER.equals(uri)) {
+                                    // 时间点
+                                    CaConditionEntry.Timer timer = new CaConditionEntry.Timer();
+                                    timer.setCron(object1.getJSONObject("params").getString("cron"));
+                                    timer.setCronType(object1.getJSONObject("params").getString("cronType"));
+                                    timer.setTimezoneID(object1.getJSONObject("params").getString("timezoneID"));
+                                    mCaconditionList.add(timer);
+                                } else if (Constant.SCENE_CONDITION_TIME_RANGE.equals(uri)) {
+                                    // 时间段
+                                    CaConditionEntry.TimeRange timeRange = new CaConditionEntry.TimeRange();
+                                    timeRange.setRepeat(object1.getJSONObject("params").getString("repeat"));
+                                    timeRange.setTimezoneID(object1.getJSONObject("params").getString("timezoneID"));
+                                    timeRange.setEndDate(object1.getJSONObject("params").getString("endDate"));
+                                    timeRange.setBeginDate(object1.getJSONObject("params").getString("beginDate"));
+                                    timeRange.setFormat(object1.getJSONObject("params").getString("format"));
+                                    mCaconditionList.add(timeRange);
+                                } else if (Constant.SCENE_CONDITION_PROPERTY.equals(uri)) {
+                                    // 设备状态
+                                    IdentifierItemForCA item = new IdentifierItemForCA();
+                                    String iotId = object1.getJSONObject("params").getString("iotId");
+                                    item.setIotId(iotId);
+                                    item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
 
-                                JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
-                                if (jsonObject != null) {
-                                    String keyNickName = jsonObject.getString(object1.getJSONObject("params").getString("propertyName"));
-                                    if (keyNickName != null) {
-                                        item.setName(keyNickName);
-                                    }
-                                }
-
-                                item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
-                                String eventCode = object1.getJSONObject("params").getString("localizedEventCode");
-                                if (eventCode == null) item.setType(1);
-                                item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
-
-                                CaConditionEntry.Property property = new CaConditionEntry.Property();
-                                property.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
-                                property.setCompareType(object1.getJSONObject("params").getString("compareType"));
-                                property.setProductKey(object1.getJSONObject("params").getString("productKey"));
-                                property.setDeviceName(object1.getJSONObject("params").getString("deviceName"));
-                                property.setCompareValue(object1.getJSONObject("params").get("compareValue"));
-
-                                if (!"==".equals(property.getCompareType()))
-                                    item.setDesc(item.getName().trim() + getCompareTypeString(property.getCompareType()) + property.getCompareValue());
-
-                                item.setObject(property);
-                                mCaconditionList.add(property);
-                                mIdentifierList.add(item);
-                            } else if (Constant.SCENE_CONDITION_EVENT.equals(uri)) {
-                                // 设备事件
-                                IdentifierItemForCA item = new IdentifierItemForCA();
-
-                                String localizedEventCode = object1.getJSONObject("params").getString("localizedEventCode");
-                                String localizedPropertyName = object1.getJSONObject("params").getString("localizedPropertyName");
-                                String compareType = object1.getJSONObject("params").getString("compareType");
-                                Object compareValue = object1.getJSONObject("params").get("compareValue");
-                                String compareTypeName = getString(R.string.equal_to);
-                                if ("<".equals(compareType))
-                                    compareTypeName = getString(R.string.less_than);
-                                else if ("<=".equals(compareType))
-                                    compareTypeName = getString(R.string.less_than_or_equal_to);
-                                else if (">=".equals(compareType))
-                                    compareTypeName = getString(R.string.great_than_or_equal_to);
-                                else if ("!=".equals(compareType))
-                                    compareTypeName = getString(R.string.is_not_equal_to);
-
-                                item.setDesc(localizedEventCode + localizedPropertyName + compareTypeName + compareValue.toString());
-
-                                String productKey = object1.getJSONObject("params").getString("productKey");
-                                String iotId = object1.getJSONObject("params").getString("iotId");
-                                if (Constant.KEY_NICK_NAME_PK.contains(productKey)) {
-                                    String key = compareValue.toString();
                                     JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
                                     if (jsonObject != null) {
-                                        String keyName = jsonObject.getString(key);
-                                        item.setDesc(getString(R.string.trigger_buttons) + keyName);
-                                    } else {
-                                        if ("1".equals(key)) {
-                                            if (CTSL.PK_ONE_SCENE_SWITCH.equals(key))
-                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_0));
-                                            else
-                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_1));
-                                        } else if ("2".equals(key)) {
-                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_2));
-                                        } else if ("3".equals(key)) {
-                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_3));
-                                        } else if ("4".equals(key)) {
-                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_4));
-                                        } else if ("5".equals(key)) {
-                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_5));
-                                        } else if ("6".equals(key)) {
-                                            item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_6));
+                                        String keyNickName = jsonObject.getString(object1.getJSONObject("params").getString("propertyName"));
+                                        if (keyNickName != null) {
+                                            item.setName(keyNickName);
                                         }
                                     }
-                                }
 
-                                item.setIotId(object1.getJSONObject("params").getString("iotId"));
-                                item.setName(localizedEventCode);
-                                item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
-                                item.setType(3);
-                                item.setValueName(localizedPropertyName);
+                                    item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
+                                    String eventCode = object1.getJSONObject("params").getString("localizedEventCode");
+                                    if (eventCode == null) item.setType(1);
+                                    item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
 
-                                CaConditionEntry.Event event = new CaConditionEntry.Event();
-                                event.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
-                                event.setCompareType(object1.getJSONObject("params").getString("compareType"));
-                                event.setProductKey(object1.getJSONObject("params").getString("productKey"));
-                                event.setDeviceName(object1.getJSONObject("params").getString("deviceName"));
-                                event.setCompareValue(compareValue);
-                                event.setEventCode(object1.getJSONObject("params").getString("eventCode"));
+                                    CaConditionEntry.Property property = new CaConditionEntry.Property();
+                                    property.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
+                                    property.setCompareType(object1.getJSONObject("params").getString("compareType"));
+                                    property.setProductKey(object1.getJSONObject("params").getString("productKey"));
+                                    property.setDeviceName(object1.getJSONObject("params").getString("deviceName"));
+                                    property.setCompareValue(object1.getJSONObject("params").get("compareValue"));
 
-                                item.setObject(event);
-                                mCaconditionList.add(event);
-                                mIdentifierList.add(item);
-                            }
-                        }
-                    }
-                    mCaconditionAdapter.notifyDataSetChanged();
-                    if (mCaconditionList != null && mCaconditionList.size() > 0) {
-                        mAddConditionLayout.setVisibility(View.GONE);
-                    }
+                                    if (!"==".equals(property.getCompareType()))
+                                        item.setDesc(item.getName().trim() + getCompareTypeString(property.getCompareType()) + property.getCompareValue());
 
-                    JSONArray actions = JSON.parseArray(object.getString("actionsJson"));
-                    if (actions.size() > 0) {
-                        for (int i = 0; i < actions.size(); i++) {
-                            String s = actions.getString(i);
-                            JSONObject object1 = JSON.parseObject(s);
-                            String uri = object1.getString("uri");
-                            if (Constant.SCENE_ACTION_SEND.equals(uri)) {
-                                ActionEntry.SendMsg sendMsg = new ActionEntry.SendMsg();
+                                    item.setObject(property);
+                                    mCaconditionList.add(property);
+                                    mIdentifierList.add(item);
+                                } else if (Constant.SCENE_CONDITION_EVENT.equals(uri)) {
+                                    // 设备事件
+                                    IdentifierItemForCA item = new IdentifierItemForCA();
 
-                                JSONObject params = object1.getJSONObject("params");
-                                JSONObject customData = params.getJSONObject("customData");
+                                    String localizedEventCode = object1.getJSONObject("params").getString("localizedEventCode");
+                                    String localizedPropertyName = object1.getJSONObject("params").getString("localizedPropertyName");
+                                    String compareType = object1.getJSONObject("params").getString("compareType");
+                                    Object compareValue = object1.getJSONObject("params").get("compareValue");
+                                    String compareTypeName = getString(R.string.equal_to);
+                                    if ("<".equals(compareType))
+                                        compareTypeName = getString(R.string.less_than);
+                                    else if ("<=".equals(compareType))
+                                        compareTypeName = getString(R.string.less_than_or_equal_to);
+                                    else if (">=".equals(compareType))
+                                        compareTypeName = getString(R.string.great_than_or_equal_to);
+                                    else if ("!=".equals(compareType))
+                                        compareTypeName = getString(R.string.is_not_equal_to);
 
-                                sendMsg.setMessage(customData.getString("message"));
-                                mActionList.add(sendMsg);
-                            } else if (Constant.SCENE_ACTION_TRIGGER.equals(uri)) {
-                                ActionEntry.Trigger trigger = new ActionEntry.Trigger();
+                                    item.setDesc(localizedEventCode + localizedPropertyName + compareTypeName + compareValue.toString());
 
-                                String name = object1.getJSONObject("params").getString("name");
-                                if (name != null) {
-                                    String sceneId = object1.getJSONObject("params").getString("sceneId");
-                                    String catalogId = SceneCatalogIdCache.getInstance().getValue(sceneId);
-                                    trigger.setSceneId(sceneId);
-
-                                    SceneActionActivity.SceneActionItem item = new SceneActionActivity.SceneActionItem();
-                                    item.setCatalogId(catalogId);
-                                    item.setId(sceneId);
-                                    item.setChecked(true);
-                                    item.setName(object1.getJSONObject("params").getString("name"));
-
-                                    item.setTrigger(trigger);
-                                    mActionList.add(trigger);
-                                    mSceneActionList.add(item);
-                                }
-                            } else if (Constant.SCENE_ACTION_PROPERTY.equals(uri)) {
-                                ActionEntry.Property property = new ActionEntry.Property();
-
-                                IdentifierItemForCA item = new IdentifierItemForCA();
-                                String iotId = object1.getJSONObject("params").getString("iotId");
-                                item.setIotId(iotId);
-                                item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
-
-                                JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
-                                String propertyName = object1.getJSONObject("params").getString("propertyName");
-                                if (jsonObject != null) {
-                                    String keyNickName = jsonObject.getString(propertyName);
-                                    if (keyNickName != null) {
-                                        item.setName(keyNickName);
+                                    String productKey = object1.getJSONObject("params").getString("productKey");
+                                    String iotId = object1.getJSONObject("params").getString("iotId");
+                                    if (Constant.KEY_NICK_NAME_PK.contains(productKey)) {
+                                        String key = compareValue.toString();
+                                        JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
+                                        if (jsonObject != null) {
+                                            String keyName = jsonObject.getString(key);
+                                            item.setDesc(getString(R.string.trigger_buttons) + keyName);
+                                        } else {
+                                            if ("1".equals(key)) {
+                                                if (CTSL.PK_ONE_SCENE_SWITCH.equals(key))
+                                                    item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_0));
+                                                else
+                                                    item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_1));
+                                            } else if ("2".equals(key)) {
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_2));
+                                            } else if ("3".equals(key)) {
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_3));
+                                            } else if ("4".equals(key)) {
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_4));
+                                            } else if ("5".equals(key)) {
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_5));
+                                            } else if ("6".equals(key)) {
+                                                item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_6));
+                                            }
+                                        }
                                     }
+
+                                    item.setIotId(object1.getJSONObject("params").getString("iotId"));
+                                    item.setName(localizedEventCode);
+                                    item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
+                                    item.setType(3);
+                                    item.setValueName(localizedPropertyName);
+
+                                    CaConditionEntry.Event event = new CaConditionEntry.Event();
+                                    event.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
+                                    event.setCompareType(object1.getJSONObject("params").getString("compareType"));
+                                    event.setProductKey(object1.getJSONObject("params").getString("productKey"));
+                                    event.setDeviceName(object1.getJSONObject("params").getString("deviceName"));
+                                    event.setCompareValue(compareValue);
+                                    event.setEventCode(object1.getJSONObject("params").getString("eventCode"));
+
+                                    item.setObject(event);
+                                    mCaconditionList.add(event);
+                                    mIdentifierList.add(item);
                                 }
-
-                                item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
-                                item.setType(1);
-                                item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
-
-                                property.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
-                                property.setIotId(item.getIotId());
-                                property.setPropertyValue(object1.getJSONObject("params").get("propertyValue"));
-
-                                String propertyValue = object1.getJSONObject("params").get("propertyValue").toString();
-                                String localizedCompareValueName = object1.getJSONObject("params").get("localizedCompareValueName").toString();
-                                if (propertyValue != null && propertyValue.equals(localizedCompareValueName)) {
-                                    item.setDesc(item.getName() + getString(R.string.equal_to) + propertyValue);
-                                }
-
-                                item.setObject(property);
-                                mActionList.add(property);
-                                mIdentifierList.add(item);
-                            } else if (Constant.SCENE_ACTION_SERVICE.equals(uri)) {
-                                ActionEntry.InvokeService service = new ActionEntry.InvokeService();
-
-                                IdentifierItemForCA item = new IdentifierItemForCA();
-                                item.setIotId(object1.getJSONObject("params").getString("iotId"));
-                                item.setName(object1.getJSONObject("params").getString("localizedServiceName"));
-                                item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
-                                item.setType(2);
-                                //item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
-
-                                Map<String, Object> map = new HashMap<>();
-                                for (Map.Entry<String, Object> map1 : object1.getJSONObject("params").getJSONObject("serviceArgs").entrySet()) {
-                                    map.put(map1.getKey(), map1.getValue());
-                                }
-
-                                service.setServiceName(object1.getJSONObject("params").getString("serviceName"));
-                                service.setIotId(item.getIotId());
-                                service.setServiceArgs(map);
-
-                                item.setDesc(item.getName());
-
-                                item.setObject(service);
-                                mActionList.add(service);
-                                mIdentifierList.add(item);
                             }
                         }
+                        mCaconditionAdapter.notifyDataSetChanged();
+                        if (mCaconditionList != null && mCaconditionList.size() > 0) {
+                            mAddConditionLayout.setVisibility(View.GONE);
+                        }
+
+                        JSONArray actions = JSON.parseArray(object.getString("actionsJson"));
+                        if (actions.size() > 0) {
+                            for (int i = 0; i < actions.size(); i++) {
+                                String s = actions.getString(i);
+                                JSONObject object1 = JSON.parseObject(s);
+                                String uri = object1.getString("uri");
+                                if (Constant.SCENE_ACTION_SEND.equals(uri)) {
+                                    ActionEntry.SendMsg sendMsg = new ActionEntry.SendMsg();
+
+                                    JSONObject params = object1.getJSONObject("params");
+                                    JSONObject customData = params.getJSONObject("customData");
+
+                                    sendMsg.setMessage(customData.getString("message"));
+                                    mActionList.add(sendMsg);
+                                } else if (Constant.SCENE_ACTION_TRIGGER.equals(uri)) {
+                                    ActionEntry.Trigger trigger = new ActionEntry.Trigger();
+
+                                    String name = object1.getJSONObject("params").getString("name");
+                                    if (name != null) {
+                                        String sceneId = object1.getJSONObject("params").getString("sceneId");
+                                        String catalogId = SceneCatalogIdCache.getInstance().getValue(sceneId);
+                                        trigger.setSceneId(sceneId);
+
+                                        SceneActionActivity.SceneActionItem item = new SceneActionActivity.SceneActionItem();
+                                        item.setCatalogId(catalogId);
+                                        item.setId(sceneId);
+                                        item.setChecked(true);
+                                        item.setName(object1.getJSONObject("params").getString("name"));
+
+                                        item.setTrigger(trigger);
+                                        mActionList.add(trigger);
+                                        mSceneActionList.add(item);
+                                    }
+                                } else if (Constant.SCENE_ACTION_PROPERTY.equals(uri)) {
+                                    ActionEntry.Property property = new ActionEntry.Property();
+
+                                    IdentifierItemForCA item = new IdentifierItemForCA();
+                                    String iotId = object1.getJSONObject("params").getString("iotId");
+                                    item.setIotId(iotId);
+                                    item.setName(object1.getJSONObject("params").getString("localizedPropertyName"));
+
+                                    JSONObject jsonObject = DeviceBuffer.getExtendedInfo(iotId);
+                                    String propertyName = object1.getJSONObject("params").getString("propertyName");
+                                    if (jsonObject != null) {
+                                        String keyNickName = jsonObject.getString(propertyName);
+                                        if (keyNickName != null) {
+                                            item.setName(keyNickName);
+                                        }
+                                    }
+
+                                    item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
+                                    item.setType(1);
+                                    item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
+
+                                    property.setPropertyName(object1.getJSONObject("params").getString("propertyName"));
+                                    property.setIotId(item.getIotId());
+                                    property.setPropertyValue(object1.getJSONObject("params").get("propertyValue"));
+
+                                    String propertyValue = object1.getJSONObject("params").get("propertyValue").toString();
+                                    String localizedCompareValueName = object1.getJSONObject("params").get("localizedCompareValueName").toString();
+                                    if (propertyValue != null && propertyValue.equals(localizedCompareValueName)) {
+                                        item.setDesc(item.getName() + getString(R.string.equal_to) + propertyValue);
+                                    }
+
+                                    item.setObject(property);
+                                    mActionList.add(property);
+                                    mIdentifierList.add(item);
+                                } else if (Constant.SCENE_ACTION_SERVICE.equals(uri)) {
+                                    ActionEntry.InvokeService service = new ActionEntry.InvokeService();
+
+                                    IdentifierItemForCA item = new IdentifierItemForCA();
+                                    item.setIotId(object1.getJSONObject("params").getString("iotId"));
+                                    item.setName(object1.getJSONObject("params").getString("localizedServiceName"));
+                                    item.setNickName(object1.getJSONObject("params").getString("deviceNickName"));
+                                    item.setType(2);
+                                    //item.setValueName(object1.getJSONObject("params").getString("localizedCompareValueName"));
+
+                                    Map<String, Object> map = new HashMap<>();
+                                    for (Map.Entry<String, Object> map1 : object1.getJSONObject("params").getJSONObject("serviceArgs").entrySet()) {
+                                        map.put(map1.getKey(), map1.getValue());
+                                    }
+
+                                    service.setServiceName(object1.getJSONObject("params").getString("serviceName"));
+                                    service.setIotId(item.getIotId());
+                                    service.setServiceArgs(map);
+
+                                    item.setDesc(item.getName());
+
+                                    item.setObject(service);
+                                    mActionList.add(service);
+                                    mIdentifierList.add(item);
+                                }
+                            }
+                        }
+                        ViseLog.d(new Gson().toJson(mActionList));
+                        mActionAdapter.notifyDataSetChanged();
+                        if (mActionList == null || mActionList.size() == 0)
+                            mAddActionLayout.setVisibility(View.VISIBLE);
+                        else mAddActionLayout.setVisibility(View.GONE);
+                        break;
                     }
-                    ViseLog.d(new Gson().toJson(mActionList));
-                    mActionAdapter.notifyDataSetChanged();
-                    if (mActionList == null || mActionList.size() == 0)
-                        mAddActionLayout.setVisibility(View.VISIBLE);
-                    else mAddActionLayout.setVisibility(View.GONE);
-                    break;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showShortToast(NewSceneActivity.this, R.string.pls_try_again_later);
             }
         }
     }

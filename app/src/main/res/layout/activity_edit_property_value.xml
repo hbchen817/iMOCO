@@ -79,5 +79,15 @@
                 android:gravity="left"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tip_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/dp_10"
+            android:gravity="center"
+            android:textColor="@color/gray3"
+            android:textSize="@dimen/sp_18"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

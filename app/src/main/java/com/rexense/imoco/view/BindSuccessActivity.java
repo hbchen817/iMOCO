@@ -70,7 +70,7 @@ public class BindSuccessActivity extends BaseActivity {
         mDeviceName = mNickName;
         mUserCenter = new UserCenter(this);
         ViseLog.d("nickName " + mNickName);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mOkView.setTypeface(iconfont);
         if (mNickName.contains(getString(R.string.app_brand))) {
             mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));

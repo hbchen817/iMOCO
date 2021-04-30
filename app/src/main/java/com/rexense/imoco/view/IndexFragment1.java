@@ -245,9 +245,6 @@ public class IndexFragment1 extends BaseFragment {
                 Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
                 startActivity(intent);
 
-                // Mqsd0W9fPlQjmxiFbxcu000000
-                //LockManager.switchService("TyQOch3rzkn0q2aFJoJ5000000", null, null, null);
-
                 /*Intent intent = new Intent(mActivity, ChoiceRemoteProductActivity.class);
                 startActivity(intent);*/
 
@@ -881,7 +878,7 @@ public class IndexFragment1 extends BaseFragment {
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
-                    ViseLog.d("(String) msg.obj = " + (String) msg.obj);
+                    //ViseLog.d("------------" + (String) msg.obj);
                     EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList((String) msg.obj);
                     if (homeDeviceList != null && homeDeviceList.data != null) {
                         // 向缓存追加家列表数据

@@ -119,7 +119,8 @@
             android:name=".view.NewSceneActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
+        <activity android:name=".demoTest.DemoEditSceneActivity" />
+        <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="103546039" /> <!-- huawei push end -->

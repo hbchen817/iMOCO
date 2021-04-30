@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
@@ -31,12 +34,16 @@ import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.EConfigureNetwork;
 import com.rexense.imoco.presenter.ConfigureNetwork;
 import com.rexense.imoco.presenter.SystemParameter;
+import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.BLEService;
 import com.rexense.imoco.utility.Dialog;
 import com.rexense.imoco.utility.Logger;
+import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.Utility;
 import com.rexense.imoco.utility.WiFiHelper;
 import com.rexense.imoco.widget.ComCircularProgress;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -250,13 +257,48 @@ public class ConfigureNetworkActivity extends BaseActivity {
                     mTimeThread = null;
                 }
                 JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                BindSuccessActivity.start(ConfigureNetworkActivity.this, jsonObject.getString("iotId"), getIntent().getStringExtra("name"));
-                finish();
+                mIotId = jsonObject.getString("iotId");
+                QMUITipDialogUtil.showLoadingDialg(ConfigureNetworkActivity.this, R.string.is_loading);
                 //Dialog.confirm(ConfigureNetworkActivity.this, R.string.dialog_title, getString(R.string.confignetwork_success), R.drawable.dialog_ok, R.string.dialog_confirm, true);
+                new UserCenter(ConfigureNetworkActivity.this).getByAccountAndDev(jsonObject.getString("iotId"),
+                        mCommitFailureHandler, mResponseErrorHandler, new ApiDataHandler(ConfigureNetworkActivity.this));
             }
             return false;
         }
     });
+
+    private String mIotId = null;
+
+    @Override
+    protected void notifyFailureOrError(int type) {
+        super.notifyFailureOrError(type);
+        QMUITipDialogUtil.dismiss();
+        String devName = getIntent().getStringExtra("name");
+        if (mIotId != null && mIotId.length() > 0 && devName != null && devName.length() > 0) {
+            BindSuccessActivity.start(ConfigureNetworkActivity.this, mIotId, getIntent().getStringExtra("name"));
+            finish();
+        }
+    }
+
+    private class ApiDataHandler extends Handler {
+        private WeakReference<Activity> ref;
+
+        public ApiDataHandler(Activity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (ref.get() == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV) {
+                QMUITipDialogUtil.dismiss();
+                JSONObject object = JSON.parseObject((String) msg.obj);
+                BindSuccessActivity.start(ConfigureNetworkActivity.this, object.getString("iotId"), object.getString("productName"));
+                finish();
+            }
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

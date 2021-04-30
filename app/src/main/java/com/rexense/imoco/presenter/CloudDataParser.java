@@ -6,6 +6,9 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.rexense.imoco.BuildConfig;
+import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EOTA;
 import com.rexense.imoco.model.EProduct;
@@ -52,6 +55,15 @@ public class CloudDataParser {
                 entry.name = item.getString("name");
                 Log.i("lzm", "json =" + item.toJSONString());
                 entry.name = ProductHelper.replaceBrand(entry.name);
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                    if (CTSL.PK_AIRCOMDITION_TWO.equals(entry.productKey)) {
+                        entry.name = "空调";
+                    } else if (CTSL.PK_FLOORHEATING001.equals(entry.productKey)) {
+                        entry.name = "地暖";
+                    } else if (CTSL.PK_FAU.equals(entry.productKey)) {
+                        entry.name = "新风";
+                    }
+                }
                 entry.categoryId = item.getInteger("categoryId");
                 entry.categoryKey = item.getString("categoryKey");
                 entry.categoryName = item.getString("categoryName");
@@ -167,6 +179,15 @@ public class CloudDataParser {
                 device.productKey = item.getString("productKey");
                 device.productName = item.getString("productName");
                 device.productName = ProductHelper.replaceBrand(device.productName);
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                    if (CTSL.PK_AIRCOMDITION_TWO.equals(device.productKey)) {
+                        device.productName = "空调";
+                    } else if (CTSL.PK_FLOORHEATING001.equals(device.productKey)) {
+                        device.productName = "地暖";
+                    } else if (CTSL.PK_FAU.equals(device.productKey)) {
+                        device.productName = "新风";
+                    }
+                }
                 device.productImage = item.getString("productImage");
                 device.productModel = item.getString("productModel");
                 device.categoryKey = item.getString("categoryKey");

@@ -154,7 +154,6 @@ public class ActivityRouter {
                 Router.getInstance().toUrl((Activity) context, code, bundle);
                 break;
         }
-        ViseLog.d("intent != null = " + (intent != null));
         if (intent != null) {
             intent.putExtra("iotId", iotId);
             intent.putExtra("productKey", productKey);

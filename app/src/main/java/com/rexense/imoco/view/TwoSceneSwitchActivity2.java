@@ -60,6 +60,10 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
     TextView mKeyName1TV;
     @BindView(R.id.key_2_tv)
     TextView mKeyName2TV;
+    @BindView(R.id.one_go_ic)
+    TextView mOneGoIC;
+    @BindView(R.id.two_go_ic)
+    TextView mTwoGoIC;
 
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
@@ -198,9 +202,10 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
     }
 
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSwitch1, R.id.mSwitch2, R.id.back_light_layout,
-            R.id.key_1_tv, R.id.key_2_tv})
+            R.id.key_1_tv, R.id.key_2_tv, R.id.one_go_ic, R.id.two_go_ic})
     public void onClickView(View view) {
         switch (view.getId()) {
+            case R.id.one_go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     mPressedKey = "1";
@@ -210,6 +215,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
                 }
                 break;
+            case R.id.two_go_ic:
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     mPressedKey = "2";
@@ -384,14 +390,16 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         return mExecuteScene;
     }
 
-    @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2})
+    @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.one_go_ic, R.id.two_go_ic})
     public boolean onLongClick(View view) {
         switch (view.getId()) {
+            case R.id.one_go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
                 }
                 break;
+            case R.id.two_go_ic:
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());

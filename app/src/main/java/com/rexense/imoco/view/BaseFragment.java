@@ -55,7 +55,7 @@ public abstract class BaseFragment extends Fragment {
                 Logger.e(sb.toString());
                 String exceptionInfo = commitFailEntry.exception != null ? commitFailEntry.exception.getMessage() : "";
                 //Toast.makeText(getActivity(), String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
-                Toast.makeText(mActivity, getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
+                ToastUtils.showLongToast(mActivity, R.string.api_commitfailure_hint);
                 notifyFailureOrError(1);
             }
             return false;
@@ -103,7 +103,7 @@ public abstract class BaseFragment extends Fragment {
 //                    });
                 }
                 //Toast.makeText(getActivity(), String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
-                Toast.makeText(mActivity, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+                ToastUtils.showLongToast(mActivity, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg));
                 if (responseErrorEntry.code == 10360) {
                     // 场景不存在
                     notifyFailureOrError(10360);

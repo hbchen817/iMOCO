@@ -178,7 +178,8 @@
                 android:id="@+id/condition_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -251,75 +252,84 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/action_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:background="@android:color/white"
-                android:paddingLeft="12dp">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/dp_15"
-                    android:text="@string/perform_the_following_actions"
-                    android:textSize="@dimen/sp_14" />
-
-                <!--<ImageView
-                    android:id="@+id/add_new_action_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:padding="10dp"
-                    android:src="@drawable/add_orange" />-->
-
-                <TextView
-                    android:id="@+id/add_new_action_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:padding="10dp"
-                    android:text="@string/icon_add_2"
-                    android:textColor="@color/appcolor"
-                    android:textSize="32sp" />
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/action_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <RelativeLayout
-                android:id="@+id/add_action_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:paddingLeft="12dp">
-
-                <TextView
-                    android:id="@+id/add_new_action_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:clickable="true"
-                    android:drawableLeft="@drawable/add_orange_2"
-                    android:drawablePadding="@dimen/dp_5"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/dp_15"
-                    android:text="@string/add_action"
-                    android:textColor="@color/appcolor"
-                    android:textSize="@dimen/sp_14" />
-
-                <TextView
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp_1"
-                    android:layout_alignParentTop="true"
-                    android:background="@color/appbgcolor" />
-            </RelativeLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:background="@android:color/white"
+                    android:paddingLeft="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:paddingVertical="@dimen/dp_15"
+                        android:text="@string/perform_the_following_actions"
+                        android:textSize="@dimen/sp_14" />
+
+                    <!--<ImageView
+                        android:id="@+id/add_new_action_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:padding="10dp"
+                        android:src="@drawable/add_orange" />-->
+
+                    <TextView
+                        android:id="@+id/add_new_action_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:padding="10dp"
+                        android:text="@string/icon_add_2"
+                        android:textColor="@color/appcolor"
+                        android:textSize="32sp" />
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/action_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <RelativeLayout
+                    android:id="@+id/add_action_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:paddingLeft="12dp">
+
+                    <TextView
+                        android:id="@+id/add_new_action_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:drawableLeft="@drawable/add_orange_2"
+                        android:drawablePadding="@dimen/dp_5"
+                        android:gravity="center"
+                        android:paddingVertical="@dimen/dp_15"
+                        android:text="@string/add_action"
+                        android:textColor="@color/appcolor"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp_1"
+                        android:layout_alignParentTop="true"
+                        android:background="@color/appbgcolor" />
+                </RelativeLayout>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/del_tv"
@@ -332,7 +342,8 @@
                 android:paddingVertical="@dimen/dp_15"
                 android:text="@string/delete"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/sp_14" />
+                android:textSize="@dimen/sp_14"
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

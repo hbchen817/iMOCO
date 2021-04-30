@@ -64,6 +64,12 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     TextView mBackLightTV;
     @BindView(R.id.back_light_layout)
     RelativeLayout mBackLightLayout;
+    @BindView(R.id.one_go_ic)
+    TextView mOneGoIC;
+    @BindView(R.id.two_go_ic)
+    TextView mTwoGoIC;
+    @BindView(R.id.three_go_ic)
+    TextView mThreeGoIC;
 
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
@@ -199,9 +205,10 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     }
 
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSwitch1, R.id.mSwitch2, R.id.mSwitch3,
-            R.id.key_1_tv, R.id.key_2_tv, R.id.key_3_tv, R.id.back_light_layout})
+            R.id.key_1_tv, R.id.key_2_tv, R.id.key_3_tv, R.id.back_light_layout, R.id.one_go_ic, R.id.two_go_ic, R.id.three_go_ic})
     public void onClickView(View view) {
         switch (view.getId()) {
+            case R.id.one_go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     mPressedKey = "1";
@@ -211,6 +218,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
                 }
                 break;
+            case R.id.two_go_ic:
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     mPressedKey = "2";
@@ -220,6 +228,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
                 }
                 break;
+            case R.id.three_go_ic:
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
                     mPressedKey = "3";
@@ -423,19 +432,22 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         return mExecuteScene;
     }
 
-    @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3})
+    @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.one_go_ic, R.id.two_go_ic, R.id.three_go_ic})
     public boolean onLongClick(View view) {
         switch (view.getId()) {
+            case R.id.one_go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
                 }
                 break;
+            case R.id.two_go_ic:
             case R.id.mSceneContentText2:
                 if (mManualIDs[1] != null) {
                     EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
                 }
                 break;
+            case R.id.three_go_ic:
             case R.id.mSceneContentText3:
                 if (mManualIDs[2] != null) {
                     EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());

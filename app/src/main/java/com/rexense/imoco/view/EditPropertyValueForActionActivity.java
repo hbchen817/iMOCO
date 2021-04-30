@@ -71,6 +71,8 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
     TextView mUnitTV;
     @BindView(R.id.name_tv)
     TextView mNameTV;
+    @BindView(R.id.tip_tv)
+    TextView mTipTV;
     @BindView(R.id.service_rv)
     RecyclerView mServiceRV;
 
@@ -99,7 +101,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_property_value);
         ButterKnife.bind(this);
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         mCompareTypes = new String[]{getString(R.string.equal_to)};
 
@@ -629,6 +631,12 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                                         mServiceInputDataList.add(dataEntry);
                                     }
                                     mAdapter.notifyDataSetChanged();
+
+                                    if (inputDatas.size() == 0) {
+                                        mTipTV.setVisibility(View.VISIBLE);
+                                        mTipTV.setText("此服务无参数。");
+                                        mServiceRV.setVisibility(View.GONE);
+                                    }
                                     break;
                                 }
                             }
