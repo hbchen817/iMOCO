@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +41,7 @@ public class DetailFourSwitchActivity extends DetailActivity {
     private TSLHelper mTSLHelper;
 
     // 更新状态
+    @SuppressLint("SetTextI18n")
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
         if(!super.updateState(propertyEntry))
@@ -91,7 +93,7 @@ public class DetailFourSwitchActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
 
         // 键1操作事件处理
         OnClickListener operateOnClickListener1 = new OnClickListener() {
@@ -104,8 +106,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate1 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate1);
-        this.mImgOperate1.setOnClickListener(operateOnClickListener1);
+        mImgOperate1 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate1);
+        mImgOperate1.setOnClickListener(operateOnClickListener1);
 
         mStateName1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateName1);
         mStateValue1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateValue1);
@@ -127,8 +129,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate2 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate2);
-        this.mImgOperate2.setOnClickListener(operateOnClickListener2);
+        mImgOperate2 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate2);
+        mImgOperate2.setOnClickListener(operateOnClickListener2);
 
         // 键3操作事件处理
         OnClickListener operateOnClickListener3 = new OnClickListener() {
@@ -141,8 +143,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate3 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate3);
-        this.mImgOperate3.setOnClickListener(operateOnClickListener3);
+        mImgOperate3 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate3);
+        mImgOperate3.setOnClickListener(operateOnClickListener3);
 
         // 键4操作事件处理
         OnClickListener operateOnClickListener4 = new OnClickListener() {
@@ -155,8 +157,8 @@ public class DetailFourSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate4 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate4);
-        this.mImgOperate4.setOnClickListener(operateOnClickListener4);
+        mImgOperate4 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate4);
+        mImgOperate4.setOnClickListener(operateOnClickListener4);
 
         // 云端定时处理
         RelativeLayout timer = (RelativeLayout)findViewById(R.id.detailTwoSwitchRLTimer);

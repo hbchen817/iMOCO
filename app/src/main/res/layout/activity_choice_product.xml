@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/choiceProductLl"
     android:layout_width="match_parent"
@@ -6,7 +6,9 @@
     android:background="@color/appbgcolor"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,58 +26,57 @@
                 android:id="@+id/choiceProductViNull"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_40"
-                android:background="@color/appbgcolor"></View>
+                android:background="@color/appbgcolor" />
 
             <TextView
                 android:id="@+id/choiceProductTypeLight"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
-                android:visibility="gone"
                 android:layout_below="@+id/choiceProductViNull"
                 android:background="@color/white"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
                 android:text="@string/configproduct_device_type_light"
-                android:textColor="@color/topic_color1" />
+                android:textColor="@color/topic_color1"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeElectric"
                 style="@style/NormalFontStyle"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
                 android:layout_below="@+id/choiceProductTypeLight"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_electric" />
+                android:text="@string/configproduct_device_type_electric"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeSafe"
                 style="@style/NormalFontStyle"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
                 android:layout_below="@+id/choiceProductTypeElectric"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_safe" />
+                android:text="@string/configproduct_device_type_safe"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeHome"
                 style="@style/NormalFontStyle"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
                 android:layout_below="@+id/choiceProductTypeSafe"
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_home" />
+                android:text="@string/configproduct_device_type_home"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeSensor"
-                android:visibility="gone"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
@@ -83,11 +84,11 @@
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_sensor" />
+                android:text="@string/configproduct_device_type_sensor"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeEnvironmental"
-                android:visibility="gone"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
@@ -95,12 +96,12 @@
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_environmental" />
+                android:text="@string/configproduct_device_type_environmental"
+                android:visibility="gone" />
 
 
             <TextView
                 android:id="@+id/choiceProductTypeLiving"
-                android:visibility="gone"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
@@ -108,12 +109,12 @@
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_living" />
+                android:text="@string/configproduct_device_type_living"
+                android:visibility="gone" />
 
 
             <TextView
                 android:id="@+id/choiceProductTypeGateway"
-                android:visibility="gone"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
@@ -121,11 +122,11 @@
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_gateway" />
+                android:text="@string/configproduct_device_type_gateway"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/choiceProductTypeOther"
-                android:visibility="gone"
                 style="@style/NormalFontStyle"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_50"
@@ -133,7 +134,8 @@
                 android:background="@color/appbgcolor"
                 android:gravity="center|left"
                 android:paddingLeft="@dimen/dp_10"
-                android:text="@string/configproduct_device_type_other" />
+                android:text="@string/configproduct_device_type_other"
+                android:visibility="gone" />
 
         </RelativeLayout>
 

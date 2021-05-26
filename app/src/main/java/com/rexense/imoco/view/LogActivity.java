@@ -5,36 +5,30 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.rexense.imoco.BuildConfig;
 import com.rexense.imoco.R;
+import com.rexense.imoco.databinding.ActivityLogBinding;
 import com.rexense.imoco.utility.LogcatFileManager;
 import com.rexense.imoco.utility.SpUtils;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class LogActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.groupListView)
-    QMUIGroupListView mGroupListView;
+    private ActivityLogBinding mViewBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityLogBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mTitle.setText(getString(R.string.alog_title));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.alog_title));
 
-        QMUICommonListItemView itemWithSwitch = mGroupListView.createItemView(getString(R.string.alog_title));
+        QMUICommonListItemView apkTime = mViewBinding.groupListView.createItemView("打包时间");
+        apkTime.setDetailText(BuildConfig.APK_TIME);
+
+        QMUICommonListItemView itemWithSwitch = mViewBinding.groupListView.createItemView(getString(R.string.alog_title));
         itemWithSwitch.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_SWITCH);
 
         String path = getExternalCacheDir().getAbsolutePath();
@@ -42,8 +36,9 @@ public class LogActivity extends BaseActivity {
 
         QMUIGroupListView.newSection(this)
                 .setDescription("日志内容生成txt文件，保存在" + path + "/Log/目录下")
+                .addItemView(apkTime, null)
                 .addItemView(itemWithSwitch, null)
-                .addTo(mGroupListView);
+                .addTo(mViewBinding.groupListView);
         itemWithSwitch.getSwitch().setChecked(SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "log_state", false));
 
         itemWithSwitch.getSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -59,6 +54,7 @@ public class LogActivity extends BaseActivity {
             }
         });
         initStatusBar();
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     // 嵌入式状态栏
@@ -70,7 +66,6 @@ public class LogActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.tv_toolbar_right})
     protected void onViewClicked(View view) {
         if (view.getId() == R.id.tv_toolbar_right) {
             finish();

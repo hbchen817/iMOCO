@@ -12,7 +12,9 @@
         android:layout_above="@id/button_layout"
         android:orientation="vertical">
 
-        <include layout="@layout/include_title" />
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/include_title" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -423,6 +425,10 @@
     </RelativeLayout>
 
     <include
+        android:id="@+id/include_wheel_picker"
         layout="@layout/include_oneitemwheelpicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:visibility="gone" />
 </RelativeLayout>

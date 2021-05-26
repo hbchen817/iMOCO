@@ -1182,7 +1182,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("name", baseInfo.name);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
-        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("description", "mode == CA," + baseInfo.description);
         requestParameterEntry.addParameter("mode", "any");
 
         // 构造条件caConditions

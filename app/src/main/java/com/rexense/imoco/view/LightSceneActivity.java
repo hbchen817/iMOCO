@@ -1,22 +1,18 @@
 package com.rexense.imoco.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -27,13 +23,11 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityLightSceneBinding;
 import com.rexense.imoco.event.ColorLightSceneEvent;
 import com.rexense.imoco.event.RefreshData;
-import com.rexense.imoco.event.RefreshSceneListEvent;
-import com.rexense.imoco.model.EProduct;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.model.ETSL;
-import com.rexense.imoco.model.ItemColorLightScene;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
@@ -45,30 +39,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-public class LightSceneActivity extends BaseActivity {
-
-    @BindView(R.id.sceneName)
-    TextView mSceneName;
-    @BindView(R.id.addBtn)
-    ImageView mAddButton;
-    @BindView(R.id.lightnessView)
-    LinearLayout mLightnessView;
-    @BindView(R.id.temperatureView)
-    LinearLayout mTemperatureView;
-    @BindView(R.id.lightnessText)
-    TextView mLightnessText;
-    @BindView(R.id.colorTemperatureText)
-    TextView mTemperatureText;
-    @BindView(R.id.deleteButton)
-    TextView mDeleteButton;
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView mRightText;
+public class LightSceneActivity extends BaseActivity implements View.OnLongClickListener {
+    private ActivityLightSceneBinding mViewBinding;
 
     private EScene.sceneListItemEntry mScene;
     private SceneManager mSceneManager;
@@ -77,9 +49,10 @@ public class LightSceneActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_scene);
-        ButterKnife.bind(this);
-        mRightText.setText("保存");
+        mViewBinding = ActivityLightSceneBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mViewBinding.includeToolbar.tvToolbarRight.setText("保存");
         EventBus.getDefault().register(this);
         mScene = (EScene.sceneListItemEntry) getIntent().getSerializableExtra("extra");
         mIotID = getIntent().getStringExtra("iotID");
@@ -102,11 +75,11 @@ public class LightSceneActivity extends BaseActivity {
     public void refreshData(ColorLightSceneEvent event) {
         int value = event.getmValue();
         if (event.getmType() == ColorLightSceneEvent.TYPE.TYPE_LIGHTNESS) {
-            mLightnessView.setVisibility(View.VISIBLE);
-            mLightnessText.setText(String.valueOf(value));
+            mViewBinding.lightnessView.setVisibility(View.VISIBLE);
+            mViewBinding.lightnessText.setText(String.valueOf(value));
         } else {
-            mTemperatureView.setVisibility(View.VISIBLE);
-            mTemperatureText.setText(String.valueOf(value));
+            mViewBinding.temperatureView.setVisibility(View.VISIBLE);
+            mViewBinding.colorTemperatureText.setText(String.valueOf(value));
         }
     }
 
@@ -119,9 +92,10 @@ public class LightSceneActivity extends BaseActivity {
         TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText("输入场景名称");
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
-        nameEt.setText(mSceneName.getText());
+        nameEt.setText(mViewBinding.sceneName.getText());
         final android.app.Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -137,7 +111,7 @@ public class LightSceneActivity extends BaseActivity {
                 String nameStr = nameEt.getText().toString().trim();
                 if (!nameStr.equals("")) {
                     dialog.dismiss();
-                    mSceneName.setText(nameStr);
+                    mViewBinding.sceneName.setText(nameStr);
                 }
             }
         });
@@ -158,16 +132,25 @@ public class LightSceneActivity extends BaseActivity {
     private void initView() {
         if (mScene == null) {
             //创建场景
-            mTitle.setText("创建场景");
-            mLightnessView.setVisibility(View.GONE);
-            mTemperatureView.setVisibility(View.GONE);
-            mDeleteButton.setVisibility(View.GONE);
+            mViewBinding.includeToolbar.tvToolbarTitle.setText("创建场景");
+            mViewBinding.lightnessView.setVisibility(View.GONE);
+            mViewBinding.temperatureView.setVisibility(View.GONE);
+            mViewBinding.deleteButton.setVisibility(View.GONE);
         } else {
             //编辑场景
-            mTitle.setText("编辑场景");
-            mSceneName.setText(mScene.name);
+            mViewBinding.includeToolbar.tvToolbarTitle.setText("编辑场景");
+            mViewBinding.sceneName.setText(mScene.name);
             mSceneManager.querySceneDetail(mScene.id, "0", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
         }
+        mViewBinding.nameLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.addBtn.setOnClickListener(this::onViewClicked);
+        mViewBinding.lightnessView.setOnClickListener(this::onViewClicked);
+        mViewBinding.temperatureView.setOnClickListener(this::onViewClicked);
+        mViewBinding.deleteButton.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
+
+        mViewBinding.lightnessView.setOnLongClickListener(this);
+        mViewBinding.temperatureView.setOnLongClickListener(this);
     }
 
     public static void start(Context context, EScene.sceneListItemEntry item, String iotID) {
@@ -177,7 +160,7 @@ public class LightSceneActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -185,11 +168,11 @@ public class LightSceneActivity extends BaseActivity {
                     // 处理创建场景结果
                     String sceneId_create = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_create != null && sceneId_create.length() > 0) {
-                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_create_success), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_create_success), mViewBinding.sceneName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();
                     } else {
-                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mViewBinding.sceneName.getText().toString()));
                     }
                     finish();
                     break;
@@ -197,17 +180,17 @@ public class LightSceneActivity extends BaseActivity {
                     // 处理修改场景结果
                     String sceneId_update = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_update != null && sceneId_update.length() > 0) {
-                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mViewBinding.sceneName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();
                     } else {
-                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(LightSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mViewBinding.sceneName.getText().toString()));
                     }
                     finish();
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
-                    String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
+                    //String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
                     ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     finish();
                     RefreshData.refreshSceneListData();
@@ -221,11 +204,11 @@ public class LightSceneActivity extends BaseActivity {
                         JSONObject params = jsonObject.getJSONObject("params");
                         mIotID = params.getString("iotId");
                         if (params.getString("propertyName").equalsIgnoreCase(CTSL.LIGHT_P_BRIGHTNESS)) {
-                            mLightnessView.setVisibility(View.VISIBLE);
-                            mLightnessText.setText(params.getString("propertyValue"));
+                            mViewBinding.lightnessView.setVisibility(View.VISIBLE);
+                            mViewBinding.lightnessText.setText(params.getString("propertyValue"));
                         } else {
-                            mTemperatureView.setVisibility(View.VISIBLE);
-                            mTemperatureText.setText(params.getString("propertyValue"));
+                            mViewBinding.temperatureView.setVisibility(View.VISIBLE);
+                            mViewBinding.colorTemperatureText.setText(params.getString("propertyValue"));
                         }
                     }
                     break;
@@ -237,67 +220,88 @@ public class LightSceneActivity extends BaseActivity {
         }
     });
 
-    @OnClick({R.id.nameLayout, R.id.addBtn, R.id.lightnessView, R.id.temperatureView, R.id.deleteButton, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.nameLayout:
-                showDeviceNameDialogEdit();
-                break;
-            case R.id.addBtn:
-                LightActionChoiceActivity.start(this);
-                break;
-            case R.id.lightnessView:
-                ColorTemperatureChoiceActivity.start2(this, 2, Integer.parseInt(mLightnessText.getText().toString()));
-                break;
-            case R.id.temperatureView:
-                ColorTemperatureChoiceActivity.start2(this, 1, Integer.parseInt(mTemperatureText.getText().toString()));
-                break;
-            case R.id.deleteButton:
-                mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                break;
-            case R.id.tv_toolbar_right:
-                if (mScene == null) {
-                    //创建场景
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
-                    baseInfoEntry.enable = true;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    if (mLightnessView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    if (mTemperatureView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                } else {
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
-                    baseInfoEntry.enable = true;
-                    baseInfoEntry.sceneId = mScene.id;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    if (mLightnessView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    if (mTemperatureView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        if (view.getId() == R.id.nameLayout) {
+            showDeviceNameDialogEdit();
+        } else if (view.getId() == R.id.addBtn) {
+            LightActionChoiceActivity.start(this);
+        } else if (view.getId() == R.id.lightnessView) {
+            ColorTemperatureChoiceActivity.start2(this, 2, Integer.parseInt(mViewBinding.lightnessText.getText().toString()));
+        } else if (view.getId() == R.id.temperatureView) {
+            ColorTemperatureChoiceActivity.start2(this, 1, Integer.parseInt(mViewBinding.colorTemperatureText.getText().toString()));
+        } else if (view.getId() == R.id.deleteButton) {
+            mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            if (mViewBinding.lightnessView.getVisibility() == View.GONE && mViewBinding.temperatureView.getVisibility() == View.GONE) {
+                ToastUtils.showShortToast(this, R.string.pls_add_actions);
+            } else if (mScene == null) {
+                //创建场景
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mViewBinding.sceneName.getText().toString(), mIotID);
+                baseInfoEntry.enable = true;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                if (mViewBinding.lightnessView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mViewBinding.lightnessText.getText().toString());
+                    parameters.add(entry);
                 }
-                break;
+                if (mViewBinding.temperatureView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mViewBinding.colorTemperatureText.getText().toString());
+                    parameters.add(entry);
+                }
+                mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            } else {
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mViewBinding.sceneName.getText().toString(), mIotID);
+                baseInfoEntry.enable = true;
+                baseInfoEntry.sceneId = mScene.id;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                if (mViewBinding.lightnessView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mViewBinding.lightnessText.getText().toString());
+                    parameters.add(entry);
+                }
+                if (mViewBinding.temperatureView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mViewBinding.colorTemperatureText.getText().toString());
+                    parameters.add(entry);
+                }
+                mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            }
         }
     }
 
-
+    @Override
+    public boolean onLongClick(View v) {
+        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(this).create();
+        alert.setIcon(R.drawable.dialog_quest);
+        alert.setTitle(R.string.dialog_title);
+        alert.setMessage(getResources().getString(R.string.do_you_really_want_to_delete_the_action));
+        //添加否按钮
+        alert.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        //添加是按钮
+        alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int arg1) {
+                if (v.getId() == mViewBinding.lightnessView.getId()) {
+                    mViewBinding.lightnessView.setVisibility(View.GONE);
+                } else if (v.getId() == mViewBinding.temperatureView.getId()) {
+                    mViewBinding.temperatureView.setVisibility(View.GONE);
+                }
+                dialog.dismiss();
+            }
+        });
+        alert.show();
+        return false;
+    }
 }

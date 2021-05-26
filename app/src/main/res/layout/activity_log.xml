@@ -7,7 +7,9 @@
     android:orientation="vertical"
     tools:context=".view.LogActivity">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <ScrollView
         android:layout_width="match_parent"

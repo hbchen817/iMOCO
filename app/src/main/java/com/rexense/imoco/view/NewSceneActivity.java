@@ -12,15 +12,10 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +31,7 @@ import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityNewSceneBinding;
 import com.rexense.imoco.demoTest.ActionEntry;
 import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.demoTest.IdentifierItemForCA;
@@ -60,53 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class NewSceneActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.name_tv)
-    TextView mSceneNameTV;
-    @BindView(R.id.name_go)
-    TextView mSceneNameIV;
-    @BindView(R.id.type_tv)
-    TextView mSceneTypeTV;
-    @BindView(R.id.type_go)
-    TextView mSceneTypeIV;
-    @BindView(R.id.status_tv)
-    TextView mSceneStatusTV;
-    @BindView(R.id.status_go)
-    TextView mSceneStatusIV;
-    @BindView(R.id.scene_mode_tv)
-    TextView mSceneModeTV;
-    @BindView(R.id.add_new_condition_iv)
-    TextView mAddConditionIV;
-    @BindView(R.id.add_new_condition_tv)
-    TextView mAddConditionTV;
-    @BindView(R.id.add_new_action_iv)
-    TextView mAddActionIV;
-    @BindView(R.id.add_new_action_tv)
-    TextView mAddActionTV;
-    @BindView(R.id.condition_recycler)
-    RecyclerView mConditionRV;
-    @BindView(R.id.add_condition_layout)
-    RelativeLayout mAddConditionLayout;
-    @BindView(R.id.condition_layout)
-    LinearLayout mConditionLayout;
-    @BindView(R.id.action_layout)
-    LinearLayout mActionLayout;
-    @BindView(R.id.action_recycler)
-    RecyclerView mActionRV;
-    @BindView(R.id.add_action_layout)
-    RelativeLayout mAddActionLayout;
-    @BindView(R.id.del_tv)
-    TextView mDelTV;
-    @BindView(R.id.catalogId_layout)
-    RelativeLayout mCatalogIdLayout;
+    private ActivityNewSceneBinding mViewBinding;
 
     private String[] mTypeArray;
     private String[] mStatusArray;
@@ -121,11 +72,9 @@ public class NewSceneActivity extends BaseActivity {
     private List<Object> mCaconditionList = new ArrayList<>();
     private List<IdentifierItemForCA> mIdentifierList = new ArrayList<>();
     private BaseQuickAdapter<Object, BaseViewHolder> mCaconditionAdapter;
-    private LinearLayoutManager mCaconditionLayoutManager;
 
     private List<Object> mActionList = new ArrayList<>();
     private BaseQuickAdapter<Object, BaseViewHolder> mActionAdapter;
-    private LinearLayoutManager mActionLayoutManager;
 
     private List<SceneActionActivity.SceneActionItem> mSceneActionList = new ArrayList<>();
 
@@ -139,15 +88,15 @@ public class NewSceneActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_scene);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityNewSceneBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mAddConditionIV.setTypeface(mIconfont);
-        mAddActionIV.setTypeface(mIconfont);
-        mSceneNameIV.setTypeface(mIconfont);
-        mSceneTypeIV.setTypeface(mIconfont);
-        mSceneStatusIV.setTypeface(mIconfont);
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.addNewConditionIv.setTypeface(mIconfont);
+        mViewBinding.addNewActionIv.setTypeface(mIconfont);
+        mViewBinding.nameGo.setTypeface(mIconfont);
+        mViewBinding.typeGo.setTypeface(mIconfont);
+        mViewBinding.statusGo.setTypeface(mIconfont);
 
         mSceneManager = new SceneManager(this);
         initView();
@@ -161,20 +110,21 @@ public class NewSceneActivity extends BaseActivity {
         mHandler = new CallbackHandler(this);
         if (mSceneId != null && mSceneId.length() > 0) {
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-            mCatalogIdLayout.setVisibility(View.GONE);
+            mViewBinding.catalogIdLayout.setVisibility(View.GONE);
             mSceneManager.querySceneDetail(mSceneId, mCatalogId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
         } else {
-            mDelTV.setVisibility(View.GONE);
-            mCatalogIdLayout.setVisibility(View.VISIBLE);
+            mViewBinding.delTv.setVisibility(View.GONE);
+            mViewBinding.catalogIdLayout.setVisibility(View.VISIBLE);
             mCatalogId = CScene.TYPE_AUTOMATIC;// 0:手动场景 1:自动场景
-            mTitle.setText(getString(R.string.create_new_scene));
-            mSceneNameTV.setText(getString(R.string.pls_input_scene_name));
-            mSceneStatusTV.setText(getString(R.string.scene_maintain_startusing));
-            mSceneTypeTV.setText(R.string.scenetype_automatic);
-            mSceneModeTV.setText(R.string.satisfy_any_of_the_following_conditions);
-            mConditionLayout.setVisibility(View.VISIBLE);
-            mActionLayout.setVisibility(View.VISIBLE);
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.create_new_scene));
+            mViewBinding.nameTv.setText(getString(R.string.pls_input_scene_name));
+            mViewBinding.statusTv.setText(getString(R.string.scene_maintain_startusing));
+            mViewBinding.typeTv.setText(R.string.scenetype_automatic);
+            mViewBinding.sceneModeTv.setText(R.string.satisfy_any_of_the_following_conditions);
+            mViewBinding.conditionLayout.setVisibility(View.VISIBLE);
+            mViewBinding.actionLayout.setVisibility(View.VISIBLE);
         }
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     @Override
@@ -194,7 +144,7 @@ public class NewSceneActivity extends BaseActivity {
     }
 
     private void initView() {
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
 
         mTypeArray = getResources().getStringArray(R.array.scene_type);
         mStatusArray = getResources().getStringArray(R.array.scene_status);
@@ -369,7 +319,7 @@ public class NewSceneActivity extends BaseActivity {
                         mActionList.remove(position);
                         mActionAdapter.notifyDataSetChanged();
                         if (mActionList.size() == 0)
-                            mAddActionLayout.setVisibility(View.VISIBLE);
+                            mViewBinding.addActionLayout.setVisibility(View.VISIBLE);
                     }
                 });
                 alert.show();
@@ -377,10 +327,10 @@ public class NewSceneActivity extends BaseActivity {
             }
         });
 
-        mActionLayoutManager = new LinearLayoutManager(this);
-        mActionLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mActionRV.setLayoutManager(mActionLayoutManager);
-        mActionRV.setAdapter(mActionAdapter);
+        LinearLayoutManager actionLayoutManager = new LinearLayoutManager(this);
+        actionLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.actionRecycler.setLayoutManager(actionLayoutManager);
+        mViewBinding.actionRecycler.setAdapter(mActionAdapter);
     }
 
     // 条件RecyclerView初始化
@@ -601,17 +551,17 @@ public class NewSceneActivity extends BaseActivity {
                         mCaconditionList.remove(position);
                         mCaconditionAdapter.notifyDataSetChanged();
                         if (mCaconditionList.size() == 0)
-                            mAddConditionLayout.setVisibility(View.VISIBLE);
+                            mViewBinding.addConditionLayout.setVisibility(View.VISIBLE);
                     }
                 });
                 alert.show();
                 return false;
             }
         });
-        mCaconditionLayoutManager = new LinearLayoutManager(this);
-        mCaconditionLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mConditionRV.setLayoutManager(mCaconditionLayoutManager);
-        mConditionRV.setAdapter(mCaconditionAdapter);
+        LinearLayoutManager caconditionLayoutManager = new LinearLayoutManager(this);
+        caconditionLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.conditionRecycler.setLayoutManager(caconditionLayoutManager);
+        mViewBinding.conditionRecycler.setAdapter(mCaconditionAdapter);
     }
 
     private String getCompareTypeString(String compareType) {
@@ -632,43 +582,43 @@ public class NewSceneActivity extends BaseActivity {
 
     private String getRepeatString(String repeat) {
         StringBuilder stringBuilder = new StringBuilder();
-        if ("mon,tue,wed,thu,fri,sat,sun".equals(repeat))
+        if ("mon,tue,wed,thu,fri,sat,sun".equals(repeat) || "1,2,3,4,5,6,7".equals(repeat))
             return getString(R.string.everyday);
-        else if ("mon,tue,wed,thu,fri".equals(repeat))
+        else if ("mon,tue,wed,thu,fri".equals(repeat) || "1,2,3,4,5".equals(repeat))
             return getString(R.string.working_days);
-        else if ("sat,sun".equals(repeat))
+        else if ("sat,sun".equals(repeat) || "6,7".equals(repeat))
             return getString(R.string.weekend);
         String[] s = repeat.split(",");
         for (int i = 0; i < s.length; i++) {
             if (i == 0) {
-                if ("mon".equals(s[i]))
+                if ("mon".equals(s[i]) || "1".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_1_all));
-                else if ("tue".equals(s[i]))
+                else if ("tue".equals(s[i]) || "2".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_2_all));
-                else if ("wed".equals(s[i]))
+                else if ("wed".equals(s[i]) || "3".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_3_all));
-                else if ("sun".equals(s[i]))
+                else if ("sun".equals(s[i]) || "7".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_0_all));
-                else if ("thu".equals(s[i]))
+                else if ("thu".equals(s[i]) || "4".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_4_all));
-                else if ("fri".equals(s[i]))
+                else if ("fri".equals(s[i]) || "5".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_5_all));
-                else if ("sat".equals(s[i]))
+                else if ("sat".equals(s[i]) || "6".equals(s[i]))
                     stringBuilder.append(getString(R.string.week_6_all));
             } else {
-                if ("mon".equals(s[i]))
+                if ("mon".equals(s[i]) || "1".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_1_all));
-                else if ("tue".equals(s[i]))
+                else if ("tue".equals(s[i]) || "2".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_2_all));
-                else if ("wed".equals(s[i]))
+                else if ("wed".equals(s[i]) || "3".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_3_all));
-                else if ("sun".equals(s[i]))
+                else if ("sun".equals(s[i]) || "7".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_0_all));
-                else if ("thu".equals(s[i]))
+                else if ("thu".equals(s[i]) || "4".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_4_all));
-                else if ("fri".equals(s[i]))
+                else if ("fri".equals(s[i]) || "5".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_5_all));
-                else if ("sat".equals(s[i]))
+                else if ("sat".equals(s[i]) || "6".equals(s[i]))
                     stringBuilder.append(", " + getString(R.string.week_6_all));
             }
         }
@@ -682,13 +632,13 @@ public class NewSceneActivity extends BaseActivity {
             if (!mCaconditionList.contains(o))
                 mCaconditionList.add(o);
             mCaconditionAdapter.notifyDataSetChanged();
-            mAddConditionLayout.setVisibility(View.GONE);
+            mViewBinding.addConditionLayout.setVisibility(View.GONE);
         } else if (o != null && o instanceof CaConditionEntry.TimeRange) {
             // 时间段
             if (!mCaconditionList.contains(o))
                 mCaconditionList.add(o);
             mCaconditionAdapter.notifyDataSetChanged();
-            mAddConditionLayout.setVisibility(View.GONE);
+            mViewBinding.addConditionLayout.setVisibility(View.GONE);
         } else if (o != null && o instanceof IdentifierItemForCA) {
             IdentifierItemForCA item = (IdentifierItemForCA) o;
             if (!mIdentifierList.contains(item))
@@ -699,25 +649,25 @@ public class NewSceneActivity extends BaseActivity {
                 if (!mActionList.contains(o1))
                     mActionList.add(o1);
                 mActionAdapter.notifyDataSetChanged();
-                mAddActionLayout.setVisibility(View.GONE);
+                mViewBinding.addActionLayout.setVisibility(View.GONE);
             } else if (o1 instanceof CaConditionEntry.Property) {
                 // 条件-设备属性
                 if (!mCaconditionList.contains(item.getObject()))
                     mCaconditionList.add(item.getObject());
                 mCaconditionAdapter.notifyDataSetChanged();
-                mAddConditionLayout.setVisibility(View.GONE);
+                mViewBinding.addConditionLayout.setVisibility(View.GONE);
             } else if (o1 instanceof ActionEntry.InvokeService) {
                 // 服务
                 if (!mActionList.contains(o1))
                     mActionList.add(o1);
                 mActionAdapter.notifyDataSetChanged();
-                mAddActionLayout.setVisibility(View.GONE);
+                mViewBinding.addActionLayout.setVisibility(View.GONE);
             } else if (o1 instanceof CaConditionEntry.Event) {
                 // 事件
                 if (!mCaconditionList.contains(item.getObject()))
                     mCaconditionList.add(item.getObject());
                 mCaconditionAdapter.notifyDataSetChanged();
-                mAddConditionLayout.setVisibility(View.GONE);
+                mViewBinding.addConditionLayout.setVisibility(View.GONE);
             }
         } else if (o != null && o instanceof ActionEntry.SendMsg) {
             ActionEntry.SendMsg msg = (ActionEntry.SendMsg) o;
@@ -725,7 +675,7 @@ public class NewSceneActivity extends BaseActivity {
                 mActionList.add(msg);
 
             mActionAdapter.notifyDataSetChanged();
-            mAddActionLayout.setVisibility(View.GONE);
+            mViewBinding.addActionLayout.setVisibility(View.GONE);
         } else if (o != null && o instanceof SceneActionActivity.SceneActionItem) {
             SceneActionActivity.SceneActionItem item = (SceneActionActivity.SceneActionItem) o;
             if (!mSceneActionList.contains(item)) {
@@ -735,201 +685,176 @@ public class NewSceneActivity extends BaseActivity {
             if (!mActionList.contains(trigger))
                 mActionList.add(trigger);
             mActionAdapter.notifyDataSetChanged();
-            mAddActionLayout.setVisibility(View.GONE);
+            mViewBinding.addActionLayout.setVisibility(View.GONE);
         }
         EventBus.getDefault().removeStickyEvent(o);
     }
 
-    @OnClick({R.id.name_tv, R.id.name_go, R.id.type_tv, R.id.type_go, R.id.status_tv, R.id.status_go,
-            R.id.scene_mode_tv, R.id.add_new_condition_iv, R.id.add_new_condition_tv, R.id.add_new_action_iv,
-            R.id.add_new_action_tv, R.id.tv_toolbar_right, R.id.del_tv})
-    protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.del_tv: {
-                android.app.AlertDialog alert = new android.app.AlertDialog.Builder(NewSceneActivity.this).create();
-                alert.setIcon(R.drawable.dialog_quest);
-                alert.setTitle(R.string.dialog_title);
-                alert.setMessage(getResources().getString(R.string.do_you_really_want_to_delete_the_current_scene));
-                //添加否按钮
-                alert.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                //添加是按钮
-                alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        arg0.dismiss();
-                        mSceneManager.deleteScene(mSceneId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                        QMUITipDialogUtil.showLoadingDialg(NewSceneActivity.this, R.string.deleting_the_scene);
-                    }
-                });
-                alert.show();
-                break;
+    public void onViewClicked(View view) {
+        if (view.getId() == R.id.del_tv) {
+            android.app.AlertDialog alert = new android.app.AlertDialog.Builder(NewSceneActivity.this).create();
+            alert.setIcon(R.drawable.dialog_quest);
+            alert.setTitle(R.string.dialog_title);
+            alert.setMessage(getResources().getString(R.string.do_you_really_want_to_delete_the_current_scene));
+            //添加否按钮
+            alert.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            //添加是按钮
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+                    arg0.dismiss();
+                    mSceneManager.deleteScene(mSceneId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    QMUITipDialogUtil.showLoadingDialg(NewSceneActivity.this, R.string.deleting_the_scene);
+                }
+            });
+            alert.show();
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            if (mSceneName == null || mSceneName.length() == 0) {
+                ToastUtils.showLongToast(this, R.string.pls_enter_a_scene_name);
+                return;
             }
-            case R.id.tv_toolbar_right: {
-                if (mSceneName == null || mSceneName.length() == 0) {
-                    ToastUtils.showLongToast(this, R.string.pls_enter_a_scene_name);
+            if (mActionList == null || mActionList.size() == 0) {
+                ToastUtils.showLongToast(this, R.string.pls_add_actions);
+                return;
+            }
+            if (CScene.TYPE_AUTOMATIC.equals(mCatalogId)) {
+                if (mCaconditionList == null || mCaconditionList.size() == 0) {
+                    ToastUtils.showLongToast(this, R.string.pls_add_conditions);
                     return;
                 }
-                if (mActionList == null || mActionList.size() == 0) {
-                    ToastUtils.showLongToast(this, R.string.pls_add_actions);
-                    return;
-                }
-                if (CScene.TYPE_AUTOMATIC.equals(mCatalogId)) {
-                    if (mCaconditionList == null || mCaconditionList.size() == 0) {
-                        ToastUtils.showLongToast(this, R.string.pls_add_conditions);
-                        return;
-                    }
 
-                    int timerCount = 0;
-                    for (int i = 0; i < mCaconditionList.size(); i++) {
-                        Object o = mCaconditionList.get(i);
-                        if (o instanceof CaConditionEntry.Timer
-                                || o instanceof CaConditionEntry.TimeRange)
-                            timerCount++;
-                    }
-                    if (timerCount > 1) {
-                        QMUITipDialogUtil.dismiss();
-                        ToastUtils.showLongToast(this, R.string.time_condition_can_not_more_than_one);
-                        return;
-                    }
-                }
-                if ("any".equals(mSceneMode)) {
-                    for (int i = 0; i < mCaconditionList.size(); i++) {
-                        Object o = mCaconditionList.get(i);
-                        if (o instanceof CaConditionEntry.TimeRange) {
-                            QMUITipDialogUtil.dismiss();
-                            ToastUtils.showLongToast(this, R.string.time_period_cannot_be_used_as_condition_to_satisfy_any_of_following_conditions);
-                            return;
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < mCaconditionList.size(); i++) {
-                        Object o = mCaconditionList.get(i);
-                        if (o instanceof CaConditionEntry.TimeRange && mCaconditionList.size() == 1) {
-                            QMUITipDialogUtil.dismiss();
-                            ToastUtils.showLongToast(this, R.string.time_period_cannot_be_only_one);
-                            return;
-                        }
-                    }
-
-                    // 时间点，事件上报
-                    int timerCount = 0;
-                    int eventCount = 0;
-                    for (int i = 0; i < mCaconditionList.size(); i++) {
-                        Object o = mCaconditionList.get(i);
-                        if (o instanceof CaConditionEntry.Timer)
-                            timerCount++;
-                        else if (o instanceof CaConditionEntry.Event)
-                            eventCount++;
-                    }
-                    if (timerCount > 0 && eventCount > 0) {
-                        QMUITipDialogUtil.dismiss();
-                        ToastUtils.showLongToast(this, R.string.timer_and_event_cannot_be_reported_as_meet_all_of_the_following_conditions_at_the_same_time);
-                        return;
-                    }
-                }
-
-                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_uploading);
-
-                if (mSceneId == null || mSceneId.length() == 0) {
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            mCatalogId, mSceneName, mSceneId);
-                    mSceneManager.createCAScene(baseInfoEntry, mEnable, mSceneMode, mCaconditionList,
-                            mActionList, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                } else {
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(mSceneId, SystemParameter.getInstance().getHomeId(),
-                            mCatalogId, mSceneName, mSceneId);
-                    mSceneManager.updateCAScene(baseInfoEntry, mEnable, mSceneMode, mCaconditionList,
-                            mActionList, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                }
-                break;
-            }
-            case R.id.add_new_action_tv:
-            case R.id.add_new_action_iv: {
-                Intent intent = new Intent(this, AddActionActivity.class);
-                startActivity(intent);
-                break;
-            }
-            case R.id.add_new_condition_tv:
-            case R.id.add_new_condition_iv: {
-                Intent intent = new Intent(this, AddConditionActivity.class);
-
-                boolean hasTimeCondition = false;
+                int timerCount = 0;
                 for (int i = 0; i < mCaconditionList.size(); i++) {
                     Object o = mCaconditionList.get(i);
-                    if (o instanceof CaConditionEntry.Timer || o instanceof CaConditionEntry.TimeRange) {
-                        hasTimeCondition = true;
-                        break;
+                    if (o instanceof CaConditionEntry.Timer
+                            || o instanceof CaConditionEntry.TimeRange)
+                        timerCount++;
+                }
+                if (timerCount > 1) {
+                    QMUITipDialogUtil.dismiss();
+                    ToastUtils.showLongToast(this, R.string.time_condition_can_not_more_than_one);
+                    return;
+                }
+            }
+            if ("any".equals(mSceneMode)) {
+                for (int i = 0; i < mCaconditionList.size(); i++) {
+                    Object o = mCaconditionList.get(i);
+                    if (o instanceof CaConditionEntry.TimeRange) {
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(this, R.string.time_period_cannot_be_used_as_condition_to_satisfy_any_of_following_conditions);
+                        return;
+                    }
+                }
+            } else {
+                for (int i = 0; i < mCaconditionList.size(); i++) {
+                    Object o = mCaconditionList.get(i);
+                    if (o instanceof CaConditionEntry.TimeRange && mCaconditionList.size() == 1) {
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(this, R.string.time_period_cannot_be_only_one);
+                        return;
                     }
                 }
 
-                intent.putExtra("has_time_condition", hasTimeCondition);
-                startActivity(intent);
-                break;
-            }
-            case R.id.scene_mode_tv: {
-                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
-                for (int i = 0; i < mModeArray.length; i++) {
-                    builder.addItem(mModeArray[i]);
+                // 时间点，事件上报
+                int timerCount = 0;
+                int eventCount = 0;
+                for (int i = 0; i < mCaconditionList.size(); i++) {
+                    Object o = mCaconditionList.get(i);
+                    if (o instanceof CaConditionEntry.Timer)
+                        timerCount++;
+                    else if (o instanceof CaConditionEntry.Event)
+                        eventCount++;
                 }
-                builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        if (position == 0) mSceneMode = "any";
-                        else mSceneMode = "all";
-                        mSceneModeTV.setText(mModeArray[position]);
-                        dialog.dismiss();
-                    }
-                });
-                builder.build().show();
-                break;
-            }
-            case R.id.status_go:
-            case R.id.status_tv: {
-                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
-                for (int i = 0; i < mStatusArray.length; i++) {
-                    builder.addItem(mStatusArray[i]);
+                if (timerCount > 0 && eventCount > 0) {
+                    QMUITipDialogUtil.dismiss();
+                    ToastUtils.showLongToast(this, R.string.timer_and_event_cannot_be_reported_as_meet_all_of_the_following_conditions_at_the_same_time);
+                    return;
                 }
-                builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        if (position == 0) mEnable = true;
-                        else mEnable = false;
-                        mSceneStatusTV.setText(mStatusArray[position]);
-                        dialog.dismiss();
-                    }
-                });
-                builder.build().show();
-                break;
             }
-            case R.id.type_go:
-            case R.id.type_tv: {
-                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
-                for (int i = 0; i < mTypeArray.length; i++) {
-                    builder.addItem(mTypeArray[i]);
+
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_uploading);
+
+            if (mSceneId == null || mSceneId.length() == 0) {
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        mCatalogId, mSceneName, mSceneId);
+                mSceneManager.createCAScene(baseInfoEntry, mEnable, mSceneMode, mCaconditionList,
+                        mActionList, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+            } else {
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(mSceneId, SystemParameter.getInstance().getHomeId(),
+                        mCatalogId, mSceneName, mSceneId);
+                mSceneManager.updateCAScene(baseInfoEntry, mEnable, mSceneMode, mCaconditionList,
+                        mActionList, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+            }
+        } else if (view.getId() == R.id.add_new_action_tv || view.getId() == R.id.add_new_action_iv) {
+            Intent intent = new Intent(this, AddActionActivity.class);
+            startActivity(intent);
+        } else if (view.getId() == R.id.add_new_condition_tv || view.getId() == R.id.add_new_condition_iv) {
+            Intent intent = new Intent(this, AddConditionActivity.class);
+
+            boolean hasTimeCondition = false;
+            for (int i = 0; i < mCaconditionList.size(); i++) {
+                Object o = mCaconditionList.get(i);
+                if (o instanceof CaConditionEntry.Timer || o instanceof CaConditionEntry.TimeRange) {
+                    hasTimeCondition = true;
+                    break;
                 }
-                builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                    @Override
-                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                        if (position == 0) mCatalogId = "1";
-                        else mCatalogId = "0";
-                        mConditionLayout.setVisibility("0".equals(mCatalogId) ? View.GONE : View.VISIBLE);
-                        mSceneTypeTV.setText(mTypeArray[position]);
-                        dialog.dismiss();
-                    }
-                });
-                builder.build().show();
-                break;
             }
-            case R.id.name_go:
-            case R.id.name_tv: {
-                showSceneNameDialogEdit();
-                break;
+
+            intent.putExtra("has_time_condition", hasTimeCondition);
+            startActivity(intent);
+        } else if (view.getId() == R.id.scene_mode_tv) {
+            QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+            for (int i = 0; i < mModeArray.length; i++) {
+                builder.addItem(mModeArray[i]);
             }
+            builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                @Override
+                public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                    if (position == 0) mSceneMode = "any";
+                    else mSceneMode = "all";
+                    mViewBinding.sceneModeTv.setText(mModeArray[position]);
+                    dialog.dismiss();
+                }
+            });
+            builder.build().show();
+        } else if (view.getId() == R.id.status_go || view.getId() == R.id.status_tv) {
+            QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+            for (int i = 0; i < mStatusArray.length; i++) {
+                builder.addItem(mStatusArray[i]);
+            }
+            builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                @Override
+                public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                    if (position == 0) mEnable = true;
+                    else mEnable = false;
+                    mViewBinding.statusTv.setText(mStatusArray[position]);
+                    dialog.dismiss();
+                }
+            });
+            builder.build().show();
+        } else if (view.getId() == R.id.type_go || view.getId() == R.id.type_tv) {
+            QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+            for (int i = 0; i < mTypeArray.length; i++) {
+                builder.addItem(mTypeArray[i]);
+            }
+            builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                @Override
+                public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                    if (position == 0) mCatalogId = "1";
+                    else mCatalogId = "0";
+                    mViewBinding.conditionLayout.setVisibility("0".equals(mCatalogId) ? View.GONE : View.VISIBLE);
+                    mViewBinding.typeTv.setText(mTypeArray[position]);
+                    dialog.dismiss();
+                }
+            });
+            builder.build().show();
+        } else if (view.getId() == R.id.name_go || view.getId() == R.id.name_tv) {
+            showSceneNameDialogEdit();
         }
     }
 
@@ -999,24 +924,24 @@ public class NewSceneActivity extends BaseActivity {
                         ViseLog.d(new Gson().toJson(object));
                         mValid = object.getBoolean("valid");
                         mSceneName = object.getString("name");
-                        mTitle.setText(mSceneName);
-                        mSceneNameTV.setText(mSceneName);
+                        mViewBinding.includeToolbar.tvToolbarTitle.setText(mSceneName);
+                        mViewBinding.nameTv.setText(mSceneName);
 
-                        mSceneTypeTV.setText(CScene.TYPE_MANUAL.equals(mCatalogId) ?
+                        mViewBinding.typeTv.setText(CScene.TYPE_MANUAL.equals(mCatalogId) ?
                                 R.string.scenetype_manual : R.string.scenetype_automatic);
-                        mConditionLayout.setVisibility(CScene.TYPE_MANUAL.equals(mCatalogId) ? View.GONE : View.VISIBLE);
-                        mActionLayout.setVisibility(View.VISIBLE);
-                        mDelTV.setVisibility(View.VISIBLE);
+                        mViewBinding.conditionLayout.setVisibility(CScene.TYPE_MANUAL.equals(mCatalogId) ? View.GONE : View.VISIBLE);
+                        mViewBinding.actionLayout.setVisibility(View.VISIBLE);
+                        mViewBinding.delTv.setVisibility(View.VISIBLE);
 
                         mEnable = object.getBoolean("enable");
-                        mSceneStatusTV.setText(mEnable ?
+                        mViewBinding.statusTv.setText(mEnable ?
                                 getString(R.string.scene_maintain_startusing) : getString(R.string.scene_maintain_stopusing));
 
                         mSceneMode = object.getString("mode");
                         if ("any".equals(mSceneMode))
-                            mSceneModeTV.setText(R.string.satisfy_any_of_the_following_conditions);
+                            mViewBinding.sceneModeTv.setText(R.string.satisfy_any_of_the_following_conditions);
                         else
-                            mSceneModeTV.setText(R.string.satisfy_all_of_the_following_conditions);
+                            mViewBinding.sceneModeTv.setText(R.string.satisfy_all_of_the_following_conditions);
 
                         JSONArray conditions = JSON.parseArray(object.getString("caConditionsJson"));
                         if (conditions.size() > 0) {
@@ -1143,7 +1068,7 @@ public class NewSceneActivity extends BaseActivity {
                         }
                         mCaconditionAdapter.notifyDataSetChanged();
                         if (mCaconditionList != null && mCaconditionList.size() > 0) {
-                            mAddConditionLayout.setVisibility(View.GONE);
+                            mViewBinding.addConditionLayout.setVisibility(View.GONE);
                         }
 
                         JSONArray actions = JSON.parseArray(object.getString("actionsJson"));
@@ -1243,8 +1168,8 @@ public class NewSceneActivity extends BaseActivity {
                         ViseLog.d(new Gson().toJson(mActionList));
                         mActionAdapter.notifyDataSetChanged();
                         if (mActionList == null || mActionList.size() == 0)
-                            mAddActionLayout.setVisibility(View.VISIBLE);
-                        else mAddActionLayout.setVisibility(View.GONE);
+                            mViewBinding.addActionLayout.setVisibility(View.VISIBLE);
+                        else mViewBinding.addActionLayout.setVisibility(View.GONE);
                         break;
                     }
                 }
@@ -1265,7 +1190,7 @@ public class NewSceneActivity extends BaseActivity {
         titleTv.setText(getString(R.string.scene_maintain_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         if (mSceneName != null && mSceneName.length() > 0) {
-            String name = mSceneNameTV.getText().toString();
+            String name = mViewBinding.nameTv.getText().toString();
             nameEt.setText(name);
             nameEt.setSelection(name.length());
         } else nameEt.setHint(getString(R.string.pls_input_scene_name));
@@ -1286,7 +1211,7 @@ public class NewSceneActivity extends BaseActivity {
                 String nameStr = nameEt.getText().toString().trim();
                 if (!nameStr.equals("")) {
                     dialog.dismiss();
-                    mSceneNameTV.setText(nameEt.getText().toString());
+                    mViewBinding.nameTv.setText(nameEt.getText().toString());
                     mSceneName = nameStr;
                 } else {
                     ToastUtils.showLongToast(NewSceneActivity.this, R.string.pls_input_scene_name);

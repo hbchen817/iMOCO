@@ -37,8 +37,11 @@ public class CustomDatePicker implements View.OnClickListener, PickerView.OnSele
 
     private int mBeginYear, mBeginMonth, mBeginDay, mBeginHour, mBeginMinute,
             mEndYear, mEndMonth, mEndDay, mEndHour, mEndMinute;
-    private List<String> mYearUnits = new ArrayList<>(), mMonthUnits = new ArrayList<>(), mDayUnits = new ArrayList<>(),
-            mHourUnits = new ArrayList<>(), mMinuteUnits = new ArrayList<>();
+    private List<String> mYearUnits = new ArrayList<>();
+    private List<String> mMonthUnits = new ArrayList<>();
+    private List<String> mDayUnits = new ArrayList<>();
+    private List<String> mHourUnits = new ArrayList<>();
+    private List<String> mMinuteUnits = new ArrayList<>();
     private DecimalFormat mDecimalFormat = new DecimalFormat("00");
 
     private boolean mCanShowPreciseTime;
@@ -145,15 +148,13 @@ public class CustomDatePicker implements View.OnClickListener, PickerView.OnSele
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_cancel:
-                break;
+        int id = v.getId();
+        if (id == R.id.tv_cancel) {
 
-            case R.id.tv_confirm:
-                if (mCallback != null) {
-                    mCallback.onTimeSelected(mSelectedTime.getTimeInMillis());
-                }
-                break;
+        } else if (id == R.id.tv_confirm) {
+            if (mCallback != null) {
+                mCallback.onTimeSelected(mSelectedTime.getTimeInMillis());
+            }
         }
 
         if (mPickerDialog != null && mPickerDialog.isShowing()) {
@@ -172,32 +173,23 @@ public class CustomDatePicker implements View.OnClickListener, PickerView.OnSele
             return;
         }
 
-        switch (view.getId()) {
-            case R.id.dpv_year:
-                mSelectedTime.set(Calendar.YEAR, timeUnit);
-                linkageMonthUnit(true, LINKAGE_DELAY_DEFAULT);
-                break;
-
-            case R.id.dpv_month:
-                // 防止类似 2018/12/31 滚动到11月时因溢出变成 2018/12/01
-                int lastSelectedMonth = mSelectedTime.get(Calendar.MONTH) + 1;
-                mSelectedTime.add(Calendar.MONTH, timeUnit - lastSelectedMonth);
-                linkageDayUnit(true, LINKAGE_DELAY_DEFAULT);
-                break;
-
-            case R.id.dpv_day:
-                mSelectedTime.set(Calendar.DAY_OF_MONTH, timeUnit);
-                linkageHourUnit(true, LINKAGE_DELAY_DEFAULT);
-                break;
-
-            case R.id.dpv_hour:
-                mSelectedTime.set(Calendar.HOUR_OF_DAY, timeUnit);
-                linkageMinuteUnit(true);
-                break;
-
-            case R.id.dpv_minute:
-                mSelectedTime.set(Calendar.MINUTE, timeUnit);
-                break;
+        int id = view.getId();
+        if (id == R.id.dpv_year) {
+            mSelectedTime.set(Calendar.YEAR, timeUnit);
+            linkageMonthUnit(true, LINKAGE_DELAY_DEFAULT);
+        } else if (id == R.id.dpv_month) {
+            // 防止类似 2018/12/31 滚动到11月时因溢出变成 2018/12/01
+            int lastSelectedMonth = mSelectedTime.get(Calendar.MONTH) + 1;
+            mSelectedTime.add(Calendar.MONTH, timeUnit - lastSelectedMonth);
+            linkageDayUnit(true, LINKAGE_DELAY_DEFAULT);
+        } else if (id == R.id.dpv_day) {
+            mSelectedTime.set(Calendar.DAY_OF_MONTH, timeUnit);
+            linkageHourUnit(true, LINKAGE_DELAY_DEFAULT);
+        } else if (id == R.id.dpv_hour) {
+            mSelectedTime.set(Calendar.HOUR_OF_DAY, timeUnit);
+            linkageMinuteUnit(true);
+        } else if (id == R.id.dpv_minute) {
+            mSelectedTime.set(Calendar.MINUTE, timeUnit);
         }
     }
 
@@ -583,8 +575,8 @@ public class CustomDatePicker implements View.OnClickListener, PickerView.OnSele
         }
         mCanShowPreciseTime = canShowPreciseTime;
 
-        mDpvMinute.setVisibility(showMinute? View.VISIBLE: View.GONE);
-        mTvMinuteUnit.setVisibility(showMinute? View.VISIBLE: View.GONE);
+        mDpvMinute.setVisibility(showMinute ? View.VISIBLE : View.GONE);
+        mTvMinuteUnit.setVisibility(showMinute ? View.VISIBLE : View.GONE);
     }
 
     private void initScrollUnit(Integer... units) {

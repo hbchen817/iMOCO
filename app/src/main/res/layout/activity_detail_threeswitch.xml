@@ -192,6 +192,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/back_light_root"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"

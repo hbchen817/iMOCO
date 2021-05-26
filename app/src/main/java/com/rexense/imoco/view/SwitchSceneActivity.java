@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -28,10 +27,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
-import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivitySwitchSceneBinding;
 import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.EDevice;
 import com.rexense.imoco.model.EScene;
@@ -39,10 +39,10 @@ import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.ItemAction;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.DeviceBuffer;
-import com.rexense.imoco.presenter.ImageProvider;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -53,24 +53,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class SwitchSceneActivity extends BaseActivity {
-
-    @BindView(R.id.sceneName)
-    TextView mSceneName;
-    @BindView(R.id.addBtn)
-    ImageView mAddButton;
-    @BindView(R.id.deleteButton)
-    TextView mDeleteButton;
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView mRightText;
-    @BindView(R.id.mRecyclerView)
-    RecyclerView mRecyclerView;
+    private ActivitySwitchSceneBinding mViewBinding;
 
     private EScene.sceneListItemEntry mScene;
     private SceneManager mSceneManager;
@@ -81,10 +65,11 @@ public class SwitchSceneActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_switch_scene);
+        mViewBinding = ActivitySwitchSceneBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
-        mRightText.setText("保存");
+        mViewBinding.includeToolbar.tvToolbarRight.setText("保存");
         mScene = (EScene.sceneListItemEntry) getIntent().getSerializableExtra("extra");
         mIotID = getIntent().getStringExtra("iotID");
         mSceneManager = new SceneManager(this);
@@ -155,7 +140,8 @@ public class SwitchSceneActivity extends BaseActivity {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 ItemAction itemAction = mList.get(position);
-                DeviceActionActivity.start(mActivity, itemAction.getIotId(), itemAction.getDeviceName());
+                ViseLog.d(new Gson().toJson(itemAction));
+                DeviceActionActivity.start(mActivity, itemAction.getIotId(), itemAction.getDeviceName(), itemAction.getIdentifier(), String.valueOf(itemAction.getActionValue()));
             }
         });
         mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -196,9 +182,9 @@ public class SwitchSceneActivity extends BaseActivity {
         TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText("输入场景名称");
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
-        nameEt.setText(mSceneName.getText());
-        if (mSceneName.getText() != null && mSceneName.getText().toString() != null) {
-            int length = mSceneName.getText().toString().length();
+        nameEt.setText(mViewBinding.sceneName.getText());
+        if (mViewBinding.sceneName.getText() != null && mViewBinding.sceneName.getText().toString() != null) {
+            int length = mViewBinding.sceneName.getText().toString().length();
             nameEt.setSelection(length);
         }
         final android.app.Dialog dialog = builder.create();
@@ -222,7 +208,7 @@ public class SwitchSceneActivity extends BaseActivity {
                 }
                 if (!nameStr.equals("")) {
                     dialog.dismiss();
-                    mSceneName.setText(nameStr);
+                    mViewBinding.sceneName.setText(nameStr);
                 }
             }
         });
@@ -236,18 +222,22 @@ public class SwitchSceneActivity extends BaseActivity {
 
     private void initView() {
         initAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
+        mViewBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mViewBinding.mRecyclerView.setAdapter(mAdapter);
         if (mScene == null) {
             //创建场景
-            mTitle.setText("创建场景");
-            mDeleteButton.setVisibility(View.GONE);
+            mViewBinding.includeToolbar.tvToolbarTitle.setText("创建场景");
+            mViewBinding.deleteButton.setVisibility(View.GONE);
         } else {
             //编辑场景
-            mTitle.setText("编辑场景");
-            mSceneName.setText(mScene.name);
+            mViewBinding.includeToolbar.tvToolbarTitle.setText("编辑场景");
+            mViewBinding.sceneName.setText(mScene.name);
             mSceneManager.querySceneDetail(mScene.id, CScene.TYPE_MANUAL, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
         }
+        mViewBinding.nameLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.addBtn.setOnClickListener(this::onViewClicked);
+        mViewBinding.deleteButton.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     public static void start(Context context, EScene.sceneListItemEntry item, String iotID) {
@@ -257,7 +247,7 @@ public class SwitchSceneActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -265,11 +255,13 @@ public class SwitchSceneActivity extends BaseActivity {
                     // 处理创建场景结果
                     String sceneId_create = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_create != null && sceneId_create.length() > 0) {
-                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_create_success), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_create_success),
+                                mViewBinding.sceneName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();
                     } else {
-                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_create_failed),
+                                mViewBinding.sceneName.getText().toString()));
                     }
                     finish();
                     break;
@@ -277,11 +269,13 @@ public class SwitchSceneActivity extends BaseActivity {
                     // 处理修改场景结果
                     String sceneId_update = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_update != null && sceneId_update.length() > 0) {
-                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_success),
+                                mViewBinding.sceneName.getText().toString()));
                         // 发送刷新列表数据事件
                         RefreshData.refreshSceneListData();
                     } else {
-                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mSceneName.getText().toString()));
+                        ToastUtils.showToastCentrally(SwitchSceneActivity.this, String.format(getString(R.string.scene_maintain_edit_failed),
+                                mViewBinding.sceneName.getText().toString()));
                     }
                     finish();
                     break;
@@ -369,7 +363,6 @@ public class SwitchSceneActivity extends BaseActivity {
                 default:
                     break;
             }
-
             return false;
         }
     });
@@ -385,51 +378,43 @@ public class SwitchSceneActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.nameLayout, R.id.addBtn, R.id.deleteButton, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.nameLayout:
-                showDeviceNameDialogEdit();
-                break;
-            case R.id.addBtn:
-                SceneSwitchDeviceListActivity.start(this);
-                break;
-            case R.id.deleteButton:
-                mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                break;
-            case R.id.tv_toolbar_right:
-                if (mScene == null) {
-                    //创建场景
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
-                    baseInfoEntry.enable = true;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    for (int i = 0; i < mList.size(); i++) {
-                        ItemAction itemAction = mList.get(i);
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = itemAction.getIotId();
-                        entry.state = new ETSL.stateEntry("", itemAction.getIdentifier(), "", itemAction.getActionValue().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                } else {
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), "mode == CA," + mIotID);
-                    baseInfoEntry.enable = true;
-                    baseInfoEntry.sceneId = mScene.id;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    for (int i = 0; i < mList.size(); i++) {
-                        ItemAction itemAction = mList.get(i);
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = itemAction.getIotId();
-                        entry.state = new ETSL.stateEntry("", itemAction.getIdentifier(), "", itemAction.getActionValue().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        if (view.getId() == R.id.nameLayout) {
+            showDeviceNameDialogEdit();
+        } else if (view.getId() == R.id.addBtn) {
+            SceneSwitchDeviceListActivity.start(this);
+        } else if (view.getId() == R.id.deleteButton) {
+            mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            if (mScene == null) {
+                //创建场景
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mViewBinding.sceneName.getText().toString(), mIotID);
+                baseInfoEntry.enable = true;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                for (int i = 0; i < mList.size(); i++) {
+                    ItemAction itemAction = mList.get(i);
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = itemAction.getIotId();
+                    entry.state = new ETSL.stateEntry("", itemAction.getIdentifier(), "", itemAction.getActionValue().toString());
+                    parameters.add(entry);
                 }
-                break;
+                mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            } else {
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mViewBinding.sceneName.getText().toString(), "mode == CA," + mIotID);
+                baseInfoEntry.enable = true;
+                baseInfoEntry.sceneId = mScene.id;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                for (int i = 0; i < mList.size(); i++) {
+                    ItemAction itemAction = mList.get(i);
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = itemAction.getIotId();
+                    entry.state = new ETSL.stateEntry("", itemAction.getIdentifier(), "", itemAction.getActionValue().toString());
+                    parameters.add(entry);
+                }
+                mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            }
         }
     }
-
-
 }

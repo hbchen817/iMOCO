@@ -8,7 +8,9 @@
     android:orientation="vertical"
     tools:context=".view.AddActionActivity">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,8 +65,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/ripple_bg"
-            android:focusable="true"
             android:clickable="true"
+            android:focusable="true"
             android:orientation="horizontal">
 
             <TextView

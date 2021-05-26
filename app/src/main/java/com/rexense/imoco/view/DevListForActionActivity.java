@@ -1,6 +1,5 @@
 package com.rexense.imoco.view;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -25,11 +24,11 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityDevListForCaBinding;
 import com.rexense.imoco.demoTest.ResponseDevListForCA;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -41,40 +40,28 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class DevListForActionActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.recycler_rl)
-    SmartRefreshLayout mRefreshLayout;
-    @BindView(R.id.dev_recycler)
-    RecyclerView mDevRecycler;
+    private ActivityDevListForCaBinding mViewBinding;
 
     private CallbackHandler mHandler;
 
     private SceneManager mSceneManager;
 
     private int mPageNo = 1;
-    private final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 20;
 
     private List<ResponseDevListForCA.DevItem> mList;
     private BaseQuickAdapter<ResponseDevListForCA.DevItem, BaseViewHolder> mAdapter;
-
-    private LinearLayoutManager mLayoutManager;
 
     private Typeface mIconfont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dev_list_for_ca);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityDevListForCaBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         initStatusBar();
         initView();
@@ -90,7 +77,7 @@ public class DevListForActionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.device_list));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.device_list));
 
         mHandler = new CallbackHandler(this);
         mSceneManager = new SceneManager(this);
@@ -111,7 +98,6 @@ public class DevListForActionActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                ViseLog.d(mList.get(position).getIotId() + "\n" + mList.get(position).getNickName());
                 Intent intent = new Intent(DevListForActionActivity.this, IdentifierListForActionActivity.class);
                 intent.putExtra("nick_name", mList.get(position).getNickName());
                 intent.putExtra("dev_name", mList.get(position).getDeviceName());
@@ -120,62 +106,63 @@ public class DevListForActionActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mDevRecycler.setLayoutManager(mLayoutManager);
-        mDevRecycler.setAdapter(mAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.devRecycler.setLayoutManager(layoutManager);
+        mViewBinding.devRecycler.setAdapter(mAdapter);
 
-        mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        mViewBinding.recyclerRl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mPageNo = 1;
                 mList.clear();
-                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE,
+                        mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
-        mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+        mViewBinding.recyclerRl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 mPageNo++;
-                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE,
+                        mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        mSceneManager.queryDevListInHomeForCA(2, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        mSceneManager.queryDevListInHomeForCA(2, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE,
+                mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
-    private class CallbackHandler extends Handler {
-        private WeakReference<Activity> weakRf;
+    private static class CallbackHandler extends Handler {
+        private final WeakReference<DevListForActionActivity> weakRf;
 
-        public CallbackHandler(Activity activity) {
+        public CallbackHandler(DevListForActionActivity activity) {
             weakRf = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (weakRf.get() == null) return;
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA: {
-                    // 获取支持TCA的设备列表
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    ViseLog.d(new Gson().toJson(jsonObject));
-                    ResponseDevListForCA responseEntry = new Gson().fromJson(new Gson().toJson(jsonObject), ResponseDevListForCA.class);
-                    mList.addAll(responseEntry.getData());
-                    if (responseEntry.getData().size() >= PAGE_SIZE) {
-                        mPageNo++;
-                        mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                    } else {
-                        if (responseEntry.getData().size() == 0)
-                            mPageNo--;
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    mRefreshLayout.finishRefresh(true);
-                    mRefreshLayout.finishLoadMore(true);
-                    QMUITipDialogUtil.dismiss();
-                    break;
+            DevListForActionActivity activity = weakRf.get();
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA) {// 获取支持TCA的设备列表
+                JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                ViseLog.d(new Gson().toJson(jsonObject));
+                ResponseDevListForCA responseEntry = new Gson().fromJson(new Gson().toJson(jsonObject), ResponseDevListForCA.class);
+                activity.mList.addAll(responseEntry.getData());
+                if (responseEntry.getData().size() >= PAGE_SIZE) {
+                    activity.mPageNo++;
+                    activity.mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), activity.mPageNo, PAGE_SIZE,
+                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                } else {
+                    if (responseEntry.getData().size() == 0)
+                        activity.mPageNo--;
                 }
+                activity.mAdapter.notifyDataSetChanged();
+                activity.mViewBinding.recyclerRl.finishRefresh(true);
+                activity.mViewBinding.recyclerRl.finishLoadMore(true);
+                QMUITipDialogUtil.dismiss();
             }
         }
     }

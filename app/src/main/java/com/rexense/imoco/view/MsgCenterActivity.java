@@ -7,16 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.android.material.tabs.TabLayout;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityMsgCenterBinding;
 import com.rexense.imoco.event.RefreshMsgCenter;
-import com.rexense.imoco.event.ShareDeviceSuccessEvent;
-import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.MsgCenterManager;
-import com.rexense.imoco.utility.SrlUtils;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.DialogUtils;
 
@@ -26,26 +22,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MsgCenterActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.view_pager)
-    ViewPager viewPager;
-    @BindView(R.id.tab_layout)
-    TabLayout tabLayout;
+public class MsgCenterActivity extends BaseActivity implements View.OnClickListener {
+    private ActivityMsgCenterBinding mViewBinding;
 
     private MsgCenterManager msgCenterManager;
     String[] type = new String[3];
     private String[] msgTypeArr = {"device", "share", "announcement"};
     private int currentPosition = 0;
-    private DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             if (currentPosition == 1) {
@@ -59,10 +44,11 @@ public class MsgCenterActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_msg_center);
-        ButterKnife.bind(this);
-        tvToolbarRight.setText(getString(R.string.msg_center_clear));
-        tvToolbarTitle.setText(getString(R.string.fragment3_msg_center));
+        mViewBinding = ActivityMsgCenterBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.msg_center_clear));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.fragment3_msg_center));
 
         currentPosition = getIntent().getIntExtra("current_pos", 0);
 
@@ -85,7 +71,7 @@ public class MsgCenterActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -104,29 +90,27 @@ public class MsgCenterActivity extends BaseActivity {
         }
     });
 
-    @OnClick({R.id.tv_toolbar_right})
-    void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                String confirmMsg = "";
-                if (currentPosition == 0) {
-                    confirmMsg = getString(R.string.msg_center_clear_device_msg);
-                } else if (currentPosition == 1) {
-                    confirmMsg = getString(R.string.msg_center_clear_share_msg);
-                } else if (currentPosition == 2) {
-                    confirmMsg = getString(R.string.msg_center_clear_notice_msg);
-                }
-                DialogUtils.showEnsureDialog(mActivity, clearMsgListener, confirmMsg, "");
-                break;
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.tv_toolbar_right) {
+            String confirmMsg = "";
+            if (currentPosition == 0) {
+                confirmMsg = getString(R.string.msg_center_clear_device_msg);
+            } else if (currentPosition == 1) {
+                confirmMsg = getString(R.string.msg_center_clear_share_msg);
+            } else if (currentPosition == 2) {
+                confirmMsg = getString(R.string.msg_center_clear_notice_msg);
+            }
+            DialogUtils.showEnsureDialog(mActivity, clearMsgListener, confirmMsg, "");
         }
     }
 
     private void initFragments() {
-        viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
-        tabLayout.setupWithViewPager(viewPager);
-        viewPager.setOffscreenPageLimit(type.length);
-        viewPager.setCurrentItem(currentPosition);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewBinding.viewPager.setAdapter(new TabAdapter(getSupportFragmentManager()));
+        mViewBinding.tabLayout.setupWithViewPager(mViewBinding.viewPager);
+        mViewBinding.viewPager.setOffscreenPageLimit(type.length);
+        mViewBinding.viewPager.setCurrentItem(currentPosition);
+        mViewBinding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 

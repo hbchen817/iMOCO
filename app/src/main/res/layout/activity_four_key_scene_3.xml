@@ -127,7 +127,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/dp_5"
                     android:paddingBottom="@dimen/dp_5"
-                    android:text="@string/key_2"
+                    android:text="@string/key_3"
                     android:textColor="#565353" />
 
                 <TextView

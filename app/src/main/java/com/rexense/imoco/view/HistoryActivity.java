@@ -19,21 +19,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityHistoryBinding;
 import com.rexense.imoco.event.RefreshHistoryEvent;
 import com.rexense.imoco.model.ItemHistoryMsg;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.LockManager;
 import com.rexense.imoco.utility.SrlUtils;
-import com.rexense.imoco.view.BaseActivity;
 import com.rexense.imoco.viewholder.CommonAdapter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -45,16 +43,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * @author Gary
  * @time 2020/10/15 13:13
  */
 
 public class HistoryActivity extends BaseActivity {
+    private ActivityHistoryBinding mViewBinding;
 
     public static final String IOTID = "IOTID";
     private static final String[] TYPE_ALL = new String[]{};
@@ -62,29 +57,16 @@ public class HistoryActivity extends BaseActivity {
     private static final String[] TYPE_OPEN = new String[]{"DoorOpenNotification", "RemoteUnlockNotification"};
     private static final String[] TYPE_INFO = new String[]{"KeyDeletedNotification", "KeyAddedNotification", "LowElectricityAlarm", "ReportReset"};
 
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.mTimeText)
-    TextView mTimeText;
-    @BindView(R.id.mTypeText)
-    TextView mTypeText;
-    @BindView(R.id.mRecyclerView)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.srl_fragment_me)
-    SmartRefreshLayout mSrlFragmentMe;
-    @BindView(R.id.no_record_hint)
-    TextView mNoRecordHint;
-
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private String mIotID;
     private int mPageNo = 1;
-    private int mPageSize = 30;
+    private final int PAGE_SIZE = 30;
     private MyResponseHandler mHandler;
     private long mStartTime;
     private String[] mCurrentType;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
             mList.clear();
@@ -92,7 +74,7 @@ public class HistoryActivity extends BaseActivity {
             getData();
         }
     };
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mPageNo++;
@@ -109,19 +91,24 @@ public class HistoryActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityHistoryBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
         mIotID = getIntent().getStringExtra(IOTID);
         mHandler = new MyResponseHandler(this);
         initView();
-        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
-        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
+        mViewBinding.srlFragmentMe.setOnRefreshListener(onRefreshListener);
+        mViewBinding.srlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
         mStartTime = 0;
         mCurrentType = TYPE_ALL;
         getData();
 
         initStatusBar();
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.mTimeView.setOnClickListener(this::onViewClicked);
+        mViewBinding.mTypeView.setOnClickListener(this::onViewClicked);
     }
 
     // 嵌入式状态栏
@@ -141,17 +128,17 @@ public class HistoryActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(R.string.history_record);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.history_record);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mViewBinding.mRecyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new CommonAdapter(mList, this);
-        mRecyclerView.setAdapter(mAdapter);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mNoRecordHint.setTypeface(iconfont);
+        mViewBinding.mRecyclerView.setAdapter(mAdapter);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.noRecordHint.setTypeface(iconfont);
     }
 
     private void getData() {
-        LockManager.getLockHistory(mIotID, mStartTime, System.currentTimeMillis(), mCurrentType, mPageNo, mPageSize, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        LockManager.getLockHistory(mIotID, mStartTime, System.currentTimeMillis(), mCurrentType, mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
 
     }
 
@@ -161,18 +148,14 @@ public class HistoryActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.mTimeView, R.id.mTypeView})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.mTimeView:
-                showTimeFilterDiaLog();
-                break;
-            case R.id.mTypeView:
-                showTypeFilterDiaLog();
-                break;
+        int resId = view.getId();
+        if (resId == R.id.iv_toolbar_left) {
+            finish();
+        } else if (resId == R.id.mTimeView) {
+            showTimeFilterDiaLog();
+        } else if (resId == R.id.mTypeView) {
+            showTypeFilterDiaLog();
         }
     }
 
@@ -187,7 +170,8 @@ public class HistoryActivity extends BaseActivity {
 
 
         final Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -204,7 +188,7 @@ public class HistoryActivity extends BaseActivity {
 
         all_time.setOnClickListener(v -> {
             if (mStartTime != 0) {
-                mTimeText.setText(all_time.getText());
+                mViewBinding.mTimeText.setText(all_time.getText());
                 mStartTime = 0;
                 mList.clear();
                 getData();
@@ -213,28 +197,28 @@ public class HistoryActivity extends BaseActivity {
         });
 
         last_week.setOnClickListener(v -> {
-            mTimeText.setText(last_week.getText());
+            mViewBinding.mTimeText.setText(last_week.getText());
             mStartTime = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 7;
             mList.clear();
             getData();
             dialog.dismiss();
         });
         last_month.setOnClickListener(v -> {
-            mTimeText.setText(last_month.getText());
+            mViewBinding.mTimeText.setText(last_month.getText());
             mStartTime = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30;
             mList.clear();
             getData();
             dialog.dismiss();
         });
         last_three_month.setOnClickListener(v -> {
-            mTimeText.setText(last_three_month.getText());
+            mViewBinding.mTimeText.setText(last_three_month.getText());
             mStartTime = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30 * 3;
             mList.clear();
             getData();
             dialog.dismiss();
         });
         last_half_year.setOnClickListener(v -> {
-            mTimeText.setText(last_half_year.getText());
+            mViewBinding.mTimeText.setText(last_half_year.getText());
             mStartTime = System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 30 * 6;
             mList.clear();
             getData();
@@ -254,7 +238,8 @@ public class HistoryActivity extends BaseActivity {
 
 
         final Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -269,7 +254,7 @@ public class HistoryActivity extends BaseActivity {
 
         all_record.setOnClickListener(v -> {
             if (mCurrentType != TYPE_ALL) {
-                mTypeText.setText(all_record.getText());
+                mViewBinding.mTypeText.setText(all_record.getText());
                 mCurrentType = TYPE_ALL;
                 mList.clear();
                 mPageNo = 1;
@@ -279,7 +264,7 @@ public class HistoryActivity extends BaseActivity {
         });
         alarm_record.setOnClickListener(v -> {
             if (mCurrentType != TYPE_ALARM) {
-                mTypeText.setText(alarm_record.getText());
+                mViewBinding.mTypeText.setText(alarm_record.getText());
                 mCurrentType = TYPE_ALARM;
                 mList.clear();
                 mPageNo = 1;
@@ -289,7 +274,7 @@ public class HistoryActivity extends BaseActivity {
         });
         open_record.setOnClickListener(v -> {
             if (mCurrentType != TYPE_OPEN) {
-                mTypeText.setText(open_record.getText());
+                mViewBinding.mTypeText.setText(open_record.getText());
                 mCurrentType = TYPE_OPEN;
                 mList.clear();
                 mPageNo = 1;
@@ -299,7 +284,7 @@ public class HistoryActivity extends BaseActivity {
         });
         info_record.setOnClickListener(v -> {
             if (mCurrentType != TYPE_INFO) {
-                mTypeText.setText(info_record.getText());
+                mViewBinding.mTypeText.setText(info_record.getText());
                 mCurrentType = TYPE_INFO;
                 mList.clear();
                 mPageNo = 1;
@@ -321,30 +306,27 @@ public class HistoryActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             HistoryActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    JSONObject js = JSON.parseObject((String) msg.obj);
-                    JSONArray array = js.getJSONArray("data");
-                    int size = array.size();
-                    for (int i = 0; i < size; i++) {
-                        JSONObject jo = array.getJSONObject(i);
-                        if (jo.getIntValue("KeyID") == 103) {
-                            continue;
-                        }
-                        ItemHistoryMsg item = new ItemHistoryMsg();
-                        item.setTime(jo.getString("client_date"));
-                        item.setEvent_code(jo.getString("event_code"));
-                        item.setKeyID(jo.getString("KeyID"));
-                        item.setLockType(jo.getIntValue("LockType"));
-                        activity.mList.add(item);
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_QUERY_HISTORY) {
+                JSONObject js = JSON.parseObject((String) msg.obj);
+                JSONArray array = js.getJSONArray("data");
+                int size = array.size();
+                for (int i = 0; i < size; i++) {
+                    JSONObject jo = array.getJSONObject(i);
+                    if (jo.getIntValue("KeyID") == 103) {
+                        continue;
                     }
-                    activity.mNoRecordHint.setVisibility(activity.mList.isEmpty() ? View.VISIBLE : View.GONE);
-                    activity.mAdapter.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
-                    SrlUtils.finishLoadMore(activity.mSrlFragmentMe, true);
-                    break;
-                default:
-                    break;
+                    ItemHistoryMsg item = new ItemHistoryMsg();
+                    item.setTime(jo.getString("client_date"));
+                    item.setEvent_code(jo.getString("event_code"));
+                    item.setKeyID(jo.getString("KeyID"));
+                    item.setLockType(jo.getIntValue("LockType"));
+                    activity.mList.add(item);
+                }
+                activity.mViewBinding.noRecordHint.setVisibility(activity.mList.isEmpty() ? View.VISIBLE : View.GONE);
+                activity.mAdapter.notifyDataSetChanged();
+                SrlUtils.finishRefresh(activity.mViewBinding.srlFragmentMe, true);
+                SrlUtils.finishLoadMore(activity.mViewBinding.srlFragmentMe, true);
             }
         }
     }

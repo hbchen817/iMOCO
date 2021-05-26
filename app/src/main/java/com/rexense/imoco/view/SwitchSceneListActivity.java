@@ -10,12 +10,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -25,6 +23,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityLightSceneListBinding;
 import com.rexense.imoco.event.CEvent;
 import com.rexense.imoco.event.EEvent;
 import com.rexense.imoco.event.SceneBindEvent;
@@ -48,18 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class SwitchSceneListActivity extends BaseActivity {
-
-    @BindView(R.id.recycle_view)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView mRightText;
+    private ActivityLightSceneListBinding mViewBinding;
 
     private String mIotId;
     private SceneManager mSceneManager;
@@ -75,18 +64,20 @@ public class SwitchSceneListActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_scene_list);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityLightSceneListBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
         mIotId = getIntent().getStringExtra("extra");
         mKeyCode = getIntent().getStringExtra("keyCode");
-        mTitle.setText("场景绑定");
-        this.mSceneManager = new SceneManager(this);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("场景绑定");
+        mSceneManager = new SceneManager(this);
         mSceneBgs = getResources().obtainTypedArray(R.array.scene_bgs);
         initAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        mViewBinding.recycleView.setLayoutManager(gridLayoutManager);
+        mViewBinding.recycleView.setAdapter(mAdapter);
+        mViewBinding.createSceneView.setOnClickListener(this::onViewClicked);
         getList();
 
         initStatusBar();
@@ -118,11 +109,12 @@ public class SwitchSceneListActivity extends BaseActivity {
 
     private void getList() {
         mClickPosition = -1;
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -138,7 +130,8 @@ public class SwitchSceneListActivity extends BaseActivity {
                         mAdapter.notifyDataSetChanged();
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL,
+                                    sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }
                     break;
@@ -233,16 +226,12 @@ public class SwitchSceneListActivity extends BaseActivity {
         mAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                switch (view.getId()) {
-                    case R.id.editBtn:
-                        SwitchSceneActivity.start(mActivity, mList.get(position), mIotId);
-                        break;
-                    case R.id.bindBtn:
-                        mBindPosition = position;
-                        mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mAPIDataHandler);
-                        break;
-                    default:
-                        break;
+                if (view.getId() == R.id.editBtn) {
+                    SwitchSceneActivity.start(mActivity, mList.get(position), mIotId);
+                } else if (view.getId() == R.id.bindBtn) {
+                    mBindPosition = position;
+                    mSceneManager.getExtendedProperty(mIotId, mKeyCode,
+                            mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mAPIDataHandler);
                 }
                 mClickPosition = -1;
                 mAdapter.notifyDataSetChanged();
@@ -250,12 +239,9 @@ public class SwitchSceneListActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.create_scene_view})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.create_scene_view:
-                SwitchSceneActivity.start(this, null, mIotId);
-                break;
+        if (view.getId() == R.id.create_scene_view) {
+            SwitchSceneActivity.start(this, null, mIotId);
         }
     }
 

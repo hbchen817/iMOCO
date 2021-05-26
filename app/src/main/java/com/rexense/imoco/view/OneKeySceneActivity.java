@@ -1,33 +1,28 @@
 package com.rexense.imoco.view;
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.rexense.imoco.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.rexense.imoco.databinding.ActivityOneKeySceneBinding;
 
 public class OneKeySceneActivity extends AppCompatActivity {
-
-    @BindView(R.id.mSceneContentText)
-    TextView mSceneContentText;
+    private ActivityOneKeySceneBinding mViewBinding;
 
     private boolean mBindScene;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_one_key_scene);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityOneKeySceneBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mViewBinding.mSceneContentText1.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick(R.id.mSceneContentText)
-    public void onViewClicked() {
+    public void onViewClicked(View view) {
         if (mBindScene) {
 
         } else {

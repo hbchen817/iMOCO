@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,28 +46,41 @@ import com.rexense.imoco.utility.ToastUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-21 17:14
  * Description: 网关详细界面
  */
 public class DetailGatewayActivity extends DetailActivity {
-    private View mFakeStatusbarView;
+    @BindView(R.id.fake_statusbar_view)
+    protected View mFakeStatusbarView;
+    @BindView(R.id.detailGatewayLblCount)
+    protected TextView mLblCount;
+    @BindView(R.id.detailGatewayLblArmMode)
+    protected TextView mLblAarmMode;
+    @BindView(R.id.detailGatewayLblArmModeClick)
+    protected TextView mLblAarmModeClick;
+    @BindView(R.id.detailGatewayImgSecurity)
+    protected ImageView mImgSecurity;
+    @BindView(R.id.detailGatewayImgSecurityRound)
+    protected ImageView mImgSecurityRound;
 
-    private int mAarmMode = 0;
-    private TextView mLblCount, mLblAarmMode, mLblAarmModeClick;
-    private ImageView mImgSecurity, mImgSecurityRound;
     private AptDeviceList mAptDeviceList = null;
     private List<EDevice.deviceEntry> mDeviceList;
     private int mStatus;
     private TSLHelper mTSLHelper;
-    private final int mPageSize = 50;
+    private final int PAGE_SIZE = 50;
+    private int mAarmMode = 0;
 
     // 开始获取网关子设备列表
     private void startGetGatewaySubdeive() {
-        this.mAptDeviceList.clearData();
-        this.mDeviceList.clear();
-        new UserCenter(this).getGatewaySubdeviceList(this.mIOTId, 1, this.mPageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processAPIDataHandler);
+        mAptDeviceList.clearData();
+        mDeviceList.clear();
+        new UserCenter(this).getGatewaySubdeviceList(mIOTId, 1, PAGE_SIZE,
+                mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
     }
 
     // 更新状态
@@ -79,34 +91,36 @@ public class DetailGatewayActivity extends DetailActivity {
         }
 
         if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode) != null && propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).length() > 0) {
-            this.mAarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
+            mAarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(DetailGatewayActivity.this, mProductKey, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             if (mapperEntry != null && mapperEntry.name != null) {
                 TextView lblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
                 lblAarmMode.setText(mapperEntry.value);
             }
-            this.mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
+            mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
 
             LinearLayout rl = (LinearLayout) findViewById(R.id.detailGatewayLlMain);
             if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
-                rl.setBackgroundColor(getResources().getColor(R.color.topic_color1));
+                int topicColor1 = getResources().getColor(R.color.topic_color1);
+                rl.setBackgroundColor(topicColor1);
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
-                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color1));
+                mFakeStatusbarView.setBackgroundColor(topicColor1);
                 if (Build.VERSION.SDK_INT >= 23)
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color1));
+                    getWindow().setStatusBarColor(topicColor1);
             } else {
-                rl.setBackgroundColor(getResources().getColor(R.color.topic_color2));
+                int topicColor2 = getResources().getColor(R.color.topic_color2);
+                rl.setBackgroundColor(topicColor2);
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
                 if (Build.VERSION.SDK_INT >= 23)
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color2));
-                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color2));
+                    getWindow().setStatusBarColor(topicColor2);
+                mFakeStatusbarView.setBackgroundColor(topicColor2);
             }
         }
         return true;
     }
 
     // 处理API数据处理器
-    private Handler processAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST == msg.what) {
@@ -124,7 +138,7 @@ public class DetailGatewayActivity extends DetailActivity {
                     }
                     if (list.data.size() >= list.pageSize) {
                         // 数据没有获取完则获取下一页数据
-                        new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, mPageSize, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
+                        new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
                     } else {
                         // 数据获取完则加载显示
                         ListView subdeviceList = (ListView) findViewById(R.id.detailGatewayLstSubdevice);
@@ -135,39 +149,35 @@ public class DetailGatewayActivity extends DetailActivity {
                     }
                 }
             }
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
-                    // 处理获取OTA固件信息
-                    JSONObject dataJson = JSONObject.parseObject((String) msg.obj);
-                    String currentVersion = dataJson.getString("currentVersion");
-                    String theNewVersion = dataJson.getString("version");
-                    Log.i("lzm", "currentVersion = " + currentVersion + "theNewVersion = " + theNewVersion);
-                    if (!currentVersion.equals(theNewVersion)) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(DetailGatewayActivity.this);
-                        builder.setIcon(R.drawable.dialog_quest);
-                        builder.setTitle(R.string.upgrade_firmware);
-                        builder.setMessage(R.string.dialog_ota);
-                        builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent intent = new Intent(mActivity, UpgradeFirmwareActivity.class);
-                                intent.putExtra("iotId", mIOTId);
-                                intent.putExtra("productKey", mProductKey);
-                                intent.putExtra("currentVersion", currentVersion);
-                                intent.putExtra("theNewVersion", theNewVersion);
-                                startActivity(intent);
-                            }
-                        });
-                        builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            }
-                        });
-                        builder.create().show();
-                    }
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO) {
+                // 处理获取OTA固件信息
+                JSONObject dataJson = JSONObject.parseObject((String) msg.obj);
+                String currentVersion = dataJson.getString("currentVersion");
+                String theNewVersion = dataJson.getString("version");
+                Log.i("lzm", "currentVersion = " + currentVersion + "theNewVersion = " + theNewVersion);
+                if (!currentVersion.equals(theNewVersion)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DetailGatewayActivity.this);
+                    builder.setIcon(R.drawable.dialog_quest);
+                    builder.setTitle(R.string.upgrade_firmware);
+                    builder.setMessage(R.string.dialog_ota);
+                    builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Intent intent = new Intent(mActivity, UpgradeFirmwareActivity.class);
+                            intent.putExtra("iotId", mIOTId);
+                            intent.putExtra("productKey", mProductKey);
+                            intent.putExtra("currentVersion", currentVersion);
+                            intent.putExtra("theNewVersion", theNewVersion);
+                            startActivity(intent);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    });
+                    builder.create().show();
+                }
             }
             return false;
         }
@@ -175,7 +185,7 @@ public class DetailGatewayActivity extends DetailActivity {
 
 
     // 实时数据处理器
-    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -224,22 +234,22 @@ public class DetailGatewayActivity extends DetailActivity {
     // 在线统计
     private void onlineCount() {
         TextView lblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
-        if (this.mDeviceList != null && this.mDeviceList.size() > 0) {
+        if (mDeviceList != null && mDeviceList.size() > 0) {
             int online = 0;
-            for (EDevice.deviceEntry e : this.mDeviceList) {
+            for (EDevice.deviceEntry e : mDeviceList) {
                 if (e.status == Constant.CONNECTION_STATUS_ONLINE) {
                     online++;
                 }
             }
-            lblCount.setText(String.format(getString(R.string.detailgateway_count), this.mDeviceList.size(), online));
+            lblCount.setText(String.format(getString(R.string.detailgateway_count), mDeviceList.size(), online));
         } else {
             lblCount.setText(String.format(getString(R.string.detailgateway_count), 0, 0));
         }
-        this.mLblCount.setVisibility(View.VISIBLE);
+        mLblCount.setVisibility(View.VISIBLE);
     }
 
     // 安防模式点击监听器
-    private OnClickListener armModeClick = new OnClickListener() {
+    private final OnClickListener armModeClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mAarmMode == 0) {
@@ -251,7 +261,7 @@ public class DetailGatewayActivity extends DetailActivity {
     };
 
     // 设备列表点击监听器
-    private AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
@@ -269,13 +279,12 @@ public class DetailGatewayActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
-        mFakeStatusbarView = (View) findViewById(R.id.fake_statusbar_view);
+        ButterKnife.bind(this);
 
-        this.mLblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
-        this.mLblCount.setVisibility(View.INVISIBLE);
-        this.mTSLHelper = new TSLHelper(this);
-        this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
-        this.mAptDeviceList = new AptDeviceList(this);
+        mLblCount.setVisibility(View.INVISIBLE);
+        mTSLHelper = new TSLHelper(this);
+        mDeviceList = new ArrayList<EDevice.deviceEntry>();
+        mAptDeviceList = new AptDeviceList(this);
 
         RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
         ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
@@ -285,20 +294,16 @@ public class DetailGatewayActivity extends DetailActivity {
         }
 
         // 获取网关状态
-        this.mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
+        mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
 
         // 安防模式设置处理
-        this.mImgSecurity = (ImageView) findViewById(R.id.detailGatewayImgSecurity);
-        this.mImgSecurityRound = (ImageView) findViewById(R.id.detailGatewayImgSecurityRound);
-        this.mLblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
-        this.mLblAarmModeClick = (TextView) findViewById(R.id.detailGatewayLblArmModeClick);
-        this.mImgSecurity.setOnClickListener(this.armModeClick);
-        this.mImgSecurityRound.setOnClickListener(this.armModeClick);
-        this.mLblAarmMode.setOnClickListener(this.armModeClick);
-        this.mLblAarmModeClick.setOnClickListener(this.armModeClick);
+        mImgSecurity.setOnClickListener(armModeClick);
+        mImgSecurityRound.setOnClickListener(armModeClick);
+        mLblAarmMode.setOnClickListener(armModeClick);
+        mLblAarmModeClick.setOnClickListener(armModeClick);
 
         // 共享网关不能添加子设备
-        if (this.mOwned == 0) {
+        if (mOwned == 0) {
             RelativeLayout rlAdd = (RelativeLayout) findViewById(R.id.detailGatewayRlAdd);
             rlAdd.setVisibility(View.GONE);
         }
@@ -319,9 +324,9 @@ public class DetailGatewayActivity extends DetailActivity {
         lblAdd.setOnClickListener(onAddClickListener);
 
         // 添加实时数据连接状态回调处理器
-        RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", mRealtimeDataHandler);
         // 添加实时数据设备加网回调处理器
-        RealtimeDataReceiver.addJoinCallbackHandler("DetailGatewayJoinCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addJoinCallbackHandler("DetailGatewayJoinCallback", mRealtimeDataHandler);
         // 注册事件总线
         EventBus.getDefault().register(this);
 
@@ -329,7 +334,7 @@ public class DetailGatewayActivity extends DetailActivity {
         startGetGatewaySubdeive();
         // 非共享设备才能去获取版本号信息
         if (mOwned > 0) {
-            OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
+            OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
         }
         initStatusBar();
     }
@@ -347,20 +352,20 @@ public class DetailGatewayActivity extends DetailActivity {
     protected void onResume() {
         // 刷新数据
         super.onResume();
-        if (this.mDeviceList != null && this.mDeviceList.size() > 0) {
+        if (mDeviceList != null && mDeviceList.size() > 0) {
             EDevice.deviceEntry bufferEntry, displayEntry;
-            for (int i = this.mDeviceList.size() - 1; i >= 0; i--) {
-                displayEntry = this.mDeviceList.get(i);
+            for (int i = mDeviceList.size() - 1; i >= 0; i--) {
+                displayEntry = mDeviceList.get(i);
                 bufferEntry = DeviceBuffer.getDeviceInformation(displayEntry.iotId);
                 if (bufferEntry != null) {
                     // 更新备注名称
                     displayEntry.nickName = bufferEntry.nickName;
                 } else {
                     // 删除不存在的数据
-                    this.mDeviceList.remove(i);
+                    mDeviceList.remove(i);
                 }
             }
-            this.mAptDeviceList.notifyDataSetChanged();
+            mAptDeviceList.notifyDataSetChanged();
         }
     }
 
@@ -379,12 +384,12 @@ public class DetailGatewayActivity extends DetailActivity {
     public void onRefreshRoomData(EEvent eventEntry) {
         // 处理刷新设备数量数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA)) {
-            this.onlineCount();
+            onlineCount();
         }
 
         // 处理刷新设备列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA)) {
-            this.startGetGatewaySubdeive();
+            startGetGatewaySubdeive();
         }
     }
 }

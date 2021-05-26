@@ -1,6 +1,5 @@
 package com.rexense.imoco.view;
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
@@ -79,7 +77,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     private String mExecuteScene = "";
     private int mBackLightState = 1;
     private TSLHelper mTSLHelper;
-    private final int TAG_GET_EXTENDED_PRO = 10000;
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
     private String mKeyName1;
     private String mKeyName2;
     private String mKeyName3;
@@ -137,17 +135,18 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mMyHandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private WeakReference<ThreeSceneSwitchActivity2> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(ThreeSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            ThreeSceneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -163,13 +162,14 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_1, mKeyName1TV.getText().toString());
-                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_2, mKeyName2TV.getText().toString());
-                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_3, mKeyName3TV.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_1, activity.mKeyName1TV.getText().toString());
+                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_2, activity.mKeyName2TV.getText().toString());
+                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_3, activity.mKeyName3TV.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
@@ -207,85 +207,64 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSwitch1, R.id.mSwitch2, R.id.mSwitch3,
             R.id.key_1_tv, R.id.key_2_tv, R.id.key_3_tv, R.id.back_light_layout, R.id.one_go_ic, R.id.two_go_ic, R.id.three_go_ic})
     public void onClickView(View view) {
-        switch (view.getId()) {
-            case R.id.one_go_ic:
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    mPressedKey = "1";
-                    mExecuteScene = mSceneContentText1.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.two_go_ic:
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    mPressedKey = "2";
-                    mExecuteScene = mSceneContentText2.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            case R.id.three_go_ic:
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    mPressedKey = "3";
-                    mExecuteScene = mSceneContentText3.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
-                }
-                break;
-
-            case R.id.mSwitch1:
-                if (mManualIDs[0] != null) {
-                    mPressedKey = "1";
-                    mExecuteScene = mSceneContentText1.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.mSwitch2:
-                if (mManualIDs[1] != null) {
-                    mPressedKey = "2";
-                    mExecuteScene = mSceneContentText2.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.mSwitch3:
-                if (mManualIDs[2] != null) {
-                    mPressedKey = "3";
-                    mExecuteScene = mSceneContentText3.getText().toString();
-                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.key_1_tv: {
-                // 按键1
-                showKeyNameDialogEdit(R.id.key_1_tv);
-                break;
+        if (view.getId() == R.id.one_go_ic || view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                mPressedKey = "1";
+                mExecuteScene = mSceneContentText1.getText().toString();
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
             }
-            case R.id.key_2_tv: {
-                // 按键2
-                showKeyNameDialogEdit(R.id.key_2_tv);
-                break;
+        } else if (view.getId() == R.id.two_go_ic || view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                mPressedKey = "2";
+                mExecuteScene = mSceneContentText2.getText().toString();
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
             }
-            case R.id.key_3_tv: {
-                // 按键3
-                showKeyNameDialogEdit(R.id.key_3_tv);
-                break;
+        } else if (view.getId() == R.id.three_go_ic || view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                mPressedKey = "3";
+                mExecuteScene = mSceneContentText3.getText().toString();
+                mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
             }
-            case R.id.back_light_layout: {
-                // 背光
-                if (mBackLightState == CTSL.STATUS_OFF) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PTS_BackLight}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PTS_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
+        } else if (view.getId() == R.id.mSwitch1) {
+            if (mManualIDs[0] != null) {
+                mPressedKey = "1";
+                mExecuteScene = mSceneContentText1.getText().toString();
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
             }
-            default:
-                break;
+        } else if (view.getId() == R.id.mSwitch2) {
+            if (mManualIDs[1] != null) {
+                mPressedKey = "2";
+                mExecuteScene = mSceneContentText2.getText().toString();
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
+        } else if (view.getId() == R.id.mSwitch3) {
+            if (mManualIDs[2] != null) {
+                mPressedKey = "3";
+                mExecuteScene = mSceneContentText3.getText().toString();
+                mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
+        } else if (view.getId() == R.id.key_1_tv) {
+            // 按键1
+            showKeyNameDialogEdit(R.id.key_1_tv);
+        } else if (view.getId() == R.id.key_2_tv) {
+            // 按键2
+            showKeyNameDialogEdit(R.id.key_2_tv);
+        } else if (view.getId() == R.id.key_3_tv) {
+            // 按键3
+            showKeyNameDialogEdit(R.id.key_3_tv);
+        } else if (view.getId() == R.id.back_light_layout) {
+            // 背光
+            if (mBackLightState == CTSL.STATUS_OFF) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PTS_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PTS_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+            }
         }
     }
 
@@ -298,32 +277,34 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         }
     }
 
-    private class DelSceneHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class DelSceneHandler extends Handler {
+        private WeakReference<ThreeSceneSwitchActivity2> ref;
 
-        public DelSceneHandler(Activity activity) {
+        public DelSceneHandler(ThreeSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            ThreeSceneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
-                ViseLog.d("mPressedKey = " + mPressedKey + " , " + (String) msg.obj);
+                ViseLog.d("mPressedKey = " + activity.mPressedKey + " , " + (String) msg.obj);
                 if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     String keyNo = jsonObject.getString("keyNo");
-                    if (keyNo != null && keyNo.equals(mPressedKey)) {
+                    if (keyNo != null && keyNo.equals(activity.mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, mDelSceneHandler);
+                        activity.mSceneManager.deleteScene(autoSceneId, null,
+                                null, activity.mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
-                mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
-                        null, mDelSceneHandler);
+                activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}",
+                        null, null, activity.mDelSceneHandler);
             } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
-                getScenes();
+                activity.getScenes();
             }
         }
     }
@@ -340,22 +321,15 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         titleTv.setText(getString(R.string.key_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setHint(getString(R.string.pls_input_key_name));
-        switch (resId) {
-            case R.id.key_1_tv: {
-                // 按键1
-                nameEt.setText(mKeyName1TV.getText().toString());
-                break;
-            }
-            case R.id.key_2_tv: {
-                // 按键2
-                nameEt.setText(mKeyName2TV.getText().toString());
-                break;
-            }
-            case R.id.key_3_tv: {
-                // 按键3
-                nameEt.setText(mKeyName3TV.getText().toString());
-                break;
-            }
+        if (resId == R.id.key_1_tv) {
+            // 按键1
+            nameEt.setText(mKeyName1TV.getText().toString());
+        } else if (resId == R.id.key_2_tv) {
+            // 按键2
+            nameEt.setText(mKeyName2TV.getText().toString());
+        } else if (resId == R.id.key_3_tv) {
+            // 按键3
+            nameEt.setText(mKeyName3TV.getText().toString());
         }
 
         nameEt.setSelection(nameEt.getText().toString().length());
@@ -388,28 +362,21 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 }
 
                 QMUITipDialogUtil.showLoadingDialg(ThreeSceneSwitchActivity2.this, R.string.is_setting);
-                switch (resId) {
-                    case R.id.key_1_tv: {
-                        // 按键1
-                        mKeyName1 = nameEt.getText().toString();
-                        mKeyName2 = mKeyName2TV.getText().toString();
-                        mKeyName3 = mKeyName3TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_2_tv: {
-                        // 按键2
-                        mKeyName1 = mKeyName1TV.getText().toString();
-                        mKeyName2 = nameEt.getText().toString();
-                        mKeyName3 = mKeyName3TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_3_tv: {
-                        // 按键3
-                        mKeyName1 = mKeyName1TV.getText().toString();
-                        mKeyName2 = mKeyName2TV.getText().toString();
-                        mKeyName3 = nameEt.getText().toString();
-                        break;
-                    }
+                if (resId == R.id.key_1_tv) {
+                    // 按键1
+                    mKeyName1 = nameEt.getText().toString();
+                    mKeyName2 = mKeyName2TV.getText().toString();
+                    mKeyName3 = mKeyName3TV.getText().toString();
+                } else if (resId == R.id.key_2_tv) {
+                    // 按键2
+                    mKeyName1 = mKeyName1TV.getText().toString();
+                    mKeyName2 = nameEt.getText().toString();
+                    mKeyName3 = mKeyName3TV.getText().toString();
+                } else if (resId == R.id.key_3_tv) {
+                    // 按键3
+                    mKeyName1 = mKeyName1TV.getText().toString();
+                    mKeyName2 = mKeyName2TV.getText().toString();
+                    mKeyName3 = nameEt.getText().toString();
                 }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_1, mKeyName1);
@@ -434,32 +401,23 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.one_go_ic, R.id.two_go_ic, R.id.three_go_ic})
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.one_go_ic:
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
-                }
-                break;
-            case R.id.two_go_ic:
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
-                }
-                break;
-            case R.id.three_go_ic:
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.one_go_ic || view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+            }
+        } else if (view.getId() == R.id.two_go_ic || view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
+            }
+        } else if (view.getId() == R.id.three_go_ic || view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
+            }
         }
         return true;
     }
 
-    private class MyHandler extends Handler {
+    private static class MyHandler extends Handler {
         final WeakReference<ThreeSceneSwitchActivity2> mWeakReference;
 
         public MyHandler(ThreeSceneSwitchActivity2 activity) {
@@ -470,6 +428,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ThreeSceneSwitchActivity2 activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -530,20 +489,20 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    DeviceBuffer.addExtendedInfo(mIOTId, object);
-                    mKeyName1TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_1));
-                    mKeyName2TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_2));
-                    mKeyName3TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_3));
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    activity.mKeyName1TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_1));
+                    activity.mKeyName2TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_2));
+                    activity.mKeyName3TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_3));
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
-                    mKeyName1TV.setText(mKeyName1);
-                    mKeyName2TV.setText(mKeyName2);
-                    mKeyName3TV.setText(mKeyName3);
-                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                    ToastUtils.showShortToast(ThreeSceneSwitchActivity2.this, R.string.set_success);
+                    activity.mKeyName1TV.setText(activity.mKeyName1);
+                    activity.mKeyName2TV.setText(activity.mKeyName2);
+                    activity.mKeyName3TV.setText(activity.mKeyName3);
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
                 default:

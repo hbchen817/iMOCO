@@ -11,12 +11,9 @@ import android.view.WindowManager;
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
-import com.aliyun.iot.link.ui.component.LinkToast;
 import com.rexense.imoco.R;
 import com.rexense.imoco.presenter.MocoApplication;
-import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.LogcatFileManager;
-import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.SpUtils;
 import com.rexense.imoco.utility.ToastUtils;
 
@@ -34,6 +31,7 @@ public class StartActivity extends BaseActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        setTheme(R.style.AppTheme_Launcher);
         setContentView(R.layout.activity_start);
         initView();
         initEvent();

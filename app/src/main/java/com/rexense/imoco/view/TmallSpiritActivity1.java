@@ -1,5 +1,6 @@
 package com.rexense.imoco.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -8,39 +9,34 @@ import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
 
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityTmallSpirit1Binding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+public class TmallSpiritActivity1 extends BaseActivity implements View.OnClickListener {
+    private ActivityTmallSpirit1Binding mViewBinding;
 
-public class TmallSpiritActivity1 extends BaseActivity {
+    private String mAuthCode = "TAOBAO";
 
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.web_view)
-    WebView webView;
-    private String mAuthCode="TAOBAO";
-
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tmall_spirit1);
-        ButterKnife.bind(this);
-        tvToolbarTitle.setText(getString(R.string.tmall_spirit));
+        mViewBinding = ActivityTmallSpirit1Binding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.tmall_spirit));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this);
         //支持javascript
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient() {
+        mViewBinding.webView.getSettings().setJavaScriptEnabled(true);
+        mViewBinding.webView.setWebViewClient(new WebViewClient() {
             //设置结束加载函数
             @Override
             public void onPageFinished(WebView view, String url) {
-                tvToolbarTitle.setText(view.getTitle());
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(view.getTitle());
             }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (isTokenUrl(url)) {
@@ -54,12 +50,12 @@ public class TmallSpiritActivity1 extends BaseActivity {
                 return false;
             }
         });
-        String tmallUrl = "https://oauth.taobao.com/authorize?response_type=code&client_id="+
-                Constant.APPKEY+
-                "&redirect_uri="+
-                Constant.TAOBAOREDIRECTURI+
+        String tmallUrl = "https://oauth.taobao.com/authorize?response_type=code&client_id=" +
+                Constant.APPKEY +
+                "&redirect_uri=" +
+                Constant.TAOBAOREDIRECTURI +
                 "&view=wap";
-        webView.loadUrl(tmallUrl);
+        mViewBinding.webView.loadUrl(tmallUrl);
 
         initStatusBar();
     }
@@ -75,7 +71,7 @@ public class TmallSpiritActivity1 extends BaseActivity {
 
     private boolean isTokenUrl(String url) {
         if (!TextUtils.isEmpty(url)) {
-            if ( url.contains("code=")) {
+            if (url.contains("code=")) {
                 String[] urlArray = url.split("code=");
                 if (urlArray.length > 1) {
                     String[] paramArray = urlArray[1].split("&");
@@ -89,12 +85,10 @@ public class TmallSpiritActivity1 extends BaseActivity {
         return false;
     }
 
-    @OnClick({R.id.tv_toolbar_right})
-    void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                break;
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.tv_toolbar_right) {
+
         }
     }
-
 }

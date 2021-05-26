@@ -8,26 +8,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityUserManagerBinding;
 import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.SrlUtils;
 import com.rexense.imoco.viewholder.CommonAdapter;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -39,50 +34,32 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * @author Gary
  * @time 2020/10/13 13:54
  */
 
 public class UserManagerActivity extends BaseActivity {
+    private ActivityUserManagerBinding mViewBinding;
 
     private static final String IOTID = "IOTID";
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.iv_toolbar_right)
-    ImageView ivToolbarRight;
-    @BindView(R.id.recycle_view)
-    RecyclerView mRecycleView;
-    @BindView(R.id.srl_fragment_me)
-    SmartRefreshLayout mSrlFragmentMe;
 
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private ProcessDataHandler mHandler;
     private int mPageNo = 1;
-    private int mPageSize = 20;
 
     private String mIotId;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
-        @Override
-        public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            mList.clear();
-            mPageNo = 1;
-            getData();
-        }
+    private final OnRefreshListener onRefreshListener = refreshLayout -> {
+        mList.clear();
+        mPageNo = 1;
+        getData();
     };
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
-        @Override
-        public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-            mPageNo++;
-            getData();
-        }
+
+    private final OnLoadMoreListener onLoadMoreListener = refreshLayout -> {
+        mPageNo++;
+        getData();
     };
 
     @Subscribe
@@ -95,9 +72,10 @@ public class UserManagerActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_manager);
+        mViewBinding = ActivityUserManagerBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
         EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
+
         mIotId = getIntent().getStringExtra(IOTID);
         initView();
         getData();
@@ -115,38 +93,35 @@ public class UserManagerActivity extends BaseActivity {
     }
 
     private void initView() {
-        ivToolbarRight.setImageResource(R.drawable.add_gray);
-        tvToolbarTitle.setText(R.string.lock_user_manager);
+        mViewBinding.includeToolbar.ivToolbarRight.setImageResource(R.drawable.add_gray);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.lock_user_manager);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mAdapter = new CommonAdapter(mList, this);
-        mRecycleView.setLayoutManager(layoutManager);
-        mRecycleView.setAdapter(mAdapter);
-        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
-        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
-        mAdapter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int index = (int) view.getTag();
-                ItemUser item = (ItemUser) mList.get(index);
-                EditUserActivity.start(UserManagerActivity.this, item.getID(), item.getName());
-            }
+        mViewBinding.recycleView.setLayoutManager(layoutManager);
+        mViewBinding.recycleView.setAdapter(mAdapter);
+        mViewBinding.srlFragmentMe.setOnRefreshListener(onRefreshListener);
+        mViewBinding.srlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
+        mAdapter.setOnClickListener(view -> {
+            int index = (int) view.getTag();
+            ItemUser item = (ItemUser) mList.get(index);
+            EditUserActivity.start(UserManagerActivity.this, item.getID(), item.getName());
         });
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.ivToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     private void getData() {
         mHandler = new ProcessDataHandler(this);
-        UserCenter.queryVirtualUserListInAccount(mPageNo, mPageSize, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        int PAGE_SIZE = 20;
+        UserCenter.queryVirtualUserListInAccount(mPageNo, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.iv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.iv_toolbar_right:
-                CreateUserActivity.start(this);
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.iv_toolbar_right) {
+            CreateUserActivity.start(this);
         }
     }
 
@@ -175,25 +150,21 @@ public class UserManagerActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             UserManagerActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_QUERY_USER_IN_ACCOUNT:
-                    JSONObject result = JSONObject.parseObject((String) msg.obj);
-                    JSONArray data = result.getJSONArray("data");
-                    int size = data.size();
-                    for (int i = 0; i < size; i++) {
-                        JSONObject jsonObject = data.getJSONObject(i);
-                        ItemUser itemUser = new ItemUser();
-                        itemUser.setID(jsonObject.getString("userId"));
-                        JSONArray attrList = jsonObject.getJSONArray("attrList");
-                        itemUser.setName(attrList.getJSONObject(0).getString("attrValue"));
-                        activity.mList.add(itemUser);
-                    }
-                    activity.mAdapter.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
-                    SrlUtils.finishLoadMore(activity.mSrlFragmentMe, true);
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_QUERY_USER_IN_ACCOUNT) {
+                JSONObject result = JSONObject.parseObject((String) msg.obj);
+                JSONArray data = result.getJSONArray("data");
+                int size = data.size();
+                for (int i = 0; i < size; i++) {
+                    JSONObject jsonObject = data.getJSONObject(i);
+                    ItemUser itemUser = new ItemUser();
+                    itemUser.setID(jsonObject.getString("userId"));
+                    JSONArray attrList = jsonObject.getJSONArray("attrList");
+                    itemUser.setName(attrList.getJSONObject(0).getString("attrValue"));
+                    activity.mList.add(itemUser);
+                }
+                activity.mAdapter.notifyDataSetChanged();
+                SrlUtils.finishRefresh(activity.mViewBinding.srlFragmentMe, true);
+                SrlUtils.finishLoadMore(activity.mViewBinding.srlFragmentMe, true);
             }
         }
     }

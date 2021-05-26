@@ -2,26 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/choiceGatewayLl"
-    android:background="@color/appbgcolor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@color/appbgcolor"
+    android:orientation="vertical">
 
-    <include layout="@layout/include_title" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/include_title" />
 
     <ListView
         android:id="@+id/choiceGatewayLstGateway"
-        android:listSelector="@color/background_list_selector"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="6dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="6dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
+        android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="6dp"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:horizontalSpacing="1dip"
+        android:listSelector="@color/background_list_selector" />
 
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.rexense.imoco.view;
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,9 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
@@ -33,8 +32,6 @@ import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
-import com.rexense.imoco.view.DetailActivity;
-import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -65,7 +62,7 @@ public class DetailThreeSwitchActivity extends DetailActivity {
     private TextView mBackLightIc;
     private TextView mBackLightTV;
 
-    private final int TAG_GET_EXTENDED_PRO = 10000;
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
     private SceneManager mSceneManager;
     private MyHandler mHandler;
     private String mKeyName1;
@@ -114,14 +111,14 @@ public class DetailThreeSwitchActivity extends DetailActivity {
             switch (mBackLightState) {
                 case 0: {
                     // 关闭
-                    mBackLightIc.setTextColor(getResources().getColor(R.color.gray3));
-                    mBackLightTV.setTextColor(getResources().getColor(R.color.gray3));
+                    mBackLightIc.setTextColor(ContextCompat.getColor(this, R.color.gray3));
+                    mBackLightTV.setTextColor(ContextCompat.getColor(this, R.color.gray3));
                     break;
                 }
                 case 1: {
                     // 打开
-                    mBackLightIc.setTextColor(getResources().getColor(R.color.blue2));
-                    mBackLightTV.setTextColor(getResources().getColor(R.color.blue2));
+                    mBackLightIc.setTextColor(ContextCompat.getColor(this, R.color.blue2));
+                    mBackLightTV.setTextColor(ContextCompat.getColor(this, R.color.blue2));
                     break;
                 }
             }
@@ -134,7 +131,7 @@ public class DetailThreeSwitchActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
         mSceneManager = new SceneManager(this);
         mHandler = new MyHandler(this);
 
@@ -142,7 +139,7 @@ public class DetailThreeSwitchActivity extends DetailActivity {
         mBackLightIc = (TextView) findViewById(R.id.back_light_ic);
         mBackLightTV = (TextView) findViewById(R.id.back_light_tv);
 
-        Typeface iconFont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconFont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconFont);
         mBackLightIc.setTypeface(iconFont);
 
@@ -213,6 +210,7 @@ public class DetailThreeSwitchActivity extends DetailActivity {
         });
         mStateValue3 = (TextView) findViewById(R.id.detailThreeSwitchLblStateValue3);
 
+        // 云端定时处理
         mTimerLayout = (RelativeLayout) findViewById(R.id.timer_layout);
         mTimerLayout.setOnClickListener(new OnClickListener() {
             @Override
@@ -220,6 +218,7 @@ public class DetailThreeSwitchActivity extends DetailActivity {
                 PluginHelper.cloudTimer(DetailThreeSwitchActivity.this, mIOTId, mProductKey);
             }
         });
+        // 背光灯控制
         mBackLightLayout = (RelativeLayout) findViewById(R.id.back_light_layout);
         mBackLightLayout.setOnClickListener(new OnClickListener() {
             @Override
@@ -232,18 +231,18 @@ public class DetailThreeSwitchActivity extends DetailActivity {
             }
         });
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconfont);
         mBackLightIc.setTypeface(iconfont);
 
         // 云端定时处理
-        RelativeLayout timer = (RelativeLayout) findViewById(R.id.timer_layout);
+        /*RelativeLayout timer = (RelativeLayout) findViewById(R.id.timer_layout);
         timer.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 PluginHelper.cloudTimer(DetailThreeSwitchActivity.this, mIOTId, mProductKey);
             }
-        });
+        });*/
 
         initStatusBar();
         initKeyNickName();
@@ -254,17 +253,18 @@ public class DetailThreeSwitchActivity extends DetailActivity {
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mHandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private final WeakReference<DetailThreeSwitchActivity> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(DetailThreeSwitchActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailThreeSwitchActivity activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -280,47 +280,49 @@ public class DetailThreeSwitchActivity extends DetailActivity {
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_1, mStateName1.getText().toString());
-                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_2, mStateName2.getText().toString());
-                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_3, mStateName3.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_1, activity.mStateName1.getText().toString());
+                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_2, activity.mStateName2.getText().toString());
+                    jsonObject.put(CTSL.TWS_P3_PowerSwitch_3, activity.mStateName3.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
     }
 
-    private class MyHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyHandler extends Handler {
+        private final WeakReference<DetailThreeSwitchActivity> ref;
 
-        public MyHandler(Activity activity) {
+        public MyHandler(DetailThreeSwitchActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailThreeSwitchActivity activity = ref.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    DeviceBuffer.addExtendedInfo(mIOTId, object);
-                    mStateName1.setText(object.getString(CTSL.TWS_P3_PowerSwitch_1));
-                    mStateName2.setText(object.getString(CTSL.TWS_P3_PowerSwitch_2));
-                    mStateName3.setText(object.getString(CTSL.TWS_P3_PowerSwitch_3));
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    activity.mStateName1.setText(object.getString(CTSL.TWS_P3_PowerSwitch_1));
+                    activity.mStateName2.setText(object.getString(CTSL.TWS_P3_PowerSwitch_2));
+                    activity.mStateName3.setText(object.getString(CTSL.TWS_P3_PowerSwitch_3));
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
-                    mStateName1.setText(mKeyName1);
-                    mStateName2.setText(mKeyName2);
-                    mStateName3.setText(mKeyName3);
-                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                    ToastUtils.showShortToast(DetailThreeSwitchActivity.this, R.string.set_success);
+                    activity.mStateName1.setText(activity.mKeyName1);
+                    activity.mStateName2.setText(activity.mKeyName2);
+                    activity.mStateName3.setText(activity.mKeyName3);
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
             }
@@ -349,22 +351,15 @@ public class DetailThreeSwitchActivity extends DetailActivity {
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setHint(getString(R.string.pls_input_key_name));
 
-        switch (resId) {
-            case R.id.detailThreeSwitchLblStateName1: {
-                // 按键1
-                nameEt.setText(mStateName1.getText().toString());
-                break;
-            }
-            case R.id.detailThreeSwitchLblStateName2: {
-                // 按键2
-                nameEt.setText(mStateName2.getText().toString());
-                break;
-            }
-            case R.id.detailThreeSwitchLblStateName3: {
-                // 按键3
-                nameEt.setText(mStateName3.getText().toString());
-                break;
-            }
+        if (resId == R.id.detailThreeSwitchLblStateName1) {
+            // 按键1
+            nameEt.setText(mStateName1.getText().toString());
+        } else if (resId == R.id.detailThreeSwitchLblStateName2) {
+            // 按键2
+            nameEt.setText(mStateName2.getText().toString());
+        } else if (resId == R.id.detailThreeSwitchLblStateName3) {
+            // 按键3
+            nameEt.setText(mStateName3.getText().toString());
         }
 
         nameEt.setSelection(nameEt.getText().toString().length());
@@ -397,28 +392,21 @@ public class DetailThreeSwitchActivity extends DetailActivity {
                 }
 
                 QMUITipDialogUtil.showLoadingDialg(DetailThreeSwitchActivity.this, R.string.is_setting);
-                switch (resId) {
-                    case R.id.detailThreeSwitchLblStateName1: {
-                        // 按键1
-                        mKeyName1 = nameEt.getText().toString();
-                        mKeyName2 = mStateName2.getText().toString();
-                        mKeyName3 = mStateName3.getText().toString();
-                        break;
-                    }
-                    case R.id.detailThreeSwitchLblStateName2: {
-                        // 按键2
-                        mKeyName1 = mStateName1.getText().toString();
-                        mKeyName2 = nameEt.getText().toString();
-                        mKeyName3 = mStateName3.getText().toString();
-                        break;
-                    }
-                    case R.id.detailThreeSwitchLblStateName3: {
-                        // 按键3
-                        mKeyName1 = mStateName1.getText().toString();
-                        mKeyName2 = mStateName2.getText().toString();
-                        mKeyName3 = nameEt.getText().toString();
-                        break;
-                    }
+                if (resId == R.id.detailThreeSwitchLblStateName1) {
+                    // 按键1
+                    mKeyName1 = nameEt.getText().toString();
+                    mKeyName2 = mStateName2.getText().toString();
+                    mKeyName3 = mStateName3.getText().toString();
+                } else if (resId == R.id.detailThreeSwitchLblStateName2) {
+                    // 按键2
+                    mKeyName1 = mStateName1.getText().toString();
+                    mKeyName2 = nameEt.getText().toString();
+                    mKeyName3 = mStateName3.getText().toString();
+                } else if (resId == R.id.detailThreeSwitchLblStateName3) {
+                    // 按键3
+                    mKeyName1 = mStateName1.getText().toString();
+                    mKeyName2 = mStateName2.getText().toString();
+                    mKeyName3 = nameEt.getText().toString();
                 }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.TWS_P3_PowerSwitch_1, mKeyName1);

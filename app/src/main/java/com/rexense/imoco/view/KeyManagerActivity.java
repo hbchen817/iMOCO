@@ -8,21 +8,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityKeyManagerBinding;
 import com.rexense.imoco.event.RefreshKeyListEvent;
-import com.rexense.imoco.model.ItemUser;
 import com.rexense.imoco.model.ItemUserKey;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.LockManager;
@@ -37,10 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * @author Gary
  * @time 2020/10/19 10:12
@@ -50,24 +43,22 @@ public class KeyManagerActivity extends BaseActivity {
 
     private static final String IOTID = "IOTID";
 
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.recycle_view)
-    RecyclerView recycleView;
-
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private String mIotId;
     private MyHandler mHandler;
     private HashMap<String, String> mUserMap = new HashMap<>();
 
+    private ActivityKeyManagerBinding mViewBinding;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_key_manager);
+        mViewBinding = ActivityKeyManagerBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
         EventBus.getDefault().register(this);
-        ButterKnife.bind(this);
-        tvToolbarTitle.setText(R.string.lock_key_manager);
+
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.lock_key_manager);
         mIotId = getIntent().getStringExtra(IOTID);
         mHandler = new MyHandler(this);
         initView();
@@ -103,9 +94,9 @@ public class KeyManagerActivity extends BaseActivity {
 
     private void initView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recycleView.setLayoutManager(layoutManager);
+        mViewBinding.recycleView.setLayoutManager(layoutManager);
         mAdapter = new CommonAdapter(mList, this);
-        recycleView.setAdapter(mAdapter);
+        mViewBinding.recycleView.setAdapter(mAdapter);
         mAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,6 +104,7 @@ public class KeyManagerActivity extends BaseActivity {
                 EditKeyActivity.start(KeyManagerActivity.this, (ItemUserKey) mList.get(index), mIotId);
             }
         });
+        mViewBinding.includeToolbar.tvToolbarLeft.setOnClickListener(this::onViewClicked);
     }
 
     public static void start(Context context, String iotId) {
@@ -121,12 +113,9 @@ public class KeyManagerActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    @OnClick({R.id.iv_toolbar_left})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
         }
     }
 
@@ -141,6 +130,7 @@ public class KeyManagerActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             KeyManagerActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_QUERY_USER_IN_DEVICE:
                     JSONArray userArray = JSON.parseArray((String) msg.obj);

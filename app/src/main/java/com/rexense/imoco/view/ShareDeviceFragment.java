@@ -1,20 +1,14 @@
 package com.rexense.imoco.view;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 
 import com.rexense.imoco.R;
-import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.ShareDeviceEvent;
 import com.rexense.imoco.model.EDevice;
-import com.rexense.imoco.model.ItemMsgCenter;
 import com.rexense.imoco.model.ItemShareDevice;
 import com.rexense.imoco.model.Visitable;
-import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.DeviceBuffer;
-import com.rexense.imoco.presenter.MsgCenterManager;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.viewholder.CommonAdapter;
 
@@ -27,6 +21,7 @@ import java.util.Map;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 
 /**
@@ -40,31 +35,31 @@ public class ShareDeviceFragment extends BaseFragment {
 
     private CommonAdapter adapter;
     private List<Visitable> models = new ArrayList<Visitable>();
-    private LinearLayoutManager layoutManager;
     private Intent intent;
     private int type;
 
     @Subscribe
-    public void shareDeviceEvent(ShareDeviceEvent shareDeviceEvent){
-        if (type==0){
-            if (shareDeviceEvent.getName().equals("select")){
+    public void shareDeviceEvent(ShareDeviceEvent shareDeviceEvent) {
+        if (type == 0) {
+            if (shareDeviceEvent.getName().equals("select")) {
                 changeStatus(2);
-            }else if (shareDeviceEvent.getName().equals("cancel")){
+            } else if (shareDeviceEvent.getName().equals("cancel")) {
                 changeStatus(1);
-            }else if (shareDeviceEvent.getName().equals("confirm")){
+            } else if (shareDeviceEvent.getName().equals("confirm")) {
                 getSelectedIds();
-                if (selectedIdList.isEmpty()){
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_selected_is_empty));
-                }else if (selectedIdList.size()>20){
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_num_error));
-                }else {
-                    intent = new Intent(mActivity,DeviceQrcodeActivity.class);
-                    intent.putStringArrayListExtra("iotIdList",selectedIdList);
+                if (selectedIdList.isEmpty()) {
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.share_device_selected_is_empty));
+                } else if (selectedIdList.size() > 20) {
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.share_device_num_error));
+                } else {
+                    intent = new Intent(mActivity, DeviceQrcodeActivity.class);
+                    intent.putStringArrayListExtra("iotIdList", selectedIdList);
                     startActivity(intent);
                 }
             }
         }
     }
+
     @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
@@ -82,29 +77,27 @@ public class ShareDeviceFragment extends BaseFragment {
         type = getArguments().getInt("type");
 
         adapter = new CommonAdapter(models, mActivity);
-        layoutManager = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recycleView.setLayoutManager(layoutManager);
         recycleView.setAdapter(adapter);
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
-                    case R.id.root_view:
-                        int p = (int) view.getTag();
-                        ItemShareDevice itemShareDevice = (ItemShareDevice) models.get(p);
-                        if (itemShareDevice.getStatus()==1){
-                            selectedIdList.clear();
-                            selectedIdList.add(itemShareDevice.getId());
-                            intent = new Intent(mActivity,DeviceQrcodeActivity.class);
-                            intent.putStringArrayListExtra("iotIdList",selectedIdList);
-                            startActivity(intent);
-                        }else if (itemShareDevice.getStatus()==2){
-                            itemShareDevice.setStatus(3);
-                        }else if (itemShareDevice.getStatus()==3){
-                            itemShareDevice.setStatus(2);
-                        }
-                        adapter.notifyDataSetChanged();
-                        break;
+                if (view.getId() == R.id.root_view) {
+                    int p = (int) view.getTag();
+                    ItemShareDevice itemShareDevice = (ItemShareDevice) models.get(p);
+                    if (itemShareDevice.getStatus() == 1) {
+                        selectedIdList.clear();
+                        selectedIdList.add(itemShareDevice.getId());
+                        intent = new Intent(mActivity, DeviceQrcodeActivity.class);
+                        intent.putStringArrayListExtra("iotIdList", selectedIdList);
+                        startActivity(intent);
+                    } else if (itemShareDevice.getStatus() == 2) {
+                        itemShareDevice.setStatus(3);
+                    } else if (itemShareDevice.getStatus() == 3) {
+                        itemShareDevice.setStatus(2);
+                    }
+                    adapter.notifyDataSetChanged();
                 }
             }
         });
@@ -120,9 +113,9 @@ public class ShareDeviceFragment extends BaseFragment {
     }
 
 
-    private void getData(){
-        Map<String, EDevice.deviceEntry> deviceMap =  DeviceBuffer.getAllDeviceInformation();
-        for(Map.Entry<String, EDevice.deviceEntry> entry : deviceMap.entrySet()){
+    private void getData() {
+        Map<String, EDevice.deviceEntry> deviceMap = DeviceBuffer.getAllDeviceInformation();
+        for (Map.Entry<String, EDevice.deviceEntry> entry : deviceMap.entrySet()) {
             String mapKey = entry.getKey();
             EDevice.deviceEntry mapValue = entry.getValue();
             ItemShareDevice itemShareDevice = new ItemShareDevice();
@@ -130,11 +123,11 @@ public class ShareDeviceFragment extends BaseFragment {
             itemShareDevice.setDeviceName(mapValue.nickName);
             itemShareDevice.setProductKey(mapValue.productKey);
             itemShareDevice.setImage(mapValue.image);
-            if (type==0&&mapValue.owned==1){
+            if (type == 0 && mapValue.owned == 1) {
                 itemShareDevice.setStatus(1);
                 models.add(itemShareDevice);
             }
-            if (type==1&&mapValue.owned==0){
+            if (type == 1 && mapValue.owned == 0) {
                 itemShareDevice.setStatus(0);
                 models.add(itemShareDevice);
             }
@@ -142,9 +135,9 @@ public class ShareDeviceFragment extends BaseFragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void changeStatus(int status){
+    private void changeStatus(int status) {
         int length = models.size();
-        for (int i=0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             ItemShareDevice itemShareDevice = (ItemShareDevice) models.get(i);
             itemShareDevice.setStatus(status);
         }
@@ -152,12 +145,13 @@ public class ShareDeviceFragment extends BaseFragment {
     }
 
     private ArrayList<String> selectedIdList = new ArrayList<>();
-    private void getSelectedIds(){
+
+    private void getSelectedIds() {
         selectedIdList.clear();
         int length = models.size();
-        for (int i=0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             ItemShareDevice itemShareDevice = (ItemShareDevice) models.get(i);
-            if (itemShareDevice.getStatus()==3){
+            if (itemShareDevice.getStatus() == 3) {
                 selectedIdList.add(itemShareDevice.getId());
             }
         }

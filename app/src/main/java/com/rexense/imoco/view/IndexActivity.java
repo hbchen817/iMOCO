@@ -1,12 +1,8 @@
 package com.rexense.imoco.view;
 
 import android.Manifest;
-import android.app.ActionBar;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -14,49 +10,31 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.alibaba.sdk.android.openaccount.widget.ProgressDialog;
-import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.imoco.R;
+import com.rexense.imoco.databinding.ActivityIndexBinding;
 import com.rexense.imoco.utility.PermissionUtil;
 import com.rexense.imoco.utility.SpUtils;
 import com.rexense.imoco.utility.ToastUtils;
-import com.tencent.bugly.crashreport.CrashReport;
-import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * @author imjackzhao@gmail.com
  * @date 2018/5/15
  */
 public class IndexActivity extends BaseActivity {
-
-    @BindView(R.id.fl_main_container)
-    FrameLayout mFlMainContainer;
-
-    @BindView(R.id.rb_tab_one)
-    RadioButton mRbTabOne;
-
-    @BindView(R.id.rg_tab_container)
-    RadioGroup mRgTabContainer;
+    private ActivityIndexBinding mViewBinding;
 
     /**
      * 当前显示的碎片
@@ -69,7 +47,7 @@ public class IndexActivity extends BaseActivity {
     private IndexFragment2 indexFragment2;
     private IndexFragment3 indexFragment3;
 
-    private String[] tagArr = {"IndexFragment1", "IndexFragment2", "IndexFragment3"};
+    private final String[] tagArr = {"IndexFragment1", "IndexFragment2", "IndexFragment3"};
     /**
      * 第一次按返回键的时间, 默认为0
      */
@@ -92,33 +70,28 @@ public class IndexActivity extends BaseActivity {
     /**
      * RadioGroup的RadioButton选中监听器
      */
-    private RadioGroup.OnCheckedChangeListener mRbOnCheckedChangeListener
+    private final RadioGroup.OnCheckedChangeListener mRbOnCheckedChangeListener
             = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId) {
-                case R.id.rb_tab_one:
-                    TAG = 0;
-                    // 切换至碎片一
-                    switchFragment(indexFragment1);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
-                    break;
-                case R.id.rb_tab_two:
-                    TAG = 1;
-                    // 切换至碎片二
-                    switchFragment(indexFragment2);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
-                    break;
-                case R.id.rb_tab_three:
-                    TAG = 2;
-                    // 切换至碎片三
-                    switchFragment(indexFragment3);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(Color.WHITE);
-                    break;
-                default:
+            if (checkedId == R.id.rb_tab_one) {
+                TAG = 0;
+                // 切换至碎片一
+                switchFragment(indexFragment1);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            } else if (checkedId == R.id.rb_tab_two) {
+                TAG = 1;
+                // 切换至碎片二
+                switchFragment(indexFragment2);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            } else if (checkedId == R.id.rb_tab_three) {
+                TAG = 2;
+                // 切换至碎片三
+                switchFragment(indexFragment3);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(Color.WHITE);
             }
         }
     };
@@ -137,9 +110,10 @@ public class IndexActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 设置布局文件
-        setContentView(R.layout.activity_index);
+        mViewBinding = ActivityIndexBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
         // 绑定ButterKnife
-        ButterKnife.bind(this);
+
         mFragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState != null) {
@@ -217,7 +191,6 @@ public class IndexActivity extends BaseActivity {
             mPermissionList.add(Manifest.permission.CAMERA);
         }
 
-
         // 位置的权限 蓝牙搜索相关
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -239,24 +212,21 @@ public class IndexActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
-                            ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
-                            PermissionUtil.getAppDetailSettingIntent1(this);
-                        }
+        if (requestCode == 1) {
+            if (grantResults.length > 0) {
+                for (int result : grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
+                        PermissionUtil.getAppDetailSettingIntent1(this);
                     }
-
-                    // 已经同意了运行时权限, 执行正常逻辑
-                    initView();
-                    initListener();
-                } else {
-                    ToastUtils.showToastCentrally(this, "发生未知错误");
                 }
-                break;
-            default:
+
+                // 已经同意了运行时权限, 执行正常逻辑
+                initView();
+                initListener();
+            } else {
+                ToastUtils.showToastCentrally(this, "发生未知错误");
+            }
         }
     }
 
@@ -273,13 +243,8 @@ public class IndexActivity extends BaseActivity {
         }
 
         // 获取活动网络连接信息
-
-        NetworkInfo aActiveInfo = mConnMgr.getActiveNetworkInfo();
-
-        return aActiveInfo;
-
+        return mConnMgr.getActiveNetworkInfo();
     }
-
 
     private void initView() {
         // 实例化几个碎片
@@ -296,7 +261,7 @@ public class IndexActivity extends BaseActivity {
 
     private void initListener() {
         // 给RadioGroup设置RadioButton选中监听器
-        mRgTabContainer.setOnCheckedChangeListener(mRbOnCheckedChangeListener);
+        mViewBinding.rgTabContainer.setOnCheckedChangeListener(mRbOnCheckedChangeListener);
     }
 
     /**

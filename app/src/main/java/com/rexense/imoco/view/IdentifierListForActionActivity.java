@@ -1,8 +1,8 @@
 package com.rexense.imoco.view;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,18 +23,16 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivityIdentifierListBinding;
 import com.rexense.imoco.demoTest.ActionEntry;
-import com.rexense.imoco.demoTest.CaConditionEntry;
 import com.rexense.imoco.demoTest.IdentifierItemForCA;
 import com.rexense.imoco.presenter.DeviceBuffer;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -43,18 +41,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class IdentifierListForActionActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.recycler_rl)
-    SmartRefreshLayout mIdentifierRL;
-    @BindView(R.id.identifier_recycler)
-    RecyclerView mIdentifierRV;
+    private ActivityIdentifierListBinding mViewBinding;
 
     private String mNickName = "";
     private String mDevIot = "";
@@ -66,14 +54,15 @@ public class IdentifierListForActionActivity extends BaseActivity {
 
     private List<IdentifierItemForCA> mList;
     private BaseQuickAdapter<IdentifierItemForCA, BaseViewHolder> mAdapter;
-    private LinearLayoutManager mLayoutManager;
+    private Typeface mIconfont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_identifier_list);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityIdentifierListBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         initStatusBar();
         initView();
     }
@@ -96,6 +85,9 @@ public class IdentifierListForActionActivity extends BaseActivity {
         mAdapter = new BaseQuickAdapter<IdentifierItemForCA, BaseViewHolder>(R.layout.item_identifier, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, IdentifierItemForCA identifier) {
+                TextView goIcon = holder.getView(R.id.go_iv);
+                goIcon.setTypeface(mIconfont);
+
                 int i = mList.indexOf(identifier);
                 holder.setText(R.id.name_tv, identifier.getName())
                         .setVisible(R.id.divider, i != 0);
@@ -110,24 +102,24 @@ public class IdentifierListForActionActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        mIdentifierRL.setOnRefreshListener(new OnRefreshListener() {
+        mViewBinding.recyclerRl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mSceneManager.queryIdentifierListForCA(mDevIot, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
-        mIdentifierRL.setOnLoadMoreListener(new OnLoadMoreListener() {
+        mViewBinding.recyclerRl.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 mSceneManager.queryIdentifierListForCA(mDevIot, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mIdentifierRV.setLayoutManager(mLayoutManager);
-        mIdentifierRV.setAdapter(mAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.identifierRecycler.setLayoutManager(layoutManager);
+        mViewBinding.identifierRecycler.setAdapter(mAdapter);
 
-        mTitle.setText(mNickName);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(mNickName);
 
         mSceneManager = new SceneManager(this);
         mHandler = new CallbackHandler(this);
@@ -135,64 +127,62 @@ public class IdentifierListForActionActivity extends BaseActivity {
         mSceneManager.queryIdentifierListForCA(mDevIot, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
-    private class CallbackHandler extends Handler {
-        private WeakReference<Activity> weakRf;
+    private static class CallbackHandler extends Handler {
+        private WeakReference<IdentifierListForActionActivity> weakRf;
 
-        public CallbackHandler(Activity activity) {
+        public CallbackHandler(IdentifierListForActionActivity activity) {
             weakRf = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            if (weakRf.get() == null) return;
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_IDENTIFIER_LIST: {
-                    mList.clear();
-                    String result = (String) msg.obj;
-                    if (result.substring(0, 1).equals("[")) {
-                        result = "{\"data\":" + result + "}";
-                    }
-                    JSONObject o = JSON.parseObject(result);
-                    JSONArray a = o.getJSONArray("data");
-                    for (int i = 0; i < a.size(); i++) {
-                        JSONObject o1 = a.getJSONObject(i);
-                        IdentifierItemForCA item = new Gson().fromJson(o1.toJSONString(), IdentifierItemForCA.class);
+            IdentifierListForActionActivity actionActivity = weakRf.get();
+            if (actionActivity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_IDENTIFIER_LIST) {
+                actionActivity.mList.clear();
+                String result = (String) msg.obj;
+                if (result.substring(0, 1).equals("[")) {
+                    result = "{\"data\":" + result + "}";
+                }
+                JSONObject o = JSON.parseObject(result);
+                JSONArray a = o.getJSONArray("data");
+                for (int i = 0; i < a.size(); i++) {
+                    JSONObject o1 = a.getJSONObject(i);
+                    IdentifierItemForCA item = new Gson().fromJson(o1.toJSONString(), IdentifierItemForCA.class);
 
-                        if (item.getType() == 1) {
-                            // 属性
-                            ActionEntry.Property property = new ActionEntry.Property();
-                            property.setIotId(mDevIot);
-                            String identifier = o1.getString("identifier");
-                            property.setPropertyName(identifier);
+                    if (item.getType() == 1) {
+                        // 属性
+                        ActionEntry.Property property = new ActionEntry.Property();
+                        property.setIotId(actionActivity.mDevIot);
+                        String identifier = o1.getString("identifier");
+                        property.setPropertyName(identifier);
 
-                            JSONObject object = DeviceBuffer.getExtendedInfo(mDevIot);
-                            if (object != null) {
-                                String name = object.getString(identifier);
-                                if (name != null) {
-                                    item.setName(name);
-                                }
+                        JSONObject object = DeviceBuffer.getExtendedInfo(actionActivity.mDevIot);
+                        if (object != null) {
+                            String name = object.getString(identifier);
+                            if (name != null) {
+                                item.setName(name);
                             }
-
-                            item.setObject(property);
-                        } else if (item.getType() == 2) {
-                            // 服务
-                            ActionEntry.InvokeService service = new ActionEntry.InvokeService();
-                            service.setIotId(mDevIot);
-                            service.setServiceName(o1.getString("identifier"));
-                            item.setObject(service);
                         }
-                        item.setIotId(mDevIot);
-                        item.setNickName(mNickName);
-                        mList.add(item);
+
+                        item.setObject(property);
+                    } else if (item.getType() == 2) {
+                        // 服务
+                        ActionEntry.InvokeService service = new ActionEntry.InvokeService();
+                        service.setIotId(actionActivity.mDevIot);
+                        service.setServiceName(o1.getString("identifier"));
+                        item.setObject(service);
                     }
-                    mAdapter.notifyDataSetChanged();
-                    QMUITipDialogUtil.dismiss();
-                    mIdentifierRL.finishLoadMore(true);
-                    mIdentifierRL.finishRefresh(true);
-                    if (a.size() == 0) {
-                        ToastUtils.showLongToast(IdentifierListForActionActivity.this, R.string.this_device_has_no_scene_action);
-                    }
-                    break;
+                    item.setIotId(actionActivity.mDevIot);
+                    item.setNickName(actionActivity.mNickName);
+                    actionActivity.mList.add(item);
+                }
+                actionActivity.mAdapter.notifyDataSetChanged();
+                QMUITipDialogUtil.dismiss();
+                actionActivity.mViewBinding.recyclerRl.finishLoadMore(true);
+                actionActivity.mViewBinding.recyclerRl.finishRefresh(true);
+                if (a.size() == 0) {
+                    ToastUtils.showLongToast(actionActivity, R.string.this_device_has_no_scene_action);
                 }
             }
         }

@@ -10,8 +10,11 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
+import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.TSLHelper;
@@ -54,6 +57,9 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
     private int mTargetTem = 0;
 
     private TSLHelper mTSLHelper;
+
+    private int mOrange3;
+    private int mOrange2;
 
     // 更新状态
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -113,7 +119,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
     }
 
     private void initView() {
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mSwitchIC.setTypeface(iconfont);
         mTimingIC.setTypeface(iconfont);
 
@@ -136,6 +142,9 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
             }
         });
         mTemValue.setText("--");
+
+        mOrange3 = ContextCompat.getColor(this, R.color.orange3);
+        mOrange2 = ContextCompat.getColor(this, R.color.orange2);
     }
 
     // 嵌入式状态栏
@@ -151,24 +160,20 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
 
     @OnClick({R.id.switch_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.switch_layout: {
-                // 开关
-                if (mPowerSwitch == 1) {
-                    // 关闭
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    // 打开
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
+        int viewId = view.getId();
+        if (viewId == R.id.switch_layout) {
+            // 开关
+            if (mPowerSwitch == 1) {
+                // 关闭
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                // 打开
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.timing_layout: {
-                // 定时
-                if (mPowerSwitch == 1) {
-                    PluginHelper.cloudTimer(FloorHeatingForFSSActivity.this, mIOTId, mProductKey);
-                }
-                break;
+        } else if (viewId == R.id.timing_layout) {
+            // 定时
+            if (mPowerSwitch == 1) {
+                PluginHelper.cloudTimer(this, mIOTId, mProductKey);
             }
         }
     }
@@ -182,25 +187,25 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
         switch (flag) {
             case 0: {
                 // 关闭
-                mSwitchIC.setTextColor(getResources().getColor(R.color.orange3));
-                mTemValue.setTextColor(getResources().getColor(R.color.orange3));
-                mTemValue1TV.setTextColor(getResources().getColor(R.color.orange3));
-                mTemValue2TV.setTextColor(getResources().getColor(R.color.orange3));
-                mTemUnit1TV.setTextColor(getResources().getColor(R.color.orange3));
-                mTemUnit2TV.setTextColor(getResources().getColor(R.color.orange3));
-                mTimingIC.setTextColor(getResources().getColor(R.color.orange3));
+                mSwitchIC.setTextColor(mOrange3);
+                mTemValue.setTextColor(mOrange3);
+                mTemValue1TV.setTextColor(mOrange3);
+                mTemValue2TV.setTextColor(mOrange3);
+                mTemUnit1TV.setTextColor(mOrange3);
+                mTemUnit2TV.setTextColor(mOrange3);
+                mTimingIC.setTextColor(mOrange3);
                 mTemSeekBar.setEnabled(false);
                 break;
             }
             case 1: {
                 // 打开
-                mSwitchIC.setTextColor(getResources().getColor(R.color.orange2));
-                mTemValue.setTextColor(getResources().getColor(R.color.orange2));
-                mTemValue1TV.setTextColor(getResources().getColor(R.color.orange2));
-                mTemValue2TV.setTextColor(getResources().getColor(R.color.orange2));
-                mTemUnit1TV.setTextColor(getResources().getColor(R.color.orange2));
-                mTemUnit2TV.setTextColor(getResources().getColor(R.color.orange2));
-                mTimingIC.setTextColor(getResources().getColor(R.color.orange2));
+                mSwitchIC.setTextColor(mOrange2);
+                mTemValue.setTextColor(mOrange2);
+                mTemValue1TV.setTextColor(mOrange2);
+                mTemValue2TV.setTextColor(mOrange2);
+                mTemUnit1TV.setTextColor(mOrange2);
+                mTemUnit2TV.setTextColor(mOrange2);
+                mTimingIC.setTextColor(mOrange2);
                 mTemSeekBar.setEnabled(true);
                 break;
             }

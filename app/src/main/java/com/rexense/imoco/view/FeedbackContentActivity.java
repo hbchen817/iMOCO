@@ -1,7 +1,6 @@
 package com.rexense.imoco.view;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,42 +10,22 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
-import com.rexense.imoco.demoTest.ActionEntry;
+import com.rexense.imoco.databinding.ActivityNotificationActionBinding;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.sdk.Account;
 import com.rexense.imoco.utility.AppUtils;
-import com.rexense.imoco.utility.BuildProperties;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class FeedbackContentActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.notifition_et)
-    EditText mContentET;
-    @BindView(R.id.content_count_tv)
-    TextView mContentCountTV;
+    private ActivityNotificationActionBinding mViewBinding;
 
     private int mFeedbackType = 0;// 101表示反馈故障、102表示功能建议、103表示其他问题
     private UserCenter mUserCenter;
@@ -55,12 +34,11 @@ public class FeedbackContentActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_action);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityNotificationActionBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         initStatusBar();
         initView();
-
     }
 
     // 嵌入式状态栏
@@ -72,34 +50,35 @@ public class FeedbackContentActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         mFeedbackType = getIntent().getIntExtra("feedback_type", 0);
-        mContentET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
-        mUserCenter = new UserCenter(FeedbackContentActivity.this);
+        mViewBinding.notifitionEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(200)});
+        mUserCenter = new UserCenter(this);
         mHandler = new DataHandler(this);
         switch (mFeedbackType) {
             case 101: {// 反馈故障
-                mTitle.setText(getString(R.string.feedback_fault));
-                mContentET.setHint(R.string.pls_enter_fault_description);
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.feedback_fault));
+                mViewBinding.notifitionEt.setHint(R.string.pls_enter_fault_description);
                 break;
             }
             case 102: {// 功能建议
-                mTitle.setText(getString(R.string.feature_suggestions));
-                mContentET.setHint(R.string.pls_enter_feature_suggestions);
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.feature_suggestions));
+                mViewBinding.notifitionEt.setHint(R.string.pls_enter_feature_suggestions);
                 break;
             }
             case 103: {// 其他问题
-                mTitle.setText(getString(R.string.other_problems));
-                mContentET.setHint(R.string.pls_enter_description_of_the_problem);
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.other_problems));
+                mViewBinding.notifitionEt.setHint(R.string.pls_enter_description_of_the_problem);
                 break;
             }
         }
-        tvToolbarRight.setText(getString(R.string.share_device_commit));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.share_device_commit));
 
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String info = mContentET.getText().toString();
+                String info = mViewBinding.notifitionEt.getText().toString();
                 if (info == null || info.length() == 0) {
                     switch (mFeedbackType) {
                         case 101: {// 反馈故障
@@ -120,7 +99,7 @@ public class FeedbackContentActivity extends BaseActivity {
 
                 String mobileSystem = "android " + Build.VERSION.RELEASE;
                 String appVersion = AppUtils.getVersionName(FeedbackContentActivity.this);
-                String content = mContentET.getText().toString();
+                String content = mViewBinding.notifitionEt.getText().toString();
                 String mobileModel = Build.MODEL;
                 String contact = Account.getUserPhone();
                 String topic = String.valueOf(mFeedbackType);
@@ -131,7 +110,7 @@ public class FeedbackContentActivity extends BaseActivity {
             }
         });
 
-        mContentET.addTextChangedListener(new TextWatcher() {
+        mViewBinding.notifitionEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -142,32 +121,34 @@ public class FeedbackContentActivity extends BaseActivity {
 
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void afterTextChanged(Editable s) {
-                mContentCountTV.setText(s.toString().length() + "/200");
+                mViewBinding.contentCountTv.setText(s.toString().length() + "/200");
             }
         });
-        mContentCountTV.setText("0/200");
+        mViewBinding.contentCountTv.setText("0/200");
     }
 
-    private class DataHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class DataHandler extends Handler {
+        private final WeakReference<FeedbackContentActivity> ref;
 
-        public DataHandler(Activity activity) {
+        public DataHandler(FeedbackContentActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            FeedbackContentActivity activity = ref.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_SUBMIT_FEEDBACK) {
-                QMUITipDialogUtil.showSuccessDialog(FeedbackContentActivity.this, R.string.submit_completed);
+                QMUITipDialogUtil.showSuccessDialog(activity, R.string.submit_completed);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         QMUITipDialogUtil.dismiss();
-                        finish();
+                        activity.finish();
                     }
                 }, 1000);
             }

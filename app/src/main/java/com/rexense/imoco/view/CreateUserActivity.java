@@ -9,14 +9,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.databinding.ActivityCreateUserBinding;
 import com.rexense.imoco.presenter.UserCenter;
 import com.rexense.imoco.utility.ToastUtils;
 
@@ -24,33 +22,23 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 /**
  * @author Gary
  * @time 2020/10/13 15:42
  */
 
 public class CreateUserActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.mNameEditText)
-    EditText mNameEditText;
+    private ActivityCreateUserBinding mViewBinding;
 
     private ProcessDataHandler mHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_user);
-        ButterKnife.bind(this);
-        initView();
+        mViewBinding = ActivityCreateUserBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
+        initView();
         initStatusBar();
     }
 
@@ -64,26 +52,26 @@ public class CreateUserActivity extends BaseActivity {
     }
 
     private void initView() {
-        tvToolbarTitle.setText(R.string.create_user);
-        tvToolbarRight.setText(R.string.nick_name_save);
-        tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.create_user);
+        mViewBinding.includeToolbar.tvToolbarRight.setText(R.string.nick_name_save);
+        mViewBinding.includeToolbar.tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.tv_toolbar_right:
-                String name = mNameEditText.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
-                    return;
-                }
-                UserCenter.createVirtualUser(name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                break;
+        int id = view.getId();
+        if (id == R.id.iv_toolbar_left) {
+            finish();
+        } else if (id == R.id.tv_toolbar_right) {
+            String name = mViewBinding.mNameEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
+                return;
+            }
+            UserCenter.createVirtualUser(name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
         }
     }
 
@@ -103,6 +91,7 @@ public class CreateUserActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             CreateUserActivity activity = mWeakReference.get();
+            if (activity == null) return;
             EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
             activity.finish();
         }

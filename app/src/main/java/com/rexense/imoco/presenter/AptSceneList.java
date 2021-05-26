@@ -250,7 +250,7 @@ public class AptSceneList extends BaseAdapter {
         void onDelItem(String sceneId);
     }
 
-    private class Myhandler extends Handler {
+    private static class Myhandler extends Handler {
         private WeakReference<Context> ref;
 
         public Myhandler(Context context) {

@@ -6,52 +6,55 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar"/>
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <TextView
         android:id="@+id/ok"
         android:layout_width="@dimen/dp_200"
-        android:text="@string/icon_ok"
-        android:textSize="@dimen/dp_200"
-        android:textColor="#32A952"
+        android:layout_height="@dimen/dp_200"
         android:layout_marginTop="@dimen/dp_50"
-        android:layout_height="@dimen/dp_200"/>
+        android:text="@string/icon_ok"
+        android:textColor="#32A952"
+        android:textSize="@dimen/dp_200" />
 
     <TextView
-        android:text="@string/device_add_success"
-        android:layout_marginTop="@dimen/dp_50"
-        android:textColor="@color/all_3"
-        android:textSize="@dimen/dp_30"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_50"
+        android:text="@string/device_add_success"
+        android:textColor="@color/all_3"
+        android:textSize="@dimen/dp_30" />
+
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/current_test_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:background="@drawable/shape_button"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_15"
         android:text="@string/current_test"
         android:textColor="@color/white"
-        android:background="@drawable/shape_button"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:textSize="@dimen/sp_15"
-        android:paddingVertical="@dimen/dp_15"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:layout_height="wrap_content"/>
+        android:textSize="@dimen/sp_15" />
 
     <TextView
         android:id="@+id/edit_name_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:layout_marginVertical="@dimen/dp_10"
+        android:background="@drawable/shape_button_grey"
+        android:gravity="center"
+        android:paddingVertical="@dimen/dp_15"
         android:text="@string/edit_device_name"
         android:textColor="@color/white"
-        android:background="@drawable/shape_button_grey"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:textSize="@dimen/sp_15"
-        android:paddingVertical="@dimen/dp_15"
-        android:layout_marginVertical="@dimen/dp_10"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:layout_height="wrap_content"/>
+        android:textSize="@dimen/sp_15" />
 
 </LinearLayout>

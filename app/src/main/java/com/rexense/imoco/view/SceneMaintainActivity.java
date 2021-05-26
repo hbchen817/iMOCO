@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,17 +18,13 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CScene;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivitySceneMaintainBinding;
 import com.rexense.imoco.event.RefreshData;
 import com.rexense.imoco.model.EChoice;
 import com.rexense.imoco.model.EProduct;
@@ -41,7 +34,6 @@ import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.ProductHelper;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
-import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -52,10 +44,11 @@ import com.vise.log.ViseLog;
  * Description: 场景维护
  */
 public class SceneMaintainActivity extends BaseActivity {
+    private ActivitySceneMaintainBinding mViewBinding;
+
     private SceneManager mSceneManager;
-    private String mName, mSceneId;
+    private String mSceneId;
     private int mOperateType, mSceneModelCode, mSceneNumber;
-    private TextView mLblName, mLblEnable;
     private List<EScene.parameterEntry> mParameterList;
     private AptSceneParameter mAptSceneParameter;
     private int mSetTimeIndex = -1;
@@ -71,7 +64,7 @@ public class SceneMaintainActivity extends BaseActivity {
         TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText(getString(R.string.scene_maintain_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
-        nameEt.setText(this.mLblName.getText().toString());
+        nameEt.setText(mViewBinding.sceneMaintainLblName.getText().toString());
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
@@ -89,7 +82,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 String nameStr = nameEt.getText().toString().trim();
                 if (!nameStr.equals("")) {
                     dialog.dismiss();
-                    mLblName.setText(nameEt.getText().toString());
+                    mViewBinding.sceneMaintainLblName.setText(nameEt.getText().toString());
                 }
             }
         });
@@ -104,38 +97,33 @@ public class SceneMaintainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scene_maintain);
+        mViewBinding = ActivitySceneMaintainBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        this.mSceneManager = new SceneManager(this);
+        mSceneManager = new SceneManager(this);
 
         Intent intent = getIntent();
-        this.mOperateType = intent.getIntExtra("operateType", 1);
-        this.mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
-        this.mSceneNumber = intent.getIntExtra("sceneNumber", 0);
-        this.mName = intent.getStringExtra("name");
-        this.mSceneId = intent.getStringExtra("sceneId");
+        mOperateType = intent.getIntExtra("operateType", 1);
+        mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
+        mSceneNumber = intent.getIntExtra("sceneNumber", 0);
+        String name = intent.getStringExtra("name");
+        mSceneId = intent.getStringExtra("sceneId");
 
-        TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
-        ImageView icon = (ImageView) findViewById(R.id.sceneMaintainImgIcon);
-        this.mLblName = (TextView) findViewById(R.id.sceneMaintainLblName);
-        this.mLblName.setMovementMethod(ScrollingMovementMethod.getInstance());
-        this.mLblEnable = (TextView) findViewById(R.id.sceneMaintainLblEnable);
-        icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
+        mViewBinding.sceneMaintainLblName.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mViewBinding.sceneMaintainImgIcon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 
-        TextView lblOperate = (TextView) findViewById(R.id.sceneMaintainLblOperate);
-        if (this.mOperateType == CScene.OPERATE_CREATE) {
-            title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
-            this.mLblName.setText(intent.getStringExtra("sceneModelName"));
-            lblOperate.setText(getString(R.string.scene_maintain_create));
+        if (mOperateType == CScene.OPERATE_CREATE) {
+            mViewBinding.includeToolbar.includeTitleLblTitle.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
+            mViewBinding.sceneMaintainLblName.setText(intent.getStringExtra("sceneModelName"));
+            mViewBinding.sceneMaintainLblOperate.setText(getString(R.string.scene_maintain_create));
         } else {
-            title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), this.mName));
-            this.mLblName.setText(this.mName);
-            lblOperate.setText(getString(R.string.scene_maintain_edit));
+            mViewBinding.includeToolbar.includeTitleLblTitle.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), name));
+            mViewBinding.sceneMaintainLblName.setText(name);
+            mViewBinding.sceneMaintainLblOperate.setText(getString(R.string.scene_maintain_edit));
         }
 
         // 修改场景名称处理
-        ImageView editName = (ImageView) findViewById(R.id.sceneMaintainImgName);
-        editName.setOnClickListener(new OnClickListener() {
+        mViewBinding.sceneMaintainImgName.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 showSceneNameDialogEdit();
@@ -143,13 +131,12 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 设置使用状态处理
-        ImageView setEnable = (ImageView) findViewById(R.id.sceneMaintainImgEnable);
-        setEnable.setOnClickListener(new OnClickListener() {
+        mViewBinding.sceneMaintainImgEnable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<EChoice.itemEntry> items = new ArrayList<EChoice.itemEntry>();
                 items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_startusing), "1", mEnable));
-                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable ? true : false));
+                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable));
                 Intent intent = new Intent(SceneMaintainActivity.this, ChoiceActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("title", getString(R.string.scene_maintain_setenable));
@@ -162,8 +149,7 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 操作处理
-        RelativeLayout rlOperate = (RelativeLayout) findViewById(R.id.sceneMaintainRlOperate);
-        rlOperate.setOnClickListener(new OnClickListener() {
+        mViewBinding.sceneMaintainRlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (System.currentTimeMillis() - mClickTime < 3000) {
@@ -177,7 +163,7 @@ public class SceneMaintainActivity extends BaseActivity {
 
                 EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
                         mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
-                        mLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
+                        mViewBinding.sceneMaintainLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
                 baseInfoEntry.enable = mEnable;
                 QMUITipDialogUtil.showLoadingDialg(SceneMaintainActivity.this, R.string.is_uploading);
                 if (mOperateType == CScene.OPERATE_CREATE) {
@@ -199,7 +185,7 @@ public class SceneMaintainActivity extends BaseActivity {
                             break;
                         }
                         case 3:// 报警开灯
-                        case 4:{// 遥控开灯
+                        case 4: {// 遥控开灯
                             mSceneManager.createCAModel(baseInfoEntry, mParameterList, "any", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                             break;
                         }
@@ -209,7 +195,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     // 修改场景
                     baseInfoEntry.sceneId = mSceneId;
                     //mSceneManager.update(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                    switch (mSceneModelCode){
+                    switch (mSceneModelCode) {
                         case 1:// 起夜开灯
                         case 5:// 开门亮灯
                         case 6:// 门铃播报
@@ -220,12 +206,12 @@ public class SceneMaintainActivity extends BaseActivity {
                         case 11:// 离家模式
                         case 12:// 睡觉模式
                         case 13:// 起床模式
-                        case 2:{// 无人关灯
+                        case 2: {// 无人关灯
                             mSceneManager.updateCAModel(baseInfoEntry, mParameterList, "all", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                             break;
                         }
                         case 3:// 报警开灯
-                        case 4:{// 遥控开灯
+                        case 4: {// 遥控开灯
                             mSceneManager.updateCAModel(baseInfoEntry, mParameterList, "any", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                             break;
                         }
@@ -235,8 +221,7 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 返回处理
-        ImageView back = (ImageView) findViewById(R.id.includeTitleImgBack);
-        back.setOnClickListener(new OnClickListener() {
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -261,14 +246,13 @@ public class SceneMaintainActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
-        this.mParameterList = this.mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
-        mAptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
-        mAptSceneParameter.setData(this.mParameterList);
-        ListView lstParameter = (ListView) findViewById(R.id.sceneMaintainLstParameter);
-        lstParameter.setAdapter(mAptSceneParameter);
+        mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+        mAptSceneParameter = new AptSceneParameter(this);
+        mAptSceneParameter.setData(mParameterList);
+        mViewBinding.sceneMaintainLstParameter.setAdapter(mAptSceneParameter);
 
         // 列表点击事件处理
-        lstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mViewBinding.sceneMaintainLstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mSetTimeIndex = -1;
@@ -285,7 +269,7 @@ public class SceneMaintainActivity extends BaseActivity {
     }
 
     // 数据处理器
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -312,9 +296,9 @@ public class SceneMaintainActivity extends BaseActivity {
                     Log.i("lzm", "Detail" + (String) msg.obj);
                     mEnable = detailEntry.rawDetail.isEnable();
                     if (mEnable) {
-                        mLblEnable.setText(getString(R.string.scene_maintain_startusing));
+                        mViewBinding.sceneMaintainLblEnable.setText(getString(R.string.scene_maintain_startusing));
                     } else {
-                        mLblEnable.setText(getString(R.string.scene_maintain_stopusing));
+                        mViewBinding.sceneMaintainLblEnable.setText(getString(R.string.scene_maintain_stopusing));
                     }
                     // 初始化场景参数
                     mSceneManager.initSceneParameterList(mParameterList, detailEntry);
@@ -327,7 +311,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     if (sceneId_create != null && sceneId_create.length() > 0) {
                         //ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()), 2000);
                         QMUITipDialogUtil.showSuccessDialog(SceneMaintainActivity.this,
-                                String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()));
+                                String.format(getString(R.string.scene_maintain_create_success), mViewBinding.sceneMaintainLblName.getText().toString()));
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -336,10 +320,10 @@ public class SceneMaintainActivity extends BaseActivity {
                                 RefreshData.refreshSceneListData();
                                 finish();
                             }
-                        },1000);
+                        }, 1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mLblName.getText().toString()));
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mViewBinding.sceneMaintainLblName.getText().toString()));
                     }
                     break;
                 case Constant.MSG_CALLBACK_UPDATESCENE:
@@ -348,7 +332,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     if (sceneId_update != null && sceneId_update.length() > 0) {
                         //ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mLblName.getText().toString()));
                         QMUITipDialogUtil.showSuccessDialog(SceneMaintainActivity.this,
-                                String.format(getString(R.string.scene_maintain_edit_success), mLblName.getText().toString()));
+                                String.format(getString(R.string.scene_maintain_edit_success), mViewBinding.sceneMaintainLblName.getText().toString()));
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -357,10 +341,11 @@ public class SceneMaintainActivity extends BaseActivity {
                                 RefreshData.refreshSceneListData();
                                 finish();
                             }
-                        },1000);
+                        }, 1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_failed), mLblName.getText().toString()));
+                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_failed),
+                                mViewBinding.sceneMaintainLblName.getText().toString()));
                     }
                     break;
                 default:
@@ -390,10 +375,10 @@ public class SceneMaintainActivity extends BaseActivity {
             String value = bundle.getString("value");
             if (value.equalsIgnoreCase("1")) {
                 mEnable = true;
-                mLblEnable.setText(getString(R.string.scene_maintain_startusing));
+                mViewBinding.sceneMaintainLblEnable.setText(getString(R.string.scene_maintain_startusing));
             } else {
                 mEnable = false;
-                mLblEnable.setText(getString(R.string.scene_maintain_stopusing));
+                mViewBinding.sceneMaintainLblEnable.setText(getString(R.string.scene_maintain_stopusing));
             }
         }
 

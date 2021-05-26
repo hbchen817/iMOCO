@@ -11,10 +11,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,14 +26,11 @@ import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.event.CEvent;
 import com.rexense.imoco.event.EEvent;
-import com.rexense.imoco.event.RefreshSceneListEvent;
 import com.rexense.imoco.model.EScene;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.model.ItemColorLightScene;
 import com.rexense.imoco.model.Visitable;
 import com.rexense.imoco.presenter.CloudDataParser;
-import com.rexense.imoco.presenter.CodeMapper;
-import com.rexense.imoco.presenter.ImageProvider;
 import com.rexense.imoco.presenter.PluginHelper;
 import com.rexense.imoco.presenter.SceneManager;
 import com.rexense.imoco.presenter.SystemParameter;
@@ -114,30 +109,32 @@ public class ColorLightDetailActivity extends DetailActivity {
             mState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER));
             if (mState == 0) {
                 // 关闭
-                mLightnessText.setTextColor(getResources().getColor(R.color.blue4_2));
-                mKText.setTextColor(getResources().getColor(R.color.blue4_2));
-                mLightnessProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.color_light_progress_2));
+                int blue42 = getResources().getColor(R.color.blue4_2);
+                mLightnessText.setTextColor(blue42);
+                mKText.setTextColor(blue42);
+                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress_2));
                 mLightnessProgressBar.setEnabled(false);
-                mSwitchIC.setTextColor(getResources().getColor(R.color.blue4_2));
-                mSwitchTV.setTextColor(getResources().getColor(R.color.blue4_2));
-                mSceneIC.setTextColor(getResources().getColor(R.color.blue4_2));
-                mSceneTV.setTextColor(getResources().getColor(R.color.blue4_2));
-                mTimerIC.setTextColor(getResources().getColor(R.color.blue4_2));
-                mTimerTV.setTextColor(getResources().getColor(R.color.blue4_2));
-                mColorTemperatureText.setTextColor(getResources().getColor(R.color.blue4_2));
+                mSwitchIC.setTextColor(blue42);
+                mSwitchTV.setTextColor(blue42);
+                mSceneIC.setTextColor(blue42);
+                mSceneTV.setTextColor(blue42);
+                mTimerIC.setTextColor(blue42);
+                mTimerTV.setTextColor(blue42);
+                mColorTemperatureText.setTextColor(blue42);
             } else {
                 // 打开
-                mLightnessText.setTextColor(getResources().getColor(R.color.blue4));
-                mKText.setTextColor(getResources().getColor(R.color.blue4));
-                mLightnessProgressBar.setProgressDrawable(getResources().getDrawable(R.drawable.color_light_progress));
+                int blue4 = getResources().getColor(R.color.blue4);
+                mLightnessText.setTextColor(blue4);
+                mKText.setTextColor(blue4);
+                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress));
                 mLightnessProgressBar.setEnabled(true);
-                mSwitchIC.setTextColor(getResources().getColor(R.color.blue4));
-                mSwitchTV.setTextColor(getResources().getColor(R.color.blue4));
-                mSceneIC.setTextColor(getResources().getColor(R.color.blue4));
-                mSceneTV.setTextColor(getResources().getColor(R.color.blue4));
-                mTimerIC.setTextColor(getResources().getColor(R.color.blue4));
-                mTimerTV.setTextColor(getResources().getColor(R.color.blue4));
-                mColorTemperatureText.setTextColor(getResources().getColor(R.color.blue4));
+                mSwitchIC.setTextColor(blue4);
+                mSwitchTV.setTextColor(blue4);
+                mSceneIC.setTextColor(blue4);
+                mSceneTV.setTextColor(blue4);
+                mTimerIC.setTextColor(blue4);
+                mTimerTV.setTextColor(blue4);
+                mColorTemperatureText.setTextColor(blue4);
             }
         }
         return true;
@@ -154,8 +151,8 @@ public class ColorLightDetailActivity extends DetailActivity {
         mTimerIC.setTypeface(iconfont);
 
         EventBus.getDefault().register(this);
-        this.mTSLHelper = new TSLHelper(this);
-        this.mSceneManager = new SceneManager(this);
+        mTSLHelper = new TSLHelper(this);
+        mSceneManager = new SceneManager(this);
         mBackView.setImageResource(R.drawable.back_default);
         mTitleText.setTextColor(getResources().getColor(R.color.all_3));
         initView();
@@ -187,7 +184,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mLightnessText.setText(String.valueOf(progress));
@@ -227,7 +224,7 @@ public class ColorLightDetailActivity extends DetailActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -236,7 +233,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     for (int i = 0; i < mList.size(); i++) {
                         ItemColorLightScene itemEntry = (ItemColorLightScene) mList.get(i);
                         if (itemEntry.getId().equalsIgnoreCase(sceneId)) {
-                            Toast.makeText(mActivity, String.format(getString(R.string.main_scene_execute_hint), itemEntry.getSceneName()), Toast.LENGTH_LONG).show();
+                            ToastUtils.showShortToast(mActivity, String.format(getString(R.string.main_scene_execute_hint_2), itemEntry.getSceneName()));
                             break;
                         }
                     }

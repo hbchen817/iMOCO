@@ -7,24 +7,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.rexense.imoco.R;
+import com.rexense.imoco.databinding.ActivityMessagerecordBinding;
 import com.rexense.imoco.presenter.AptMessageRecord;
 import com.rexense.imoco.presenter.CloudDataParser;
 import com.rexense.imoco.presenter.TSLHelper;
 import com.rexense.imoco.contract.Constant;
 import com.rexense.imoco.model.ETSL;
 import com.rexense.imoco.utility.SrlUtils;
+import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.utility.Utility;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -43,15 +39,13 @@ public class MessageRecordActivity extends BaseActivity {
     private String mContentId;
     private int mContentType;
     private TSLHelper mTSLHelper;
-    private int mPageSize = 30;
-    private ListView mListView;
+    private final int PAGE_SIZE = 30;
     private AptMessageRecord mAPTMessageRecord;
     private long mMinTimeStamp = 0;
-    private TextView mTitle;
-    private ImageView mDropDown;
-    SmartRefreshLayout mSrlFragmentMe;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    private ActivityMessagerecordBinding mViewBinding;
+
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
             mMinTimeStamp = 0;
@@ -59,7 +53,7 @@ public class MessageRecordActivity extends BaseActivity {
         }
     };
 
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mMinTimeStamp--;
@@ -68,7 +62,7 @@ public class MessageRecordActivity extends BaseActivity {
     };
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -85,10 +79,10 @@ public class MessageRecordActivity extends BaseActivity {
                         }
                         mMinTimeStamp = propertyTimelineList.minTimeStamp;
                     } else {
-                        Toast.makeText(MessageRecordActivity.this, getString(R.string.messagerecord_loadend), Toast.LENGTH_LONG).show();
+                        ToastUtils.showLongToast(MessageRecordActivity.this, R.string.messagerecord_loadend);
                     }
-                    SrlUtils.finishRefresh(mSrlFragmentMe, true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+                    SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
                     break;
                 case Constant.MSG_CALLBACK_GETTSLEVENTTIMELINEDATA:
                     // 处理获取事件时间线数据处理
@@ -103,10 +97,10 @@ public class MessageRecordActivity extends BaseActivity {
                         }
                         mMinTimeStamp = eventTimelineList.minTimeStamp;
                     } else {
-                        Toast.makeText(MessageRecordActivity.this, getString(R.string.messagerecord_loadend), Toast.LENGTH_LONG).show();
+                        ToastUtils.showLongToast(MessageRecordActivity.this, R.string.messagerecord_loadend);
                     }
-                    SrlUtils.finishRefresh(mSrlFragmentMe, true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+                    SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
                     break;
                 default:
                     break;
@@ -118,17 +112,16 @@ public class MessageRecordActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_messagerecord);
-        mSrlFragmentMe = (SmartRefreshLayout) findViewById(R.id.srl_fragment_me);
-        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
-        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
+        mViewBinding = ActivityMessagerecordBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        this.mIODId = getIntent().getStringExtra("iotId");
-        this.mProductKey = getIntent().getStringExtra("productKey");
+        mViewBinding.srlFragmentMe.setOnRefreshListener(onRefreshListener);
+        mViewBinding.srlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
 
-        this.mTitle = (TextView) findViewById(R.id.messageRecordLblTitle);
-        this.mDropDown = (ImageView) findViewById(R.id.messageRecordImgDropdown);
-        this.mDropDown.setVisibility(View.GONE);
+        mIODId = getIntent().getStringExtra("iotId");
+        mProductKey = getIntent().getStringExtra("productKey");
+
+        mViewBinding.messageRecordImgDropdown.setVisibility(View.GONE);
 
         // 回退处理
         ImageView imgBack = (ImageView) findViewById(R.id.messageRecordImgBack);
@@ -140,23 +133,22 @@ public class MessageRecordActivity extends BaseActivity {
         });
 
         // 消息记录列表处理
-        this.mAPTMessageRecord = new AptMessageRecord(this);
-        this.mListView = (ListView) findViewById(R.id.messageRecordLstMessageRecord);
-        this.mListView.setAdapter(this.mAPTMessageRecord);
+        mAPTMessageRecord = new AptMessageRecord(this);
+        mViewBinding.messageRecordLstMessageRecord.setAdapter(mAPTMessageRecord);
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
         // 获取设备消息记录内容
-        this.mContents = this.mTSLHelper.getMessageRecordContent(this.mProductKey);
-        if (this.mContents != null && this.mContents.size() > 0) {
+        mContents = mTSLHelper.getMessageRecordContent(mProductKey);
+        if (mContents != null && mContents.size() > 0) {
             // 查询第一个内容
-            this.mContentId = this.mContents.get(0).id;
-            this.mContentType = this.mContents.get(0).type;
-            this.mTitle.setText(this.mContents.get(0).name);
-            this.startQuery();
+            mContentId = mContents.get(0).id;
+            mContentType = mContents.get(0).type;
+            mViewBinding.messageRecordLblTitle.setText(mContents.get(0).name);
+            startQuery();
             // 如果有多个内容则显示下拉选择
-            if (this.mContents.size() > 1) {
-                this.mDropDown.setVisibility(View.VISIBLE);
-                this.mDropDown.setOnClickListener(new View.OnClickListener() {
+            if (mContents.size() > 1) {
+                mViewBinding.messageRecordImgDropdown.setVisibility(View.VISIBLE);
+                mViewBinding.messageRecordImgDropdown.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // 选择消息记录内容
@@ -184,43 +176,43 @@ public class MessageRecordActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constant.REQUESTCODE_CALLCHOICECONTENTACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICECONTENTACTIVITY) {
-            this.mContentId = data.getStringExtra("id");
-            this.mTitle.setText(data.getStringExtra("name"));
-            this.mContentType = data.getIntExtra("type", Constant.CONTENTTYPE_PROPERTY);
-            this.startQuery();
+            mContentId = data.getStringExtra("id");
+            mViewBinding.messageRecordLblTitle.setText(data.getStringExtra("name"));
+            mContentType = data.getIntExtra("type", Constant.CONTENTTYPE_PROPERTY);
+            startQuery();
         }
     }
 
     // 开始查询
     private void startQuery() {
-        if (this.mContents != null && this.mContents.size() > 0) {
+        if (mContents != null && mContents.size() > 0) {
             mAPTMessageRecord.clearData();
-            if (this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
-                this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
-                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            if (mContentType == Constant.CONTENTTYPE_PROPERTY) {
+                mTSLHelper.getPropertyTimelineData(mIODId, mContentId, 0, Utility.getCurrentTimeStamp(), PAGE_SIZE, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             } else {
-                this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType, 0, Utility.getCurrentTimeStamp(), this.mPageSize, "desc",
-                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+                mTSLHelper.getEventTimelineData(mIODId, mContentId, mContentType, 0, Utility.getCurrentTimeStamp(), PAGE_SIZE, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         } else {
-            SrlUtils.finishRefresh(mSrlFragmentMe, true);
-            SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+            SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+            SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
         }
     }
 
     // 下一页查询
     private void nextQuery() {
-        if (this.mContents != null && this.mContents.size() > 0) {
-            if (this.mContentType == Constant.CONTENTTYPE_PROPERTY) {
-                this.mTSLHelper.getPropertyTimelineData(this.mIODId, this.mContentId, 0, mMinTimeStamp, this.mPageSize, "desc",
-                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+        if (mContents != null && mContents.size() > 0) {
+            if (mContentType == Constant.CONTENTTYPE_PROPERTY) {
+                mTSLHelper.getPropertyTimelineData(mIODId, mContentId, 0, mMinTimeStamp, PAGE_SIZE, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             } else {
-                this.mTSLHelper.getEventTimelineData(this.mIODId, this.mContentId, this.mContentType, 0, mMinTimeStamp, this.mPageSize, "desc",
-                        mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+                this.mTSLHelper.getEventTimelineData(mIODId, mContentId, mContentType, 0, mMinTimeStamp, PAGE_SIZE, "desc",
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         } else {
-            SrlUtils.finishRefresh(mSrlFragmentMe, true);
-            SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+            SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+            SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
         }
     }
 }

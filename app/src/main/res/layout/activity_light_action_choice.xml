@@ -5,7 +5,9 @@
     android:background="#EEEEF2"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
         android:id="@+id/temperatureView"

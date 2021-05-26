@@ -1,20 +1,14 @@
 package com.rexense.imoco.view;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -25,6 +19,7 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.CTSL;
 import com.rexense.imoco.contract.Constant;
+import com.rexense.imoco.databinding.ActivitySceneListForFullScreenBinding;
 import com.rexense.imoco.event.SceneBindEvent;
 import com.rexense.imoco.model.EAPIChannel;
 import com.rexense.imoco.presenter.SceneManager;
@@ -32,7 +27,6 @@ import com.rexense.imoco.utility.Logger;
 import com.rexense.imoco.utility.QMUITipDialogUtil;
 import com.rexense.imoco.utility.ToastUtils;
 import com.rexense.imoco.widget.GridItemDecoration;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
@@ -46,22 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class SceneListForFSSActivity extends DetailActivity {
-    @BindView(R.id.includeDetailRl)
-    RelativeLayout mTopbar;
-    @BindView(R.id.includeDetailImgBack)
-    ImageView mTopbarBack;
-    @BindView(R.id.includeDetailLblTitle)
-    TextView mTopbarTitle;
-    @BindView(R.id.includeDetailImgMore)
-    ImageView mTopbarMore;
-    @BindView(R.id.scene_rv)
-    RecyclerView mSceneRV;
-    @BindView(R.id.scene_sfl)
-    SmartRefreshLayout mSceneSFL;
+    private ActivitySceneListForFullScreenBinding mViewBinding;
 
     private List<SceneItem> mList = new ArrayList<>();
     private BaseQuickAdapter<SceneItem, BaseViewHolder> mSceneAdapter;
@@ -75,9 +55,9 @@ public class SceneListForFSSActivity extends DetailActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scene_list_for_full_screen);
+        mViewBinding = ActivitySceneListForFullScreenBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         mSceneManager = new SceneManager(this);
 
@@ -123,12 +103,12 @@ public class SceneListForFSSActivity extends DetailActivity {
             mList.add(item);
         }
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mSceneRV.setLayoutManager(layoutManager);
-        mSceneRV.addItemDecoration(new GridItemDecoration(2, QMUIDisplayHelper.dp2px(this, 10)));
-        mSceneRV.setAdapter(mSceneAdapter);
+        mViewBinding.sceneRv.setLayoutManager(layoutManager);
+        mViewBinding.sceneRv.addItemDecoration(new GridItemDecoration(2, QMUIDisplayHelper.dp2px(this, 10)));
+        mViewBinding.sceneRv.setAdapter(mSceneAdapter);
 
-        mSceneSFL.setEnableLoadMore(false);
-        mSceneSFL.setOnRefreshListener(new OnRefreshListener() {
+        mViewBinding.sceneSfl.setEnableLoadMore(false);
+        mViewBinding.sceneSfl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 getScenes();
@@ -142,7 +122,6 @@ public class SceneListForFSSActivity extends DetailActivity {
 
     @Subscribe
     public void refreshSceneName(SceneBindEvent event) {
-        ViseLog.d("绑定场景");
         getScenes();
     }
 
@@ -155,8 +134,8 @@ public class SceneListForFSSActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mTopbarTitle.setText(R.string.rb_tab_two_desc);
-        mTopbarBack.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.rb_tab_two_desc);
+        mViewBinding.includeToolbar.includeDetailImgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -169,53 +148,55 @@ public class SceneListForFSSActivity extends DetailActivity {
         mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
     }
 
-    private class MyHandler extends Handler {
-        final WeakReference<Activity> mWeakReference;
+    private static class MyHandler extends Handler {
+        final WeakReference<SceneListForFSSActivity> mWeakReference;
 
-        public MyHandler(Activity activity) {
+        public MyHandler(SceneListForFSSActivity activity) {
             mWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (mWeakReference.get() == null) return;
+            SceneListForFSSActivity activity = mWeakReference.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
                 ViseLog.d("获取扩展信息：" + (String) msg.obj);
                 JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
 
-                int pos = Integer.parseInt(mCurrentKey);
+                int pos = Integer.parseInt(activity.mCurrentKey);
                 if (jsonObject.getString("name") == null) {
-                    mList.get(pos - 1).setSceneName(getString(R.string.no_bind_scene));
+                    activity.mList.get(pos - 1).setSceneName(activity.getString(R.string.no_bind_scene));
                 } else {
-                    mList.get(pos - 1).setSceneName(jsonObject.getString("name"));
+                    activity.mList.get(pos - 1).setSceneName(jsonObject.getString("name"));
                 }
-                mList.get(pos - 1).setSceneId(jsonObject.getString("msId"));
-                mList.get(pos - 1).setAsId(jsonObject.getString("asId"));
+                activity.mList.get(pos - 1).setSceneId(jsonObject.getString("msId"));
+                activity.mList.get(pos - 1).setAsId(jsonObject.getString("asId"));
                 if (pos <= 11) {
-                    mCurrentKey = String.valueOf(pos + 1);
-                    mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
+                    activity.mCurrentKey = String.valueOf(pos + 1);
+                    activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey, activity.mCommitFailureHandler,
+                            activity.mExtendedPropertyResponseErrorHandler, activity.mMyHandler);
                 } else {
-                    mSceneSFL.finishRefresh(true);
+                    activity.mViewBinding.sceneSfl.finishRefresh(true);
                     QMUITipDialogUtil.dismiss();
-                    mSceneAdapter.notifyDataSetChanged();
+                    activity.mSceneAdapter.notifyDataSetChanged();
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_EXECUTESCENE) {
                 ViseLog.d((String) msg.obj);
                 String sceneId = (String) msg.obj;
                 String sceneName = null;
-                for (int i = 0; i < mList.size(); i++) {
-                    SceneItem item = mList.get(i);
+                for (int i = 0; i < activity.mList.size(); i++) {
+                    SceneItem item = activity.mList.get(i);
                     if (sceneId.equals(item.getSceneId())) {
                         sceneName = item.getSceneName();
                         break;
                     }
                 }
-                ToastUtils.showLongToast(SceneListForFSSActivity.this, String.format(getString(R.string.main_scene_execute_hint_2),
+                ToastUtils.showLongToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint_2),
                         sceneName));
             } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
-                QMUITipDialogUtil.showLoadingDialg(SceneListForFSSActivity.this, R.string.is_loading);
-                getScenes();
+                QMUITipDialogUtil.showLoadingDialg(activity, R.string.is_loading);
+                activity.getScenes();
             }
         }
     }
@@ -250,7 +231,7 @@ public class SceneListForFSSActivity extends DetailActivity {
                         mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        mSceneSFL.finishRefresh(true);
+                        mViewBinding.sceneSfl.finishRefresh(true);
                         mSceneAdapter.notifyDataSetChanged();
                     }
                 } else if (responseErrorEntry.code == 10360) {
@@ -274,8 +255,8 @@ public class SceneListForFSSActivity extends DetailActivity {
             getWindow().setStatusBarColor(Color.WHITE);
         }
 
-        mTopbar.setBackgroundColor(Color.WHITE);
-        mTopbarMore.setVisibility(View.GONE);
+        mViewBinding.includeToolbar.includeDetailRl.setBackgroundColor(Color.WHITE);
+        mViewBinding.includeToolbar.includeDetailImgMore.setVisibility(View.GONE);
     }
 
     private class SceneItem {

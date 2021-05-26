@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -34,7 +33,6 @@ import com.alibaba.sdk.android.openaccount.ui.widget.NetworkCheckOnClickListener
 import com.alibaba.sdk.android.openaccount.util.OpenAccountUtils;
 import com.alibaba.sdk.android.openaccount.util.ResourceUtils;
 import com.alibaba.sdk.android.openaccount.util.RpcUtils;
-import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.imoco.R;
 import com.rexense.imoco.contract.Constant;
 
@@ -57,98 +55,94 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mToolBar.setVisibility(View.GONE);
-        this.setViewListener(this);
-        this.mobileInputBox.setSupportForeignMobile(this, OpenAccountUIConfigs.MobileResetPasswordLoginFlow.mobileCountrySelectorActvityClazz, false);
+        setViewListener(this);
+        mobileInputBox.setSupportForeignMobile(this, OpenAccountUIConfigs.MobileResetPasswordLoginFlow.mobileCountrySelectorActvityClazz, false);
         if (OpenAccountUIConfigs.MobileResetPasswordLoginFlow.supportResetPasswordWithNick) {
-            if (this.mobileInputBox.getInputHint() == null) {
-                this.mobileInputBox.setInputHint(ResourceUtils.getString(this, "ali_sdk_openaccount_dynamic_text_mobile_or_login_id"));
+            if (mobileInputBox.getInputHint() == null) {
+                mobileInputBox.setInputHint(ResourceUtils.getString(this, "ali_sdk_openaccount_dynamic_text_mobile_or_login_id"));
             }
 
-            this.mobileInputBox.setInputType(1);
+            mobileInputBox.setInputType(1);
         } else {
-            if (this.mobileInputBox.getInputHint() == null) {
-                this.mobileInputBox.setInputHint(ResourceUtils.getString(this, "ali_sdk_openaccount_dynamic_text_mobile"));
+            if (mobileInputBox.getInputHint() == null) {
+                mobileInputBox.setInputHint(ResourceUtils.getString(this, "ali_sdk_openaccount_dynamic_text_mobile"));
             }
 
-            this.mobileInputBox.setInputType(2);
+            mobileInputBox.setInputType(2);
         }
 
         try {
-            this.mMobile = this.getIntent().getStringExtra("mobile");
-            this.mLocationCode = this.getIntent().getStringExtra("LocationCode");
-        } catch (Exception var3) {
+            mMobile = getIntent().getStringExtra("mobile");
+            mLocationCode = getIntent().getStringExtra("LocationCode");
+        } catch (Exception ignored) {
         }
 
         if (!OpenAccountUIConfigs.MobileResetPasswordLoginFlow.supportForeignMobileNumbers) {
-            if (!TextUtils.isEmpty(this.mMobile) && OpenAccountUtils.isNumeric(this.mMobile)) {
-                this.mobileInputBox.getEditText().setText(this.mMobile);
-                this.mobileInputBox.getEditText().setEnabled(false);
-                this.mobileInputBox.getEditText().setFocusable(false);
-                this.mobileInputBox.getClearTextView().setVisibility(View.GONE);
-                this.sendSMS();
+            if (!TextUtils.isEmpty(mMobile) && OpenAccountUtils.isNumeric(mMobile)) {
+                mobileInputBox.getEditText().setText(mMobile);
+                mobileInputBox.getEditText().setEnabled(false);
+                mobileInputBox.getEditText().setFocusable(false);
+                mobileInputBox.getClearTextView().setVisibility(View.GONE);
+                sendSMS();
             }
-        } else if (!TextUtils.isEmpty(this.mLocationCode)) {
-            this.mobileInputBox.setMobileLocationCode(this.mLocationCode);
+        } else if (!TextUtils.isEmpty(mLocationCode)) {
+            mobileInputBox.setMobileLocationCode(mLocationCode);
         }
 
-        View backImg = this.findViewById(ResourceUtils.getRId(this, "back_img_view"));
+        View backImg = findViewById(ResourceUtils.getRId(this, "back_img_view"));
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        View accountLoginView = this.findViewById(ResourceUtils.getRId(this, "account_login_view"));
+        View accountLoginView = findViewById(ResourceUtils.getRId(this, "account_login_view"));
         accountLoginView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        Log.i("lzm", "0");
         // 关闭输入键盘处理
-        ImageView background = this.findViewById(ResourceUtils.getRId(this,"loginImgBackground"));
+        ImageView background = this.findViewById(ResourceUtils.getRId(this, "loginImgBackground"));
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("lzm", "1");
                 final View view = getWindow().peekDecorView();
                 if (view != null && view.getWindowToken() != null) {
-                    Log.i("lzm", "2");
                     InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     boolean b = imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    Log.i("lzm", "3 b = " + b);
                 }
             }
         });
-        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this,"yonghuxieyi"));
-        yonghuxieyi.setOnClickListener(v->{
-            if(getString(R.string.app_user_deal_url).length() == 0){
-                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this, "yonghuxieyi"));
+        yonghuxieyi.setOnClickListener(v -> {
+            if (getString(R.string.app_user_deal_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL, getString(R.string.aboutus_user_deal));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url), getString(R.string.aboutus_user_deal));
             }
         });
-        TextView yinsi = this.findViewById(ResourceUtils.getRId(this,"yinsi"));
-        yinsi.setOnClickListener(v->{
-            if(getString(R.string.app_privacy_policy_url).length() == 0){
-                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+        TextView yinsi = this.findViewById(ResourceUtils.getRId(this, "yinsi"));
+        yinsi.setOnClickListener(v -> {
+            if (getString(R.string.app_privacy_policy_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url), getString(R.string.aboutus_privacy_policy));
             }
         });
     }
 
     public void setViewListener(Activity activity) {
-        this.next.setText(ResourceUtils.getString(this, "ali_sdk_openaccount_text_login"));
-        this.next.setOnClickListener(new NetworkCheckOnClickListener() {
+        next.setText(ResourceUtils.getString(this, "ali_sdk_openaccount_text_login"));
+        next.setOnClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
-                LoginWithSmsCodeActivity.this.goCheckSMSCode((String)null, (String)null, (String)null);
+                goCheckSMSCode((String) null, (String) null, (String) null);
             }
         });
-        this.smsCodeInputBox.addSendClickListener(new NetworkCheckOnClickListener() {
+        smsCodeInputBox.addSendClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
-                LoginWithSmsCodeActivity.this.sendSMS();
+                sendSMS();
             }
         });
     }
@@ -181,16 +175,16 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                     String cSessionId = data.getStringExtra("cSessionId");
                     String nocToken = data.getStringExtra("nocToken");
                     String sig = data.getStringExtra("sig");
-                    this.goCheckSMSCode(cSessionId, nocToken, sig);
+                    goCheckSMSCode(cSessionId, nocToken, sig);
                 }
             } else {
-                this.smsCheckTrustToken = "";
+                smsCheckTrustToken = "";
             }
         } else if (requestCode == 1 && resultCode == -1) {
-            this.finishWithoutCallback();
-            LoginCallback loginCallback = this.getLoginCallback();
+            finishWithoutCallback();
+            LoginCallback loginCallback = getLoginCallback();
             if (loginCallback != null) {
-                loginCallback.onSuccess(this.sessionManagerService.getSession());
+                loginCallback.onSuccess(sessionManagerService.getSession());
             }
         }
 
@@ -198,18 +192,18 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
 
     protected void onPwdLoginFail(int code, String message) {
         if (TextUtils.isEmpty(message)) {
-            ToastUtils.toastSystemError(this.getApplicationContext());
+            ToastUtils.toastSystemError(getApplicationContext());
         } else {
-            ToastUtils.toast(this.getApplicationContext(), message, code);
+            ToastUtils.toast(getApplicationContext(), message, code);
         }
 
     }
 
     private void hideSoftInputForHw() {
         if ("HUAWEI".equalsIgnoreCase(Build.MANUFACTURER) && Build.VERSION.SDK_INT >= 27) {
-            InputMethodManager manager = (InputMethodManager)((InputMethodManager)this.getSystemService("input_method"));
+            InputMethodManager manager = (InputMethodManager) ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
             if (manager != null) {
-                manager.hideSoftInputFromWindow(this.mobileInputBox.getEditText().getWindowToken(), 2);
+                manager.hideSoftInputFromWindow(mobileInputBox.getEditText().getWindowToken(), 2);
             }
         }
 
@@ -219,15 +213,15 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
         AliSDKLogger.i("LoginWithSmsCodeActivity", "loginSuccess");
         ((ExecutorService) OpenAccountSDK.getService(ExecutorService.class)).postUITask(new Runnable() {
             public void run() {
-                LoginCallback loginCallback = LoginWithSmsCodeActivity.this.getLoginCallback();
+                LoginCallback loginCallback = getLoginCallback();
                 if (loginCallback != null) {
                     AliSDKLogger.i("LoginWithSmsCodeActivity", "loginCallback != null");
-                    loginCallback.onSuccess(LoginWithSmsCodeActivity.this.sessionManagerService.getSession());
+                    loginCallback.onSuccess(sessionManagerService.getSession());
                 }
 
-                ((ExecutorService)OpenAccountSDK.getService(ExecutorService.class)).postUITask(new Runnable() {
+                ((ExecutorService) OpenAccountSDK.getService(ExecutorService.class)).postUITask(new Runnable() {
                     public void run() {
-                        LoginWithSmsCodeActivity.this.finishWithoutCallback();
+                        finishWithoutCallback();
                     }
                 });
             }
@@ -296,16 +290,16 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                 } else {
                     Uri.Builder builder;
                     Intent h5Intent;
-                    switch(result.code) {
+                    switch (result.code) {
                         case 1:
-                            if (result.data != null && ((LoginResult)result.data).loginSuccessResult != null) {
-                                SessionData sessionData = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult)result.data).loginSuccessResult);
+                            if (result.data != null && ((LoginResult) result.data).loginSuccessResult != null) {
+                                SessionData sessionData = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult) result.data).loginSuccessResult);
                                 if (sessionData.scenario == null) {
                                     sessionData.scenario = 1;
                                 }
 
                                 LoginWithSmsCodeActivity.this.sessionManagerService.updateSession(sessionData);
-                                String accountName = ((LoginResult)result.data).userInputName;
+                                String accountName = ((LoginResult) result.data).userInputName;
                                 if (TextUtils.isEmpty(accountName)) {
                                     accountName = this.loginId;
                                 }
@@ -319,7 +313,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             }
                             break;
                         case 2:
-                            SessionData sessionData1 = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult)result.data).loginSuccessResult);
+                            SessionData sessionData1 = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult) result.data).loginSuccessResult);
                             if (sessionData1.scenario == null) {
                                 sessionData1.scenario = 1;
                             }
@@ -328,8 +322,8 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             LoginWithSmsCodeActivity.this.loginSuccess();
                             break;
                         case 26053:
-                            if (result.data != null && ((LoginResult)result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult)result.data).checkCodeResult.clientVerifyData)) {
-                                builder = Uri.parse(((LoginResult)result.data).checkCodeResult.clientVerifyData).buildUpon();
+                            if (result.data != null && ((LoginResult) result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult) result.data).checkCodeResult.clientVerifyData)) {
+                                builder = Uri.parse(((LoginResult) result.data).checkCodeResult.clientVerifyData).buildUpon();
                                 builder.appendQueryParameter("callback", "https://www.alipay.com/webviewbridge");
                                 h5Intent = new Intent(LoginWithSmsCodeActivity.this, LoginDoubleCheckWebActivity.class);
                                 h5Intent.putExtra("url", builder.toString());
@@ -340,8 +334,8 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             }
                             break;
                         case 26152:
-                            if (result.data != null && ((LoginResult)result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult)result.data).checkCodeResult.clientVerifyData)) {
-                                builder = Uri.parse(((LoginResult)result.data).checkCodeResult.clientVerifyData).buildUpon();
+                            if (result.data != null && ((LoginResult) result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult) result.data).checkCodeResult.clientVerifyData)) {
+                                builder = Uri.parse(((LoginResult) result.data).checkCodeResult.clientVerifyData).buildUpon();
                                 builder.appendQueryParameter("callback", "https://www.alipay.com/webviewbridge");
                                 h5Intent = new Intent(LoginWithSmsCodeActivity.this, LoginIVWebActivity.class);
                                 h5Intent.putExtra("url", builder.toString());
