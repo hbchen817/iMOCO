@@ -19,6 +19,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityChoiceRemoteProductBinding;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,37 +32,33 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ChoiceRemoteProductActivity extends BaseActivity {
-    @BindView(R.id.iv_toolbar_left)
-    ImageView mToolbarLeft;
-    @BindView(R.id.tv_toolbar_title)
-    TextView mToolbarTitle;
-    @BindView(R.id.product_recycler)
-    RecyclerView mProductRV;
+    private ActivityChoiceRemoteProductBinding mViewBinding;
 
     private List<ProductItem> mList = new ArrayList<>();
     private BaseQuickAdapter<ProductItem, BaseViewHolder> mAdapter;
+    private TypedArray mItemIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choice_remote_product);
+        mViewBinding = ActivityChoiceRemoteProductBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        ButterKnife.bind(this);
         initStatusBar();
         init();
     }
 
     private void init() {
         String[] itemTitles = getResources().getStringArray(R.array.remote_product_titles);
-        TypedArray itemIcons = getResources().obtainTypedArray(R.array.remote_product_ics);
+        mItemIcons = getResources().obtainTypedArray(R.array.remote_product_ics);
         for (int i = 0; i < itemTitles.length; i++) {
-            ProductItem item = new ProductItem(itemIcons.getResourceId(i, 0), itemTitles[i]);
+            ProductItem item = new ProductItem(mItemIcons.getResourceId(i, 0), itemTitles[i]);
             if (i == 0)
-                item.setTid("2");
+                item.setTid(Constant.REMOTE_CONTROL_TV);
             else if (i == 1)
-                item.setTid("7");
+                item.setTid(Constant.REMOTE_CONTROL_AIR_CONDITIONER);
             else if (i == 2)
-                item.setTid("6");
+                item.setTid(Constant.REMOTE_CONTROL_FAN);
             mList.add(item);
         }
         mAdapter = new BaseQuickAdapter<ProductItem, BaseViewHolder>(/*R.layout.item_remote_product*/R.layout.item_remote_product_grid, mList) {
@@ -82,9 +80,16 @@ public class ChoiceRemoteProductActivity extends BaseActivity {
         /*LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.VERTICAL);*/
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mProductRV.setLayoutManager(layoutManager);
-        //mProductRV.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        mProductRV.setAdapter(mAdapter);
+        mViewBinding.productRecycler.setLayoutManager(layoutManager);
+        //mViewBinding.productRecycler.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        mViewBinding.productRecycler.setAdapter(mAdapter);
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mItemIcons.recycle();
     }
 
     // 嵌入式状态栏
@@ -94,25 +99,21 @@ public class ChoiceRemoteProductActivity extends BaseActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
-        mToolbarTitle.setText(R.string.configproduct_title);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.configproduct_title);
     }
 
-    @OnClick({R.id.iv_toolbar_left})
     protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left: {
-                finish();
-                break;
-            }
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
         }
     }
 
     private class ProductItem {
         private int icon;
         private String title;
-        private String tid;
+        private int tid;
 
-        public ProductItem(int icon, String title, String tid) {
+        public ProductItem(int icon, String title, int tid) {
             this.icon = icon;
             this.title = title;
             this.tid = tid;
@@ -139,11 +140,11 @@ public class ChoiceRemoteProductActivity extends BaseActivity {
             this.title = title;
         }
 
-        public String getTid() {
+        public int getTid() {
             return tid;
         }
 
-        public void setTid(String tid) {
+        public void setTid(int tid) {
             this.tid = tid;
         }
     }

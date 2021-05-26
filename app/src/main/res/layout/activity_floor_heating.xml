@@ -7,7 +7,9 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/include_detail" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/include_detail" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -207,9 +209,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_20"
                 android:layout_marginTop="@dimen/dp_10"
-                android:textSize="@dimen/dp_30"
+                android:text="@string/icon_locking"
                 android:textColor="#F45D31"
-                android:text="@string/icon_locking" />
+                android:textSize="@dimen/dp_30" />
 
             <TextView
 
@@ -242,9 +244,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_50"
                 android:layout_marginTop="@dimen/dp_40"
-                android:textSize="@dimen/dp_30"
+                android:text="@string/icon_switch"
                 android:textColor="#F45D31"
-                android:text="@string/icon_switch"/>
+                android:textSize="@dimen/dp_30" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -277,9 +279,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginHorizontal="@dimen/dp_20"
                 android:layout_marginTop="@dimen/dp_10"
-                android:textSize="@dimen/dp_30"
+                android:text="@string/icon_timer"
                 android:textColor="#F45D31"
-                android:text="@string/icon_timer" />
+                android:textSize="@dimen/dp_30" />
 
             <TextView
 

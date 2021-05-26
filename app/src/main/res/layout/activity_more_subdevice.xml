@@ -12,7 +12,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/include_title" />
+        <include
+            android:id="@+id/include_toolbar"
+            layout="@layout/include_title" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -235,6 +237,7 @@
     </RelativeLayout>
 
     <include
+        android:id="@+id/include_wheel_picker"
         layout="@layout/include_oneitemwheelpicker"
         android:visibility="gone" />
 </FrameLayout>

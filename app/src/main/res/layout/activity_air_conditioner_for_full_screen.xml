@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue2"
+    android:background="@color/appcolor"
     android:orientation="vertical"
     tools:context=".view.AirConditionerForFSSActivity">
 
-    <include layout="@layout/include_detail" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/include_detail" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8"
-            android:background="@drawable/shape_blue_gradient"
+            android:background="@drawable/shape_appcolor_gradient"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -174,19 +176,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10">
 
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/dp_10"
+                android:paddingRight="@dimen/dp_5">
 
                 <RelativeLayout
                     android:id="@+id/workmode_layout"
-                    android:layout_width="@dimen/dp_80"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_80"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/only_stroke"
                     android:padding="@dimen/dp_10">
 
                     <TextView
@@ -211,14 +217,16 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingRight="@dimen/dp_5">
 
                 <RelativeLayout
                     android:id="@+id/timing_layout"
-                    android:layout_width="@dimen/dp_80"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_80"
                     android:layout_centerInParent="true"
-                    android:layout_centerVertical="true"
+                    android:background="@drawable/only_stroke"
                     android:padding="@dimen/dp_10">
 
                     <TextView
@@ -244,14 +252,16 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/dp_5"
+                android:paddingRight="@dimen/dp_10">
 
                 <RelativeLayout
                     android:id="@+id/fanmode_layout"
-                    android:layout_width="@dimen/dp_80"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_80"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/only_stroke"
                     android:padding="@dimen/dp_10">
 
                     <TextView
@@ -277,7 +287,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:orientation="horizontal">
 
             <!--<RelativeLayout
@@ -320,6 +330,79 @@
 
                 <RelativeLayout
                     android:id="@+id/switch_layout"
+                    android:layout_width="@dimen/dp_100"
+                    android:layout_height="@dimen/dp_100"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/only_stroke"
+                    android:padding="@dimen/dp_10">
+                    <!--@drawable/shape_round_black-->
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true">
+
+                        <TextView
+                            android:id="@+id/switch_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center"
+                            android:text="@string/icon_switch"
+                            android:textColor="@color/index_imgcolor"
+                            android:textSize="@dimen/sp_30" />
+
+                        <TextView
+                            android:id="@+id/switch_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/switch_ic"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/on_off" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!--<RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/workmode_layout"
+                    android:layout_width="@dimen/dp_80"
+                    android:layout_height="@dimen/dp_80"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_round_black"
+                    android:padding="@dimen/dp_10">
+
+                    <TextView
+                        android:id="@+id/workmode_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/icon_heating"
+                        android:textColor="@color/index_imgcolor"
+                        android:textSize="@dimen/sp_30" />
+
+                    <TextView
+                        android:id="@+id/workmode_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/workmode_ic"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/heating" />
+                </RelativeLayout>
+            </RelativeLayout>-->
+
+            <!--<RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/switch_layout"
                     android:layout_width="@dimen/dp_80"
                     android:layout_height="@dimen/dp_80"
                     android:layout_centerInParent="true"
@@ -345,7 +428,7 @@
                         android:layout_centerHorizontal="true"
                         android:text="@string/on_off" />
                 </RelativeLayout>
-            </RelativeLayout>
+            </RelativeLayout>-->
 
             <!--<RelativeLayout
                 android:layout_width="0dp"

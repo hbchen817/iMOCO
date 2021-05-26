@@ -17,6 +17,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -68,6 +71,8 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     TextView mTimerIcTV;
     @BindView(R.id.back_light_tv)
     TextView mBackLightTV;
+    @BindView(R.id.back_light_ic)
+    TextView mBackLightIc;
     @BindView(R.id.key_1_tv)
     TextView mKeyName1TV;
     @BindView(R.id.key_2_tv)
@@ -83,7 +88,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
 
     private TSLHelper mTSLHelper;
     private SceneManager mSceneManager;
-    private final int TAG_GET_EXTENDED_PRO = 10000;
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
     private MyHandler mHandler;
     private String mKeyName1;
     private String mKeyName2;
@@ -95,6 +100,22 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
         ViseLog.d(new Gson().toJson(propertyEntry));
         if (!super.updateState(propertyEntry)) {
             return false;
+        }
+
+        if (propertyEntry.getPropertyValue(CTSL.WC_BackLight) != null && propertyEntry.getPropertyValue(CTSL.WC_BackLight).length() > 0) {
+            mBackLightState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.WC_BackLight));
+            switch (mBackLightState) {
+                case CTSL.STATUS_OFF: {
+                    mBackLightIc.setTextColor(getResources().getColor(R.color.gray3));
+                    mBackLightTV.setTextColor(getResources().getColor(R.color.gray3));
+                    break;
+                }
+                case CTSL.STATUS_ON: {
+                    mBackLightIc.setTextColor(getResources().getColor(R.color.blue2));
+                    mBackLightTV.setTextColor(getResources().getColor(R.color.blue2));
+                    break;
+                }
+            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.TWC_CurtainConrtol) != null && propertyEntry.getPropertyValue(CTSL.TWC_CurtainConrtol).length() > 0) {
@@ -155,7 +176,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
 
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconfont);
-        mBackLightTV.setTypeface(iconfont);
+        mBackLightIc.setTypeface(iconfont);
 
         mTSLHelper = new TSLHelper(this);
         mSceneManager = new SceneManager(this);
@@ -170,17 +191,18 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mHandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private final WeakReference<TwoWayCurtainsDetailActivity> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(TwoWayCurtainsDetailActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            TwoWayCurtainsDetailActivity activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -196,48 +218,50 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.TWC_CurtainConrtol, mKeyName1TV.getText().toString());
-                    jsonObject.put(CTSL.TWC_InnerCurtainOperation, mKeyName2TV.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.TWC_CurtainConrtol, activity.mKeyName1TV.getText().toString());
+                    jsonObject.put(CTSL.TWC_InnerCurtainOperation, activity.mKeyName2TV.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
     }
 
-    private class MyHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyHandler extends Handler {
+        private WeakReference<TwoWayCurtainsDetailActivity> ref;
 
-        public MyHandler(Activity activity) {
+        public MyHandler(TwoWayCurtainsDetailActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            TwoWayCurtainsDetailActivity activity = ref.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    DeviceBuffer.addExtendedInfo(mIOTId, object);
-                    mKeyName1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
-                    mKeyName2TV.setText(object.getString(CTSL.TWC_InnerCurtainOperation));
-                    mTitle1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
-                    mTitle2TV.setText(object.getString(CTSL.TWC_InnerCurtainOperation));
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    activity.mKeyName1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
+                    activity.mKeyName2TV.setText(object.getString(CTSL.TWC_InnerCurtainOperation));
+                    activity.mTitle1TV.setText(object.getString(CTSL.TWC_CurtainConrtol));
+                    activity.mTitle2TV.setText(object.getString(CTSL.TWC_InnerCurtainOperation));
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
-                    mKeyName1TV.setText(mKeyName1);
-                    mTitle1TV.setText(mKeyName1);
-                    mKeyName2TV.setText(mKeyName2);
-                    mTitle2TV.setText(mKeyName2);
-                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                    ToastUtils.showShortToast(TwoWayCurtainsDetailActivity.this, R.string.set_success);
+                    activity.mKeyName1TV.setText(activity.mKeyName1);
+                    activity.mTitle1TV.setText(activity.mKeyName1);
+                    activity.mKeyName2TV.setText(activity.mKeyName2);
+                    activity.mTitle2TV.setText(activity.mKeyName2);
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
             }
@@ -254,14 +278,16 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     }
 
     private void setSwitch(int id) {
-        Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        //Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.one_switch_background);
         mCloseCurtains.setBackground(id == mCloseCurtains.getId() ? drawable : null);
         mOpenCurtains.setBackground(id == mOpenCurtains.getId() ? drawable : null);
         mStopCurtains.setBackground(id == mStopCurtains.getId() ? drawable : null);
     }
 
     private void setSecondSwitch(int id) {
-        Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        //Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.one_switch_background);
         mTwoCloseCurtains.setBackground(id == mTwoCloseCurtains.getId() ? drawable : null);
         mTwoOpenCurtains.setBackground(id == mTwoOpenCurtains.getId() ? drawable : null);
         mTwoStopCurtains.setBackground(id == mTwoStopCurtains.getId() ? drawable : null);
@@ -270,67 +296,46 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     @OnClick({R.id.close_curtains, R.id.open_curtains, R.id.stop_curtains, R.id.two_close_curtains, R.id.two_open_curtains, R.id.two_stop_curtains,
             R.id.key_1_tv, R.id.key_2_tv, R.id.timer_layout, R.id.back_light_layout})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.close_curtains: {
-                mStatus.setText(((TextView) view).getText());
-                setSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_CLOSE});
-                break;
-            }
-            case R.id.open_curtains: {
-                mStatus.setText(((TextView) view).getText());
-                setSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_OPEN});
-                break;
-            }
-            case R.id.stop_curtains: {
-                mStatus.setText(((TextView) view).getText());
-                setSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_STOP});
-                break;
-            }
-            case R.id.two_close_curtains: {
-                mTwoStatus.setText(((TextView) view).getText());
-                setSecondSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_CLOSE});
-                break;
-            }
-            case R.id.two_open_curtains: {
-                mTwoStatus.setText(((TextView) view).getText());
-                setSecondSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_OPEN});
-                break;
-            }
-            case R.id.two_stop_curtains:
-                mTwoStatus.setText(((TextView) view).getText());
-                setSecondSwitch(view.getId());
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_STOP});
-                break;
-            case R.id.key_1_tv: {
-                // 一路窗帘
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
-                showKeyNameDialogEdit(R.id.key_1_tv);
-                break;
-            }
-            case R.id.key_2_tv: {
-                // 二路窗帘
-                showKeyNameDialogEdit(R.id.key_2_tv);
-                break;
-            }
-            case R.id.timer_layout: {
-                // 定时
-                PluginHelper.cloudTimer(TwoWayCurtainsDetailActivity.this, mIOTId, mProductKey);
-                break;
-            }
-            case R.id.back_light_layout: {
-                // 背光
-                ViseLog.d("背光");
-                if (mBackLightState == CTSL.STATUS_OFF) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
+        if (view.getId() == R.id.close_curtains) {
+            mStatus.setText(((TextView) view).getText());
+            setSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_CLOSE});
+        } else if (view.getId() == R.id.open_curtains) {
+            mStatus.setText(((TextView) view).getText());
+            setSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_OPEN});
+        } else if (view.getId() == R.id.stop_curtains) {
+            mStatus.setText(((TextView) view).getText());
+            setSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_STOP});
+        } else if (view.getId() == R.id.two_close_curtains) {
+            mTwoStatus.setText(((TextView) view).getText());
+            setSecondSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_CLOSE});
+        } else if (view.getId() == R.id.two_open_curtains) {
+            mTwoStatus.setText(((TextView) view).getText());
+            setSecondSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_OPEN});
+        } else if (view.getId() == R.id.two_stop_curtains) {
+            mTwoStatus.setText(((TextView) view).getText());
+            setSecondSwitch(view.getId());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_InnerCurtainOperation}, new String[]{"" + CTSL.WC_STATUS_STOP});
+        } else if (view.getId() == R.id.key_1_tv) {
+            // 一路窗帘
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWC_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+            showKeyNameDialogEdit(R.id.key_1_tv);
+        } else if (view.getId() == R.id.key_2_tv) {
+            // 二路窗帘
+            showKeyNameDialogEdit(R.id.key_2_tv);
+        } else if (view.getId() == R.id.timer_layout) {
+            // 定时
+            PluginHelper.cloudTimer(this, mIOTId, mProductKey);
+        } else if (view.getId() == R.id.back_light_layout) {
+            // 背光
+            if (mBackLightState == CTSL.STATUS_OFF) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.WC_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.WC_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
             }
         }
     }
@@ -347,22 +352,18 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
         titleTv.setText(getString(R.string.key_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setHint(getString(R.string.pls_input_key_name));
-        switch (resId) {
-            case R.id.key_1_tv: {
-                // 按键1
-                nameEt.setText(mKeyName1TV.getText().toString());
-                break;
-            }
-            case R.id.key_2_tv: {
-                // 按键2
-                nameEt.setText(mKeyName2TV.getText().toString());
-                break;
-            }
+        if (resId == R.id.key_1_tv) {
+            // 按键1
+            nameEt.setText(mKeyName1TV.getText().toString());
+        } else if (resId == R.id.key_2_tv) {
+            // 按键2
+            nameEt.setText(mKeyName2TV.getText().toString());
         }
 
         nameEt.setSelection(nameEt.getText().toString().length());
         final android.app.Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -388,19 +389,14 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
                 }
 
                 QMUITipDialogUtil.showLoadingDialg(TwoWayCurtainsDetailActivity.this, R.string.is_setting);
-                switch (resId) {
-                    case R.id.key_1_tv: {
-                        // 按键1
-                        mKeyName1 = nameEt.getText().toString();
-                        mKeyName2 = mKeyName2TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_2_tv: {
-                        // 按键2
-                        mKeyName1 = mKeyName1TV.getText().toString();
-                        mKeyName2 = nameEt.getText().toString();
-                        break;
-                    }
+                if (resId == R.id.key_1_tv) {
+                    // 按键1
+                    mKeyName1 = nameEt.getText().toString();
+                    mKeyName2 = mKeyName2TV.getText().toString();
+                } else if (resId == R.id.key_2_tv) {
+                    // 按键2
+                    mKeyName1 = mKeyName1TV.getText().toString();
+                    mKeyName2 = nameEt.getText().toString();
                 }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.TWC_CurtainConrtol, mKeyName1);

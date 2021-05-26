@@ -2,43 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/detailOneSwitchLl"
-    android:background="@color/background_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_main"
     android:orientation="vertical"
     android:paddingBottom="5dp">
 
-    <include layout="@layout/include_title" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/include_title" />
 
     <com.laffey.smart.widget.ComRoundCornerImageView
         android:id="@+id/sceneMaintainImgIcon"
         android:layout_width="match_parent"
-        android:src="@drawable/scene_unmanned_off"
         android:layout_height="130dp"
-        android:scaleType="centerCrop"
-        app:left_top_radius="10dp"
-        app:right_top_radius="10dp"
-        app:left_bottom_radius="10dp"
-        app:right_bottom_radius="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/scene_unmanned_off"
+        app:left_bottom_radius="10dp"
+        app:left_top_radius="10dp"
+        app:right_bottom_radius="10dp"
+        app:right_top_radius="10dp" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="10dp">
 
         <TextView
             android:id="@+id/scene_name_tv"
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/scene_maintain_name"/>
+            android:gravity="center_vertical"
+            android:text="@string/scene_maintain_name" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -62,20 +64,20 @@
             android:id="@+id/sceneMaintainImgName"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@string/contentDescription_null"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/go" />
 
     </RelativeLayout>
 
     <TextView
         android:layout_width="fill_parent"
-        android:background="@color/colorLine"
+        android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_height="1dp" />
+        android:background="@color/colorLine" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -84,13 +86,13 @@
         android:layout_marginRight="10dp">
 
         <TextView
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
             style="@style/NormalFontStyle"
-            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/scene_maintain_use"/>
+            android:gravity="center_vertical"
+            android:text="@string/scene_maintain_use" />
 
         <TextView
             android:id="@+id/sceneMaintainLblEnable"
@@ -106,20 +108,20 @@
             android:id="@+id/sceneMaintainImgEnable"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@string/contentDescription_null"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/contentDescription_null"
             android:src="@drawable/go" />
 
     </RelativeLayout>
 
     <TextView
         android:layout_width="fill_parent"
-        android:background="@color/colorLine"
+        android:layout_height="1dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_height="1dp" />
+        android:background="@color/colorLine" />
 
     <ListView
         android:id="@+id/sceneMaintainLstParameter"
@@ -130,15 +132,14 @@
         android:layout_weight="1"
         android:divider="@color/background_list_item_divier"
         android:dividerHeight="0.5dp"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:horizontalSpacing="1dip" />
 
     <RelativeLayout
         android:id="@+id/sceneMaintainRlOperate"
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/shape_button">
@@ -146,17 +147,17 @@
         <Space
             android:id="@+id/sceneMaintainSpaNull"
             android:layout_width="1dp"
-            android:layout_centerHorizontal="true"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/sceneMaintainLblOperate"
             style="@style/NormalFontStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="@string/scene_maintain_create"
             android:textAlignment="center"
-            android:layout_centerVertical="true"
             android:textColor="#FFFFFF" />
 
     </RelativeLayout>

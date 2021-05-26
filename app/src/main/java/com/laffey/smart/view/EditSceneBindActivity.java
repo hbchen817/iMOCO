@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,11 +19,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityEditSceneBindBinding;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,11 +38,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EditSceneBindActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.mSceneContentText)
-    TextView mSceneContentText;
+    private ActivityEditSceneBindBinding mViewBinding;
 
     private String mIotId;
     private String mKeyCode;
@@ -49,8 +48,9 @@ public class EditSceneBindActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_scene_bind);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityEditSceneBindBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
         mSceneManager = new SceneManager(this);
         mMyHandler = new MyHandler(this);
@@ -72,7 +72,7 @@ public class EditSceneBindActivity extends BaseActivity {
 
     @Subscribe
     public void refreshSceneName(SceneBindEvent event) {
-        mSceneContentText.setText(event.sceneName);
+        mViewBinding.mSceneContentText.setText(event.sceneName);
     }
 
     @Override
@@ -81,10 +81,15 @@ public class EditSceneBindActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         String title = getIntent().getStringExtra("title");
-        tvToolbarTitle.setText(title + "绑定场景");
-        mSceneContentText.setText(getIntent().getStringExtra("sceneName"));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(title + "绑定场景");
+        mViewBinding.mSceneContentText.setText(getIntent().getStringExtra("sceneName"));
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.mSceneContentText.setOnClickListener(this::onViewClicked);
+        mViewBinding.unbind.setOnClickListener(this::onViewClicked);
     }
 
     public static void start(Context context, String title, String iotId, String keyCode, String sceneName) {
@@ -96,18 +101,15 @@ public class EditSceneBindActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.mSceneContentText, R.id.unbind})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.mSceneContentText:
-                SwitchSceneListActivity.start(this, mIotId, mKeyCode);
-                break;
-            case R.id.unbind:
-                mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
-                break;
+        int id = view.getId();
+        if (id == R.id.iv_toolbar_left) {
+            finish();
+        } else if (id == R.id.mSceneContentText) {
+            SwitchSceneListActivity.start(this, mIotId, mKeyCode);
+        } else if (id == R.id.unbind) {
+            mSceneManager.getExtendedProperty(mIotId, mKeyCode,
+                    mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
         }
     }
 
@@ -122,6 +124,7 @@ public class EditSceneBindActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             EditSceneBindActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据

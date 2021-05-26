@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.view.AirConditionerForFSSActivity;
@@ -101,7 +102,7 @@ public class FullScreenSwitchActivity extends DetailActivity {
 
         initStatusBar();
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mACSwitchTV.setTypeface(iconfont);
         mNASwitchTV.setTypeface(iconfont);
         mFHSwitchTV.setTypeface(iconfont);
@@ -122,79 +123,65 @@ public class FullScreenSwitchActivity extends DetailActivity {
     @OnClick({R.id.scene_layout, R.id.air_conditioner_layout, R.id.new_air_layout, R.id.floor_heating_layout,
             R.id.air_conditioner_switch, R.id.new_air_switch, R.id.floor_heating_switch})
     protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.scene_layout: {
-                // 场景
-                Intent intent = new Intent(this, SceneListForFSSActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
-                intent.putExtra("name", "空调");
-                intent.putExtra("owned", mOwned);
-                startActivity(intent);
-                break;
+        int resId = view.getId();
+        if (resId == R.id.scene_layout) {
+            // 场景
+            Intent intent = new Intent(this, SceneListForFSSActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
+            intent.putExtra("name", "空调");
+            intent.putExtra("owned", mOwned);
+            startActivity(intent);
+        } else if (resId == R.id.air_conditioner_layout) {
+            // 空调
+            Intent intent = new Intent(mActivity, AirConditionerForFSSActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
+            intent.putExtra("name", "空调");
+            intent.putExtra("owned", mOwned);
+            startActivity(intent);
+        } else if (resId == R.id.new_air_layout) {
+            // 新风
+            Intent intent = new Intent(mActivity, NewAirForFSSActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
+            intent.putExtra("name", "新风");
+            intent.putExtra("owned", mOwned);
+            startActivity(intent);
+        } else if (resId == R.id.floor_heating_layout) {
+            // 地暖
+            Intent intent = new Intent(mActivity, FloorHeatingForFSSActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
+            intent.putExtra("name", "地暖");
+            intent.putExtra("owned", mOwned);
+            startActivity(intent);
+        } else if (resId == R.id.air_conditioner_switch) {
+            // 空调开关
+            if (mACPowerSwitch == 0) {
+                // 打开
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                // 关闭
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
             }
-            case R.id.air_conditioner_layout: {
-                // 空调
-                Intent intent = new Intent(mActivity, AirConditionerForFSSActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
-                intent.putExtra("name", "空调");
-                intent.putExtra("owned", mOwned);
-                startActivity(intent);
-                break;
+        } else if (resId == R.id.new_air_switch) {
+            // 新风开关
+            if (mNAPowerSwitch == 0) {
+                // 打开
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                // 关闭
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
             }
-            case R.id.new_air_layout: {
-                // 新风
-                Intent intent = new Intent(mActivity, NewAirForFSSActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
-                intent.putExtra("name", "新风");
-                intent.putExtra("owned", mOwned);
-                startActivity(intent);
-                break;
-            }
-            case R.id.floor_heating_layout: {
-                // 地暖
-                Intent intent = new Intent(mActivity, FloorHeatingForFSSActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", CTSL.TEST_PK_FULL_SCREEN_SWITCH);
-                intent.putExtra("name", "地暖");
-                intent.putExtra("owned", mOwned);
-                startActivity(intent);
-                break;
-            }
-            case R.id.air_conditioner_switch: {
-                // 空调开关
-                if (mACPowerSwitch == 0) {
-                    // 打开
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    // 关闭
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
-            }
-            case R.id.new_air_switch: {
-                // 新风开关
-                if (mNAPowerSwitch == 0) {
-                    // 打开
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    // 关闭
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
-            }
-            case R.id.floor_heating_switch: {
-                // 新风开关
-                if (mFHPowerSwitch == 0) {
-                    // 打开
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    // 关闭
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
+        } else if (resId == R.id.floor_heating_switch) {
+            // 新风开关
+            if (mFHPowerSwitch == 0) {
+                // 打开
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                // 关闭
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
             }
         }
     }

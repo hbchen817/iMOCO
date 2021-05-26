@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +17,7 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityPermitjoinBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.EScene;
@@ -27,6 +29,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
 import com.laffey.smart.widget.ComCircularProgress;
 import com.vise.log.ViseLog;
@@ -41,16 +44,13 @@ import butterknife.OnClick;
  * Description: 允许子设备入网
  */
 public class PermitJoinActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.permitJoinCPProgress)
-    ComCircularProgress mProgressBar;
+    private ActivityPermitjoinBinding mViewBinding;
+
     private String mGatewayIOTId;
     private String mProductKey;
     private String mProductName;
     private boolean mIsProhibit = false;
     private boolean mIsJoinSuccess = false;
-    private TextView mReaminSecond;
     private ConfigureNetwork mConfigNetwork;
     private final int mTimeoutSecond = 120;
     private final int mIntervalMS = 100;
@@ -60,20 +60,21 @@ public class PermitJoinActivity extends BaseActivity {
     private String mSubDeviceIotId;
 
     // 处理允许入网进度
-    private Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
+        @SuppressLint("SetTextI18n")
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_PERMITJOIN_STEP_START == msg.what) {
                 // 开始处理
-                mReaminSecond.setText("0");
-                mProgressBar.setProgress(0);
+                mViewBinding.permitJoinLblRemainSecond.setText("0");
+                mViewBinding.permitJoinCPProgress.setProgress(0);
             } else if (Constant.MSG_PERMITJOIN_REMAIN_SECOND == msg.what) {
                 // 剩余秒数处理
                 int progress = msg.arg1;
                 if (0 == ((progress * mIntervalMS) % 1000)) {
                     int process = (progress * mIntervalMS) / (mTimeoutSecond * 10);
-                    mReaminSecond.setText(process + "");
-                    mProgressBar.setProgress(process);
+                    mViewBinding.permitJoinLblRemainSecond.setText(process + "");
+                    mViewBinding.permitJoinCPProgress.setProgress(process);
                 }
             } else if (Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
                 // 超时处理
@@ -128,7 +129,7 @@ public class PermitJoinActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             SceneManager mSceneManager = new SceneManager(mActivity);
@@ -145,7 +146,7 @@ public class PermitJoinActivity extends BaseActivity {
                     Message msg1 = new Message();
                     msg1.what = Constant.MSG_PERMITJOIN_STEP_END;
                     prcessPermitJoinProgressHandler.sendMessage(msg1);
-                    Toast.makeText(PermitJoinActivity.this, getString(R.string.permitjoin_success), Toast.LENGTH_LONG).show();
+                    ToastUtils.showLongToast(PermitJoinActivity.this, getString(R.string.permitjoin_success));
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
@@ -185,13 +186,13 @@ public class PermitJoinActivity extends BaseActivity {
     });
 
     // 实时数据处理器
-    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
                     // 处理子设备加网通知
-                    ViseLog.d("(String) msg.obj " + (String) msg.obj);
+                    ViseLog.d("处理子设备加网通知 " + (String) msg.obj);
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
                     mSubDeviceName = joinResultEntry.subDeviceName;
                     mSubDeviceIotId = joinResultEntry.subIotId;
@@ -220,19 +221,20 @@ public class PermitJoinActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_permitjoin);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityPermitjoinBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         Intent intent = getIntent();
-        this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
-        this.mProductKey = intent.getStringExtra("productKey");
-        this.mProductName = intent.getStringExtra("productName");
+        mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
+        mProductKey = intent.getStringExtra("productKey");
+        mProductName = intent.getStringExtra("productName");
 
-        this.mConfigNetwork = new ConfigureNetwork(this);
-        tvToolbarTitle.setText("添加设备");
-        this.initProcess();
+        mConfigNetwork = new ConfigureNetwork(this);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("添加设备");
+        initProcess();
 
         initStatusBar();
+        mViewBinding.includeToolbar.ivToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     // 嵌入式状态栏
@@ -250,11 +252,11 @@ public class PermitJoinActivity extends BaseActivity {
         RealtimeDataReceiver.deleteCallbackHandler("PermitJoinJoinCallback");
 
         // 中断加网线程
-        if (this.mJoinThread != null) {
-            if (!this.mJoinThread.isInterrupted()) {
-                this.mJoinThread.interrupt();
+        if (mJoinThread != null) {
+            if (!mJoinThread.isInterrupted()) {
+                mJoinThread.interrupt();
             }
-            this.mJoinThread = null;
+            mJoinThread = null;
         }
 
         super.onDestroy();
@@ -262,8 +264,6 @@ public class PermitJoinActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mReaminSecond = (TextView) findViewById(R.id.permitJoinLblRemainSecond);
-
 
         // 允许入网事件处理
         OnClickListener permitOnClickListener = new OnClickListener() {
@@ -275,10 +275,10 @@ public class PermitJoinActivity extends BaseActivity {
         };
 
         // 追加长连接实时数据子设备入网回调处理器
-        RealtimeDataReceiver.addJoinCallbackHandler("PermitJoinJoinCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addJoinCallbackHandler("PermitJoinJoinCallback", mRealtimeDataHandler);
 
         // 发送允许入网120秒命令
-        sendPermitJoinCommand(this.mTimeoutSecond);
+        sendPermitJoinCommand(mTimeoutSecond);
     }
 
     // 发送允许入网命令
@@ -324,13 +324,14 @@ public class PermitJoinActivity extends BaseActivity {
                 this.interrupt();
             }
         };
-        this.mJoinThread.start();
+        mJoinThread.start();
     }
 
-    @OnClick(R.id.iv_toolbar_left)
-    public void onViewClicked() {
-        mIsProhibit = true;
-        sendPermitJoinCommand(1);
-        finish();
+    public void onViewClicked(View view) {
+        if (view.getId() == R.id.iv_toolbar_left) {
+            mIsProhibit = true;
+            sendPermitJoinCommand(1);
+            finish();
+        }
     }
 }

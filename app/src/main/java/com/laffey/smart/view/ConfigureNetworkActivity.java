@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,6 +31,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CBLE;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityConfigurenetworkBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EConfigureNetwork;
 import com.laffey.smart.presenter.ConfigureNetwork;
@@ -44,6 +46,7 @@ import com.laffey.smart.utility.WiFiHelper;
 import com.laffey.smart.widget.ComCircularProgress;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,20 +58,11 @@ import butterknife.OnClick;
  * Description: 网关蓝牙配网
  */
 public class ConfigureNetworkActivity extends BaseActivity {
-    @BindView(R.id.password_layout)
-    RelativeLayout passwordLayout;
-    @BindView(R.id.permitJoinLblRemainSecond)
-    TextView permitJoinLblRemainSecond;
-    @BindView(R.id.process_layout)
-    LinearLayout processLayout;
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.permitJoinCPProgress)
-    ComCircularProgress mProgressBar;
+    private ActivityConfigurenetworkBinding mViewBinding;
+
     private String mProductKey;
     private String mBLEDviceAddress;
     private BLEService mBLEService;
-    private EditText mSSID, mPassword;
     private boolean mConnectStatus = false;
     private ConfigureNetwork mConfigureNetwork;
     private final int mTimeoutSecond = 120;
@@ -135,12 +129,13 @@ public class ConfigureNetworkActivity extends BaseActivity {
     };
 
     // 处理蓝牙响应数据
-    private Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_PARSE_CONFIGNETWORKFRAME == msg.what) {
                 EConfigureNetwork.parseResultEntry resultEntry = (EConfigureNetwork.parseResultEntry) msg.obj;
-                Logger.d("Received the response information from BLE device:" + String.format("\r\n    cmd: %d\r\n    ack: %d\r\n    data: %s", resultEntry.cmd, resultEntry.ack, resultEntry.content));
+                Logger.d("Received the response information from BLE device:" + String.format(Locale.getDefault(),
+                        "\r\n    cmd: %d\r\n    ack: %d\r\n    data: %s", resultEntry.cmd, resultEntry.ack, resultEntry.content));
                 if (resultEntry.cmd == Constant.CONFIGNETWORK_CMD_SENDYZ) {
                     // 处理验证
                     mDeviceName = resultEntry.content;
@@ -187,37 +182,38 @@ public class ConfigureNetworkActivity extends BaseActivity {
     });
 
     // 处理配网进度
-    private Handler prcessConfigNetworkProgressHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessConfigNetworkProgressHandler = new Handler(new Handler.Callback() {
+        @SuppressLint("SetTextI18n")
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_CONFIGNETWORK_STEP_START == msg.what) {
                 // 开始处理
-                permitJoinLblRemainSecond.setText("0");
-                mProgressBar.setProgress(0);
+                mViewBinding.permitJoinLblRemainSecond.setText("0");
+                mViewBinding.permitJoinCPProgress.setProgress(0);
             } else if (Constant.MSG_CONFIGNETWORK_REMAIN_SECOND == msg.what) {
                 // 剩余秒数处理
                 int progress = msg.arg1;
                 if (0 == ((progress * mIntervalMS) % 1000)) {
                     int process = (progress * mIntervalMS) / (mTimeoutSecond * 10);
-                    permitJoinLblRemainSecond.setText(process + "");
-                    mProgressBar.setProgress(process);
+                    mViewBinding.permitJoinLblRemainSecond.setText(process + "");
+                    mViewBinding.permitJoinCPProgress.setProgress(process);
                 }
             } else if (Constant.MSG_CONFIGNETWORK_STEP_END == msg.what) {
                 // 结束处理
-                processLayout.setVisibility(View.GONE);
-                passwordLayout.setVisibility(View.VISIBLE);
+                mViewBinding.processLayout.setVisibility(View.GONE);
+                mViewBinding.passwordLayout.setVisibility(View.VISIBLE);
                 mIsBinding = false;
             } else if (Constant.MSG_CONFIGNETWORK_FAILURE == msg.what) {
                 // 失败处理
-                processLayout.setVisibility(View.GONE);
-                passwordLayout.setVisibility(View.VISIBLE);
+                mViewBinding.processLayout.setVisibility(View.GONE);
+                mViewBinding.passwordLayout.setVisibility(View.VISIBLE);
                 mIsBinding = false;
             } else if (Constant.MSG_CONFIGNETWORK_TIMEOUT == msg.what) {
                 // 超时处理
                 Log.i("lzm", "timeout");
                 if (!mIsDestory) {
-                    processLayout.setVisibility(View.GONE);
-                    passwordLayout.setVisibility(View.VISIBLE);
+                    mViewBinding.processLayout.setVisibility(View.GONE);
+                    mViewBinding.passwordLayout.setVisibility(View.VISIBLE);
                     mIsBinding = false;
                     Dialog.confirm(ConfigureNetworkActivity.this, R.string.dialog_title, getString(R.string.confignetwork_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
                 }
@@ -237,7 +233,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
     }
 
     // 绑定设备回调
-    private Handler mBindDeviceHandler = new Handler(new Handler.Callback() {
+    private final Handler mBindDeviceHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_CALLBACK_BINDEVICE == msg.what) {
@@ -275,27 +271,28 @@ public class ConfigureNetworkActivity extends BaseActivity {
         QMUITipDialogUtil.dismiss();
         String devName = getIntent().getStringExtra("name");
         if (mIotId != null && mIotId.length() > 0 && devName != null && devName.length() > 0) {
-            BindSuccessActivity.start(ConfigureNetworkActivity.this, mIotId, getIntent().getStringExtra("name"));
+            BindSuccessActivity.start(this, mIotId, getIntent().getStringExtra("name"));
             finish();
         }
     }
 
-    private class ApiDataHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class ApiDataHandler extends Handler {
+        private final WeakReference<ConfigureNetworkActivity> ref;
 
-        public ApiDataHandler(Activity activity) {
+        public ApiDataHandler(ConfigureNetworkActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            ConfigureNetworkActivity activity = ref.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV) {
                 QMUITipDialogUtil.dismiss();
                 JSONObject object = JSON.parseObject((String) msg.obj);
-                BindSuccessActivity.start(ConfigureNetworkActivity.this, object.getString("iotId"), object.getString("productName"));
-                finish();
+                BindSuccessActivity.start(activity, object.getString("iotId"), object.getString("productName"));
+                activity.finish();
             }
         }
     }
@@ -303,19 +300,20 @@ public class ConfigureNetworkActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_configurenetwork);
-        ButterKnife.bind(this);
-        mIsDestory = false;
-        tvToolbarTitle.setText("网关配网");
-        Intent intent = getIntent();
-        this.mBLEDviceAddress = intent.getStringExtra("address");
-        this.mProductKey = intent.getStringExtra("productKey");
+        mViewBinding = ActivityConfigurenetworkBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        this.mConfigureNetwork = new ConfigureNetwork(this);
+        mIsDestory = false;
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("网关配网");
+        mViewBinding.includeToolbar.tvToolbarLeft.setOnClickListener(this::onViewClicked);
+        Intent intent = getIntent();
+        mBLEDviceAddress = intent.getStringExtra("address");
+        mProductKey = intent.getStringExtra("productKey");
+
+        mConfigureNetwork = new ConfigureNetwork(this);
 
         // 处理关闭键盘
-        LinearLayout ll = findViewById(R.id.configureNetworkLl);
-        ll.setOnClickListener(new OnClickListener() {
+        mViewBinding.configureNetworkLl.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 closeKeyboard();
@@ -323,13 +321,13 @@ public class ConfigureNetworkActivity extends BaseActivity {
         });
 
         // 注册GATT广播接收器
-        registerReceiver(this.mGattUpdateReceiver, this.mGattUpdateIntentFilter());
+        registerReceiver(mGattUpdateReceiver, mGattUpdateIntentFilter());
 
         // 创建并绑定蓝牙服务
         Intent gattServiceIntent = new Intent(this, BLEService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        this.initProcess();
+        initProcess();
 
         initStatusBar();
     }
@@ -346,7 +344,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         // 卸载GATT广播接收器
-        unregisterReceiver(this.mGattUpdateReceiver);
+        unregisterReceiver(mGattUpdateReceiver);
 
         //解绑蓝牙连接服务
         unbindService(mServiceConnection);
@@ -354,11 +352,11 @@ public class ConfigureNetworkActivity extends BaseActivity {
         mBLEService = null;
 
         // 中断计时线程
-        if (this.mTimeThread != null) {
-            if (!this.mTimeThread.isInterrupted()) {
-                this.mTimeThread.interrupt();
+        if (mTimeThread != null) {
+            if (!mTimeThread.isInterrupted()) {
+                mTimeThread.interrupt();
             }
-            this.mTimeThread = null;
+            mTimeThread = null;
         }
         prcessConfigNetworkProgressHandler.removeCallbacksAndMessages(null);
         mIsDestory = true;
@@ -376,10 +374,8 @@ public class ConfigureNetworkActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mSSID = (EditText) findViewById(R.id.configureNetworkTxtSSID);
-        this.mPassword = (EditText) findViewById(R.id.configureNetworkTxtPwd);
         WiFiHelper wiFiHelper = new WiFiHelper(this);
-        mSSID.setText(wiFiHelper.getWIFIName());
+        mViewBinding.configureNetworkTxtSSID.setText(wiFiHelper.getWIFIName());
 
         // 选择WiFi处理
         OnClickListener choiceOnClickListener = new OnClickListener() {
@@ -390,8 +386,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
                 startActivityForResult(in, Constant.REQUESTCODE_CALLCHOICEWIFIACTIVITY);
             }
         };
-        ImageView imgChoice = (ImageView) findViewById(R.id.configureNetworkImgChoice);
-        imgChoice.setOnClickListener(choiceOnClickListener);
+        mViewBinding.configureNetworkImgChoice.setOnClickListener(choiceOnClickListener);
 
         // 配置事件处理
         OnClickListener configOnClickListener = new OnClickListener() {
@@ -404,10 +399,8 @@ public class ConfigureNetworkActivity extends BaseActivity {
                 }
             }
         };
-        ImageView imgConfig = (ImageView) findViewById(R.id.configNetworkImgConfig);
-        TextView lblConfig = (TextView) findViewById(R.id.configureNetworkLblConfig);
-        imgConfig.setOnClickListener(configOnClickListener);
-        lblConfig.setOnClickListener(configOnClickListener);
+        mViewBinding.configNetworkImgConfig.setOnClickListener(configOnClickListener);
+        mViewBinding.configureNetworkLblConfig.setOnClickListener(configOnClickListener);
 
         // 放弃事件处理
         OnClickListener cannelOnClickListener = new OnClickListener() {
@@ -423,141 +416,148 @@ public class ConfigureNetworkActivity extends BaseActivity {
                 finish();
             }
         };
-        TextView lblCancel = (TextView) findViewById(R.id.configureNetworkLblCancel);
-        ImageView imgCancel = (ImageView) findViewById(R.id.configureNetworkImgCancel);
-        lblCancel.setOnClickListener(cannelOnClickListener);
-        imgCancel.setOnClickListener(cannelOnClickListener);
+        mViewBinding.configureNetworkLblCancel.setOnClickListener(cannelOnClickListener);
+        mViewBinding.configureNetworkImgCancel.setOnClickListener(cannelOnClickListener);
     }
 
     // 向蓝牙设备发送路由器SSID与密码
     private void sendSSIDAndPassword() {
         Log.i("lzm", "send 1");
-        if (!this.mConnectStatus) {
+        if (!mConnectStatus) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_noconnect), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mSSID.requestFocus();
+            mViewBinding.configureNetworkTxtSSID.requestFocus();
             return;
         }
-        if (this.mSSID.getText().toString().equals("")) {
+        if (mViewBinding.configureNetworkTxtSSID.getText().toString().equals("")) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_ssid), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mSSID.requestFocus();
+            mViewBinding.configureNetworkTxtSSID.requestFocus();
             return;
         }
-        if (this.mPassword.getText().toString().equals("")) {
+        if (mViewBinding.configureNetworkTxtPwd.getText().toString().equals("")) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_pwd), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mPassword.requestFocus();
+            mViewBinding.configureNetworkTxtPwd.requestFocus();
             return;
         }
         Log.i("lzm", "send 2");
 
-        this.mDeviceName = "";
-        this.mToken = "";
-        this.mSendBLEDataStatusMachine = Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0;
-        passwordLayout.setVisibility(View.GONE);
-        processLayout.setVisibility(View.VISIBLE);
+        mDeviceName = "";
+        mToken = "";
+        mSendBLEDataStatusMachine = Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0;
+        mViewBinding.passwordLayout.setVisibility(View.GONE);
+        mViewBinding.processLayout.setVisibility(View.VISIBLE);
         Log.i("lzm", "send 3");
 
         mIsBinding = true;
-        try {
+        /*try {
             Thread.sleep(600);
         } catch (Exception ex) {
-        }
+        }*/
 
-        // 创建并运行配网剩余秒数提示线程
-        this.mConfigNetworkIsSuccess = false;
-        this.mTimeThread = new Thread() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Message msg1 = new Message();
-                msg1.what = Constant.MSG_CONFIGNETWORK_STEP_START;
-                prcessConfigNetworkProgressHandler.sendMessage(msg1);
-                int count = 1;
-                int retryTime = 0;
-                int retryTimeMax = 3;
-                while (count <= (mTimeoutSecond * 1000 / mIntervalMS) && !this.isInterrupted()) {
-                    // 发送SSID
-                    if (mSendBLEDataStatusMachine == Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0) {
-                        ConfigureNetwork.sendDataToBLE(mBLEService, mSSID.getText().toString(), mProductKey, Constant.CONFIGNETWORK_CMD_SENDSSID);
-                        Utility.sleepMilliSecond(mIntervalMS);
-                        Message msg2 = new Message();
-                        msg2.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
-                        msg2.arg1 = count;
-                        prcessConfigNetworkProgressHandler.sendMessage(msg2);
-                        Utility.sleepMilliSecond(mIntervalMS);
-                        count++;
-                        Message msg3 = new Message();
-                        msg3.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
-                        msg3.arg1 = count;
-                        prcessConfigNetworkProgressHandler.sendMessage(msg3);
+                // 创建并运行配网剩余秒数提示线程
+                mConfigNetworkIsSuccess = false;
+                mTimeThread = new Thread() {
+                    @Override
+                    public void run() {
+                        Message msg1 = new Message();
+                        msg1.what = Constant.MSG_CONFIGNETWORK_STEP_START;
+                        prcessConfigNetworkProgressHandler.sendMessage(msg1);
+                        int count = 1;
+                        int retryTime = 0;
+                        int retryTimeMax = 3;
+                        while (count <= (mTimeoutSecond * 1000 / mIntervalMS) && !this.isInterrupted()) {
+                            // 发送SSID
+                            if (mSendBLEDataStatusMachine == Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0) {
+                                ConfigureNetwork.sendDataToBLE(mBLEService, mViewBinding.configureNetworkTxtSSID.getText().toString(), mProductKey, Constant.CONFIGNETWORK_CMD_SENDSSID);
+                                Utility.sleepMilliSecond(mIntervalMS);
+                                Message msg2 = new Message();
+                                msg2.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
+                                msg2.arg1 = count;
+                                prcessConfigNetworkProgressHandler.sendMessage(msg2);
+                                Utility.sleepMilliSecond(mIntervalMS);
+                                count++;
+                                Message msg3 = new Message();
+                                msg3.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
+                                msg3.arg1 = count;
+                                prcessConfigNetworkProgressHandler.sendMessage(msg3);
+                            }
+
+                            // 发送密码
+                            if (mSendBLEDataStatusMachine == Constant.CONFIGNETWORK_SEND_STATUSMACHINE_1) {
+                                ConfigureNetwork.sendDataToBLE(mBLEService, mViewBinding.configureNetworkTxtPwd.getText().toString(), mProductKey, Constant.CONFIGNETWORK_CMD_SENDPASSWORD);
+                                count++;
+                                Utility.sleepMilliSecond(mIntervalMS);
+                                Message msg4 = new Message();
+                                msg4.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
+                                msg4.arg1 = count;
+                                prcessConfigNetworkProgressHandler.sendMessage(msg4);
+                                count++;
+                                Utility.sleepMilliSecond(mIntervalMS);
+                                Message msg5 = new Message();
+                                msg5.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
+                                msg5.arg1 = count;
+                                prcessConfigNetworkProgressHandler.sendMessage(msg5);
+                            }
+
+                            if (mConfigNetworkIsSuccess) {
+                                break;
+                            }
+
+                            count++;
+                            Utility.sleepMilliSecond(mIntervalMS);
+
+                            // 发送等待进度
+                            Message msg6 = new Message();
+                            msg6.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
+                            msg6.arg1 = count;
+                            prcessConfigNetworkProgressHandler.sendMessage(msg6);
+                        }
+
+                        Log.i("lzm", "send + " + isInterrupted());
+                        // 配网超时处理
+                        if (!mConfigNetworkIsSuccess && count > (mTimeoutSecond * 1000 / mIntervalMS) && !isInterrupted()) {
+                            Message msg3 = new Message();
+                            msg3.what = Constant.MSG_CONFIGNETWORK_TIMEOUT;
+                            Log.i("lzm", "send");
+                            prcessConfigNetworkProgressHandler.sendMessage(msg3);
+                        }
+
+                        interrupt();
                     }
-
-                    // 发送密码
-                    if (mSendBLEDataStatusMachine == Constant.CONFIGNETWORK_SEND_STATUSMACHINE_1) {
-                        ConfigureNetwork.sendDataToBLE(mBLEService, mPassword.getText().toString(), mProductKey, Constant.CONFIGNETWORK_CMD_SENDPASSWORD);
-                        count++;
-                        Utility.sleepMilliSecond(mIntervalMS);
-                        Message msg4 = new Message();
-                        msg4.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
-                        msg4.arg1 = count;
-                        prcessConfigNetworkProgressHandler.sendMessage(msg4);
-                        count++;
-                        Utility.sleepMilliSecond(mIntervalMS);
-                        Message msg5 = new Message();
-                        msg5.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
-                        msg5.arg1 = count;
-                        prcessConfigNetworkProgressHandler.sendMessage(msg5);
-                    }
-
-                    if (mConfigNetworkIsSuccess) {
-                        break;
-                    }
-
-                    count++;
-                    Utility.sleepMilliSecond(mIntervalMS);
-
-                    // 发送等待进度
-                    Message msg6 = new Message();
-                    msg6.what = Constant.MSG_CONFIGNETWORK_REMAIN_SECOND;
-                    msg6.arg1 = count;
-                    prcessConfigNetworkProgressHandler.sendMessage(msg6);
-                }
-
-                Log.i("lzm", "send + " + this.isInterrupted());
-                // 配网超时处理
-                if (!mConfigNetworkIsSuccess && count > (mTimeoutSecond * 1000 / mIntervalMS) && !this.isInterrupted()) {
-                    Message msg3 = new Message();
-                    msg3.what = Constant.MSG_CONFIGNETWORK_TIMEOUT;
-                    Log.i("lzm", "send");
-                    prcessConfigNetworkProgressHandler.sendMessage(msg3);
-                }
-
-                this.interrupt();
+                };
+                mTimeThread.start();
             }
-        };
-        this.mTimeThread.start();
+        }, 600);
     }
 
     // 绑定网关设备
     private void bindGatewayDevice() {
-        Logger.d(String.format("The information of the gateway:\r\n    DeviceName: %s\r\n    Token: %s", this.mDeviceName, this.mToken));
+        Logger.d(String.format("The information of the gateway:\r\n    DeviceName: %s\r\n    Token: %s", mDeviceName, mToken));
 
-        if (this.mToken == null || this.mToken.length() == 0 || this.mDeviceName == null || this.mDeviceName.length() == 0) {
+        if (mToken == null || mToken.length() == 0 || mDeviceName == null || mDeviceName.length() == 0) {
             return;
         }
 
         // 等待5秒,以确保服务器端处理Token完成。
-        try {
+        /*try {
             Thread.sleep(5 * 1000);
         } catch (Exception ex) {
-        }
+        }*/
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 构造参数
+                EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
+                parameter.homeId = SystemParameter.getInstance().getHomeId();
+                parameter.productKey = mProductKey;
+                parameter.deviceName = mDeviceName;
+                parameter.token = mToken;
 
-        // 构造参数
-        EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
-        parameter.homeId = SystemParameter.getInstance().getHomeId();
-        parameter.productKey = this.mProductKey;
-        parameter.deviceName = this.mDeviceName;
-        parameter.token = this.mToken;
-
-        this.mConfigureNetwork.bindDevice(parameter, mCommitFailureHandler, mResponseErrorHandler, mBindDeviceHandler);
+                mConfigureNetwork.bindDevice(parameter, mCommitFailureHandler, mResponseErrorHandler, mBindDeviceHandler);
+            }
+        }, 5 * 1000);
     }
 
     @Override
@@ -565,19 +565,20 @@ public class ConfigureNetworkActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constant.REQUESTCODE_CALLCHOICEWIFIACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEWIFIACTIVITY) {
-            this.mSSID.setText(data.getStringExtra("ssid"));
+            mViewBinding.configureNetworkTxtSSID.setText(data.getStringExtra("ssid"));
         }
     }
 
-    @OnClick(R.id.iv_toolbar_left)
-    public void onViewClicked() {
-        if (mTimeThread != null) {
-            if (!mTimeThread.isInterrupted()) {
-                mTimeThread.interrupt();
-                mTimeThread = null;
+    public void onViewClicked(View view) {
+        if (view.getId() == R.id.iv_toolbar_left) {
+            if (mTimeThread != null) {
+                if (!mTimeThread.isInterrupted()) {
+                    mTimeThread.interrupt();
+                    mTimeThread = null;
+                }
             }
+            finish();
         }
-        finish();
     }
 
 

@@ -6,13 +6,15 @@
     android:background="@color/appbgcolor"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <WebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,12 +23,13 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingVertical="@dimen/dp_30">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="天猫精灵"
+            android:text="@string/tmall_spirit"
             android:textColor="@color/upsdk_blue_text_007dff"
-            android:textSize="@dimen/sp_24"/>
+            android:textSize="@dimen/sp_24" />
     </LinearLayout>
 
     <TextView

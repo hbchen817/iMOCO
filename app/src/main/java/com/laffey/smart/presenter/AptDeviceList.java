@@ -43,13 +43,13 @@ public class AptDeviceList extends BaseAdapter {
     // 构造
     public AptDeviceList(Context context) {
         super();
-        this.mContext = context;
-        this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
+        mContext = context;
+        mDeviceList = new ArrayList<EDevice.deviceEntry>();
     }
 
     // 设置数据
     public void setData(List<EDevice.deviceEntry> deviceList) {
-        this.mDeviceList = deviceList;
+        mDeviceList = deviceList;
         RefreshData.refreshDeviceNumberData();
     }
 
@@ -62,8 +62,8 @@ public class AptDeviceList extends BaseAdapter {
     public void updateStateData(String iotId, String propertyName, String propertyValue, long timeStamp) {
         boolean isExist = false;
         EDevice.deviceEntry deviceEntry = null;
-        if (this.mDeviceList.size() > 0) {
-            for (EDevice.deviceEntry entry : this.mDeviceList) {
+        if (mDeviceList.size() > 0) {
+            for (EDevice.deviceEntry entry : mDeviceList) {
                 if (entry.iotId.equalsIgnoreCase(iotId)) {
                     isExist = true;
                     deviceEntry = entry;
@@ -75,22 +75,22 @@ public class AptDeviceList extends BaseAdapter {
             return;
         }
 
-        deviceEntry.processStateTime(this.mContext, propertyName, propertyValue, timeStamp);
-        this.notifyDataSetChanged();
+        deviceEntry.processStateTime(mContext, propertyName, propertyValue, timeStamp);
+        notifyDataSetChanged();
         RefreshData.refreshDeviceNumberData();
     }
 
     // 更新房间数据
     public void updateRoomData(String iotId) {
-        if (this.mDeviceList.size() > 0) {
-            for (EDevice.deviceEntry entry : this.mDeviceList) {
+        if (mDeviceList.size() > 0) {
+            for (EDevice.deviceEntry entry : mDeviceList) {
                 if (entry.iotId.equalsIgnoreCase(iotId)) {
                     // 获取房间信息
                     EHomeSpace.roomEntry roomEntry = DeviceBuffer.getDeviceRoomInfo(iotId);
                     if (roomEntry != null) {
                         entry.roomId = roomEntry.roomId;
                         entry.roomName = roomEntry.name;
-                        this.notifyDataSetChanged();
+                        notifyDataSetChanged();
                     }
                     break;
                 }
@@ -102,7 +102,7 @@ public class AptDeviceList extends BaseAdapter {
     // 返回列表条目数量
     @Override
     public int getCount() {
-        return this.mDeviceList == null ? 0 : this.mDeviceList.size();
+        return mDeviceList == null ? 0 : mDeviceList.size();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class AptDeviceList extends BaseAdapter {
 
     @Override
     public Object getItem(int arg0) {
-        return arg0 > this.mDeviceList.size() ? null : this.mDeviceList.get(arg0);
+        return arg0 > mDeviceList.size() ? null : mDeviceList.get(arg0);
     }
 
     // 获取列表条目视图
@@ -121,7 +121,7 @@ public class AptDeviceList extends BaseAdapter {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(this.mContext);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(R.layout.list_device, null, true);
             viewHolder.icon = (ImageView) convertView.findViewById(R.id.deviceListImgIcon);
             viewHolder.name = (TextView) convertView.findViewById(R.id.deviceListLblName);
@@ -151,10 +151,10 @@ public class AptDeviceList extends BaseAdapter {
 
         viewHolder.name.setText(deviceEntry.nickName);
         viewHolder.room.setText(deviceEntry.roomName);
-        viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, deviceEntry.status)));
+        viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(mContext, deviceEntry.status)));
 
         // 如果离线显示为浅灰色
-        if (this.mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
+        if (mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
             viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
             viewHolder.status.setTextColor(Color.parseColor("#AAAAAA"));
             viewHolder.room.setTextColor(Color.parseColor("#AAAAAA"));

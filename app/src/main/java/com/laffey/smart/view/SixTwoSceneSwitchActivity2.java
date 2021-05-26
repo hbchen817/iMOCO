@@ -150,14 +150,13 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         return true;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconfont);
         mBackLightIc.setTypeface(iconfont);
 
@@ -192,17 +191,18 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mMyHandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private WeakReference<SixTwoSceneSwitchActivity2> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(SixTwoSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            SixTwoSceneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -218,16 +218,17 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_1, mKey1TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_2, mKey2TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_3, mKey3TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_4, mKey4TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mKey5TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mKey6TV.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_1, activity.mKey1TV.getText().toString());
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_2, activity.mKey2TV.getText().toString());
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_3, activity.mKey3TV.getText().toString());
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_4, activity.mKey4TV.getText().toString());
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, activity.mKey5TV.getText().toString());
+                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, activity.mKey6TV.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
@@ -267,97 +268,72 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.switch1:
-                if (mState1 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch2:
-                if (mState2 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch3:
-                if (mState3 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch4:
-                if (mState4 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mFirstManualSceneId != null) {
-                    mPressedKey = "5";
-                    mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.mSceneContentText5:
-                if (mSecondManualSceneId != null) {
-                    mPressedKey = "6";
-                    mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            case R.id.timer_layout: {
-                // 定时
-                PluginHelper.cloudTimer(SixTwoSceneSwitchActivity2.this, mIOTId, mProductKey);
-                break;
+        if (view.getId() == R.id.switch1) {
+            if (mState1 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.back_light_layout: {
-                // 背光
-                if (mBackLightState == CTSL.STATUS_OFF) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-                break;
+        } else if (view.getId() == R.id.switch2) {
+            if (mState2 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.key_1_tv: {
-                // 按键1
-                showKeyNameDialogEdit(R.id.key_1_tv);
-                break;
+        } else if (view.getId() == R.id.switch3) {
+            if (mState3 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.key_2_tv: {
-                // 按键2
-                showKeyNameDialogEdit(R.id.key_2_tv);
-                break;
+        } else if (view.getId() == R.id.switch4) {
+            if (mState4 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.key_3_tv: {
-                // 按键3
-                showKeyNameDialogEdit(R.id.key_3_tv);
-                break;
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mFirstManualSceneId != null) {
+                mPressedKey = "5";
+                mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
             }
-            case R.id.key_4_tv: {
-                // 按键4
-                showKeyNameDialogEdit(R.id.key_4_tv);
-                break;
+        } else if (view.getId() == R.id.mSceneContentText5) {
+            if (mSecondManualSceneId != null) {
+                mPressedKey = "6";
+                mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
             }
-            case R.id.key_5_tv: {
-                // 按键5
-                showKeyNameDialogEdit(R.id.key_5_tv);
-                break;
+        } else if (view.getId() == R.id.timer_layout) {
+            // 定时
+            PluginHelper.cloudTimer(SixTwoSceneSwitchActivity2.this, mIOTId, mProductKey);
+        } else if (view.getId() == R.id.back_light_layout) {
+            // 背光
+            if (mBackLightState == CTSL.STATUS_OFF) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
             }
-            case R.id.key_6_tv: {
-                // 按键6
-                showKeyNameDialogEdit(R.id.key_6_tv);
-                break;
-            }
-            default:
-                break;
+        } else if (view.getId() == R.id.key_1_tv) {
+            // 按键1
+            showKeyNameDialogEdit(R.id.key_1_tv);
+        } else if (view.getId() == R.id.key_2_tv) {
+            // 按键2
+            showKeyNameDialogEdit(R.id.key_2_tv);
+        } else if (view.getId() == R.id.key_3_tv) {
+            // 按键3
+            showKeyNameDialogEdit(R.id.key_3_tv);
+        } else if (view.getId() == R.id.key_4_tv) {
+            // 按键4
+            showKeyNameDialogEdit(R.id.key_4_tv);
+        } else if (view.getId() == R.id.key_5_tv) {
+            // 按键5
+            showKeyNameDialogEdit(R.id.key_5_tv);
+        } else if (view.getId() == R.id.key_6_tv) {
+            // 按键6
+            showKeyNameDialogEdit(R.id.key_6_tv);
         }
     }
 
@@ -370,33 +346,34 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         }
     }
 
-    private class DelSceneHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class DelSceneHandler extends Handler {
+        private WeakReference<SixTwoSceneSwitchActivity2> ref;
 
-        public DelSceneHandler(Activity activity) {
+        public DelSceneHandler(SixTwoSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            SixTwoSceneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
                 if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     String keyNo = jsonObject.getString("keyNo");
-                    if (keyNo != null && keyNo.equals(mPressedKey)) {
+                    if (keyNo != null && keyNo.equals(activity.mPressedKey)) {
                         String autoSceneId = jsonObject.getString("asId");
-                        mSceneManager.deleteScene(autoSceneId, null, null, null);
-						mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
-                        	null, mDelSceneHandler);
+                        activity.mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                                null, activity.mDelSceneHandler);
                     }
                 }
             } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
-                mSceneManager.setExtendedProperty(mIOTId, mPressedKey, "{}", null,
-                        null, mDelSceneHandler);
+                activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                        null, activity.mDelSceneHandler);
             } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
-                getScenes();
+                activity.getScenes();
             }
         }
     }
@@ -411,38 +388,26 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         titleTv.setText(getString(R.string.key_name_edit));
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setHint(getString(R.string.pls_input_key_name));
-        switch (resId) {
-            case R.id.key_1_tv: {
-                // 按键1
-                nameEt.setText(mKey1TV.getText().toString());
-                break;
-            }
-            case R.id.key_2_tv: {
-                // 按键2
-                nameEt.setText(mKey2TV.getText().toString());
-                break;
-            }
-            case R.id.key_3_tv: {
-                // 按键3
-                nameEt.setText(mKey3TV.getText().toString());
-                break;
-            }
-            case R.id.key_4_tv: {
-                // 按键4
-                nameEt.setText(mKey4TV.getText().toString());
-                break;
-            }
-            case R.id.key_5_tv: {
-                // 按键5
-                nameEt.setText(mKey5TV.getText().toString());
-                break;
-            }
-            case R.id.key_6_tv: {
-                // 按键6
-                nameEt.setText(mKey6TV.getText().toString());
-                break;
-            }
+        if (resId == R.id.key_1_tv) {
+            // 按键1
+            nameEt.setText(mKey1TV.getText().toString());
+        } else if (resId == R.id.key_2_tv) {
+            // 按键2
+            nameEt.setText(mKey2TV.getText().toString());
+        } else if (resId == R.id.key_3_tv) {
+            // 按键3
+            nameEt.setText(mKey3TV.getText().toString());
+        } else if (resId == R.id.key_4_tv) {
+            // 按键4
+            nameEt.setText(mKey4TV.getText().toString());
+        } else if (resId == R.id.key_5_tv) {
+            // 按键5
+            nameEt.setText(mKey5TV.getText().toString());
+        } else if (resId == R.id.key_6_tv) {
+            // 按键6
+            nameEt.setText(mKey6TV.getText().toString());
         }
+
         nameEt.setSelection(nameEt.getText().toString().length());
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -479,68 +444,56 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 }
 
                 QMUITipDialogUtil.showLoadingDialg(SixTwoSceneSwitchActivity2.this, R.string.is_setting);
-                switch (resId) {
-                    case R.id.key_1_tv: {
-                        // 按键1
-                        mKeyName1 = nameEt.getText().toString();
-                        mKeyName2 = mKey2TV.getText().toString();
-                        mKeyName3 = mKey3TV.getText().toString();
-                        mKeyName4 = mKey4TV.getText().toString();
-                        mKeyName5 = mKey5TV.getText().toString();
-                        mKeyName6 = mKey6TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_2_tv: {
-                        // 按键2
-                        mKeyName1 = mKey1TV.getText().toString();
-                        mKeyName2 = nameEt.getText().toString();
-                        mKeyName3 = mKey3TV.getText().toString();
-                        mKeyName4 = mKey4TV.getText().toString();
-                        mKeyName5 = mKey5TV.getText().toString();
-                        mKeyName6 = mKey6TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_3_tv: {
-                        // 按键3
-                        mKeyName1 = mKey1TV.getText().toString();
-                        mKeyName2 = mKey2TV.getText().toString();
-                        mKeyName3 = nameEt.getText().toString();
-                        mKeyName4 = mKey4TV.getText().toString();
-                        mKeyName5 = mKey5TV.getText().toString();
-                        mKeyName6 = mKey6TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_4_tv: {
-                        // 按键4
-                        mKeyName1 = mKey1TV.getText().toString();
-                        mKeyName2 = mKey2TV.getText().toString();
-                        mKeyName3 = mKey3TV.getText().toString();
-                        mKeyName4 = nameEt.getText().toString();
-                        mKeyName5 = mKey5TV.getText().toString();
-                        mKeyName6 = mKey6TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_5_tv: {
-                        // 按键5
-                        mKeyName1 = mKey1TV.getText().toString();
-                        mKeyName2 = mKey2TV.getText().toString();
-                        mKeyName3 = mKey3TV.getText().toString();
-                        mKeyName4 = mKey4TV.getText().toString();
-                        mKeyName5 = nameEt.getText().toString();
-                        mKeyName6 = mKey6TV.getText().toString();
-                        break;
-                    }
-                    case R.id.key_6_tv: {
-                        // 按键6
-                        mKeyName1 = mKey1TV.getText().toString();
-                        mKeyName2 = mKey2TV.getText().toString();
-                        mKeyName3 = mKey3TV.getText().toString();
-                        mKeyName4 = mKey4TV.getText().toString();
-                        mKeyName5 = mKey5TV.getText().toString();
-                        mKeyName6 = nameEt.getText().toString();
-                        break;
-                    }
+                if (resId == R.id.key_1_tv) {
+                    // 按键1
+                    mKeyName1 = nameEt.getText().toString();
+                    mKeyName2 = mKey2TV.getText().toString();
+                    mKeyName3 = mKey3TV.getText().toString();
+                    mKeyName4 = mKey4TV.getText().toString();
+                    mKeyName5 = mKey5TV.getText().toString();
+                    mKeyName6 = mKey6TV.getText().toString();
+                } else if (resId == R.id.key_2_tv) {
+                    // 按键2
+                    mKeyName1 = mKey1TV.getText().toString();
+                    mKeyName2 = nameEt.getText().toString();
+                    mKeyName3 = mKey3TV.getText().toString();
+                    mKeyName4 = mKey4TV.getText().toString();
+                    mKeyName5 = mKey5TV.getText().toString();
+                    mKeyName6 = mKey6TV.getText().toString();
+                } else if (resId == R.id.key_3_tv) {
+                    // 按键3
+                    mKeyName1 = mKey1TV.getText().toString();
+                    mKeyName2 = mKey2TV.getText().toString();
+                    mKeyName3 = nameEt.getText().toString();
+                    mKeyName4 = mKey4TV.getText().toString();
+                    mKeyName5 = mKey5TV.getText().toString();
+                    mKeyName6 = mKey6TV.getText().toString();
+                } else if (resId == R.id.key_4_tv) {
+                    // 按键4
+                    mKeyName1 = mKey1TV.getText().toString();
+                    mKeyName2 = mKey2TV.getText().toString();
+                    mKeyName3 = mKey3TV.getText().toString();
+                    mKeyName4 = nameEt.getText().toString();
+                    mKeyName5 = mKey5TV.getText().toString();
+                    mKeyName6 = mKey6TV.getText().toString();
+                } else if (resId == R.id.key_5_tv) {
+                    // 按键5
+                    mKeyName1 = mKey1TV.getText().toString();
+                    mKeyName2 = mKey2TV.getText().toString();
+                    mKeyName3 = mKey3TV.getText().toString();
+                    mKeyName4 = mKey4TV.getText().toString();
+                    mKeyName5 = nameEt.getText().toString();
+                    mKeyName6 = mKey6TV.getText().toString();
+                } else if (resId == R.id.key_6_tv) {
+                    // 按键6
+                    mKeyName1 = mKey1TV.getText().toString();
+                    mKeyName2 = mKey2TV.getText().toString();
+                    mKeyName3 = mKey3TV.getText().toString();
+                    mKeyName4 = mKey4TV.getText().toString();
+                    mKeyName5 = mKey5TV.getText().toString();
+                    mKeyName6 = nameEt.getText().toString();
                 }
+
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_1, mKeyName1);
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_2, mKeyName2);
@@ -565,25 +518,20 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     @Override
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText2:
-                if (mFirstManualSceneId != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText5:
-                if (mSecondManualSceneId != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText2) {
+            if (mFirstManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText5) {
+            if (mSecondManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
+            }
         }
         return true;
     }
 
 
-    private class MyHandler extends Handler {
+    private static class MyHandler extends Handler {
         final WeakReference<SixTwoSceneSwitchActivity2> mWeakReference;
 
         public MyHandler(SixTwoSceneSwitchActivity2 activity) {
@@ -594,6 +542,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             SixTwoSceneSwitchActivity2 activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -632,26 +581,26 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     break;
                 case TAG_GET_EXTENDED_PRO: {
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
-                    mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
-                    mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
-                    mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
-                    mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
-                    mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
-                    DeviceBuffer.addExtendedInfo(mIOTId, object);
+                    activity.mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
+                    activity.mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
+                    activity.mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
+                    activity.mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
+                    activity.mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
+                    activity.mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
-                    mKey1TV.setText(mKeyName1);
-                    mKey2TV.setText(mKeyName2);
-                    mKey3TV.setText(mKeyName3);
-                    mKey4TV.setText(mKeyName4);
-                    mKey5TV.setText(mKeyName5);
-                    mKey6TV.setText(mKeyName6);
-                    DeviceBuffer.addExtendedInfo(mIOTId, resultObj);
-                    ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.set_success);
+                    activity.mKey1TV.setText(activity.mKeyName1);
+                    activity.mKey2TV.setText(activity.mKeyName2);
+                    activity.mKey3TV.setText(activity.mKeyName3);
+                    activity.mKey4TV.setText(activity.mKeyName4);
+                    activity.mKey5TV.setText(activity.mKeyName5);
+                    activity.mKey6TV.setText(activity.mKeyName6);
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.resultObj);
+                    ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
                 default:

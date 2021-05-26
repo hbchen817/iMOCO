@@ -30,6 +30,7 @@ import com.aliyun.alink.business.devicecenter.api.discovery.LocalDeviceMgr;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityScanGatewayNetBinding;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EConfigureNetwork;
 import com.laffey.smart.model.ItemGateway;
@@ -57,19 +58,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class ScanGatewayByNetActivity extends BaseActivity {
-
-    @BindView(R.id.includeTitleLblTitle)
-    TextView includeTitleLblTitle;
-    @BindView(R.id.recycle_view)
-    RecyclerView mRecycleView;
-    @BindView(R.id.progressBar)
-    ProgressBar mProgressBar;
-    @BindView(R.id.scanBleLblStop)
-    TextView mStopView;
-    @BindView(R.id.scanBLERLHint)
-    RelativeLayout mHintView;
-    @BindView(R.id.scanBLELl)
-    LinearLayout mScanView;
+    private ActivityScanGatewayNetBinding mViewBinding;
 
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
@@ -83,8 +72,9 @@ public class ScanGatewayByNetActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_gateway_net);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityScanGatewayNetBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         initView();
         discovery();
 
@@ -101,13 +91,13 @@ public class ScanGatewayByNetActivity extends BaseActivity {
     }
 
     private void initView() {
-        includeTitleLblTitle.setText(R.string.search_gate_way_device);
+        mViewBinding.includeToolbar.includeTitleLblTitle.setText(R.string.search_gate_way_device);
         mHandler = new ProcessDataHandler(this);
         mResponseErrorHandler = new ResponseErrorHandler(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecycleView.setLayoutManager(layoutManager);
+        mViewBinding.recycleView.setLayoutManager(layoutManager);
         mAdapter = new CommonAdapter(mList, this);
-        mRecycleView.setAdapter(mAdapter);
+        mViewBinding.recycleView.setAdapter(mAdapter);
         mAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,6 +105,8 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                 showConfirmDialog(index);
             }
         });
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(this::onViewClicked);
+        mViewBinding.scanBleLblStop.setOnClickListener(this::onViewClicked);
     }
 
     private void showConfirmDialog(int index) {
@@ -123,7 +115,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 // 取消设备发现
                 stopDiscovery();
-                mHintView.setVisibility(View.GONE);
+                mViewBinding.scanBLERLHint.setVisibility(View.GONE);
                 ConfigureNetwork network = new ConfigureNetwork(ScanGatewayByNetActivity.this);
                 EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
                 parameter.homeId = SystemParameter.getInstance().getHomeId();
@@ -171,7 +163,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
      * 发现设备
      */
     private void discovery() {
-        mHintView.setVisibility(View.VISIBLE);
+        mViewBinding.scanBLERLHint.setVisibility(View.VISIBLE);
         EnumSet<DiscoveryType> enumSet = EnumSet.noneOf(DiscoveryType.class);
         enumSet.add(DiscoveryType.LOCAL_ONLINE_DEVICE);
         LocalDeviceMgr.getInstance().startDiscovery(this, enumSet, null, new IDeviceDiscoveryListener() {
@@ -203,16 +195,12 @@ public class ScanGatewayByNetActivity extends BaseActivity {
         stopDiscovery();
     }
 
-    @OnClick({R.id.includeTitleImgBack, R.id.scanBleLblStop})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.includeTitleImgBack:
-                finish();
-                break;
-            case R.id.scanBleLblStop:
-                stopDiscovery();
-                mHintView.setVisibility(View.GONE);
-                break;
+        if (view.getId() == R.id.includeTitleImgBack) {
+            finish();
+        } else if (view.getId() == R.id.scanBleLblStop) {
+            stopDiscovery();
+            mViewBinding.scanBLERLHint.setVisibility(View.GONE);
         }
     }
 
@@ -267,6 +255,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ScanGatewayByNetActivity activity = mWeakReference.get();
+            if (activity == null) return;
             if (activity.mDisposable != null && !activity.mDisposable.isDisposed()) {
                 activity.mDisposable.dispose();
             }
@@ -287,6 +276,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ScanGatewayByNetActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_FILTER_DEVICE:
                     JSONArray items = JSON.parseArray((String) msg.obj);

@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <View
         android:layout_width="match_parent"
@@ -29,9 +31,9 @@
                 android:id="@+id/mTimeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="全部时间"
                 android:drawableRight="@drawable/arrow_down"
                 android:drawablePadding="@dimen/dp_5"
+                android:text="全部时间"
                 android:textColor="@color/topic_color2"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
@@ -53,10 +55,10 @@
                 android:id="@+id/mTypeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="全部记录"
-                android:textColor="@color/topic_color2"
                 android:drawableRight="@drawable/arrow_down"
                 android:drawablePadding="@dimen/dp_5"
+                android:text="全部记录"
+                android:textColor="@color/topic_color2"
                 android:textSize="@dimen/sp_16" />
         </LinearLayout>
 
@@ -66,18 +68,19 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/all_9" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/no_record_hint"
-            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text="@string/icon_no_data"
             android:textSize="@dimen/dp_80"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:visibility="visible" />
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/srl_fragment_me"

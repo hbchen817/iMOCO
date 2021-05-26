@@ -8,7 +8,9 @@
     android:orientation="vertical"
     tools:context=".view.SceneListForFSSActivity">
 
-    <include layout="@layout/include_detail_black" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/include_detail_black" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/scene_sfl"
@@ -18,7 +20,7 @@
         <com.scwang.smartrefresh.layout.header.ClassicsHeader
             android:id="@+id/recycler_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/scene_rv"

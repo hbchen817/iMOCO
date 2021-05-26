@@ -3,6 +3,7 @@ package com.laffey.smart.view;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
+import com.laffey.smart.databinding.ActivityProductguidanceBinding;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.ProductHelper;
@@ -33,22 +35,19 @@ import com.laffey.smart.utility.Dialog;
  * Description: 产品配网引导
  */
 public class ProductGuidanceActivity extends BaseActivity {
+    private ActivityProductguidanceBinding mViewBinding;
+
     private String mProductKey = "";
     private String mProductName = "";
     private int mNodeType;
     private String mGatewayIOTId = "";
     private int mGatewayNumber = 0;
     private List<EProduct.configGuidanceEntry> mGuidances;
-    private ImageView mGuidanceIcon;
-    private TextView mGuidanceCopywriting;
-    private TextView mOperateCopywriting;
-    private ImageView mOperateIcon;
-    private CheckBox mChbIsRead;
     private int mStepCount, mCurrentStepIndex;
     private String[] mIgnoreList = {};
 
     // 数据处理器
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -87,18 +86,18 @@ public class ProductGuidanceActivity extends BaseActivity {
 
     // 配网步骤引导
     public void guidance(int stepIndex) {
-        if ((this.mGuidances == null || this.mGuidances.size() == 0) && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*&& !mProductKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
+        if ((mGuidances == null || mGuidances.size() == 0) && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*&& !mProductKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
             return;
         }
 
         // 引导完作后的处理
-        if (this.mCurrentStepIndex >= this.mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100) /*|| mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
-            if (!mChbIsRead.isChecked()) {
+        if (mCurrentStepIndex >= mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100) /*|| mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
+            if (!mViewBinding.productGuidanceChbRead.isChecked()) {
                 Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
                 return;
             }
 
-            if (this.mNodeType == Constant.DEVICETYPE_GATEWAY) {
+            if (mNodeType == Constant.DEVICETYPE_GATEWAY) {
                 if (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
                     ScanGatewayByNetActivity.start(ProductGuidanceActivity.this);
                 } else {
@@ -110,23 +109,23 @@ public class ProductGuidanceActivity extends BaseActivity {
                 finish();
             } else {
                 // 选中的是子设备处理
-                if (this.mGatewayNumber <= 0) {
+                if (mGatewayNumber <= 0) {
                     // 如果没有网关则退出
                     Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.choicegateway_nohasgatewayhint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
                 } else {
-                    if (this.mGatewayIOTId != null && this.mGatewayIOTId.length() > 0) {
+                    if (mGatewayIOTId != null && mGatewayIOTId.length() > 0) {
                         // 如果网关已经选定则直接进入允许子设备入网
                         Intent intent = new Intent(ProductGuidanceActivity.this, PermitJoinActivity.class);
-                        intent.putExtra("productKey", this.mProductKey);
-                        intent.putExtra("productName", this.mProductName);
-                        intent.putExtra("gatewayIOTId", this.mGatewayIOTId);
+                        intent.putExtra("productKey", mProductKey);
+                        intent.putExtra("productName", mProductName);
+                        intent.putExtra("gatewayIOTId", mGatewayIOTId);
                         startActivity(intent);
                         finish();
                     } else {
                         // 如果网关没有选定先选择子设备所属的网关
                         Intent intent = new Intent(ProductGuidanceActivity.this, ChoiceGatewayActivity.class);
-                        intent.putExtra("productKey", this.mProductKey);
-                        intent.putExtra("productName", this.mProductName);
+                        intent.putExtra("productKey", mProductKey);
+                        intent.putExtra("productName", mProductName);
                         startActivity(intent);
                         finish();
                     }
@@ -137,39 +136,36 @@ public class ProductGuidanceActivity extends BaseActivity {
 
         if (!mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             // 加载引导内容
-            mGuidanceCopywriting.setText(mGuidances.get(stepIndex).dnCopywriting);
-            mOperateCopywriting.setText(mGuidances.get(stepIndex).buttonCopywriting);
+            mViewBinding.productGuidanceLblCopywriting.setText(mGuidances.get(stepIndex).dnCopywriting);
+            mViewBinding.productGuidanceLblOperate.setText(mGuidances.get(stepIndex).buttonCopywriting);
             if (mCurrentStepIndex == mStepCount - 1) {
-                mChbIsRead.setVisibility(View.VISIBLE);
+                mViewBinding.productGuidanceChbRead.setVisibility(View.VISIBLE);
             }
             if (!isDestroyed())
-                Glide.with(this).load(mGuidances.get(stepIndex).dnGuideIcon).transition(new DrawableTransitionOptions().crossFade()).into(mGuidanceIcon);
+                Glide.with(this).load(mGuidances.get(stepIndex).dnGuideIcon)
+                        .transition(new DrawableTransitionOptions().crossFade()).into(mViewBinding.productGuidanceImgIcon);
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_productguidance);
+        mViewBinding = ActivityProductguidanceBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         Intent intent = getIntent();
-        this.mProductKey = intent.getStringExtra("productKey");
-        this.mProductName = intent.getStringExtra("productName");
-        this.mNodeType = intent.getIntExtra("nodeType", 0);
-        this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
-        this.mGatewayNumber = intent.getIntExtra("gatewayNumber", 0);
+        mProductKey = intent.getStringExtra("productKey");
+        mProductName = intent.getStringExtra("productName");
+        mNodeType = intent.getIntExtra("nodeType", 0);
+        mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
+        mGatewayNumber = intent.getIntExtra("gatewayNumber", 0);
 
         Log.i("lzm", "pk" + mProductKey);
         TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
         title.setText(R.string.productguidance_title);
 
-        this.mGuidanceIcon = (ImageView) findViewById(R.id.productGuidanceImgIcon);
-        this.mGuidanceIcon.setImageResource(R.drawable.transparent_bg);
-        this.mGuidanceCopywriting = (TextView) findViewById(R.id.productGuidanceLblCopywriting);
-        this.mChbIsRead = (CheckBox) findViewById(R.id.productGuidanceChbRead);
+        mViewBinding.productGuidanceImgIcon.setImageResource(R.drawable.transparent_bg);
 
-        this.mOperateCopywriting = (TextView) findViewById(R.id.productGuidanceLblOperate);
-        this.mOperateIcon = (ImageView) findViewById(R.id.productGuidanceImgOperate);
         OnClickListener guidanceClick = new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,8 +173,8 @@ public class ProductGuidanceActivity extends BaseActivity {
                 guidance(mCurrentStepIndex);
             }
         };
-        this.mOperateCopywriting.setOnClickListener(guidanceClick);
-        this.mOperateIcon.setOnClickListener(guidanceClick);
+        mViewBinding.productGuidanceLblOperate.setOnClickListener(guidanceClick);
+        mViewBinding.productGuidanceImgOperate.setOnClickListener(guidanceClick);
 
         ImageView back = (ImageView) findViewById(R.id.includeTitleImgBack);
         back.setOnClickListener(new OnClickListener() {
@@ -188,19 +184,19 @@ public class ProductGuidanceActivity extends BaseActivity {
             }
         });
 
-        if (this.mProductKey.length() > 1 && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*&&!mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
-            mChbIsRead.setVisibility(View.VISIBLE);
-            mOperateCopywriting.setText(R.string.dialog_confirm);
+        if (mProductKey.length() > 1 && !mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*&&!mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
+            mViewBinding.productGuidanceChbRead.setVisibility(View.VISIBLE);
+            mViewBinding.productGuidanceLblOperate.setText(R.string.dialog_confirm);
             //获取产品配网引导信息
-            new ProductHelper(this).getGuidanceInformation(this.mProductKey, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processDataHandler);
-        } else if (this.mProductKey.length() > 1 && (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*||mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/)) {
+            new ProductHelper(this).getGuidanceInformation(mProductKey, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        } else if (mProductKey.length() > 1 && (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)/*||mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/)) {
             //RG4100网关
-            mGuidanceCopywriting.setText(R.string.gateway_guidance);
-            mChbIsRead.setVisibility(View.VISIBLE);
-            mOperateCopywriting.setText(R.string.dialog_confirm);
+            mViewBinding.productGuidanceLblCopywriting.setText(R.string.gateway_guidance);
+            mViewBinding.productGuidanceChbRead.setVisibility(View.VISIBLE);
+            mViewBinding.productGuidanceLblOperate.setText(R.string.dialog_confirm);
             if (!isDestroyed())
                 Glide.with(this).load(R.drawable.icon_gateway_fton)
-                        .transition(new DrawableTransitionOptions().crossFade()).into(this.mGuidanceIcon);
+                        .transition(new DrawableTransitionOptions().crossFade()).into(mViewBinding.productGuidanceImgIcon);
         }
 
         initStatusBar();

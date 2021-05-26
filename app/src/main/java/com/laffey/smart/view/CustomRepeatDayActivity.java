@@ -16,6 +16,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityCustomRepeatDayBinding;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -29,16 +31,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CustomRepeatDayActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.repeat_recycler)
-    RecyclerView mRepeatRV;
+    private ActivityCustomRepeatDayBinding mViewBinding;
 
     private BaseQuickAdapter<RepeatDay, BaseViewHolder> mRepeatAdapter;
     private List<RepeatDay> mDayList = new ArrayList<>();
-    private LinearLayoutManager mLayoutManager;
 
     private String mCustomWeekDayResult = null;
 
@@ -47,10 +43,10 @@ public class CustomRepeatDayActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_repeat_day);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityCustomRepeatDayBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         initStatusBar();
         mCustomWeekDayResult = getIntent().getStringExtra("custom_day");
@@ -68,9 +64,9 @@ public class CustomRepeatDayActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.custom));
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.custom));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean isChecked = false;
@@ -80,39 +76,39 @@ public class CustomRepeatDayActivity extends BaseActivity {
                     if (day.isChecked) {
                         isChecked = true;
                         String dayValue = null;
-                        switch (day.getPos()+1){
-                            case 1:{
+                        switch (day.getPos() + 1) {
+                            case 1: {
                                 dayValue = "mon";
                                 break;
                             }
-                            case 2:{
+                            case 2: {
                                 dayValue = "tue";
                                 break;
                             }
-                            case 3:{
+                            case 3: {
                                 dayValue = "wed";
                                 break;
                             }
-                            case 4:{
+                            case 4: {
                                 dayValue = "thu";
                                 break;
                             }
-                            case 5:{
+                            case 5: {
                                 dayValue = "fri";
                                 break;
                             }
-                            case 6:{
+                            case 6: {
                                 dayValue = "sat";
                                 break;
                             }
-                            case 7:{
+                            case 7: {
                                 dayValue = "sun";
                                 break;
                             }
                         }
                         if (stringBuilder.toString().length() == 0) {
                             stringBuilder.append(dayValue);
-                        } else stringBuilder.append("," + dayValue);
+                        } else stringBuilder.append(",").append(dayValue);
                     }
                 }
                 if (!isChecked)
@@ -131,26 +127,26 @@ public class CustomRepeatDayActivity extends BaseActivity {
             boolean isContains = false;
             if (mCustomWeekDayResult != null) {
                 String[] s = mCustomWeekDayResult.split(",");
-                for (int j = 0; j < s.length; j++) {
-                    if ("mon".equals(s[j]) && i == 0) {
+                for (String value : s) {
+                    if ("mon".equals(value) && i == 0) {
                         isContains = true;
                         break;
-                    } else if ("tue".equals(s[j]) && i == 1) {
+                    } else if ("tue".equals(value) && i == 1) {
                         isContains = true;
                         break;
-                    } else if ("wed".equals(s[j]) && i == 2) {
+                    } else if ("wed".equals(value) && i == 2) {
                         isContains = true;
                         break;
-                    } else if ("thu".equals(s[j]) && i == 3) {
+                    } else if ("thu".equals(value) && i == 3) {
                         isContains = true;
                         break;
-                    } else if ("fri".equals(s[j]) && i == 4) {
+                    } else if ("fri".equals(value) && i == 4) {
                         isContains = true;
                         break;
-                    } else if ("sat".equals(s[j]) && i == 5) {
+                    } else if ("sat".equals(value) && i == 5) {
                         isContains = true;
                         break;
-                    } else if ("sun".equals(s[j]) && i == 6) {
+                    } else if ("sun".equals(value) && i == 6) {
                         isContains = true;
                         break;
                     }
@@ -179,10 +175,10 @@ public class CustomRepeatDayActivity extends BaseActivity {
                 mRepeatAdapter.notifyDataSetChanged();
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mRepeatRV.setLayoutManager(mLayoutManager);
-        mRepeatRV.setAdapter(mRepeatAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.repeatRecycler.setLayoutManager(layoutManager);
+        mViewBinding.repeatRecycler.setAdapter(mRepeatAdapter);
     }
 
     private class RepeatDay {

@@ -147,4 +147,11 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/start</item>
+        <item name="android:windowDisablePreview">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityEditUserBinding;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
@@ -36,16 +37,10 @@ import butterknife.OnClick;
  */
 
 public class EditUserActivity extends BaseActivity {
+    private ActivityEditUserBinding mViewBinding;
 
     private static final String ID = "ID";
     private static final String NAME = "NAME";
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.mNameEditText)
-    EditText mNameEditText;
 
     private ProcessDataHandler mHandler;
     private String mUserId;
@@ -53,8 +48,9 @@ public class EditUserActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_user);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityEditUserBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         initView();
 
         initStatusBar();
@@ -73,36 +69,36 @@ public class EditUserActivity extends BaseActivity {
         Intent intent = getIntent();
         mUserId = intent.getStringExtra(ID);
         String name = intent.getStringExtra(NAME);
-        tvToolbarTitle.setText(R.string.edit_user);
-        tvToolbarRight.setText(R.string.nick_name_save);
-        tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.edit_user);
+        mViewBinding.includeToolbar.tvToolbarRight.setText(R.string.nick_name_save);
+        mViewBinding.includeToolbar.tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
-        mNameEditText.setText(name);
-        if (name != null) mNameEditText.setSelection(name.length());
+        mViewBinding.mNameEditText.setText(name);
+        if (name != null) mViewBinding.mNameEditText.setSelection(name.length());
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
+        mViewBinding.deleteUser.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right, R.id.delete_user})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.tv_toolbar_right:
-                String name = mNameEditText.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
-                    return;
+        int id = view.getId();
+        if (id == R.id.iv_toolbar_left) {
+            finish();
+        } else if (id == R.id.tv_toolbar_right) {
+            String name = mViewBinding.mNameEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
+                return;
+            }
+            UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        } else if (id == R.id.delete_user) {
+            DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    UserCenter.deleteVirtualUser(mUserId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 }
-                UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                break;
-            case R.id.delete_user:
-                DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        UserCenter.deleteVirtualUser(mUserId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                    }
-                }, "您确定要删除此用户吗？", "删除用户确认");
-                break;
+            }, "您确定要删除此用户吗？", "删除用户确认");
         }
     }
 
@@ -119,9 +115,9 @@ public class EditUserActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_UPDATE_USER:
                 case Constant.MSG_CALLBACK_DELETE_USER:
-                EditUserActivity activity = mWeakReference.get();
-                EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
-                activity.finish();
+                    EditUserActivity activity = mWeakReference.get();
+                    EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
+                    activity.finish();
                 default:
                     break;
             }

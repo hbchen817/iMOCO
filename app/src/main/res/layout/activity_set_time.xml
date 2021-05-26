@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/moreSubdeviceFl"
-    android:background="@color/background_detail"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/appbgcolor">
 
     <LinearLayout
         android:id="@+id/detailGatewaySetLl"
@@ -12,24 +11,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/include_title" />
+        <include
+            android:id="@+id/include_toolbar"
+            layout="@layout/include_title" />
 
         <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
             style="@style/InputItemStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/dp_45"
             android:layout_marginTop="20dp">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_allday" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/setTimeSwtAllday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,16 +44,17 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
             style="@style/InputItemStyle"
-            android:layout_marginTop="16dp">
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/dp_45"
+            android:layout_marginTop="@dimen/dp_16">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_begin" />
@@ -60,7 +63,8 @@
                 android:id="@+id/setTimeLblBegin"
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/setTimeImgBegin"
                 android:gravity="center_vertical"
@@ -69,7 +73,7 @@
             <ImageView
                 android:id="@+id/setTimeImgBegin"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="@dimen/dp_25"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
@@ -79,15 +83,16 @@
         </RelativeLayout>
 
         <RelativeLayout
+            style="@style/InputItemStyle"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            style="@style/InputItemStyle">
+            android:layout_height="@dimen/dp_45">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_end" />
@@ -97,6 +102,7 @@
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@+id/setTimeImgEnd"
                 android:gravity="center_vertical"
@@ -116,16 +122,17 @@
 
         <RelativeLayout
             android:id="@+id/setTimeRllEveryday"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
             style="@style/InputItemStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/dp_45"
             android:layout_marginTop="16dp">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_everyday_2" />
@@ -144,15 +151,16 @@
 
         <RelativeLayout
             android:id="@+id/setTimeRllWorkday"
+            style="@style/InputItemStyle"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            style="@style/InputItemStyle">
+            android:layout_height="@dimen/dp_45">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_workday_2" />
@@ -173,13 +181,14 @@
             android:id="@+id/setTimeRllWeekend"
             style="@style/InputItemStyle"
             android:layout_width="fill_parent"
-            android:layout_height="40dp">
+            android:layout_height="@dimen/dp_45">
 
             <TextView
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_weekend_2" />
@@ -198,16 +207,17 @@
 
         <RelativeLayout
             android:id="@+id/setTimeRllSefldefine"
+            style="@style/InputItemStyle"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            style="@style/InputItemStyle">
+            android:layout_height="@dimen/dp_45">
 
             <TextView
                 android:id="@+id/setTimeLblSefldefineHint"
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_selfdefine_2" />
@@ -216,9 +226,10 @@
                 android:id="@+id/setTimeLblSefldefine"
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_toRightOf="@+id/setTimeLblSefldefineHint"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/setTimeLblSefldefineHint"
                 android:gravity="center_vertical"
                 android:text="@string/set_time_selfdefine" />
 
@@ -240,14 +251,13 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical" >
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
 
     <RelativeLayout
         android:id="@+id/setTimeRelConfirm"
         android:layout_width="match_parent"
-        android:layout_gravity="center|bottom"
         android:layout_height="50dp"
+        android:layout_gravity="center|bottom"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp">
 
@@ -272,5 +282,7 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/include_twoitemwheelpicker" />
+    <include
+        android:id="@+id/include_wheel_picker"
+        layout="@layout/include_twoitemwheelpicker" />
 </FrameLayout>

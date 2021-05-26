@@ -5,32 +5,30 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.laffey.smart.R;
+import com.laffey.smart.databinding.ActivityMoreServiceBinding;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MoreServiceActivity extends BaseActivity {
+public class MoreServiceActivity extends BaseActivity implements View.OnClickListener {
 
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-
+    private ActivityMoreServiceBinding mViewBinding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_service);
-        ButterKnife.bind(this);
-        tvToolbarTitle.setText(getString(R.string.fragment3_more_service));
+        mViewBinding = ActivityMoreServiceBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+        mViewBinding.includeCommonToolbar.tvToolbarTitle.setText(getString(R.string.fragment3_more_service));
+
+        mViewBinding.includeCommonToolbar.tvToolbarRight.setOnClickListener(this);
     }
 
-    @OnClick({R.id.tv_toolbar_right})
-    void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                break;
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.tv_toolbar_right) {
+
         }
     }
 

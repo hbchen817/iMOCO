@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,6 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityBindSuccessBinding;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.TSLHelper;
@@ -31,19 +31,11 @@ import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class BindSuccessActivity extends BaseActivity {
+    private ActivityBindSuccessBinding mViewBinding;
 
     private static final String EXTRA_IOT_ID = "EXTRA_IOT_ID";
     private static final String EXTRA_NICKNAME = "EXTRA_NICKNAME";
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.ok)
-    TextView mOkView;
 
     private String mIotId;
     private UserCenter mUserCenter;
@@ -61,16 +53,17 @@ public class BindSuccessActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bind_success);
-        ButterKnife.bind(this);
-        mTitle.setText(R.string.bind_result);
+        mViewBinding = ActivityBindSuccessBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.bind_result);
         mIotId = getIntent().getStringExtra(EXTRA_IOT_ID);
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mDeviceName = mNickName;
         mUserCenter = new UserCenter(this);
-        ViseLog.d("nickName " + mNickName);
+
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
-        mOkView.setTypeface(iconfont);
+        mViewBinding.ok.setTypeface(iconfont);
         if (mNickName.contains(getString(R.string.app_brand))) {
             mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
             mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -82,6 +75,9 @@ public class BindSuccessActivity extends BaseActivity {
         mTSLHelper.getBaseInformation(mIotId, null, null, mProcessHandler);
 
         initStatusBar();
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.currentTestBtn.setOnClickListener(this::onViewClicked);
+        mViewBinding.editNameBtn.setOnClickListener(this::onViewClicked);
     }
 
     // 嵌入式状态栏
@@ -105,7 +101,8 @@ public class BindSuccessActivity extends BaseActivity {
         nameEt.setText(mNickName);
         nameEt.setSelection(mNickName.length());
         final android.app.Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -115,31 +112,23 @@ public class BindSuccessActivity extends BaseActivity {
 
         View confirmView = view.findViewById(R.id.dialogEditLblConfirm);
         View cancelView = view.findViewById(R.id.dialogEditLblCancel);
-        confirmView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String nameStr = nameEt.getText().toString().trim();
-                if (!nameStr.equals("")) {
-                    dialog.dismiss();
-                    // 设置设备昵称
-                    mNewNickName = nameStr;
-                    mUserCenter.setDeviceNickName(mIotId, nameStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    mNickName = mNewNickName;
-                } else {
-                    ToastUtils.showShortToast(BindSuccessActivity.this, R.string.dev_name_cannot_be_empty);
-                }
-            }
-        });
-        cancelView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        confirmView.setOnClickListener(v -> {
+            String nameStr = nameEt.getText().toString().trim();
+            if (!nameStr.equals("")) {
                 dialog.dismiss();
+                // 设置设备昵称
+                mNewNickName = nameStr;
+                mUserCenter.setDeviceNickName(mIotId, nameStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                mNickName = mNewNickName;
+            } else {
+                ToastUtils.showShortToast(BindSuccessActivity.this, R.string.dev_name_cannot_be_empty);
             }
         });
+        cancelView.setOnClickListener(v -> dialog.dismiss());
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -164,37 +153,31 @@ public class BindSuccessActivity extends BaseActivity {
         }
     });
 
-    @OnClick({R.id.iv_toolbar_left, R.id.current_test_btn, R.id.edit_name_btn})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
+        int id = view.getId();
+        if (id == R.id.iv_toolbar_left) {
+            finish();
+        } else if (id == R.id.current_test_btn) {
+            if (mPK == null) {
+                ToastUtils.showLongToast(this, R.string.pls_try_again_later);
+                mTSLHelper.getBaseInformation(mIotId, null, null, mProcessHandler);
+            } else {
+                ActivityRouter.toDetail(this, mIotId, mPK,
+                        mStatus, mNickName, mOwned);
                 finish();
-                break;
-            case R.id.current_test_btn:
-                if (mPK == null) {
-                    ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
-                    mTSLHelper.getBaseInformation(mIotId, null, null, mProcessHandler);
+            }
+        } else if (id == R.id.edit_name_btn) {
+            if (mDeviceName.equals(mNickName)) {
+                ToastUtils.showLongToast(this, R.string.pls_try_again_later);
+                if (mNickName.contains(getString(R.string.app_brand))) {
+                    mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                    mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 } else {
-                    ActivityRouter.toDetail(this, mIotId, mPK,
-                            mStatus, mNickName, mOwned);
-                    finish();
+                    mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
-                break;
-            case R.id.edit_name_btn:
-                if (mDeviceName.equals(mNickName)) {
-                    ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
-                    if (mNickName.contains(getString(R.string.app_brand))) {
-                        mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
-                        mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    } else {
-                        mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    }
-                } else {
-                    showDeviceNameDialogEdit();
-                }
-                break;
-            default:
-                break;
+            } else {
+                showDeviceNameDialogEdit();
+            }
         }
     }
 
@@ -205,7 +188,7 @@ public class BindSuccessActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private class ProcessDataHandler extends Handler {
+    private static class ProcessDataHandler extends Handler {
         final WeakReference<BindSuccessActivity> mWeakReference;
 
         public ProcessDataHandler(BindSuccessActivity activity) {
@@ -217,14 +200,10 @@ public class BindSuccessActivity extends BaseActivity {
             super.handleMessage(msg);
             BindSuccessActivity activity = mWeakReference.get();
             if (activity == null) return;
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
-                    JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
-                    activity.mPK = jsonObject.getString("productKey");
-                    activity.mStatus = jsonObject.getIntValue("status");
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_GETTHINGBASEINFO) {
+                JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
+                activity.mPK = jsonObject.getString("productKey");
+                activity.mStatus = jsonObject.getIntValue("status");
             }
         }
     }

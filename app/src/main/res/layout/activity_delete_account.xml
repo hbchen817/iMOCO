@@ -6,15 +6,19 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="@dimen/dp_16"
-        android:paddingHorizontal="@dimen/dp_12"
         android:background="@color/appbgcolor"
-        android:textSize="@dimen/sp_14"
-        android:text="@string/delete_account_text1"/>
+        android:paddingHorizontal="@dimen/dp_12"
+        android:paddingVertical="@dimen/dp_16"
+        android:text="@string/delete_account_text1"
+        android:textSize="@dimen/sp_14" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,35 +27,39 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/dp_12"
         android:paddingVertical="@dimen/dp_16">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/delete_account_account_safety"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_16"
-            android:textStyle="bold"
-            android:text="@string/delete_account_account_safety"/>
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginTop="@dimen/dp_12"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/delete_account_account_safety_detail"/>
+            android:text="@string/delete_account_account_safety_detail"
+            android:textSize="@dimen/sp_14" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_20"
+            android:text="@string/delete_account_device_safety"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_16"
-            android:textStyle="bold"
-            android:text="@string/delete_account_device_safety"/>
+            android:textStyle="bold" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginTop="@dimen/dp_12"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/delete_account_device_safety_detail"/>
+            android:text="@string/delete_account_device_safety_detail"
+            android:textSize="@dimen/sp_14" />
     </LinearLayout>
 
     <RelativeLayout
@@ -63,12 +71,13 @@
         android:background="@drawable/shape_appcolor"
         android:paddingHorizontal="@dimen/dp_14"
         android:paddingVertical="@dimen/dp_12">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:text="@string/delete_account_confirm_btn"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_14"
-            android:text="@string/delete_account_confirm_btn"/>
+            android:textSize="@dimen/sp_14" />
     </RelativeLayout>
 </LinearLayout>

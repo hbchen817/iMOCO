@@ -621,7 +621,7 @@
     <string name="time_range_txt">如：工作日19–22点</string>
     <string name="dev_status">设备状态</string>
     <string name="dev_status_txt">如“门打开”或“灯打开”</string>
-    <string name="do_once">执行一次</string>Working days
+    <string name="do_once">执行一次</string>
     <string name="everyday">每天</string>
     <string name="working_days">工作日</string>
     <string name="weekend">周末</string>
@@ -659,6 +659,7 @@
     <string name="time_period_cannot_be_used_as_condition_to_satisfy_any_of_following_conditions">“时间段”无法作为“满足以下任一条件”的条件</string>
     <string name="time_condition_can_not_more_than_one">“时间点”、“时间段”条件总数不能大于一个</string>
     <string name="this_device_has_no_scene_action">此设备无场景动作</string>
+    <string name="this_device_has_no_scene_condition">此设备无场景条件</string>
     <string name="do_you_really_want_to_delete_the_current_scene">你真的要删除场景？</string>
     <string name="deleting_the_scene">正在删除场景</string>
     <string name="delete_the_success">删除成功</string>
@@ -715,4 +716,6 @@
     <string name="tv">电视</string>
     <string name="fan">风扇</string>
     <string name="pls_input_brand">请输入品牌</string>
+
+    <string name="service_has_no_parameters">此服务无参数。</string>
 </resources>

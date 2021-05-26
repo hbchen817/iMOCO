@@ -6,7 +6,9 @@
     android:background="@color/appbgcolor"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"

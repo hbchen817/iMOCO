@@ -7,7 +7,9 @@
     android:orientation="vertical"
     tools:context=".view.NewSceneActivity">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -53,6 +55,7 @@
                     android:layout_marginEnd="@dimen/dp_10"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="onViewClicked"
                     android:text="@string/icon_right_arrow"
                     android:textColor="@color/normal_font_color"
                     android:textSize="@dimen/sp_30" />
@@ -66,8 +69,10 @@
                     android:layout_toRightOf="@id/name"
                     android:clickable="true"
                     android:ellipsize="end"
+                    android:focusable="true"
                     android:gravity="right"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:onClick="onViewClicked" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -100,6 +105,7 @@
                     android:layout_marginEnd="@dimen/dp_10"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="onViewClicked"
                     android:text="@string/icon_right_arrow"
                     android:textColor="@color/normal_font_color"
                     android:textSize="@dimen/sp_30" />
@@ -112,7 +118,9 @@
                     android:layout_toLeftOf="@id/type_go"
                     android:layout_toRightOf="@id/type"
                     android:clickable="true"
-                    android:gravity="right" />
+                    android:focusable="true"
+                    android:gravity="right"
+                    android:onClick="onViewClicked" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -153,6 +161,7 @@
                     android:layout_marginEnd="@dimen/dp_10"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="onViewClicked"
                     android:text="@string/icon_right_arrow"
                     android:textColor="@color/normal_font_color"
                     android:textSize="@dimen/sp_30" />
@@ -165,7 +174,9 @@
                     android:layout_toLeftOf="@id/status_go"
                     android:layout_toRightOf="@id/status"
                     android:clickable="true"
-                    android:gravity="right" />
+                    android:focusable="true"
+                    android:gravity="right"
+                    android:onClick="onViewClicked" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -195,6 +206,8 @@
                         android:clickable="true"
                         android:drawableRight="@drawable/arrow_down"
                         android:drawablePadding="@dimen/dp_5"
+                        android:focusable="true"
+                        android:onClick="onViewClicked"
                         android:paddingVertical="@dimen/dp_15"
                         android:textSize="@dimen/sp_14" />
 
@@ -212,6 +225,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:onClick="onViewClicked"
                         android:padding="10dp"
                         android:text="@string/icon_add_2"
                         android:textColor="@color/appcolor"
@@ -238,7 +252,9 @@
                         android:clickable="true"
                         android:drawableLeft="@drawable/add_orange_2"
                         android:drawablePadding="@dimen/dp_5"
+                        android:focusable="true"
                         android:gravity="center"
+                        android:onClick="onViewClicked"
                         android:paddingVertical="@dimen/dp_15"
                         android:text="@string/add_condition"
                         android:textColor="@color/appcolor"
@@ -290,6 +306,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:onClick="onViewClicked"
                         android:padding="10dp"
                         android:text="@string/icon_add_2"
                         android:textColor="@color/appcolor"
@@ -316,7 +333,9 @@
                         android:clickable="true"
                         android:drawableLeft="@drawable/add_orange_2"
                         android:drawablePadding="@dimen/dp_5"
+                        android:focusable="true"
                         android:gravity="center"
+                        android:onClick="onViewClicked"
                         android:paddingVertical="@dimen/dp_15"
                         android:text="@string/add_action"
                         android:textColor="@color/appcolor"
@@ -339,6 +358,7 @@
                 android:layout_margin="@dimen/dp_10"
                 android:background="@drawable/shape_button"
                 android:gravity="center"
+                android:onClick="onViewClicked"
                 android:paddingVertical="@dimen/dp_15"
                 android:text="@string/delete"
                 android:textColor="@android:color/white"

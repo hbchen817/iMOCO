@@ -8,12 +8,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -24,6 +22,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityDeviceActionBinding;
 import com.laffey.smart.model.ItemAction;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
@@ -38,17 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class DeviceActionActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView mTitleRight;
-    @BindView(R.id.mRecyclerView)
-    RecyclerView mRecyclerView;
+    private ActivityDeviceActionBinding mViewBinding;
 
     private String mIotID;
     private String mDeviceName;
@@ -60,12 +50,16 @@ public class DeviceActionActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_action);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityDeviceActionBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         mSceneManager = new SceneManager(this);
         mMyHandler = new MyHandler(this);
         mIotID = getIntent().getStringExtra("iotID");
         mDeviceName = getIntent().getStringExtra("deviceName");
+        mIdentifier = getIntent().getStringExtra("identifier");
+        mActionValue = getIntent().getStringExtra("actionValue");
+
         initView();
         getData();
 
@@ -82,16 +76,17 @@ public class DeviceActionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText("选择动作");
-        mTitleRight.setText("保存");
-        mTitleRight.setOnClickListener(v -> {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("选择动作");
+        mViewBinding.includeToolbar.tvToolbarRight.setText("保存");
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(v -> {
             List<ItemAction> mSelectList = new ArrayList<>();
             for (int i = 0; i < mList.size(); i++) {
                 if (mList.get(i).isSelected()) {
                     mSelectList.add(mList.get(i));
                 }
             }
-            if (mSelectList.size() >= 0) {
+
+            if (mSelectList.size() > 0) {
                 EventBus.getDefault().post(mSelectList);
                 //finish();
                 Intent intent = new Intent(DeviceActionActivity.this, SwitchSceneActivity.class);
@@ -101,8 +96,8 @@ public class DeviceActionActivity extends BaseActivity {
             }
         });
         initAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
+        mViewBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mViewBinding.mRecyclerView.setAdapter(mAdapter);
     }
 
     private void getData() {
@@ -136,7 +131,7 @@ public class DeviceActionActivity extends BaseActivity {
         });
     }
 
-    private class MyHandler extends Handler {
+    private static class MyHandler extends Handler {
         final WeakReference<DeviceActionActivity> mWeakReference;
 
         public MyHandler(DeviceActionActivity activity) {
@@ -147,69 +142,74 @@ public class DeviceActionActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             DeviceActionActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_SCENE_ABILITY_TSL:
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    JSONArray simplifyAbilityDTOs = jsonObject.getJSONArray("simplifyAbilityDTOs");
-                    JSONObject abilityDsl = jsonObject.getJSONObject("abilityDsl");
-                    JSONArray services = abilityDsl.getJSONArray("services");
-                    JSONArray properties = abilityDsl.getJSONArray("properties");
-                    JSONArray events = abilityDsl.getJSONArray("events");
-                    int size = simplifyAbilityDTOs.size();
-                    for (int i = 0; i < size; i++) {
-                        JSONObject ability = simplifyAbilityDTOs.getJSONObject(i);
-                        int type = ability.getIntValue("type");//功能类型：1-属性；2-服务；3-事件
-                        switch (type) {
-                            case 1:
-                                int propertiesSize = properties.size();
-                                for (int j = 0; j < propertiesSize; j++) {
-                                    JSONObject property = properties.getJSONObject(j);
-                                    if (property.getString("identifier").equals(ability.getString("identifier"))) {
-                                        JSONObject dataType = property.getJSONObject("dataType");
-                                        String dataTypeValue = dataType.getString("type");
-                                        JSONObject specs = dataType.getJSONObject("specs");
-                                        switch (dataTypeValue) {
-                                            case "enum":
-                                            case "bool":
-                                                for (Map.Entry<String, Object> map : specs.entrySet()) {
-                                                    String identifier = property.getString("identifier").trim();
-                                                    String name = null;
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_SCENE_ABILITY_TSL) {
+                JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                JSONArray simplifyAbilityDTOs = jsonObject.getJSONArray("simplifyAbilityDTOs");
+                JSONObject abilityDsl = jsonObject.getJSONObject("abilityDsl");
+                JSONArray services = abilityDsl.getJSONArray("services");
+                JSONArray properties = abilityDsl.getJSONArray("properties");
+                JSONArray events = abilityDsl.getJSONArray("events");
+                int size = simplifyAbilityDTOs.size();
+                for (int i = 0; i < size; i++) {
+                    JSONObject ability = simplifyAbilityDTOs.getJSONObject(i);
+                    int type = ability.getIntValue("type");//功能类型：1-属性；2-服务；3-事件
+                    switch (type) {
+                        case 1:
+                            int propertiesSize = properties.size();
+                            for (int j = 0; j < propertiesSize; j++) {
+                                JSONObject property = properties.getJSONObject(j);
+                                if (property.getString("identifier").equals(ability.getString("identifier"))) {
+                                    JSONObject dataType = property.getJSONObject("dataType");
+                                    String dataTypeValue = dataType.getString("type");
+                                    JSONObject specs = dataType.getJSONObject("specs");
+                                    switch (dataTypeValue) {
+                                        case "enum":
+                                        case "bool":
+                                            for (Map.Entry<String, Object> map : specs.entrySet()) {
+                                                String identifier = property.getString("identifier").trim();
+                                                String name = null;
 
-                                                    if (DeviceBuffer.getExtendedInfo(mIotID) != null) {
-                                                        name = DeviceBuffer.getExtendedInfo(mIotID).getString(identifier);
-                                                        if (name == null)
-                                                            name = property.getString("name").trim();
-                                                    } else name = property.getString("name").trim();
+                                                if (DeviceBuffer.getExtendedInfo(activity.mIotID) != null) {
+                                                    name = DeviceBuffer.getExtendedInfo(activity.mIotID).getString(identifier);
+                                                    if (name == null)
+                                                        name = property.getString("name").trim();
+                                                } else name = property.getString("name").trim();
 
-                                                    ItemAction<String> itemAction = new ItemAction<String>();
-                                                    itemAction.setActionName(name);
-                                                    itemAction.setIdentifier(identifier);
-                                                    itemAction.setActionKey((String) map.getValue());
-                                                    itemAction.setActionValue(map.getKey());
-                                                    itemAction.setIotId(activity.mIotID);
-                                                    itemAction.setDeviceName(activity.mDeviceName);
-                                                    itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
-                                                    mList.add(itemAction);
+                                                ItemAction<String> itemAction = new ItemAction<String>();
+                                                itemAction.setActionName(name);
+                                                itemAction.setIdentifier(identifier);
+                                                itemAction.setActionKey((String) map.getValue());
+                                                itemAction.setActionValue(map.getKey());
+                                                itemAction.setIotId(activity.mIotID);
+                                                itemAction.setDeviceName(activity.mDeviceName);
+                                                itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
+
+                                                if (activity.mIdentifier != null && activity.mIdentifier.length() > 0 &&
+                                                        activity.mActionValue != null && activity.mActionValue.length() > 0) {
+                                                    if (activity.mIdentifier.equals(itemAction.getIdentifier()) && activity.mActionValue.equals(itemAction.getActionValue())) {
+                                                        itemAction.setSelected(true);
+                                                    }
                                                 }
-                                                break;
-                                            default:
-                                                break;
-                                        }
+
+                                                activity.mList.add(itemAction);
+                                            }
+                                            break;
+                                        default:
+                                            break;
                                     }
                                 }
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                break;
-                            default:
-                                break;
-                        }
+                            }
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            break;
                     }
-                    activity.mAdapter.notifyDataSetChanged();
-                    break;
-                default:
-                    break;
+                }
+                activity.mAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -219,6 +219,18 @@ public class DeviceActionActivity extends BaseActivity {
         Intent intent = new Intent(context, DeviceActionActivity.class);
         intent.putExtra("iotID", iotID);
         intent.putExtra("deviceName", deviceName);
+        context.startActivity(intent);
+    }
+
+    private String mIdentifier;
+    private String mActionValue;
+
+    public static void start(Context context, String iotID, String deviceName, String identifier, String actionValue) {
+        Intent intent = new Intent(context, DeviceActionActivity.class);
+        intent.putExtra("iotID", iotID);
+        intent.putExtra("deviceName", deviceName);
+        intent.putExtra("identifier", identifier);
+        intent.putExtra("actionValue", actionValue);
         context.startActivity(intent);
     }
 }
