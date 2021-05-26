@@ -20,6 +20,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityDeviceQrcodeBinding;
 import com.rexense.wholehouse.presenter.ShareDeviceManager;
 import com.rexense.wholehouse.utility.ToastUtils;
 
@@ -31,23 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class DeviceQrcodeActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.mobile_account_et)
-    EditText mobileAccountEt;
-    @BindView(R.id.qrcode_tv)
-    TextView qrcodeTv;
-    @BindView(R.id.account_tv)
-    TextView accountTv;
-    @BindView(R.id.qrcode_view)
-    LinearLayout qrcodeView;
-    @BindView(R.id.account_view)
-    LinearLayout accountView;
-    @BindView(R.id.qrcode_img)
-    ImageView qrcodeImg;
+    private ActivityDeviceQrcodeBinding mViewBinding;
 
     private ArrayList<String> iotIdList = new ArrayList<>();
     private ShareDeviceManager shareDeviceManager;
@@ -55,17 +40,21 @@ public class DeviceQrcodeActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_qrcode);
-        ButterKnife.bind(this);
-        tvToolbarRight.setText(getString(R.string.share_device_commit));
-        tvToolbarRight.setVisibility(View.GONE);
-        tvToolbarTitle.setText(getString(R.string.fragment3_share_device));
+        mViewBinding = ActivityDeviceQrcodeBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.share_device_commit));
+        mViewBinding.includeToolbar.tvToolbarRight.setVisibility(View.GONE);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.fragment3_share_device));
         iotIdList = getIntent().getStringArrayListExtra("iotIdList");
         shareDeviceManager = new ShareDeviceManager(mActivity);
 
         shareDeviceManager.getQrcode(iotIdList, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
         initStatusBar();
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onClick);
+        mViewBinding.qrcodeTv.setOnClickListener(this::onClick);
+        mViewBinding.accountTv.setOnClickListener(this::onClick);
     }
 
     // 嵌入式状态栏
@@ -78,7 +67,7 @@ public class DeviceQrcodeActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -107,11 +96,11 @@ public class DeviceQrcodeActivity extends BaseActivity {
                         Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                         bitmap.setPixels(pixels, 0, size, 0, 0, size, size);
 
-                        qrcodeImg.setImageBitmap(bitmap);
+                        mViewBinding.qrcodeImg.setImageBitmap(bitmap);
                     }
                     break;
                 case Constant.MSG_CALLBACK_SHAREDEVICEORSCENE:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_share_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.share_device_share_success));
                     finish();
                     break;
                 default:
@@ -121,31 +110,27 @@ public class DeviceQrcodeActivity extends BaseActivity {
         }
     });
 
-    @OnClick({R.id.tv_toolbar_right, R.id.qrcode_tv, R.id.account_tv})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                String mobileStr = mobileAccountEt.getText().toString().trim();
-                if (TextUtils.isEmpty(mobileStr)) {
-                    ToastUtils.showToastCentrally(mActivity, mobileAccountEt.getHint().toString());
-                    return;
-                }
-                shareDeviceManager.shareDeviceByMobile(iotIdList,mobileStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                break;
-            case R.id.qrcode_tv:
-                qrcodeTv.setTextColor(getResources().getColor(R.color.appcolor));
-                accountTv.setTextColor(getResources().getColor(R.color.black));
-                qrcodeView.setVisibility(View.VISIBLE);
-                accountView.setVisibility(View.GONE);
-                tvToolbarRight.setVisibility(View.GONE);
-                break;
-            case R.id.account_tv:
-                qrcodeTv.setTextColor(getResources().getColor(R.color.black));
-                accountTv.setTextColor(getResources().getColor(R.color.appcolor));
-                qrcodeView.setVisibility(View.GONE);
-                accountView.setVisibility(View.VISIBLE);
-                tvToolbarRight.setVisibility(View.VISIBLE);
-                break;
+        int id = view.getId();
+        if (id == R.id.tv_toolbar_right) {
+            String mobileStr = mViewBinding.mobileAccountEt.getText().toString().trim();
+            if (TextUtils.isEmpty(mobileStr)) {
+                ToastUtils.showToastCentrally(mActivity, mViewBinding.mobileAccountEt.getHint().toString());
+                return;
+            }
+            shareDeviceManager.shareDeviceByMobile(iotIdList, mobileStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        } else if (id == R.id.qrcode_tv) {
+            mViewBinding.qrcodeTv.setTextColor(getResources().getColor(R.color.appcolor));
+            mViewBinding.accountTv.setTextColor(getResources().getColor(R.color.black));
+            mViewBinding.qrcodeView.setVisibility(View.VISIBLE);
+            mViewBinding.accountView.setVisibility(View.GONE);
+            mViewBinding.includeToolbar.tvToolbarRight.setVisibility(View.GONE);
+        } else if (id == R.id.account_tv) {
+            mViewBinding.qrcodeTv.setTextColor(getResources().getColor(R.color.black));
+            mViewBinding.accountTv.setTextColor(getResources().getColor(R.color.appcolor));
+            mViewBinding.qrcodeView.setVisibility(View.GONE);
+            mViewBinding.accountView.setVisibility(View.VISIBLE);
+            mViewBinding.includeToolbar.tvToolbarRight.setVisibility(View.VISIBLE);
         }
     }
 

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.wholehouse.R;
@@ -36,32 +37,48 @@ import com.rexense.wholehouse.utility.ToastUtils;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-21 17:14
  * Description: 两键开关详细界面
  */
 public class DetailTwoSwitchActivity2 extends DetailActivity {
-    private int mState1 = 0;
-    private int mState2 = 0;
-    private int mBackLightState = 1;
-    private ImageView mImgOperate1;
-    private ImageView mImgOperate2;
-    private TextView mStateName1;
-    private TextView mStateValue1;
-    private TextView mStateName2;
-    private TextView mStateValue2;
+    @BindView(R.id.detailTwoSwitchImgOperate1)
+    protected ImageView mImgOperate1;
+    @BindView(R.id.detailTwoSwitchImgOperate2)
+    protected ImageView mImgOperate2;
+    @BindView(R.id.detailTwoSwitchLblStateName1)
+    protected TextView mStateName1;
+    @BindView(R.id.detailTwoSwitchLblStateValue1)
+    protected TextView mStateValue1;
+    @BindView(R.id.detailTwoSwitchLblStateName2)
+    protected TextView mStateName2;
+    @BindView(R.id.detailTwoSwitchLblStateValue2)
+    protected TextView mStateValue2;
     private TSLHelper mTSLHelper;
-    private TextView mTimerIcTV;
-    private TextView mBackLightIc;
-    private TextView mBackLightTV;
-    private RelativeLayout mBackLightLayout;
+    @BindView(R.id.timer_ic_tv)
+    protected TextView mTimerIcTV;
+    @BindView(R.id.back_light_ic)
+    protected TextView mBackLightIc;
+    @BindView(R.id.back_light_tv)
+    protected TextView mBackLightTV;
+    @BindView(R.id.back_light_layout)
+    protected RelativeLayout mBackLightLayout;
+	@BindView(R.id.back_light_root)
+    protected RelativeLayout mBackLightRoot;
 
-    private final int TAG_GET_EXTENDED_PRO = 10000;
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
+
     private SceneManager mSceneManager;
     private MyHandler mHandler;
     private String mKeyName1;
     private String mKeyName2;
+    private int mState1 = 0;
+    private int mState2 = 0;
+    private int mBackLightState = 1;
 
     // 更新状态
     @Override
@@ -93,13 +110,13 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
             mBackLightState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.TWS_P_BackLightMode));
             switch (mBackLightState) {
                 case CTSL.STATUS_OFF: {
-                    mBackLightIc.setTextColor(getResources().getColor(R.color.gray3));
-                    mBackLightTV.setTextColor(getResources().getColor(R.color.gray3));
+                    mBackLightIc.setTextColor(ContextCompat.getColor(this, R.color.gray3));
+                    mBackLightTV.setTextColor(ContextCompat.getColor(this, R.color.gray3));
                     break;
                 }
                 case CTSL.STATUS_ON: {
-                    mBackLightIc.setTextColor(getResources().getColor(R.color.blue2));
-                    mBackLightTV.setTextColor(getResources().getColor(R.color.blue2));
+                    mBackLightIc.setTextColor(ContextCompat.getColor(this, R.color.blue2));
+                    mBackLightTV.setTextColor(ContextCompat.getColor(this, R.color.blue2));
                     break;
                 }
             }
@@ -111,8 +128,9 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
+        ButterKnife.bind(this);
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
         mSceneManager = new SceneManager(this);
         mHandler = new MyHandler(this);
 
@@ -127,26 +145,21 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate1 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate1);
-        this.mImgOperate1.setOnClickListener(operateOnClickListener1);
+        mImgOperate1.setOnClickListener(operateOnClickListener1);
 
-        mStateName1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateName1);
         mStateName1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName1);
             }
         });
-        mStateValue1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateValue1);
 
-        mStateName2 = (TextView) findViewById(R.id.detailTwoSwitchLblStateName2);
         mStateName2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName2);
             }
         });
-        mStateValue2 = (TextView) findViewById(R.id.detailTwoSwitchLblStateValue2);
 
         // 键2操作事件处理
         OnClickListener operateOnClickListener2 = new OnClickListener() {
@@ -159,8 +172,7 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate2 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate2);
-        this.mImgOperate2.setOnClickListener(operateOnClickListener2);
+        mImgOperate2.setOnClickListener(operateOnClickListener2);
 
         // 云端定时处理
         RelativeLayout timer = (RelativeLayout) findViewById(R.id.detailTwoSwitchRLTimer);
@@ -173,11 +185,7 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
 
         initStatusBar();
 
-        mTimerIcTV = (TextView) findViewById(R.id.timer_ic_tv);
-        mBackLightIc = (TextView) findViewById(R.id.back_light_ic);
-        mBackLightTV = (TextView) findViewById(R.id.back_light_tv);
-        mBackLightLayout = (RelativeLayout) findViewById(R.id.back_light_layout);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconfont);
         mBackLightIc.setTypeface(iconfont);
 
@@ -193,6 +201,10 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
         });
 
         initKeyNickName();
+        mBackLightRoot.setVisibility(View.GONE);
+        if (CTSL.PK_TWOWAYSWITCH_LF.equals(mProductKey)) {
+            mBackLightRoot.setVisibility(View.VISIBLE);
+        }
     }
 
     private JSONObject mResultObj;
@@ -208,17 +220,12 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setHint(getString(R.string.pls_input_key_name));
 
-        switch (resId) {
-            case R.id.detailTwoSwitchLblStateName1: {
-                // 按键1
-                nameEt.setText(mStateName1.getText().toString());
-                break;
-            }
-            case R.id.detailTwoSwitchLblStateName2: {
-                // 按键2
-                nameEt.setText(mStateName2.getText().toString());
-                break;
-            }
+        if (resId == R.id.detailTwoSwitchLblStateName1) {
+            // 按键1
+            nameEt.setText(mStateName1.getText().toString());
+        } else if (resId == R.id.detailTwoSwitchLblStateName2) {
+            // 按键2
+            nameEt.setText(mStateName2.getText().toString());
         }
 
         nameEt.setSelection(nameEt.getText().toString().length());
@@ -249,25 +256,21 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
                 }
 
                 QMUITipDialogUtil.showLoadingDialg(DetailTwoSwitchActivity2.this, R.string.is_setting);
-                switch (resId) {
-                    case R.id.detailTwoSwitchLblStateName1: {
-                        // 按键1
-                        mKeyName1 = nameEt.getText().toString();
-                        mKeyName2 = mStateName2.getText().toString();
-                        break;
-                    }
-                    case R.id.detailTwoSwitchLblStateName2: {
-                        // 按键2
-                        mKeyName1 = mStateName1.getText().toString();
-                        mKeyName2 = nameEt.getText().toString();
-                        break;
-                    }
+                if (resId == R.id.detailTwoSwitchLblStateName1) {
+                    // 按键1
+                    mKeyName1 = nameEt.getText().toString();
+                    mKeyName2 = mStateName2.getText().toString();
+                } else if (resId == R.id.detailTwoSwitchLblStateName2) {
+                    // 按键2
+                    mKeyName1 = mStateName1.getText().toString();
+                    mKeyName2 = nameEt.getText().toString();
                 }
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put(CTSL.TWS_P_PowerSwitch_1, mKeyName1);
                 jsonObject.put(CTSL.TWS_P_PowerSwitch_2, mKeyName2);
                 mResultObj = jsonObject;
-                mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                        mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 dialog.dismiss();
             }
         });
@@ -284,26 +287,28 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getColor(R.color.appbgcolor));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 
     private void initKeyNickName() {
         MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
-        mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mHandler);
+        mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO,
+                null, errHandler, mHandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private final WeakReference<DetailTwoSwitchActivity2> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(DetailTwoSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailTwoSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -319,44 +324,46 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.TWS_P_PowerSwitch_1, mStateName1.getText().toString());
-                    jsonObject.put(CTSL.TWS_P_PowerSwitch_2, mStateName2.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.TWS_P_PowerSwitch_1, activity.mStateName1.getText().toString());
+                    jsonObject.put(CTSL.TWS_P_PowerSwitch_2, activity.mStateName2.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
     }
 
-    private class MyHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyHandler extends Handler {
+        private final WeakReference<DetailTwoSwitchActivity2> ref;
 
-        public MyHandler(Activity activity) {
+        public MyHandler(DetailTwoSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailTwoSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    DeviceBuffer.addExtendedInfo(mIOTId, object);
-                    mStateName1.setText(object.getString(CTSL.TWS_P_PowerSwitch_1));
-                    mStateName2.setText(object.getString(CTSL.TWS_P_PowerSwitch_2));
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    activity.mStateName1.setText(object.getString(CTSL.TWS_P_PowerSwitch_1));
+                    activity.mStateName2.setText(object.getString(CTSL.TWS_P_PowerSwitch_2));
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
-                    mStateName1.setText(mKeyName1);
-                    mStateName2.setText(mKeyName2);
-                    DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                    ToastUtils.showShortToast(DetailTwoSwitchActivity2.this, R.string.set_success);
+                    activity.mStateName1.setText(activity.mKeyName1);
+                    activity.mStateName2.setText(activity.mKeyName2);
+                    DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
             }

@@ -1,5 +1,7 @@
 package com.rexense.wholehouse.view;
 
+import android.annotation.SuppressLint;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -7,11 +9,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CTSL;
+import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.presenter.CodeMapper;
 import com.rexense.wholehouse.presenter.ImageProvider;
 import com.rexense.wholehouse.model.ETSL;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Creator: xieshaobing
@@ -29,20 +37,28 @@ public class DetailSensorActivity extends DetailActivity {
     private TextView mStateValue2;
     private TextView mPowerName;
     private TextView mPowerValue;
+    @BindView(R.id.deteailSensorRLState3)
+    RelativeLayout mDeteailSensorRLState3;
+    @BindView(R.id.detailSensorImgStateIcon3)
+    ImageView mStateIcon3;
+    @BindView(R.id.detailSensorLblStateName3)
+    TextView mStateName3;
+    @BindView(R.id.detailSensorLblStateValue3)
+    TextView mStateValue3;
 
     // 更新状态
+    @SuppressLint("SetTextI18n")
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
-        if(!super.updateState(propertyEntry))
-        {
+        if (!super.updateState(propertyEntry)) {
             return false;
         }
 
         // 电池电量处理
-        if(this.mIsHasPowerSource) {
-            if(propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage) != null && propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage).length() > 0) {
-                ETSL.stateEntry powerEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.P_P_BatteryPercentage, propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage));
-                if(powerEntry != null && powerEntry.name != null && powerEntry.value != null) {
+        if (mIsHasPowerSource) {
+            if (propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage) != null && propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage).length() > 0) {
+                ETSL.stateEntry powerEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.P_P_BatteryPercentage, propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage));
+                if (powerEntry != null && powerEntry.name != null && powerEntry.value != null) {
                     mPowerName.setText(powerEntry.name + ":");
                     mPowerValue.setText(powerEntry.value);
                 }
@@ -50,21 +66,29 @@ public class DetailSensorActivity extends DetailActivity {
         }
 
         // 温湿度处理
-        if(mProductKey.equals(CTSL.PK_TEMHUMSENSOR)) {
-            if(propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature).length() > 0) {
-                ETSL.stateEntry tempEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.THS_P_CurrentTemperature, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature));
-                if(tempEntry != null && tempEntry.name != null && tempEntry.value != null) {
+        if (mProductKey.equals(CTSL.PK_PM_TEMHUMSENSOR_HY) || CTSL.PK_TEMHUMSENSOR_MLK.equals(mProductKey)) {
+            if (propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature).length() > 0) {
+                ETSL.stateEntry tempEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.THS_P_CurrentTemperature, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature));
+                if (tempEntry != null && tempEntry.name != null && tempEntry.value != null) {
                     mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentTemperature));
                     mStateName.setText(tempEntry.name + ":");
                     mStateValue.setText(tempEntry.value);
                 }
             }
-            if(propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity).length() > 0) {
-                ETSL.stateEntry humEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.THS_P_CurrentHumidity, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity));
-                if(humEntry != null && humEntry.name != null && humEntry.value != null) {
+            if (propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity).length() > 0) {
+                ETSL.stateEntry humEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.THS_P_CurrentHumidity, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentHumidity));
+                if (humEntry != null && humEntry.name != null && humEntry.value != null) {
                     mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));
                     mStateName2.setText(humEntry.name + ":");
                     mStateValue2.setText(humEntry.value);
+                }
+            }
+            if (propertyEntry.getPropertyValue(CTSL.THS_P_PM25) != null && propertyEntry.getPropertyValue(CTSL.THS_P_PM25).length() > 0) {
+                ETSL.stateEntry humEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, mProductKey, CTSL.THS_P_PM25, propertyEntry.getPropertyValue(CTSL.THS_P_PM25));
+                if (humEntry != null && humEntry.name != null && humEntry.value != null) {
+                    mStateIcon3.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_PM25));
+                    mStateName3.setText(humEntry.name + ":");
+                    mStateValue3.setText(humEntry.value);
                 }
             }
 
@@ -72,21 +96,26 @@ public class DetailSensorActivity extends DetailActivity {
         }
 
         // 状态（非电池电量）处理
-        ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(DetailSensorActivity.this, propertyEntry);
-        if(stateEntry != null && stateEntry.name != null && stateEntry.value != null) {
-            if (CTSL.PK_DOORSENSOR.equals(mProductKey)){
+        ETSL.stateEntry stateEntry = CodeMapper.processPropertyState(this, propertyEntry);
+        if (stateEntry != null && stateEntry.name != null && stateEntry.value != null) {
+            if (CTSL.PK_DOORSENSOR_HM.equals(mProductKey) ||
+                    CTSL.PK_DOORSENSOR_MLK.equals(mProductKey)) {
                 // 门磁
                 mStateIcon.setImageResource(R.drawable.state_icon_door);
-            } else if (CTSL.PK_SMOKESENSOR.equals(mProductKey)) {
+            } else if (CTSL.PK_SMOKESENSOR_HM.equals(mProductKey) ||
+                    CTSL.PK_SMOKESENSOR_MLK.equals(mProductKey)) {
                 // 烟雾传感器
                 mStateIcon.setImageResource(R.drawable.state_icon_smoke);
-            } else if (CTSL.PK_WATERSENSOR.equals(mProductKey)) {
+            } else if (CTSL.PK_WATERSENSOR_HM.equals(mProductKey) ||
+                    CTSL.PK_WATERSENSOR_MLK.equals(mProductKey)) {
                 // 水浸传感器
                 mStateIcon.setImageResource(R.drawable.state_icon_water);
-            } else if (CTSL.PK_GASSENSOR.equals(mProductKey)) {
+            } else if (CTSL.PK_GASSENSOR_HM.equals(mProductKey) ||
+                    CTSL.PK_GASSENSOR_MLK.equals(mProductKey)) {
                 // 燃气传感器
                 mStateIcon.setImageResource(R.drawable.state_icon_gas);
-            } else if (CTSL.PK_PIRSENSOR.equals(mProductKey)) {
+            } else if (CTSL.PK_PIRSENSOR_HM.equals(mProductKey) ||
+                    CTSL.PK_PIRSENSOR_MLK.equals(mProductKey)) {
                 // 人体红外传感器
                 mStateIcon.setImageResource(R.drawable.state_icon_pir);
             }
@@ -108,12 +137,16 @@ public class DetailSensorActivity extends DetailActivity {
         mStateName = (TextView) findViewById(R.id.detailSensorLblStateName);
         mStateValue = (TextView) findViewById(R.id.detailSensorLblStateValue);
         mIcon = (ImageView) findViewById(R.id.detailSensorImgIcon);
-        mPowerName = (TextView)findViewById(R.id.detailSensorLblPowerName);
-        mPowerValue = (TextView)findViewById(R.id.detailSensorLblPowerValue);
+        mPowerName = (TextView) findViewById(R.id.detailSensorLblPowerName);
+        mPowerValue = (TextView) findViewById(R.id.detailSensorLblPowerValue);
+        if (CTSL.PK_PM_TEMHUMSENSOR_HY.equals(mProductKey)) {
+            mDeteailSensorRLState3.setVisibility(View.VISIBLE);
+        }
 
         // 初始化设备状态图标
         mIcon.setImageResource(ImageProvider.genProductIcon(mProductKey));
-        if (mProductKey.equalsIgnoreCase(CTSL.PK_TEMHUMSENSOR)){
+        if (mProductKey.equalsIgnoreCase(CTSL.PK_PM_TEMHUMSENSOR_HY) ||
+                CTSL.PK_TEMHUMSENSOR_MLK.equalsIgnoreCase(mProductKey)) {
             mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentTemperature));
         }
 
@@ -125,15 +158,16 @@ public class DetailSensorActivity extends DetailActivity {
         }
 
         // 遥控按钮无状态显示栏
-        if(mProductKey.equals(CTSL.PK_REMOTECONTRILBUTTON)) {
+        if (mProductKey.equals(CTSL.PK_REMOTECONTRILBUTTON)) {
             RelativeLayout relativeLayoutState = (RelativeLayout) findViewById(R.id.deteailSensorRLState);
             relativeLayoutState.setVisibility(View.GONE);
         }
 
-        RelativeLayout mLayoutState2 = (RelativeLayout)findViewById(R.id.deteailSensorRLState2);
+        RelativeLayout mLayoutState2 = (RelativeLayout) findViewById(R.id.deteailSensorRLState2);
         mLayoutState2.setVisibility(View.GONE);
         // 温湿度要使用状态2显示栏
-        if(mProductKey.equals(CTSL.PK_TEMHUMSENSOR)) {
+        if (mProductKey.equals(CTSL.PK_PM_TEMHUMSENSOR_HY) ||
+                mProductKey.equals(CTSL.PK_TEMHUMSENSOR_MLK)) {
             mLayoutState2.setVisibility(View.VISIBLE);
             mStateIcon2 = (ImageView) findViewById(R.id.detailSensorImgStateIcon2);
             mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));
@@ -142,19 +176,24 @@ public class DetailSensorActivity extends DetailActivity {
         }
         initStatusBar();
 
-        if (CTSL.PK_DOORSENSOR.equals(mProductKey)){
+        if (CTSL.PK_DOORSENSOR_HM.equals(mProductKey) ||
+                CTSL.PK_DOORSENSOR_MLK.equals(mProductKey)) {
             // 门磁
             mStateIcon.setImageResource(R.drawable.state_icon_door);
-        } else if (CTSL.PK_SMOKESENSOR.equals(mProductKey)) {
+        } else if (CTSL.PK_SMOKESENSOR_HM.equals(mProductKey) ||
+                CTSL.PK_SMOKESENSOR_MLK.equals(mProductKey)) {
             // 烟雾传感器
             mStateIcon.setImageResource(R.drawable.state_icon_smoke);
-        } else if (CTSL.PK_WATERSENSOR.equals(mProductKey)) {
+        } else if (CTSL.PK_WATERSENSOR_HM.equals(mProductKey) ||
+                CTSL.PK_WATERSENSOR_MLK.equals(mProductKey)) {
             // 水浸传感器
             mStateIcon.setImageResource(R.drawable.state_icon_water);
-        } else if (CTSL.PK_GASSENSOR.equals(mProductKey)) {
+        } else if (CTSL.PK_GASSENSOR_HM.equals(mProductKey) ||
+                CTSL.PK_GASSENSOR_MLK.equals(mProductKey)) {
             // 燃气传感器
             mStateIcon.setImageResource(R.drawable.state_icon_gas);
-        } else if (CTSL.PK_PIRSENSOR.equals(mProductKey)) {
+        } else if (CTSL.PK_PIRSENSOR_HM.equals(mProductKey) ||
+                CTSL.PK_PIRSENSOR_MLK.equals(mProductKey)) {
             // 人体红外传感器
             mStateIcon.setImageResource(R.drawable.state_icon_pir);
         }
@@ -165,7 +204,7 @@ public class DetailSensorActivity extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.sensor_detail_bg));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appcolor));
         }
     }
 }

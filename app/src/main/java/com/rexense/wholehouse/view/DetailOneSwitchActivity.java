@@ -1,5 +1,6 @@
 package com.rexense.wholehouse.view;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +29,7 @@ public class DetailOneSwitchActivity extends DetailActivity {
     private TSLHelper mTSLHelper;
 
     // 更新状态
+    @SuppressLint("SetTextI18n")
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
         if(!super.updateState(propertyEntry))
@@ -52,7 +54,7 @@ public class DetailOneSwitchActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
 
         // 设备操作事件处理
         OnClickListener operateOnClickListener = new OnClickListener() {
@@ -65,8 +67,8 @@ public class DetailOneSwitchActivity extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate = (ImageView) findViewById(R.id.detailOneSwitchImgOperate);
-        this.mImgOperate.setOnClickListener(operateOnClickListener);
+        mImgOperate = (ImageView) findViewById(R.id.detailOneSwitchImgOperate);
+        mImgOperate.setOnClickListener(operateOnClickListener);
 
         mStateName = (TextView) findViewById(R.id.detailOneSwitchLblStateName);
         mStateValue = (TextView) findViewById(R.id.detailOneSwitchLblStateValue);

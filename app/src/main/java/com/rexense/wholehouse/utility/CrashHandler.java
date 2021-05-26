@@ -191,8 +191,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
-                    notifySystemToScan(path);
                 }
+                if (BuildConfig.DEBUG)
+                    notifySystemToScan(path);
                 FileOutputStream fos = new FileOutputStream(path + fileName);
                 fos.write(sb.toString().getBytes());
                 fos.close();

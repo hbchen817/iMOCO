@@ -43,6 +43,8 @@ import com.vise.log.ViseLog;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
+import butterknife.ButterKnife;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-21 17:14
@@ -58,6 +60,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
     private TextView mBacklightTV;
     private TSLHelper mTSLHelper;
     private RelativeLayout mBackLightLayout;
+    private RelativeLayout mBackLightRoot;
 
     private SceneManager mSceneManager;
     private MyHandler mhandler;
@@ -106,8 +109,9 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
+        ButterKnife.bind(this);
 
-        this.mTSLHelper = new TSLHelper(this);
+        mTSLHelper = new TSLHelper(this);
 
         // 设备操作事件处理
         OnClickListener operateOnClickListener = new OnClickListener() {
@@ -120,8 +124,8 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
                 }
             }
         };
-        this.mImgOperate = (ImageView) findViewById(R.id.detailOneSwitchImgOperate);
-        this.mImgOperate.setOnClickListener(operateOnClickListener);
+        mImgOperate = (ImageView) findViewById(R.id.detailOneSwitchImgOperate);
+        mImgOperate.setOnClickListener(operateOnClickListener);
 
         mStateName = (TextView) findViewById(R.id.detailOneSwitchLblStateName);
         mStateName.setOnClickListener(new OnClickListener() {
@@ -136,7 +140,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
         TextView timerIc = (TextView) findViewById(R.id.timer_ic_tv);
         mBacklightTV = (TextView) findViewById(R.id.back_light_txt);
         mBacklightIc = (TextView) findViewById(R.id.back_light_tv);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         timerIc.setTypeface(iconfont);
         mBacklightIc.setTypeface(iconfont);
 
@@ -161,11 +165,17 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
                     mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
             }
         });
+        mBackLightRoot = (RelativeLayout) findViewById(R.id.back_light_root);
 
         mhandler = new MyHandler(this);
         mSceneManager = new SceneManager(this);
         //mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, mCommitFailureHandler, mResponseErrorHandler, mhandler);
         initKeyNickName();
+
+        mBackLightRoot.setVisibility(View.GONE);
+        if (CTSL.PK_ONEWAYSWITCH_LF.equals(mProductKey)) {
+            mBackLightRoot.setVisibility(View.VISIBLE);
+        }
     }
 
     // 嵌入式状态栏
@@ -177,24 +187,25 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
         }
     }
 
-    private final int TAG_GET_EXTENDED_PRO = 10000;
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
 
     private void initKeyNickName() {
         MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mhandler);
     }
 
-    private class MyResponseErrHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyResponseErrHandler extends Handler {
+        private final WeakReference<DetailOneSwitchActivity2> ref;
 
-        public MyResponseErrHandler(Activity activity) {
+        public MyResponseErrHandler(DetailOneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailOneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -210,11 +221,12 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
                 Logger.e(sb.toString());
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    logOut();
+                    activity.logOut();
                 } else if (responseErrorEntry.code == 6741) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.OWS_P_PowerSwitch_1, mStateName.getText().toString());
-                    mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), null, null, null);
+                    jsonObject.put(CTSL.OWS_P_PowerSwitch_1, activity.mStateName.getText().toString());
+                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
+                            null, null, null);
                 }
             }
         }
@@ -273,26 +285,27 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
 
     private JSONObject mResultObj;
 
-    private class MyHandler extends Handler {
-        private WeakReference<Activity> ref;
+    private static class MyHandler extends Handler {
+        private final WeakReference<DetailOneSwitchActivity2> ref;
 
-        public MyHandler(Activity activity) {
+        public MyHandler(DetailOneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if (ref.get() == null) return;
+            DetailOneSwitchActivity2 activity = ref.get();
+            if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
                 JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                 String keyName = jsonObject.getString(CTSL.OWS_P_PowerSwitch_1);
-                mStateName.setText(keyName);
+                activity.mStateName.setText(keyName);
             } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
                 QMUITipDialogUtil.dismiss();
-                mStateName.setText(mKeyName);
-                DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
-                ToastUtils.showShortToast(DetailOneSwitchActivity2.this, R.string.set_success);
+                activity.mStateName.setText(activity.mKeyName);
+                DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                ToastUtils.showShortToast(activity, R.string.set_success);
             } else if (msg.what == Constant.MSG_CALLBACK_IDENTIFIER_LIST) {
                 String result = (String) msg.obj;
                 if (result.substring(0, 1).equals("[")) {
@@ -304,14 +317,14 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
                         String key = object.getString("identifier");
                         if (CTSL.OWS_P_PowerSwitch_1.equals(key)) {
                             String name = object.getString("name");
-                            mStateName.setText(name.trim());
+                            activity.mStateName.setText(name.trim());
                         }
                     }
                 }
             } else if (msg.what == TAG_GET_EXTENDED_PRO) {
                 JSONObject object = JSONObject.parseObject((String) msg.obj);
-                DeviceBuffer.addExtendedInfo(mIOTId, object);
-                mStateName.setText(object.getString(CTSL.OWS_P_PowerSwitch_1));
+                DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                activity.mStateName.setText(object.getString(CTSL.OWS_P_PowerSwitch_1));
             }
         }
     }

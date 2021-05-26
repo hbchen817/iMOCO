@@ -1,5 +1,6 @@
 package com.rexense.wholehouse.view;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import com.google.gson.Gson;
 import com.kyleduo.switchbutton.SwitchButton;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityTimeRangeSelectorBinding;
 import com.rexense.wholehouse.demoTest.CaConditionEntry;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -36,48 +38,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TimeRangeSelectorActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.all_day_sb)
-    SwitchButton mAllDaySB;
-    @BindView(R.id.range_time_layout)
-    LinearLayout mRangeTimeLayout;
-    @BindView(R.id.begin_time_layout)
-    RelativeLayout mBeginTimeLayout;
-    @BindView(R.id.end_time_layout)
-    RelativeLayout mEndTimeLayout;
-    @BindView(R.id.begin_time_tv)
-    TextView mBeginTimeTV;
-    @BindView(R.id.end_time_tv)
-    TextView mEndTimeTV;
-    @BindView(R.id.once_layout)
-    RelativeLayout mOnceLayout;
-    @BindView(R.id.once_checked)
-    TextView mOnceIV;
-    @BindView(R.id.everyday_layout)
-    RelativeLayout mEverydayLayout;
-    @BindView(R.id.everyday_checked)
-    TextView mEverydayIV;
-    @BindView(R.id.working_days_layout)
-    RelativeLayout mWorkingDaysLayout;
-    @BindView(R.id.working_days_checked)
-    TextView mWorkingDaysIV;
-    @BindView(R.id.weekend_layout)
-    RelativeLayout mWeekendLayout;
-    @BindView(R.id.weakend_checked)
-    TextView mWeekendIV;
-    @BindView(R.id.custom_layout)
-    RelativeLayout mCustomLayout;
-    @BindView(R.id.custom_checked)
-    TextView mCustomIV;
+    private ActivityTimeRangeSelectorBinding mViewBinding;
 
     private AlertDialog mBeginDialog;
     private AlertDialog mEndDialog;
@@ -111,15 +79,15 @@ public class TimeRangeSelectorActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time_range_selector);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityTimeRangeSelectorBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mOnceIV.setTypeface(iconfont);
-        mEverydayIV.setTypeface(iconfont);
-        mWorkingDaysIV.setTypeface(iconfont);
-        mWeekendIV.setTypeface(iconfont);
-        mCustomIV.setTypeface(iconfont);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.onceChecked.setTypeface(iconfont);
+        mViewBinding.everydayChecked.setTypeface(iconfont);
+        mViewBinding.workingDaysChecked.setTypeface(iconfont);
+        mViewBinding.weakendChecked.setTypeface(iconfont);
+        mViewBinding.customChecked.setTypeface(iconfont);
 
         initStatusBar();
         initView();
@@ -137,32 +105,32 @@ public class TimeRangeSelectorActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.time_range));
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.time_range));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTimeRange.setTimezoneID(Constant.TIMER_ZONE_ID);
-                if (mAllDaySB.isChecked()) {
+                if (mViewBinding.allDaySb.isChecked()) {
                     mTimeRange.setFormat("HH:mm:ss");
                     mTimeRange.setBeginDate("00:00:00");
                     mTimeRange.setEndDate("23:59:59");
                 } else {
                     mTimeRange.setFormat("HH:mm:ss");
-                    mTimeRange.setBeginDate(mBeginTimeTV.getText().toString() + ":00");
-                    mTimeRange.setEndDate(mEndTimeTV.getText().toString() + ":00");
+                    mTimeRange.setBeginDate(mViewBinding.beginTimeTv.getText().toString() + ":00");
+                    mTimeRange.setEndDate(mViewBinding.endTimeTv.getText().toString() + ":00");
                 }
-                if (mOnceIV.getVisibility() == View.VISIBLE) {
-                    if (!mAllDaySB.isChecked()) {
+                if (mViewBinding.onceChecked.getVisibility() == View.VISIBLE) {
+                    if (!mViewBinding.allDaySb.isChecked()) {
                         try {
-                            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                             String s = format2.format(new Date(System.currentTimeMillis()));
 
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            long i = format.parse(s + " " + mBeginTimeTV.getText().toString()).getTime();
-                            long j = format.parse(s + " " + mEndTimeTV.getText().toString()).getTime();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                            long i = format.parse(s + " " + mViewBinding.beginTimeTv.getText().toString()).getTime();
+                            long j = format.parse(s + " " + mViewBinding.endTimeTv.getText().toString()).getTime();
                             long n = System.currentTimeMillis();
-                            if (n >= i && n >= j && j >= i) {
+                            if (n >= j && j >= i) {
                                 ToastUtils.showLongToast(TimeRangeSelectorActivity.this, R.string.invalid_for_past_time_period);
                                 return;
                             }
@@ -181,91 +149,80 @@ public class TimeRangeSelectorActivity extends BaseActivity {
             }
         });
 
-        mRangeTimeLayout.setVisibility(mAllDaySB.isChecked() ? View.GONE : View.VISIBLE);
-        mAllDaySB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mViewBinding.rangeTimeLayout.setVisibility(mViewBinding.allDaySb.isChecked() ? View.GONE : View.VISIBLE);
+        mViewBinding.allDaySb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mRangeTimeLayout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
+                mViewBinding.rangeTimeLayout.setVisibility(isChecked ? View.GONE : View.VISIBLE);
             }
         });
 
         initDialog();
         mTimeRange = new CaConditionEntry.TimeRange();
+
+        mViewBinding.beginTimeLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.endTimeLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.onceLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.everydayLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.workingDaysLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.weekendLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.customLayout.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick({R.id.begin_time_layout, R.id.end_time_layout, R.id.once_layout, R.id.everyday_layout, R.id.working_days_layout, R.id.weekend_layout, R.id.custom_layout})
     protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.begin_time_layout: {
-                showBeginDialog();
-                break;
-            }
-            case R.id.end_time_layout: {
-                showEndDialog();
-                break;
-            }
-            case R.id.once_layout: {
-                mRepeatDays = "";
-                mOnceIV.setVisibility(View.VISIBLE);
-                mEverydayIV.setVisibility(View.GONE);
-                mWorkingDaysIV.setVisibility(View.GONE);
-                mWeekendIV.setVisibility(View.GONE);
-                mCustomIV.setVisibility(View.GONE);
-                break;
-            }
-            case R.id.everyday_layout: {
-                mRepeatDays = "1,2,3,4,5,6,7";
-                mOnceIV.setVisibility(View.GONE);
-                mEverydayIV.setVisibility(View.VISIBLE);
-                mWorkingDaysIV.setVisibility(View.GONE);
-                mWeekendIV.setVisibility(View.GONE);
-                mCustomIV.setVisibility(View.GONE);
-                break;
-            }
-            case R.id.working_days_layout: {
-                mRepeatDays = "1,2,3,4,5";
-                mOnceIV.setVisibility(View.GONE);
-                mEverydayIV.setVisibility(View.GONE);
-                mWorkingDaysIV.setVisibility(View.VISIBLE);
-                mWeekendIV.setVisibility(View.GONE);
-                mCustomIV.setVisibility(View.GONE);
-                break;
-            }
-            case R.id.weekend_layout: {
-                mRepeatDays = "6,7";
-                mOnceIV.setVisibility(View.GONE);
-                mEverydayIV.setVisibility(View.GONE);
-                mWorkingDaysIV.setVisibility(View.GONE);
-                mWeekendIV.setVisibility(View.VISIBLE);
-                mCustomIV.setVisibility(View.GONE);
-                break;
-            }
-            case R.id.custom_layout: {
-                Intent intent = new Intent(this, TimeRangeRepeatDayActivity.class);
-                intent.putExtra("custom_day", mCustomWeekDayResult);
-                startActivityForResult(intent, 1000);
-                break;
-            }
+        if (view.getId() == R.id.begin_time_layout) {
+            showBeginDialog();
+        } else if (view.getId() == R.id.end_time_layout) {
+            showEndDialog();
+        } else if (view.getId() == R.id.once_layout) {
+            mRepeatDays = "";
+            mViewBinding.onceChecked.setVisibility(View.VISIBLE);
+            mViewBinding.everydayChecked.setVisibility(View.GONE);
+            mViewBinding.workingDaysChecked.setVisibility(View.GONE);
+            mViewBinding.weakendChecked.setVisibility(View.GONE);
+            mViewBinding.customChecked.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.everyday_layout) {
+            mRepeatDays = "1,2,3,4,5,6,7";
+            mViewBinding.onceChecked.setVisibility(View.GONE);
+            mViewBinding.everydayChecked.setVisibility(View.VISIBLE);
+            mViewBinding.workingDaysChecked.setVisibility(View.GONE);
+            mViewBinding.weakendChecked.setVisibility(View.GONE);
+            mViewBinding.customChecked.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.working_days_layout) {
+            mRepeatDays = "1,2,3,4,5";
+            mViewBinding.onceChecked.setVisibility(View.GONE);
+            mViewBinding.everydayChecked.setVisibility(View.GONE);
+            mViewBinding.workingDaysChecked.setVisibility(View.VISIBLE);
+            mViewBinding.weakendChecked.setVisibility(View.GONE);
+            mViewBinding.customChecked.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.weekend_layout) {
+            mRepeatDays = "6,7";
+            mViewBinding.onceChecked.setVisibility(View.GONE);
+            mViewBinding.everydayChecked.setVisibility(View.GONE);
+            mViewBinding.workingDaysChecked.setVisibility(View.GONE);
+            mViewBinding.weakendChecked.setVisibility(View.VISIBLE);
+            mViewBinding.customChecked.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.custom_layout) {
+            Intent intent = new Intent(this, TimeRangeRepeatDayActivity.class);
+            intent.putExtra("custom_day", mCustomWeekDayResult);
+            startActivityForResult(intent, 1000);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 1000: {
-                if (resultCode == 1) {
-                    String result = data.getStringExtra("custom_repeat_result");
-                    mCustomWeekDayResult = result;
-                    mRepeatDays = result;
+        if (requestCode == 1000) {
+            if (resultCode == 1 && data != null) {
+                String result = data.getStringExtra("custom_repeat_result");
+                mCustomWeekDayResult = result;
+                mRepeatDays = result;
 
-                    mOnceIV.setVisibility(View.GONE);
-                    mEverydayIV.setVisibility(View.GONE);
-                    mWorkingDaysIV.setVisibility(View.GONE);
-                    mWeekendIV.setVisibility(View.GONE);
-                    mCustomIV.setVisibility(View.VISIBLE);
-                }
-                break;
+                mViewBinding.onceChecked.setVisibility(View.GONE);
+                mViewBinding.everydayChecked.setVisibility(View.GONE);
+                mViewBinding.workingDaysChecked.setVisibility(View.GONE);
+                mViewBinding.weakendChecked.setVisibility(View.GONE);
+                mViewBinding.customChecked.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -319,9 +276,10 @@ public class TimeRangeSelectorActivity extends BaseActivity {
 
         TextView beginSureTV = (TextView) mBeginView.findViewById(R.id.sure_tv);
         beginSureTV.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                mBeginTimeTV.setText(mBeginHourList.get(mBeginSelectedHour) + ":" + mBeginMinList.get(mBeginSelectedMin));
+                mViewBinding.beginTimeTv.setText(mBeginHourList.get(mBeginSelectedHour) + ":" + mBeginMinList.get(mBeginSelectedMin));
                 mBeginDialog.dismiss();
             }
         });
@@ -375,16 +333,17 @@ public class TimeRangeSelectorActivity extends BaseActivity {
 
         TextView endSureTV = (TextView) mEndView.findViewById(R.id.sure_tv);
         endSureTV.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
-                mEndTimeTV.setText(mEndHourList.get(mEndSelectedHour) + ":" + mEndMinList.get(mEndSelectedMin));
+                mViewBinding.endTimeTv.setText(mEndHourList.get(mEndSelectedHour) + ":" + mEndMinList.get(mEndSelectedMin));
                 mEndDialog.dismiss();
             }
         });
     }
 
     private void showBeginDialog() {
-        String beginTime = mBeginTimeTV.getText().toString();
+        String beginTime = mViewBinding.beginTimeTv.getText().toString();
         String[] s = beginTime.split(":");
         mBeginHourWV.setCurrentIndex(Integer.parseInt(s[0]));
         mBeginMinWV.setCurrentIndex(Integer.parseInt(s[1]));
@@ -394,7 +353,7 @@ public class TimeRangeSelectorActivity extends BaseActivity {
     }
 
     private void showEndDialog() {
-        String endTime = mEndTimeTV.getText().toString();
+        String endTime = mViewBinding.endTimeTv.getText().toString();
         String[] s = endTime.split(":");
         mEndHourWV.setCurrentIndex(Integer.parseInt(s[0]));
         mEndMinWV.setCurrentIndex(Integer.parseInt(s[1]));
@@ -409,34 +368,34 @@ public class TimeRangeSelectorActivity extends BaseActivity {
             ViseLog.d(new Gson().toJson(message.obj));
             mTimeRange = (CaConditionEntry.TimeRange) message.obj;
             if ("00:00:00".equals(mTimeRange.getBeginDate()) && "23:59:59".equals(mTimeRange.getEndDate())) {
-                mAllDaySB.setChecked(true);
+                mViewBinding.allDaySb.setChecked(true);
             } else {
-                mAllDaySB.setChecked(false);
+                mViewBinding.allDaySb.setChecked(false);
                 String beginDate = mTimeRange.getBeginDate();
-                beginDate = beginDate.substring(beginDate.lastIndexOf(":00"), beginDate.length());
+                beginDate = beginDate.substring(0, beginDate.lastIndexOf(":00"));
                 String endDate = mTimeRange.getEndDate();
-                endDate = endDate.substring(endDate.lastIndexOf(":00"), endDate.length());
-                mBeginTimeTV.setText(beginDate);
-                mEndTimeTV.setText(endDate);
+                endDate = endDate.substring(0, endDate.lastIndexOf(":00"));
+                mViewBinding.beginTimeTv.setText(beginDate);
+                mViewBinding.endTimeTv.setText(endDate);
             }
-            mOnceIV.setVisibility(View.GONE);
-            mEverydayIV.setVisibility(View.GONE);
-            mWorkingDaysIV.setVisibility(View.GONE);
-            mWeekendIV.setVisibility(View.GONE);
-            mCustomIV.setVisibility(View.GONE);
+            mViewBinding.onceChecked.setVisibility(View.GONE);
+            mViewBinding.everydayChecked.setVisibility(View.GONE);
+            mViewBinding.workingDaysChecked.setVisibility(View.GONE);
+            mViewBinding.weakendChecked.setVisibility(View.GONE);
+            mViewBinding.customChecked.setVisibility(View.GONE);
 
             String repeat = mTimeRange.getRepeat();
             mRepeatDays = repeat;
             if (repeat == null || repeat.length() == 0) {
-                mOnceIV.setVisibility(View.VISIBLE);
+                mViewBinding.onceChecked.setVisibility(View.VISIBLE);
             } else if ("1,2,3,4,5,6,7".equals(repeat)) {
-                mEverydayIV.setVisibility(View.VISIBLE);
+                mViewBinding.everydayChecked.setVisibility(View.VISIBLE);
             } else if ("1,2,3,4,5".equals(repeat)) {
-                mWorkingDaysIV.setVisibility(View.VISIBLE);
+                mViewBinding.workingDaysChecked.setVisibility(View.VISIBLE);
             } else if ("6,7".equals(repeat)) {
-                mWeekendIV.setVisibility(View.VISIBLE);
+                mViewBinding.weakendChecked.setVisibility(View.VISIBLE);
             } else {
-                mCustomIV.setVisibility(View.VISIBLE);
+                mViewBinding.customChecked.setVisibility(View.VISIBLE);
                 mCustomWeekDayResult = repeat;
             }
 

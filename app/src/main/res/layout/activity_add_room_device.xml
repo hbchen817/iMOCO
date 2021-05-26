@@ -6,7 +6,9 @@
     android:background="@color/appbgcolor"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -22,11 +24,11 @@
                 android:id="@+id/room_name_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:gravity="center_vertical"
-                android:background="@drawable/shape_frame_item"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/dp_10"
                 android:layout_marginRight="10dp"
+                android:background="@drawable/shape_frame_item"
+                android:gravity="center_vertical"
                 android:paddingHorizontal="@dimen/dp_7"
                 android:paddingVertical="@dimen/dp_9">
 
@@ -34,25 +36,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:text="@string/room_name"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/sp_14"
-                    android:text="@string/room_name"/>
+                    android:textSize="@dimen/sp_14" />
 
                 <TextView
                     android:id="@+id/room_name_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/dp_22"
-                    android:layout_alignParentRight="true"
-                    android:textSize="@dimen/sp_14"/>
+                    android:textSize="@dimen/sp_14" />
 
                 <ImageView
                     android:layout_width="@dimen/dp_16"
                     android:layout_height="@dimen/dp_16"
-                    android:src="@drawable/go"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/go" />
 
             </RelativeLayout>
 
@@ -61,13 +63,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dp_12"
-                android:text="@string/devices_belong_this_room"/>
+                android:text="@string/devices_belong_this_room" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_view1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false" />
 
 
             <TextView
@@ -75,13 +77,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/dp_12"
-                android:text="@string/devices_not_belong_this_room"/>
+                android:text="@string/devices_not_belong_this_room" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycle_view2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSONObject;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityTmallSpiritBinding;
 import com.rexense.wholehouse.presenter.AccountHelper;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.rexense.wholehouse.widget.DialogUtils;
@@ -23,30 +24,27 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class TmallSpiritActivity extends BaseActivity {
+    private ActivityTmallSpiritBinding mViewBinding;
 
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.bind_btn)
-    TextView bindBtn;
-    private String mAuthCode="TAOBAO";
-    private int bindFlag=0;//0未绑定1已绑定
+    private final String mAuthCode = "TAOBAO";
+    private int bindFlag = 0;//0未绑定1已绑定
 
-    private DialogInterface.OnClickListener unbindClickListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener unbindClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             unBindTaobao();
         }
     };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tmall_spirit);
-        ButterKnife.bind(this);
-        tvToolbarTitle.setText(getString(R.string.tmall_spirit));
+        mViewBinding = ActivityTmallSpiritBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.tmall_spirit));
 
         initStatusBar();
+        mViewBinding.bindBtn.setOnClickListener(this::onClick);
     }
 
     // 嵌入式状态栏
@@ -58,7 +56,7 @@ public class TmallSpiritActivity extends BaseActivity {
         }
     }
 
-    private void checkBind(){
+    private void checkBind() {
         AccountHelper.getBindTaoBaoAccount("TAOBAO", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
@@ -72,34 +70,34 @@ public class TmallSpiritActivity extends BaseActivity {
         AccountHelper.bindTaoBaoAccount(authCode, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
-    private void unBindTaobao(){
+    private void unBindTaobao() {
         AccountHelper.unbindTaoBaoAccount("TAOBAO", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETBINDTAOBAOACCOUNT:
                     String resultStr = (String) msg.obj;
                     JSONObject dataJson = JSONObject.parseObject(resultStr);
-                    if (dataJson==null){
+                    if (dataJson == null) {
                         bindFlag = 0;
-                        bindBtn.setText(getString(R.string.tmall_spirit_bind));
-                    }else {
+                        mViewBinding.bindBtn.setText(getString(R.string.tmall_spirit_bind));
+                    } else {
                         bindFlag = 1;
-                        bindBtn.setText(getString(R.string.tmall_spirit_unbind));
+                        mViewBinding.bindBtn.setText(getString(R.string.tmall_spirit_unbind));
                         String accountId = dataJson.getString("accountId");
                         String accountType = dataJson.getString("accountType");
                     }
                     break;
                 case Constant.MSG_CALLBACK_BINDTAOBAO:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.tmall_spirit_bind_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.tmall_spirit_bind_success));
                     checkBind();
                     break;
                 case Constant.MSG_CALLBACK_UNBINDTAOBAO:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.tmall_spirit_unbind_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.tmall_spirit_unbind_success));
                     checkBind();
                     break;
                 default:
@@ -109,24 +107,21 @@ public class TmallSpiritActivity extends BaseActivity {
         }
     });
 
-    @OnClick({R.id.bind_btn})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.bind_btn:
-                if (bindFlag==1){//解绑
-                    DialogUtils.showEnsureDialog(mActivity,unbindClickListener,getString(R.string.tmall_spirit_unbind_ensure),"");
-                }else {//绑定
-                    Intent intent = new Intent(mActivity,TmallSpiritActivity1.class);
-                    startActivityForResult(intent,1);
-                }
-                break;
+        if (view.getId() == R.id.bind_btn) {
+            if (bindFlag == 1) {//解绑
+                DialogUtils.showEnsureDialog(mActivity, unbindClickListener, getString(R.string.tmall_spirit_unbind_ensure), "");
+            } else {//绑定
+                Intent intent = new Intent(mActivity, TmallSpiritActivity1.class);
+                startActivityForResult(intent, 1);
+            }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1&&resultCode==RESULT_OK){
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             String AuthCode = data.getStringExtra("AuthCode");
             bindTaobao(AuthCode);
         }

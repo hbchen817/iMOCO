@@ -50,6 +50,7 @@
 
     <color name="fontgrey">#ADADAD</color>
     <color name="appcolor">#F49400</color>
+    <color name="appcolor2">#66F49400</color>
     <color name="lightappcolor">#EAF2FF</color>
     <color name="appcolorlight">#DB427A</color>
     <color name="index_imgcolor">#262E52</color>

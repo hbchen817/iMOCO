@@ -297,7 +297,7 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
         });
     }
 
-    @OnClick({R.id.close_curtains, R.id.open_curtains, R.id.stop_curtains})
+    @OnClick({R.id.close_curtains, R.id.open_curtains, R.id.stop_curtains, R.id.back_light_layout})
     public void onViewClicked(View view) {
         mStatusText.setText(((TextView) view).getText());
         setSwitch(view.getId());
@@ -315,6 +315,15 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
             case R.id.stop_curtains: {
                 // 暂停窗帘
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.WC_CurtainConrtol}, new String[]{"" + CTSL.WC_STATUS_STOP});
+                break;
+            }
+            case R.id.back_light_layout: {
+                // 背光
+                if (mBackLightState == CTSL.STATUS_OFF) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.PFS_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+                }
                 break;
             }
         }

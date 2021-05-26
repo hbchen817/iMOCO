@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.just.agentweb.AgentWeb;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityH5Binding;
 import com.rexense.wholehouse.utility.Network;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -41,23 +42,9 @@ import butterknife.OnClick;
  * @date 2018/5/15
  */
 public class H5Activity extends BaseActivity {
+    private ActivityH5Binding mViewBinding;
 
     private static final String TAG = "H5Activity";
-
-    @BindView(R.id.fl_h5_container)
-    FrameLayout mFlH5Container;
-
-    @BindView(R.id.srl_h5)
-    SmartRefreshLayout mSrlH5;
-
-    @BindView(R.id.iv_toolbar_left)
-    ImageView mIvToolbarLeft;
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTvToolbarTitle;
-
-    @BindView(R.id.content_tv)
-    TextView mContentTV;
 
     private AgentWeb mAgentWeb;
 
@@ -66,7 +53,7 @@ public class H5Activity extends BaseActivity {
      */
     private String mUrl;
 
-    private OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
 
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -76,19 +63,19 @@ public class H5Activity extends BaseActivity {
         }
     };
 
-    private WebViewClient mWebViewClient = new WebViewClient() {
+    private final WebViewClient mWebViewClient = new WebViewClient() {
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
 
             // 在RefreshLayout处于刷新状态情况下,判断当前网络状态,
-            if (mSrlH5.getState() == RefreshState.Refreshing) {
+            if (mViewBinding.srlH5.getState() == RefreshState.Refreshing) {
                 // 如果网络正常, 则设置刷新成功; 如果网络不可用, 则设置刷新失败;
                 if (Network.isNetworkAvailable(H5Activity.this)) {
-                    mSrlH5.finishRefresh(true);
+                    mViewBinding.srlH5.finishRefresh(true);
                 } else {
-                    mSrlH5.finishRefresh(false);
+                    mViewBinding.srlH5.finishRefresh(false);
                 }
             }
         }
@@ -96,26 +83,26 @@ public class H5Activity extends BaseActivity {
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             super.onReceivedSslError(view, handler, error);
-            ViseLog.d("onReceivedSslError error = "+error.toString());
+            ViseLog.d("onReceivedSslError error = " + error.toString());
         }
 
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             super.onReceivedHttpError(view, request, errorResponse);
-            ViseLog.d("onReceivedSslError error = "+errorResponse.toString());
+            ViseLog.d("onReceivedSslError error = " + errorResponse.toString());
         }
 
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            ViseLog.d("onReceivedError 1111111111111 = "+error.getDescription().toString()+" , "+error.getErrorCode());
+            ViseLog.d("onReceivedError 1111111111111 = " + error.getDescription().toString() + " , " + error.getErrorCode());
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
-            ViseLog.d("onReceivedError 2222222222222 = "+description+" , "+failingUrl);
+            ViseLog.d("onReceivedError 2222222222222 = " + description + " , " + failingUrl);
         }
     };
 
@@ -132,15 +119,16 @@ public class H5Activity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_h5);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityH5Binding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         initView();
         initData();
         initListener();
 
         initStatusBar();
 
-        mContentTV.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mViewBinding.contentTv.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     // 嵌入式状态栏
@@ -154,7 +142,7 @@ public class H5Activity extends BaseActivity {
 
     private void initView() {
         // 设置自定义Toolbar的左返回按钮
-        mIvToolbarLeft.setImageResource(R.drawable.back_default);
+        mViewBinding.toolbarLayout.ivToolbarLeft.setImageResource(R.drawable.back_default);
     }
 
     private void initData() {
@@ -171,19 +159,19 @@ public class H5Activity extends BaseActivity {
 
         if (!TextUtils.isEmpty(title)) {
             // 显示title
-            mTvToolbarTitle.setText(title);
+            mViewBinding.toolbarLayout.tvToolbarTitle.setText(title);
         }
 
         if (Constant.USER_PROTOCOL_URL.equals(mUrl)) {
-            mContentTV.setText(getString(R.string.user_protocol_txt));
+            mViewBinding.contentTv.setText(getString(R.string.user_protocol_txt));
         } else if (Constant.PRIVACY_POLICY_URL.equals(mUrl)) {
-            mContentTV.setText(getString(R.string.privacy_policy_txt));
+            mViewBinding.contentTv.setText(getString(R.string.privacy_policy_txt));
         } else {
-            mSrlH5.setVisibility(View.GONE);
-            mContentTV.setVisibility(View.VISIBLE);
+            mViewBinding.srlH5.setVisibility(View.GONE);
+            mViewBinding.contentTv.setVisibility(View.VISIBLE);
             // 加载url
             mAgentWeb = AgentWeb.with(this)
-                    .setAgentWebParent(mFlH5Container, new FrameLayout.LayoutParams(-1, -1))
+                    .setAgentWebParent(mViewBinding.flH5Container, new FrameLayout.LayoutParams(-1, -1))
                     .useDefaultIndicator()
                     .setWebViewClient(mWebViewClient)
                     .setMainFrameErrorView(R.layout.layout_h5_error_page, -1)
@@ -194,17 +182,15 @@ public class H5Activity extends BaseActivity {
     }
 
     private void initListener() {
-        mSrlH5.setOnRefreshListener(mOnRefreshListener);
+        mViewBinding.srlH5.setOnRefreshListener(mOnRefreshListener);
     }
 
     @OnClick({R.id.iv_toolbar_left})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                // 关闭当前界面
-                finish();
-                break;
-            default:
+        int resId = view.getId();
+        if (resId == R.id.iv_toolbar_left) {
+            // 关闭当前界面
+            finish();
         }
     }
 

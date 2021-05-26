@@ -26,6 +26,7 @@ import com.cncoderx.wheelview.Wheel3DView;
 import com.google.gson.Gson;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityEditPropertyValueBinding;
 import com.rexense.wholehouse.demoTest.ActionEntry;
 import com.rexense.wholehouse.demoTest.CaConditionEntry;
 import com.rexense.wholehouse.demoTest.IdentifierItemForCA;
@@ -52,24 +53,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class EditPropertyValueForActionActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.value_rv)
-    RecyclerView mValueRV;
-    @BindView(R.id.event_layout)
-    LinearLayout mEventLayout;
-    @BindView(R.id.compare_value_wv)
-    Wheel3DView mCompareValueWV;
-    @BindView(R.id.compare_type_wv)
-    Wheel3DView mCompareTypeWV;
-    @BindView(R.id.unit_tv)
-    TextView mUnitTV;
-    @BindView(R.id.name_tv)
-    TextView mNameTV;
-    @BindView(R.id.service_rv)
-    RecyclerView mServiceRV;
+    private ActivityEditPropertyValueBinding mViewBinding;
 
     private IdentifierItemForCA mIdentifier;
     private EventValue mEventValue;
@@ -80,31 +64,29 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
 
     private List<PropertyValue> mList;
     private BaseQuickAdapter<PropertyValue, BaseViewHolder> mAdapter;
-    private LinearLayoutManager mLayoutManager;
 
     private String[] mCompareTypes;
 
     private List<ServiceInputData> mServiceInputDataList = new ArrayList<>();
     private BaseQuickAdapter<ServiceInputData, BaseViewHolder> mServiceAdapter;
-    private LinearLayoutManager mServiceLayoutManager;
 
     private Typeface mIconfont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_property_value);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityEditPropertyValueBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         mCompareTypes = new String[]{getString(R.string.equal_to)};
 
-        mCompareTypeWV.setEntries(mCompareTypes);
-        mCompareTypeWV.setCyclic(false);
+        mViewBinding.compareTypeWv.setEntries(mCompareTypes);
+        mViewBinding.compareTypeWv.setCyclic(false);
 
         initStatusBar();
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
 
         mSceneManager = new SceneManager(this);
         mHandler = new CallbackHandler(this);
@@ -131,10 +113,10 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mValueRV.setLayoutManager(mLayoutManager);
-        mValueRV.setAdapter(mAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.valueRv.setLayoutManager(layoutManager);
+        mViewBinding.valueRv.setAdapter(mAdapter);
 
         mServiceAdapter = new BaseQuickAdapter<ServiceInputData, BaseViewHolder>(R.layout.item_service_inputdata, mServiceInputDataList) {
             @Override
@@ -174,20 +156,20 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                 builder.build().show();
             }
         });
-        mServiceLayoutManager = new LinearLayoutManager(this);
-        mServiceLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mServiceRV.setLayoutManager(mServiceLayoutManager);
-        mServiceRV.setAdapter(mServiceAdapter);
+        LinearLayoutManager serviceLayoutManager = new LinearLayoutManager(this);
+        serviceLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.serviceRv.setLayoutManager(serviceLayoutManager);
+        mViewBinding.serviceRv.setAdapter(mServiceAdapter);
 
         EventBus.getDefault().register(this);
 
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mIdentifier.getType() == 1) {
                     // 属性
-                    if (mEventLayout.getVisibility() == View.VISIBLE) {
-                        String compareValue = mEventValueList.get(mCompareValueWV.getCurrentIndex());
+                    if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
+                        String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
                         Object result = 0;
                         if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
                         else result = Integer.parseInt(compareValue);
@@ -195,14 +177,14 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         ActionEntry.Property property = (ActionEntry.Property) mIdentifier.getObject();
                         property.setPropertyValue(result);
                         mIdentifier.setObject(property);
-                        mIdentifier.setDesc(mIdentifier.getName() + getString(R.string.equal_to) + compareValue + mUnitTV.getText().toString());
+                        mIdentifier.setDesc(mIdentifier.getName() + getString(R.string.equal_to) + compareValue + mViewBinding.unitTv.getText().toString());
 
                         EventBus.getDefault().unregister(EditPropertyValueForActionActivity.this);
                         EventBus.getDefault().postSticky(mIdentifier);
 
                         Intent intent = new Intent(EditPropertyValueForActionActivity.this, NewSceneActivity.class);
                         startActivity(intent);
-                    } else if (mValueRV.getVisibility() == View.VISIBLE) {
+                    } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
                         ActionEntry.Property property = (ActionEntry.Property) mIdentifier.getObject();
                         PropertyValue value = new PropertyValue();
                         for (int i = 0; i < mList.size(); i++) {
@@ -233,8 +215,8 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                     }
                 } else if (mIdentifier.getType() == 3) {
                     // 事件
-                    if (mEventLayout.getVisibility() == View.VISIBLE) {
-                        String compareValue = mEventValueList.get(mCompareValueWV.getCurrentIndex());
+                    if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
+                        String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
                         Object result = 0;
                         if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
                         else result = Integer.parseInt(compareValue);
@@ -244,19 +226,19 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         event.setDeviceName(event.getDeviceName());
                         event.setEventCode(event.getEventCode());
                         event.setPropertyName(mEventValue.getIdentifier());
-                        event.setCompareType(mCompareTypes[mCompareTypeWV.getCurrentIndex()]);
+                        event.setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
                         event.setCompareValue(result);
 
                         mIdentifier.setValueName(mEventValue.getName());
                         mIdentifier.setObject(event);
-                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mUnitTV.getText().toString());
+                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mViewBinding.unitTv.getText().toString());
 
                         EventBus.getDefault().unregister(EditPropertyValueForActionActivity.this);
                         EventBus.getDefault().postSticky(mIdentifier);
 
                         Intent intent = new Intent(EditPropertyValueForActionActivity.this, NewSceneActivity.class);
                         startActivity(intent);
-                    } else if (mValueRV.getVisibility() == View.VISIBLE) {
+                    } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
                         CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
                         PropertyValue value = new PropertyValue();
                         for (int i = 0; i < mList.size(); i++) {
@@ -297,9 +279,9 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                         String value = data.getSelectValue();
 
                         if (i == 0) {
-                            stringBuilder.append(data.getName() + data.getSelectName());
+                            stringBuilder.append(data.getName()).append(data.getSelectName());
                         } else {
-                            stringBuilder.append("，" + data.getName() + data.getSelectName());
+                            stringBuilder.append("，").append(data.getName()).append(data.getSelectName());
                         }
 
                         if ("enum".equals(data.getDataType().getType()) || "bool".equals(data.getDataType().getType())) {
@@ -359,7 +341,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void update(IdentifierItemForCA item) {
         mIdentifier = item;
-        mTitle.setText(mIdentifier.getName().trim());
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(mIdentifier.getName().trim());
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mSceneManager.queryTSLListForCA(item.getIotId(), 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
@@ -367,98 +349,98 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
         EventBus.getDefault().removeStickyEvent(item);
     }
 
-    private class CallbackHandler extends Handler {
-        private WeakReference<Activity> weakRf;
+    private static class CallbackHandler extends Handler {
+        private final WeakReference<EditPropertyValueForActionActivity> weakRf;
 
-        public CallbackHandler(Activity activity) {
+        public CallbackHandler(EditPropertyValueForActionActivity activity) {
             weakRf = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
-            if (weakRf.get() == null) return;
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_TSL_LIST: {
-                    JSONObject o = JSON.parseObject((String) msg.obj);
-                    ViseLog.d(new Gson().toJson(o));
-                    JSONObject abilityDsl = o.getJSONObject("abilityDsl");
-                    switch (mIdentifier.getType()) {
-                        case 1: {
-                            // 属性
-                            JSONArray array = abilityDsl.getJSONArray("properties");
-                            for (int i = 0; i < array.size(); i++) {
-                                JSONObject o1 = array.getJSONObject(i);
-                                ActionEntry.Property property = (ActionEntry.Property) mIdentifier.getObject();
-                                if (property.getPropertyName().equals(o1.getString("identifier"))) {
-                                    JSONObject dataType = o1.getJSONObject("dataType");
-                                    if ("bool".equals(dataType.getString("type")) || "enum".equals(dataType.getString("type"))) {
-                                        mList.clear();
-                                        mValueRV.setVisibility(View.VISIBLE);
-                                        mEventLayout.setVisibility(View.GONE);
-                                        for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
-                                            PropertyValue value = new PropertyValue();
-                                            value.setKey((String) map.getValue());
-                                            value.setValue(map.getKey());
-                                            if (property.getPropertyValue() != null && map.getKey().equals(property.getPropertyValue() + ""))
-                                                value.setChecked(true);
-                                            mList.add(value);
+            EditPropertyValueForActionActivity activity = weakRf.get();
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_TSL_LIST) {
+                JSONObject o = JSON.parseObject((String) msg.obj);
+                ViseLog.d(new Gson().toJson(o));
+                JSONObject abilityDsl = o.getJSONObject("abilityDsl");
+                switch (activity.mIdentifier.getType()) {
+                    case 1: {
+                        // 属性
+                        JSONArray array = abilityDsl.getJSONArray("properties");
+                        for (int i = 0; i < array.size(); i++) {
+                            JSONObject o1 = array.getJSONObject(i);
+                            ActionEntry.Property property = (ActionEntry.Property) activity.mIdentifier.getObject();
+                            if (property.getPropertyName().equals(o1.getString("identifier"))) {
+                                JSONObject dataType = o1.getJSONObject("dataType");
+                                if ("bool".equals(dataType.getString("type")) || "enum".equals(dataType.getString("type"))) {
+                                    activity.mList.clear();
+                                    activity.mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                                    activity.mViewBinding.eventLayout.setVisibility(View.GONE);
+                                    for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
+                                        PropertyValue value = new PropertyValue();
+                                        value.setKey((String) map.getValue());
+                                        value.setValue(map.getKey());
+                                        if (property.getPropertyValue() != null && map.getKey().equals(property.getPropertyValue() + ""))
+                                            value.setChecked(true);
+                                        activity.mList.add(value);
+                                    }
+                                    activity.mAdapter.notifyDataSetChanged();
+                                } else if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
+                                    activity.mViewBinding.valueRv.setVisibility(View.GONE);
+                                    activity.mViewBinding.eventLayout.setVisibility(View.VISIBLE);
+                                    activity.mEventValue = new EventValue();
+                                    activity.mViewBinding.nameTv.setText(activity.mIdentifier.getName());
+                                    for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
+                                        if ("max".equals(map.getKey()))
+                                            activity.mEventValue.setMax((String) map.getValue());
+                                        else if ("min".equals(map.getKey()))
+                                            activity.mEventValue.setMin((String) map.getValue());
+                                        else if ("step".equals(map.getKey()))
+                                            activity.mEventValue.setStep((String) map.getValue());
+                                        else if ("unitName".equals(map.getKey()))
+                                            activity.mEventValue.setUnitName((String) map.getValue());
+                                        else if ("unit".equals(map.getKey()))
+                                            activity.mEventValue.setUnit((String) map.getValue());
+                                    }
+                                    activity.mEventValue.setType(dataType.getString("type"));
+
+                                    activity.mIdentifier.setValueName(o1.getString("name"));
+
+                                    int currentPos = 0;
+                                    activity.mEventValueList.clear();
+                                    if ("int".equals(activity.mEventValue.getType())) {
+                                        int min = Integer.parseInt(activity.mEventValue.getMin());
+                                        int max = Integer.parseInt(activity.mEventValue.getMax());
+                                        int step = Integer.parseInt(activity.mEventValue.getStep());
+                                        int z = 0;
+                                        for (int j = min; j <= max; ) {
+                                            activity.mEventValueList.add(String.valueOf(j));
+
+                                            if (property.getPropertyValue() != null && (int) property.getPropertyValue() == j)
+                                                currentPos = z;
+                                            z++;
+                                            j = j + step;
                                         }
-                                        mAdapter.notifyDataSetChanged();
-                                    } else if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
-                                        mValueRV.setVisibility(View.GONE);
-                                        mEventLayout.setVisibility(View.VISIBLE);
-                                        mEventValue = new EventValue();
-                                        mNameTV.setText(mIdentifier.getName());
-                                        for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
-                                            if ("max".equals(map.getKey()))
-                                                mEventValue.setMax((String) map.getValue());
-                                            else if ("min".equals(map.getKey()))
-                                                mEventValue.setMin((String) map.getValue());
-                                            else if ("step".equals(map.getKey()))
-                                                mEventValue.setStep((String) map.getValue());
-                                            else if ("unitName".equals(map.getKey()))
-                                                mEventValue.setUnitName((String) map.getValue());
-                                            else if ("unit".equals(map.getKey()))
-                                                mEventValue.setUnit((String) map.getValue());
+                                    } else if ("double".equals(activity.mEventValue.getType())) {
+                                        double min = Double.parseDouble(activity.mEventValue.getMin());
+                                        double max = Double.parseDouble(activity.mEventValue.getMax());
+                                        double step = Double.parseDouble(activity.mEventValue.getStep());
+                                        int z = 0;
+                                        for (double j = min; j <= max; ) {
+                                            activity.mEventValueList.add(String.valueOf(j));
+
+                                            if (property.getPropertyValue() != null && Double.parseDouble(property.getPropertyValue().toString()) == j)
+                                                currentPos = z;
+                                            z++;
+
+                                            BigDecimal jBig = new BigDecimal(Double.toString(j));
+                                            BigDecimal sBig = new BigDecimal(Double.toString(step));
+                                            j = jBig.add(sBig).doubleValue();
                                         }
-                                        mEventValue.setType(dataType.getString("type"));
-
-                                        mIdentifier.setValueName(o1.getString("name"));
-
-                                        int currentPos = 0;
-                                        mEventValueList.clear();
-                                        if ("int".equals(mEventValue.getType())) {
-                                            int min = Integer.parseInt(mEventValue.getMin());
-                                            int max = Integer.parseInt(mEventValue.getMax());
-                                            int step = Integer.parseInt(mEventValue.getStep());
-                                            int z = 0;
-                                            for (int j = min; j <= max; ) {
-                                                mEventValueList.add(String.valueOf(j));
-
-                                                if (property.getPropertyValue() != null && (int) property.getPropertyValue() == j)
-                                                    currentPos = z;
-                                                z++;
-                                                j = j + step;
-                                            }
-                                        } else if ("double".equals(mEventValue.getType())) {
-                                            double min = Double.parseDouble(mEventValue.getMin());
-                                            double max = Double.parseDouble(mEventValue.getMax());
-                                            double step = Double.parseDouble(mEventValue.getStep());
-                                            int z = 0;
-                                            for (double j = min; j <= max; ) {
-                                                mEventValueList.add(String.valueOf(j));
-
-                                                if (property.getPropertyValue() != null && Double.parseDouble(property.getPropertyValue().toString()) == j)
-                                                    currentPos = z;
-                                                z++;
-
-                                                BigDecimal jBig = new BigDecimal(Double.toString(j));
-                                                BigDecimal sBig = new BigDecimal(Double.toString(step));
-                                                j = jBig.add(sBig).doubleValue();
-                                            }
-                                        }
-                                        mCompareValueWV.setEntries(mEventValueList);
-                                        mCompareValueWV.setCurrentIndex(currentPos);
+                                    }
+                                    activity.mViewBinding.compareValueWv.setEntries(activity.mEventValueList);
+                                    activity.mViewBinding.compareValueWv.setCurrentIndex(currentPos);
 
                                         /*if ("<".equals(property.getCompareType()))
                                             mCompareTypeWV.setCurrentIndex(0);
@@ -473,81 +455,81 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                                         else if ("!=".equals(property.getCompareType()))
                                             mCompareTypeWV.setCurrentIndex(5);*/
 
-                                        if (mEventValue.getUnit() != null && mEventValue.getUnit().length() > 0) {
-                                            mUnitTV.setVisibility(View.VISIBLE);
-                                            mUnitTV.setText(mEventValue.getUnit());
-                                        } else if (mEventValue.getUnitName() != null && mEventValue.getUnitName().length() > 0) {
-                                            mUnitTV.setVisibility(View.VISIBLE);
-                                            mUnitTV.setText(mEventValue.getUnitName());
-                                        } else mUnitTV.setVisibility(View.GONE);
-                                    }
-                                    break;
+                                    if (activity.mEventValue.getUnit() != null && activity.mEventValue.getUnit().length() > 0) {
+                                        activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
+                                        activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnit());
+                                    } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
+                                        activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
+                                        activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
+                                    } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
                                 }
+                                break;
                             }
-                            break;
                         }
-                        case 3: {
-                            // 事件
-                            JSONArray array = abilityDsl.getJSONArray("events");
-                            for (int i = 0; i < array.size(); i++) {
-                                JSONObject o1 = array.getJSONObject(i);
-                                CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
-                                if (event.getEventCode().equals(o1.getString("identifier"))) {
-                                    JSONArray outputDatas = o1.getJSONArray("outputData");
-                                    JSONObject outputData = outputDatas.getJSONObject(0);
-                                    JSONObject dataType = outputData.getJSONObject("dataType");
-                                    mNameTV.setText(outputData.getString("name"));
-                                    if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
-                                        mValueRV.setVisibility(View.GONE);
-                                        mEventLayout.setVisibility(View.VISIBLE);
-                                        mEventValue = new EventValue();
-                                        mEventValue.setName(outputData.getString("name"));
-                                        mEventValue.setIdentifier(outputData.getString("identifier"));
-                                        for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
-                                            if ("max".equals(map.getKey()))
-                                                mEventValue.setMax((String) map.getValue());
-                                            else if ("min".equals(map.getKey()))
-                                                mEventValue.setMin((String) map.getValue());
-                                            else if ("step".equals(map.getKey()))
-                                                mEventValue.setStep((String) map.getValue());
-                                            else if ("unitName".equals(map.getKey()))
-                                                mEventValue.setUnitName((String) map.getValue());
+                        break;
+                    }
+                    case 3: {
+                        // 事件
+                        JSONArray array = abilityDsl.getJSONArray("events");
+                        for (int i = 0; i < array.size(); i++) {
+                            JSONObject o1 = array.getJSONObject(i);
+                            CaConditionEntry.Event event = (CaConditionEntry.Event) activity.mIdentifier.getObject();
+                            if (event.getEventCode().equals(o1.getString("identifier"))) {
+                                JSONArray outputDatas = o1.getJSONArray("outputData");
+                                JSONObject outputData = outputDatas.getJSONObject(0);
+                                JSONObject dataType = outputData.getJSONObject("dataType");
+                                activity.mViewBinding.nameTv.setText(outputData.getString("name"));
+                                if ("int".equals(dataType.getString("type")) || "double".equals(dataType.getString("type"))) {
+                                    activity.mViewBinding.valueRv.setVisibility(View.GONE);
+                                    activity.mViewBinding.eventLayout.setVisibility(View.VISIBLE);
+                                    activity.mEventValue = new EventValue();
+                                    activity.mEventValue.setName(outputData.getString("name"));
+                                    activity.mEventValue.setIdentifier(outputData.getString("identifier"));
+                                    for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
+                                        if ("max".equals(map.getKey()))
+                                            activity.mEventValue.setMax((String) map.getValue());
+                                        else if ("min".equals(map.getKey()))
+                                            activity.mEventValue.setMin((String) map.getValue());
+                                        else if ("step".equals(map.getKey()))
+                                            activity.mEventValue.setStep((String) map.getValue());
+                                        else if ("unitName".equals(map.getKey()))
+                                            activity.mEventValue.setUnitName((String) map.getValue());
+                                    }
+                                    activity.mEventValue.setType(dataType.getString("type"));
+
+                                    int currentPos = 0;
+                                    activity.mEventValueList.clear();
+                                    if ("int".equals(activity.mEventValue.getType())) {
+                                        int min = Integer.parseInt(activity.mEventValue.getMin());
+                                        int max = Integer.parseInt(activity.mEventValue.getMax());
+                                        int step = Integer.parseInt(activity.mEventValue.getStep());
+                                        int z = 0;
+                                        for (int j = min; j <= max; ) {
+                                            activity.mEventValueList.add(String.valueOf(j));
+
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == j)
+                                                currentPos = z;
+                                            z++;
+                                            j = j + step;
                                         }
-                                        mEventValue.setType(dataType.getString("type"));
+                                    } else if ("double".equals(activity.mEventValue.getType())) {
+                                        double min = Double.parseDouble(activity.mEventValue.getMin());
+                                        double max = Double.parseDouble(activity.mEventValue.getMax());
+                                        double step = Double.parseDouble(activity.mEventValue.getStep());
+                                        int z = 0;
+                                        for (double j = min; j <= max; ) {
+                                            activity.mEventValueList.add(String.valueOf(j));
 
-                                        int currentPos = 0;
-                                        mEventValueList.clear();
-                                        if ("int".equals(mEventValue.getType())) {
-                                            int min = Integer.parseInt(mEventValue.getMin());
-                                            int max = Integer.parseInt(mEventValue.getMax());
-                                            int step = Integer.parseInt(mEventValue.getStep());
-                                            int z = 0;
-                                            for (int j = min; j <= max; ) {
-                                                mEventValueList.add(String.valueOf(j));
-
-                                                if (event.getCompareValue() != null && (int) event.getCompareValue() == j)
-                                                    currentPos = z;
-                                                z++;
-                                                j = j + step;
-                                            }
-                                        } else if ("double".equals(mEventValue.getType())) {
-                                            double min = Double.parseDouble(mEventValue.getMin());
-                                            double max = Double.parseDouble(mEventValue.getMax());
-                                            double step = Double.parseDouble(mEventValue.getStep());
-                                            int z = 0;
-                                            for (double j = min; j <= max; ) {
-                                                mEventValueList.add(String.valueOf(j));
-
-                                                if (event.getCompareValue() != null && Double.parseDouble(event.getCompareValue().toString()) == j)
-                                                    currentPos = z;
-                                                z++;
-                                                BigDecimal jBig = new BigDecimal(Double.toString(j));
-                                                BigDecimal sBig = new BigDecimal(Double.toString(step));
-                                                j = jBig.add(sBig).doubleValue();
-                                            }
+                                            if (event.getCompareValue() != null && Double.parseDouble(event.getCompareValue().toString()) == j)
+                                                currentPos = z;
+                                            z++;
+                                            BigDecimal jBig = new BigDecimal(Double.toString(j));
+                                            BigDecimal sBig = new BigDecimal(Double.toString(step));
+                                            j = jBig.add(sBig).doubleValue();
                                         }
-                                        mCompareValueWV.setEntries(mEventValueList);
-                                        mCompareValueWV.setCurrentIndex(currentPos);
+                                    }
+                                    activity.mViewBinding.compareValueWv.setEntries(activity.mEventValueList);
+                                    activity.mViewBinding.compareValueWv.setCurrentIndex(currentPos);
 
                                         /*if ("<".equals(event.getCompareType()))
                                             mCompareTypeWV.setCurrentIndex(0);
@@ -562,84 +544,88 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
                                         else if ("!=".equals(event.getCompareType()))
                                             mCompareTypeWV.setCurrentIndex(5);*/
 
-                                        if (mEventValue.getUnit() != null && mEventValue.getUnit().length() > 0) {
-                                            mUnitTV.setVisibility(View.VISIBLE);
-                                            mUnitTV.setText(mEventValue.getUnit());
-                                        } else if (mEventValue.getUnitName() != null && mEventValue.getUnitName().length() > 0) {
-                                            mUnitTV.setVisibility(View.VISIBLE);
-                                            mUnitTV.setText(mEventValue.getUnitName());
-                                        } else mUnitTV.setVisibility(View.GONE);
-                                    } else if ("enum".equals(dataType.getString("type"))) {
-                                        mList.clear();
-                                        mValueRV.setVisibility(View.VISIBLE);
-                                        mEventLayout.setVisibility(View.GONE);
-                                        ((CaConditionEntry.Event) mIdentifier.getObject()).setPropertyName(outputData.getString("identifier"));
-                                        ((CaConditionEntry.Event) mIdentifier.getObject()).setCompareType("==");
-                                        for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
-                                            PropertyValue value = new PropertyValue();
-                                            value.setKey((String) map.getValue());
-                                            value.setValue(map.getKey());
-                                            if (event.getCompareValue() != null && map.getKey().equals(event.getCompareValue() + ""))
-                                                value.setChecked(true);
-                                            mList.add(value);
-                                        }
-                                        mAdapter.notifyDataSetChanged();
+                                    if (activity.mEventValue.getUnit() != null && activity.mEventValue.getUnit().length() > 0) {
+                                        activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
+                                        activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnit());
+                                    } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
+                                        activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
+                                        activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
+                                    } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
+                                } else if ("enum".equals(dataType.getString("type"))) {
+                                    activity.mList.clear();
+                                    activity.mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                                    activity.mViewBinding.eventLayout.setVisibility(View.GONE);
+                                    ((CaConditionEntry.Event) activity.mIdentifier.getObject()).setPropertyName(outputData.getString("identifier"));
+                                    ((CaConditionEntry.Event) activity.mIdentifier.getObject()).setCompareType("==");
+                                    for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
+                                        PropertyValue value = new PropertyValue();
+                                        value.setKey((String) map.getValue());
+                                        value.setValue(map.getKey());
+                                        if (event.getCompareValue() != null && map.getKey().equals(event.getCompareValue() + ""))
+                                            value.setChecked(true);
+                                        activity.mList.add(value);
                                     }
-                                    break;
+                                    activity.mAdapter.notifyDataSetChanged();
                                 }
+                                break;
                             }
-                            break;
                         }
-                        case 2: {
-                            // 服务
-                            mEventLayout.setVisibility(View.GONE);
-                            mValueRV.setVisibility(View.GONE);
-                            mServiceRV.setVisibility(View.VISIBLE);
-                            JSONArray array = abilityDsl.getJSONArray("services");
-                            for (int i = 0; i < array.size(); i++) {
-                                JSONObject service = array.getJSONObject(i);
-                                ActionEntry.InvokeService invokeService = (ActionEntry.InvokeService) mIdentifier.getObject();
-                                if (invokeService.getServiceName().equals(service.getString("identifier"))) {
-                                    mServiceInputDataList.clear();
-                                    JSONArray inputDatas = service.getJSONArray("inputData");
-                                    Map<String, Object> serviceArgs = (Map<String, Object>) invokeService.getServiceArgs();
-                                    for (int j = 0; j < inputDatas.size(); j++) {
-                                        ServiceInputData dataEntry = new ServiceInputData();
-                                        JSONObject inputData = inputDatas.getJSONObject(j);
-                                        JSONObject dataType = inputData.getJSONObject("dataType");
-                                        dataEntry.setIdentifier(inputData.getString("identifier"));
-                                        dataEntry.setName(inputData.getString("name"));
-                                        dataEntry.setType(dataType.getString("type"));
-                                        if ("enum".equals(dataType.getString("type")) || "bool".equals(dataType.getString("type"))) {
-                                            for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
-                                                dataEntry.put((String) map.getValue(), map.getKey());
-                                                if (serviceArgs == null) {
-                                                    dataEntry.setSelectValue(map.getKey());
-                                                    dataEntry.setSelectName(map.getValue().toString());
-                                                } else {
-                                                    dataEntry.setSelectValue(String.valueOf(serviceArgs.get(dataEntry.getIdentifier())));
-                                                    dataEntry.setSelectName(dataEntry.getIdentifier());
-                                                }
+                        break;
+                    }
+                    case 2: {
+                        // 服务
+                        activity.mViewBinding.eventLayout.setVisibility(View.GONE);
+                        activity.mViewBinding.valueRv.setVisibility(View.GONE);
+                        activity.mViewBinding.serviceRv.setVisibility(View.VISIBLE);
+                        JSONArray array = abilityDsl.getJSONArray("services");
+                        for (int i = 0; i < array.size(); i++) {
+                            JSONObject service = array.getJSONObject(i);
+                            ActionEntry.InvokeService invokeService = (ActionEntry.InvokeService) activity.mIdentifier.getObject();
+                            if (invokeService.getServiceName().equals(service.getString("identifier"))) {
+                                activity.mServiceInputDataList.clear();
+                                JSONArray inputDatas = service.getJSONArray("inputData");
+                                Map<String, Object> serviceArgs = (Map<String, Object>) invokeService.getServiceArgs();
+                                for (int j = 0; j < inputDatas.size(); j++) {
+                                    ServiceInputData dataEntry = new ServiceInputData();
+                                    JSONObject inputData = inputDatas.getJSONObject(j);
+                                    JSONObject dataType = inputData.getJSONObject("dataType");
+                                    dataEntry.setIdentifier(inputData.getString("identifier"));
+                                    dataEntry.setName(inputData.getString("name"));
+                                    dataEntry.setType(dataType.getString("type"));
+                                    if ("enum".equals(dataType.getString("type")) || "bool".equals(dataType.getString("type"))) {
+                                        for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
+                                            dataEntry.put((String) map.getValue(), map.getKey());
+                                            if (serviceArgs == null) {
+                                                dataEntry.setSelectValue(map.getKey());
+                                                dataEntry.setSelectName(map.getValue().toString());
+                                            } else {
+                                                dataEntry.setSelectValue(String.valueOf(serviceArgs.get(dataEntry.getIdentifier())));
+                                                dataEntry.setSelectName(dataEntry.getIdentifier());
                                             }
                                         }
-                                        ViseLog.d(new Gson().toJson(dataEntry));
-                                        mServiceInputDataList.add(dataEntry);
                                     }
-                                    mAdapter.notifyDataSetChanged();
-                                    break;
+                                    ViseLog.d(new Gson().toJson(dataEntry));
+                                    activity.mServiceInputDataList.add(dataEntry);
                                 }
+                                activity.mAdapter.notifyDataSetChanged();
+
+                                if (inputDatas.size() == 0) {
+                                    activity.mViewBinding.tipTv.setVisibility(View.VISIBLE);
+                                    activity.mViewBinding.tipTv.setText(R.string.service_has_no_parameters);
+                                    activity.mViewBinding.serviceRv.setVisibility(View.GONE);
+                                }
+                                break;
                             }
-                            break;
                         }
+                        break;
                     }
-                    QMUITipDialogUtil.dismiss();
-                    break;
                 }
+                QMUITipDialogUtil.dismiss();
             }
         }
     }
 
-    private class PropertyValue {
+    private static class PropertyValue {
         private String key;
         private Object value;
         private boolean isChecked = false;
@@ -669,7 +655,7 @@ public class EditPropertyValueForActionActivity extends BaseActivity {
         }
     }
 
-    private class EventValue {
+    private static class EventValue {
         private String max;
         private String min;
         private String step;

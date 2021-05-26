@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityChoiceBinding;
 import com.rexense.wholehouse.model.EChoice;
 import com.rexense.wholehouse.presenter.AptChoiceList;
 
@@ -26,21 +27,22 @@ import java.util.List;
  * Description: 通用选择
  */
 public class ChoiceActivity extends Activity {
+    private ActivityChoiceBinding mViewBinding;
+
     private List<EChoice.itemEntry> mItems = null;
     private int mResultCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choice);
+        mViewBinding = ActivityChoiceBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        title.setText(getIntent().getStringExtra("title"));
-        this.mItems = (List<EChoice.itemEntry>)getIntent().getSerializableExtra("items");
+        mViewBinding.includeToolbar.includeTitleLblTitle.setText(getIntent().getStringExtra("title"));
+        mItems = (List<EChoice.itemEntry>) getIntent().getSerializableExtra("items");
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -48,16 +50,14 @@ public class ChoiceActivity extends Activity {
         });
 
         boolean isMultipleSelect = getIntent().getBooleanExtra("isMultipleSelect", false);
-        ListView listItem = (ListView)findViewById(R.id.choiceLstItem);
-        listItem.setAdapter(new AptChoiceList(this, this.mItems, isMultipleSelect));
-        RelativeLayout relOk = (RelativeLayout)findViewById(R.id.choiceRelOk);
+        mViewBinding.choiceLstItem.setAdapter(new AptChoiceList(this, mItems, isMultipleSelect));
 
-        this.mResultCode = getIntent().getIntExtra("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
+        mResultCode = getIntent().getIntExtra("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
 
-        if(!isMultipleSelect){
+        if (!isMultipleSelect) {
             // 单选处理
-            relOk.setVisibility(View.GONE);
-            listItem.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            mViewBinding.choiceRelOk.setVisibility(View.GONE);
+            mViewBinding.choiceLstItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // 返回当前选项
@@ -69,15 +69,15 @@ public class ChoiceActivity extends Activity {
             });
         } else {
             // 多选处理
-            relOk.setOnClickListener(new OnClickListener() {
+            mViewBinding.choiceRelOk.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // 返回所选选项
                     String values = "";
                     int i = 0;
-                    for(EChoice.itemEntry item : mItems){
-                        if(mItems.get(i).isSelected){
-                            if(values.length() > 0){
+                    for (EChoice.itemEntry item : mItems) {
+                        if (mItems.get(i).isSelected) {
+                            if (values.length() > 0) {
                                 values = values + ",";
                             }
                             values = values + mItems.get(i).value;

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.databinding.ActivityNotificationActionBinding;
 import com.rexense.wholehouse.demoTest.ActionEntry;
 import com.rexense.wholehouse.utility.ToastUtils;
 
@@ -22,22 +23,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NotificationActionActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.notifition_et)
-    EditText mNotificationET;
-    @BindView(R.id.content_count_tv)
-    TextView mContentCountTV;
+    private ActivityNotificationActionBinding mViewBinding;
 
     private ActionEntry.SendMsg mSendMsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_action);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityNotificationActionBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         initStatusBar();
         initView();
@@ -46,10 +40,10 @@ public class NotificationActionActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void update(ActionEntry.SendMsg msg){
+    public void update(ActionEntry.SendMsg msg) {
         mSendMsg = msg;
-        mNotificationET.setText(mSendMsg.getMessage());
-        mNotificationET.setSelection(mSendMsg.getMessage().length());
+        mViewBinding.notifitionEt.setText(mSendMsg.getMessage());
+        mViewBinding.notifitionEt.setSelection(mSendMsg.getMessage().length());
 
         EventBus.getDefault().removeStickyEvent(msg);
     }
@@ -64,13 +58,13 @@ public class NotificationActionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.send_notifications_to_your_phone));
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.send_notifications_to_your_phone));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
 
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String info = mNotificationET.getText().toString();
+                String info = mViewBinding.notifitionEt.getText().toString();
                 if (info == null || info.length() == 0) {
                     ToastUtils.showLongToast(NotificationActionActivity.this, R.string.pls_enter_the_notification);
                     return;
@@ -78,7 +72,7 @@ public class NotificationActionActivity extends BaseActivity {
 
                 if (mSendMsg == null)
                     mSendMsg = new ActionEntry.SendMsg();
-                mSendMsg.setMessage(mNotificationET.getText().toString());
+                mSendMsg.setMessage(mViewBinding.notifitionEt.getText().toString());
 
                 EventBus.getDefault().unregister(NotificationActionActivity.this);
                 EventBus.getDefault().postSticky(mSendMsg);
@@ -88,7 +82,7 @@ public class NotificationActionActivity extends BaseActivity {
             }
         });
 
-        mNotificationET.addTextChangedListener(new TextWatcher() {
+        mViewBinding.notifitionEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -101,10 +95,10 @@ public class NotificationActionActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                mContentCountTV.setText(s.toString().length()+"/60");
+                mViewBinding.contentCountTv.setText(s.toString().length() + "/60");
             }
         });
-        mContentCountTV.setText("0/60");
+        mViewBinding.contentCountTv.setText("0/60");
     }
 
     @Override

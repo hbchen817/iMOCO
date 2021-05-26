@@ -45,45 +45,64 @@ public class ActivityRouter {
                 + "\nowned = " + owned);
         switch (productKey) {
             case CTSL.PK_GATEWAY:
-            case CTSL.PK_GATEWAY_RG4100:
+            case CTSL.PK_GATEWAY_RG4100_RY:
                 // 网关处理
                 //intent = new Intent(context, LockDetailActivity.class);
                 intent = new Intent(context, DetailGatewayActivity.class);
                 break;
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
                 intent = new Intent(context, DetailOneSwitchActivity2.class);
                 break;
             case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两键开关处理
                 intent = new Intent(context, DetailTwoSwitchActivity2.class);
                 break;
             case CTSL.PK_FOURWAYSWITCH:
+            case CTSL.PK_FOURWAYSWITCH_LF:
             case CTSL.PK_FOURWAYSWITCH_2: {
                 intent = new Intent(context, DetailFourSwitchActivity2.class);
                 break;
             }
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 // 门磁传感器处理
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 // 水浸传感器处理
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_HM:
                 // 燃气传感器处理
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_GASSENSOR_MLK:
+                // 燃气传感器处理
+            case CTSL.PK_SMOKESENSOR_HM:
                 // 烟雾传感器处理
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+                // 烟雾传感器处理
+            case CTSL.PK_PIRSENSOR_HM:
                 // 人体热释传感器处理
-            case CTSL.PK_TEMHUMSENSOR:
+            case CTSL.PK_PIRSENSOR_MLK:
+                // 人体热释传感器处理
+            case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_TEMHUMSENSOR_MLK:
                 // 温湿度传感器处理
             case CTSL.PK_REMOTECONTRILBUTTON:
                 // 遥控按钮处理
                 intent = new Intent(context, DetailSensorActivity.class);
                 // 非燃气传感器有电源
-                if (!productKey.equals(CTSL.PK_GASSENSOR)) {
+                if (!productKey.equals(CTSL.PK_GASSENSOR_HM) &&
+                        !productKey.equals(CTSL.PK_GASSENSOR_MLK)) {
                     intent.putExtra("isHasPowerSource", true);
                 }
                 break;
-            case CTSL.PK_SMART_LOCK_A7:
+            case CTSL.PK_KDS_SMART_LOCK_A7:
                 intent = new Intent(context, LockDetailActivity.class);
                 break;
             case CTSL.PK_LIGHT:
@@ -96,6 +115,7 @@ public class ActivityRouter {
                 intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
+            case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
                 intent = new Intent(context, USixSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
@@ -111,33 +131,37 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_FOUR_SCENE_SWITCH_LF:
                 intent = new Intent(context, FourSceneSwitchActivity2.class);
                 break;
-            case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
+            case CTSL.PK_FULL_SCREEN_SWITCH_HY: {
                 // 全面屏开关
                 ViseLog.d("iotId = " + iotId + " , productKey = " + productKey);
                 intent = new Intent(context, FullScreenSwitchActivity.class);
                 break;
             }
+            case CTSL.PK_THREEWAYSWITCH_HY:
+            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_LF:
+            case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH: {
                 // 三键开关
                 intent = new Intent(context, DetailThreeSwitchActivity.class);
                 break;
             }
-            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF: {
                 // 单路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, OneWayCurtainsDetailActivity.class);
                 break;
             }
-            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS: {
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF: {
                 // 双路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
                 break;
             }
             default:
-                //if ("a1SlOjihHnP".equals(productKey)) productKey = CTSL.PK_AIRCOMDITION_TWO;
                 String code = "link://router/" + productKey;
                 Bundle bundle = new Bundle();
                 bundle.putString("iotId", iotId); // 传入插件参数，没有参数则不需要这一行
@@ -145,7 +169,6 @@ public class ActivityRouter {
                 Router.getInstance().toUrl((Activity) context, code, bundle);
                 break;
         }
-        ViseLog.d("intent != null = " + (intent != null));
         if (intent != null) {
             intent.putExtra("iotId", iotId);
             intent.putExtra("productKey", productKey);

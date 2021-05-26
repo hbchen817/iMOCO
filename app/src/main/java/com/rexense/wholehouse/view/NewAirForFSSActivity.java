@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CTSL;
+import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityNewAirForFullScreenBinding;
 import com.rexense.wholehouse.model.ETSL;
 import com.rexense.wholehouse.presenter.PluginHelper;
 import com.rexense.wholehouse.presenter.TSLHelper;
@@ -20,51 +22,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class NewAirForFSSActivity extends DetailActivity {
-    @BindView(R.id.includeDetailRl)
-    RelativeLayout mTopbarRoot;
-    @BindView(R.id.includeDetailImgMore)
-    ImageView mTopbarMore;
-    @BindView(R.id.includeDetailImgBack)
-    ImageView mTopbarBack;
-    @BindView(R.id.includeDetailLblTitle)
-    TextView mTopbarTitle;
-    @BindView(R.id.low_wind_ic)
-    TextView mLowWindIC;
-    @BindView(R.id.mid_wind_ic)
-    TextView mMidWindIC;
-    @BindView(R.id.high_wind_ic)
-    TextView mHighWindIC;
-    @BindView(R.id.switch_ic)
-    TextView mSwitchIC;
-    @BindView(R.id.timing_ic)
-    TextView mTimingIC;
-    @BindView(R.id.low_wind_tv)
-    TextView mLowWindTV;
-    @BindView(R.id.mid_wind_tv)
-    TextView mMidWindTV;
-    @BindView(R.id.high_wind_tv)
-    TextView mHighWindTV;
-    @BindView(R.id.switch_tv)
-    TextView mSwitchTV;
-    @BindView(R.id.fanmode_show_tv)
-    TextView mFanModeShowTV;
-    @BindView(R.id.timing_tv)
-    TextView mTimingTV;
-    @BindView(R.id.low_wind_layout)
-    RelativeLayout mLowWindLayout;
-    @BindView(R.id.mid_wind_layout)
-    RelativeLayout mMidWindLayout;
-    @BindView(R.id.high_wind_layout)
-    RelativeLayout mHighWindLayout;
-    @BindView(R.id.switch_layout)
-    RelativeLayout mSwitchLayout;
-    @BindView(R.id.timing_layout)
-    RelativeLayout mTimingLayout;
+    private ActivityNewAirForFullScreenBinding mViewBinding;
 
     private int mFanMode = 0;//0: 低风 1: 中风 2: 高风
     private int mPowerSwitch = 3;// 3: 关闭 4: 打开
 
     private TSLHelper mTSLHelper;
+
+    private int mShapeCornerAppGreen;
+    private int mAppGreen;
+    private int mShapeCorner;
+    private int mIndexImgColor;
+    private int mShapeCornerAppGreen2;
+    private int mAppGreen2;
+    private int mAll82;
 
     // 更新状态
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -91,8 +62,8 @@ public class NewAirForFSSActivity extends DetailActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_air_for_full_screen);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityNewAirForFullScreenBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         initStatusBar();
         initView();
@@ -102,13 +73,13 @@ public class NewAirForFSSActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mTopbarBack.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.includeDetailImgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mTopbarTitle.setText(R.string.new_air);
+        mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.new_air);
     }
 
     // 嵌入式状态栏
@@ -118,57 +89,59 @@ public class NewAirForFSSActivity extends DetailActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
-        mTopbarRoot.setBackgroundColor(Color.WHITE);
-        mTopbarMore.setVisibility(View.GONE);
+        mViewBinding.includeToolbar.includeDetailRl.setBackgroundColor(Color.WHITE);
+        mViewBinding.includeToolbar.includeDetailImgMore.setVisibility(View.GONE);
     }
 
     private void initView() {
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mLowWindIC.setTypeface(iconfont);
-        mMidWindIC.setTypeface(iconfont);
-        mHighWindIC.setTypeface(iconfont);
-        mSwitchIC.setTypeface(iconfont);
-        mTimingIC.setTypeface(iconfont);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.lowWindIc.setTypeface(iconfont);
+        mViewBinding.midWindIc.setTypeface(iconfont);
+        mViewBinding.highWindIc.setTypeface(iconfont);
+        mViewBinding.switchIc.setTypeface(iconfont);
+        mViewBinding.timingIc.setTypeface(iconfont);
+
+        mViewBinding.lowWindLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.midWindLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.highWindLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.switchLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.timingLayout.setOnClickListener(this::onViewClicked);
+
+        mShapeCornerAppGreen = R.drawable.shape_corner_appgreen;
+        mAppGreen = getResources().getColor(R.color.appgreen);
+        mShapeCorner = R.drawable.shape_corner;
+        mIndexImgColor = getResources().getColor(R.color.index_imgcolor);
+        mShapeCornerAppGreen2 = R.drawable.shape_corner_appgreen_2;
+        mAppGreen2 = getResources().getColor(R.color.appgreen_2);
+        mAll82 = getResources().getColor(R.color.all_8_2);
     }
 
-    @OnClick({R.id.low_wind_layout, R.id.mid_wind_layout, R.id.high_wind_layout, R.id.switch_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.low_wind_layout: {
-                // 低风
-                if (mPowerSwitch == 4)
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 2});
-                break;
+        if (view.getId() == R.id.low_wind_layout) {
+            // 低风
+            if (mPowerSwitch == 4)
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 2});
+        } else if (view.getId() == R.id.mid_wind_layout) {
+            // 中风
+            if (mPowerSwitch == 4)
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 3});
+        } else if (view.getId() == R.id.high_wind_layout) {
+            // 高风
+            if (mPowerSwitch == 4)
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 4});
+        } else if (view.getId() == R.id.switch_layout) {
+            // 开关
+            if (mPowerSwitch == 4) {
+                // 关闭
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                // 打开
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
             }
-            case R.id.mid_wind_layout: {
-                // 中风
-                if (mPowerSwitch == 4)
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 3});
-                break;
-            }
-            case R.id.high_wind_layout: {
-                // 高风
-                if (mPowerSwitch == 4)
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_2}, new String[]{"" + 4});
-                break;
-            }
-            case R.id.switch_layout: {
-                // 开关
-                if (mPowerSwitch == 4) {
-                    // 关闭
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    // 打开
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            }
-            case R.id.timing_layout: {
-                // 定时
-                if (mPowerSwitch == 4)
-                    PluginHelper.cloudTimer(NewAirForFSSActivity.this, mIOTId, mProductKey);
-                break;
-            }
+        } else if (view.getId() == R.id.timing_layout) {
+            // 定时
+            if (mPowerSwitch == 4)
+                PluginHelper.cloudTimer(this, mIOTId, mProductKey);
         }
     }
 
@@ -177,180 +150,180 @@ public class NewAirForFSSActivity extends DetailActivity {
             case 0: {
                 // 低风
                 if (mPowerSwitch == 4) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.lowWindIc.setTextColor(mAppGreen);
+                    mViewBinding.lowWindTv.setTextColor(mAppGreen);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.midWindTv.setTextColor(mIndexImgColor);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.highWindTv.setTextColor(mIndexImgColor);
                 } else if (mPowerSwitch == 3) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.lowWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.lowWindTv.setTextColor(mAppGreen2);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mAll82);
+                    mViewBinding.midWindTv.setTextColor(mAll82);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mAll82);
+                    mViewBinding.highWindTv.setTextColor(mAll82);
                 }
 
-                mFanModeShowTV.setText(getString(R.string.fan_speed_low));
+                mViewBinding.fanmodeShowTv.setText(getString(R.string.fan_speed_low));
                 if (mPowerSwitch == 3) break;
-                mFanModeShowTV.setTextColor(getResources().getColor(R.color.appgreen));
+                mViewBinding.fanmodeShowTv.setTextColor(mAppGreen);
                 break;
             }
             case 1: {
                 // 中风
                 if (mPowerSwitch == 4) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.lowWindTv.setTextColor(mIndexImgColor);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.midWindIc.setTextColor(mAppGreen);
+                    mViewBinding.midWindTv.setTextColor(mAppGreen);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.highWindTv.setTextColor(mIndexImgColor);
                 } else if (mPowerSwitch == 3) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mAll82);
+                    mViewBinding.lowWindTv.setTextColor(mAll82);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.midWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.midWindTv.setTextColor(mAppGreen2);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mAll82);
+                    mViewBinding.highWindTv.setTextColor(mAll82);
                 }
 
-                mFanModeShowTV.setText(getString(R.string.fan_speed_mid));
+                mViewBinding.fanmodeShowTv.setText(getString(R.string.fan_speed_mid));
                 if (mPowerSwitch == 3) break;
-                mFanModeShowTV.setTextColor(getResources().getColor(R.color.appgreen));
+                mViewBinding.fanmodeShowTv.setTextColor(mAppGreen);
                 break;
             }
             case 2: {
                 // 高风
                 if (mPowerSwitch == 4) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.lowWindTv.setTextColor(mIndexImgColor);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.midWindTv.setTextColor(mIndexImgColor);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.highWindIc.setTextColor(mAppGreen);
+                    mViewBinding.highWindTv.setTextColor(mAppGreen);
                 } else if (mPowerSwitch == 3) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mAll82);
+                    mViewBinding.lowWindTv.setTextColor(mAll82);
 
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mAll82);
+                    mViewBinding.midWindTv.setTextColor(mAll82);
 
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.highWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.highWindTv.setTextColor(mAppGreen2);
                 }
 
-                mFanModeShowTV.setText(getString(R.string.fan_speed_high));
+                mViewBinding.fanmodeShowTv.setText(getString(R.string.fan_speed_high));
                 if (mPowerSwitch == 3) break;
-                mFanModeShowTV.setTextColor(getResources().getColor(R.color.appgreen));
+                mViewBinding.fanmodeShowTv.setTextColor(mAppGreen);
                 break;
             }
             case 3: {
                 // 关闭
-                mSwitchIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                mSwitchTV.setTextColor(getResources().getColor(R.color.all_8_2));
-                mTimingIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                mTimingTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                mViewBinding.switchIc.setTextColor(mAll82);
+                mViewBinding.switchTv.setTextColor(mAll82);
+                mViewBinding.timingIc.setTextColor(mAll82);
+                mViewBinding.timingTv.setTextColor(mAll82);
 
                 if (mFanMode == 0) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.lowWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.lowWindTv.setTextColor(mAppGreen2);
                 } else {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mAll82);
+                    mViewBinding.lowWindTv.setTextColor(mAll82);
                 }
 
                 if (mFanMode == 1) {
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.midWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.midWindTv.setTextColor(mAppGreen2);
                 } else {
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mAll82);
+                    mViewBinding.midWindTv.setTextColor(mAll82);
                 }
 
                 if (mFanMode == 2) {
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen_2);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.appgreen_2));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCornerAppGreen2);
+                    mViewBinding.highWindIc.setTextColor(mAppGreen2);
+                    mViewBinding.highWindTv.setTextColor(mAppGreen2);
                 } else {
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.all_8_2));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.all_8_2));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mAll82);
+                    mViewBinding.highWindTv.setTextColor(mAll82);
                 }
 
-                mFanModeShowTV.setTextColor(getResources().getColor(R.color.appgreen_2));
+                mViewBinding.fanmodeShowTv.setTextColor(mAppGreen2);
                 break;
             }
 
             case 4: {
                 // 打开
-                mSwitchIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                mSwitchTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                mTimingIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                mTimingTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                mViewBinding.switchIc.setTextColor(mIndexImgColor);
+                mViewBinding.switchTv.setTextColor(mIndexImgColor);
+                mViewBinding.timingIc.setTextColor(mIndexImgColor);
+                mViewBinding.timingTv.setTextColor(mIndexImgColor);
 
                 if (mFanMode == 0) {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.lowWindIc.setTextColor(mAppGreen);
+                    mViewBinding.lowWindTv.setTextColor(mAppGreen);
                 } else {
-                    mLowWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mLowWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mLowWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.lowWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.lowWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.lowWindTv.setTextColor(mIndexImgColor);
                 }
 
                 if (mFanMode == 1) {
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.midWindIc.setTextColor(mAppGreen);
+                    mViewBinding.midWindTv.setTextColor(mAppGreen);
                 } else {
-                    mMidWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mMidWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mMidWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.midWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.midWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.midWindTv.setTextColor(mIndexImgColor);
                 }
 
                 if (mFanMode == 2) {
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner_appgreen);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.appgreen));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.appgreen));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCornerAppGreen);
+                    mViewBinding.highWindIc.setTextColor(mAppGreen);
+                    mViewBinding.highWindTv.setTextColor(mAppGreen);
                 } else {
-                    mHighWindLayout.setBackgroundResource(R.drawable.shape_corner);
-                    mHighWindIC.setTextColor(getResources().getColor(R.color.index_imgcolor));
-                    mHighWindTV.setTextColor(getResources().getColor(R.color.index_imgcolor));
+                    mViewBinding.highWindLayout.setBackgroundResource(mShapeCorner);
+                    mViewBinding.highWindIc.setTextColor(mIndexImgColor);
+                    mViewBinding.highWindTv.setTextColor(mIndexImgColor);
                 }
-                mFanModeShowTV.setTextColor(getResources().getColor(R.color.appgreen));
+                mViewBinding.fanmodeShowTv.setTextColor(mAppGreen);
                 break;
             }
         }

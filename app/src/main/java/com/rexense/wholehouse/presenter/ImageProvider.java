@@ -37,35 +37,49 @@ public class ImageProvider {
         switch (productKey) {
             case CTSL.PK_GATEWAY:
                 return R.drawable.icon_gateway;
-            case CTSL.PK_GATEWAY_RG4100:
+            case CTSL.PK_GATEWAY_RG4100_RY:
                 return R.drawable.icon_gateway_fton;
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_one_key_switch;
                 else
                     return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_two_key_switch;
                 else
                     return R.drawable.icon_twoswitch;
             case CTSL.PK_REMOTECONTRILBUTTON:
                 return R.drawable.icon_button;
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 return R.drawable.icon_doorsensor;
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_HM:
+            case CTSL.PK_GASSENSOR_MLK:
                 return R.drawable.icon_gassensor;
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 return R.drawable.icon_smokesensor;
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 return R.drawable.icon_watersensor;
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 return R.drawable.icon_pirsensor;
-            case CTSL.PK_TEMHUMSENSOR:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_TEMHUMSENSOR_MLK:
                 return R.drawable.icon_thsensor;
-            case CTSL.PK_SMART_LOCK_A7:
+            case CTSL.PK_KDS_SMART_LOCK_A7:
                 return R.drawable.icon_smart_lock;
-            case CTSL.PK_WSD_ELE:
+            case CTSL.PK_DY_ELE:
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
@@ -73,6 +87,10 @@ public class ImageProvider {
                 return R.drawable.icon_one_key_switch;
             case CTSL.PK_TWO_KEY_SWITCH:
                 return R.drawable.icon_two_key_switch;*/
+            case CTSL.PK_THREEWAYSWITCH_HY:
+            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_LF:
+            case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
                 return R.drawable.icon_three_key_switch;
             case CTSL.PK_BLACK_ONE_SWITCH:
@@ -100,8 +118,10 @@ public class ImageProvider {
             case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
                 return R.drawable.icon_color_light;
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_FOUR_SCENE_SWITCH_LF:
                 return R.drawable.icon_four_scene_switch;
             case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_LF:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_four_way_switch;
                 else return R.drawable.icon_four_switch_white;
@@ -115,21 +135,22 @@ public class ImageProvider {
             }
             case CTSL.PK_ONE_SCENE_SWITCH:
                 return R.drawable.icon_one_scene_switch;
-            case CTSL.PK_AIRCOMDITION_TWO:
+            case CTSL.PK_AIRCOMDITION_TWO_LF:
             case CTSL.PK_FAU:
-            case CTSL.PK_FLOORHEATING001:
+            case CTSL.PK_FLOORHEATING001_LF:
             case CTSL.PK_VRV_AC:
                 return R.drawable.icon_ac;
-            case CTSL.PK_OUTLET:
+            case CTSL.PK_OUTLET_LF:
                 return R.drawable.icon_outlet;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
+            case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
             case CTSL.PK_SIX_SCENE_SWITCH:
                 return R.drawable.icon_six_scene_switch;
             case CTSL.PK_THREE_SCENE_SWITCH: {
                 return R.drawable.icon_three_scene_switch;
             }
-            case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:
-            case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF: {
                 // 窗帘电机
                 return R.drawable.icon_dianji;
             }
@@ -171,22 +192,31 @@ public class ImageProvider {
             return R.drawable.icon_gateway;
         }
         switch (productKey) {
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 return R.drawable.state_icon_door;
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 return R.drawable.state_icon_pir;
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_HM:
+            case CTSL.PK_GASSENSOR_MLK:
                 return R.drawable.state_icon_smoke;
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 return R.drawable.state_icon_gas;
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 return R.drawable.state_icon_water;
-            case CTSL.PK_TEMHUMSENSOR:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_TEMHUMSENSOR_MLK:
                 if (propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentHumidity)) {
                     return R.drawable.state_icon_humdity;
                 }
                 if (propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentTemperature)) {
                     return R.drawable.state_icon_temp;
+                }
+                if (propertyName.equalsIgnoreCase(CTSL.THS_P_PM25)) {
+                    return R.drawable.state_icon_pm25;
                 }
                 break;
             default:
@@ -207,6 +237,10 @@ public class ImageProvider {
                         return R.drawable.state_icon_cancel;
                     }
                 }
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 // 一键开关处理
                 if (property.equals(CTSL.OWS_P_PowerSwitch_1)) {
@@ -219,6 +253,10 @@ public class ImageProvider {
                     }
                 }
             case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两键开关处理
                 if (property.equals(CTSL.TWS_P_PowerSwitch_1)) {
                     // 第一路处理
@@ -239,6 +277,10 @@ public class ImageProvider {
                         //return R.drawable.state_twoswitch_2_off;
                     }
                 }
+            case CTSL.PK_THREEWAYSWITCH_HY:
+            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_LF:
+            case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
                 // 三键开关处理
                 if (property.equals(CTSL.TWS_P3_PowerSwitch_1)) {
@@ -277,6 +319,7 @@ public class ImageProvider {
                 }
             case CTSL.PK_FOURWAYSWITCH:
             case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_LF:
                 // 四键开关处理
                 if (property.equals(CTSL.FWS_P_PowerSwitch_1)) {
                     // 第一路处理
@@ -338,7 +381,8 @@ public class ImageProvider {
                         return R.drawable.state_twoswitch_2_off;
                     }
                 }
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 // 门磁传感器处理
                 if (property.equals(CTSL.DS_P_ContactState)) {
                     if (state.equals(CTSL.DS_P_ContactState_Open)) {
@@ -347,7 +391,8 @@ public class ImageProvider {
                         return R.drawable.state_doorsensor_close;
                     }
                 }
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_HM:
+            case CTSL.PK_GASSENSOR_MLK:
                 // 燃气传感器处理
                 if (property.equals(CTSL.GS_P_GasSensorState)) {
                     if (state.equals(CTSL.GS_P_GasSensorState_Has)) {
@@ -356,7 +401,8 @@ public class ImageProvider {
                         return R.drawable.state_gassensor_nonhas;
                     }
                 }
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 // 烟雾传感器处理
                 if (property.equals(CTSL.SS_P_SmokeSensorState)) {
                     if (state.equals(CTSL.SS_P_SmokeSensorState_Has)) {
@@ -365,7 +411,8 @@ public class ImageProvider {
                         return R.drawable.state_smokesensor_nonhas;
                     }
                 }
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 // 水浸传感器处理
                 if (property.equals(CTSL.WS_P_WaterSensorState)) {
                     if (state.equals(CTSL.WS_P_WaterSensorState_Has)) {
@@ -374,7 +421,8 @@ public class ImageProvider {
                         return R.drawable.state_watersensor_nonhas;
                     }
                 }
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 // 人体热释传感器处理
                 if (property.equals(CTSL.PIR_P_MotionAlarmState)) {
                     if (state.equals(CTSL.PIR_P_MotionAlarmState_Has)) {

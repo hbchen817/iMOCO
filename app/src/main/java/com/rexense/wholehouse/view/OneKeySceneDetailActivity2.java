@@ -56,6 +56,8 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
     TextView mBackLightIc;
     @BindView(R.id.back_light_tv)
     TextView mBackLightTV;
+    @BindView(R.id.go_ic)
+    TextView mGoIC;
     @BindView(R.id.back_light_layout)
     RelativeLayout mBackLightLayout;
 
@@ -192,9 +194,10 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
         getScenes();
     }
 
-    @OnClick({R.id.mSceneContentText1, R.id.device_image_view, R.id.key_name_tv, R.id.back_light_layout})
+    @OnClick({R.id.mSceneContentText1, R.id.device_image_view, R.id.key_name_tv, R.id.back_light_layout, R.id.go_ic})
     public void onClickView(View view) {
         switch (view.getId()) {
+            case R.id.go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     mPressedKey = "1";
@@ -323,9 +326,10 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
         });
     }
 
-    @OnLongClick({R.id.mSceneContentText1})
+    @OnLongClick({R.id.mSceneContentText1, R.id.go_ic})
     public boolean onLongClick(View view) {
         switch (view.getId()) {
+            case R.id.go_ic:
             case R.id.mSceneContentText1:
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());

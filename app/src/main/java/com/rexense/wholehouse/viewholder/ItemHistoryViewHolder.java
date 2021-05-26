@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.model.ItemHistoryMsg;
 
 import java.util.Arrays;

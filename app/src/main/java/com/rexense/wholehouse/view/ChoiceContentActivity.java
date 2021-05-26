@@ -3,6 +3,8 @@ package com.rexense.wholehouse.view;
 import java.util.List;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityChoiceContentBinding;
 import com.rexense.wholehouse.model.ETSL;
 import com.rexense.wholehouse.presenter.AptContent;
 import com.rexense.wholehouse.presenter.TSLHelper;
@@ -25,20 +28,21 @@ import com.rexense.wholehouse.presenter.TSLHelper;
 public class ChoiceContentActivity extends BaseActivity {
     private List<ETSL.messageRecordContentEntry> mContents;
 
+    private ActivityChoiceContentBinding mViewBinding;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choice_content);
+        mViewBinding = ActivityChoiceContentBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         String productKey = getIntent().getStringExtra("productKey");
-        this.mContents = new TSLHelper(this).getMessageRecordContent(productKey);
+        mContents = new TSLHelper(this).getMessageRecordContent(productKey);
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        title.setText(R.string.choicecontent_title);
+        mViewBinding.includeToolbar.includeTitleLblTitle.setText(R.string.choicecontent_title);
 
         // 回退处理
-        ImageView imgAdd = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgAdd.setOnClickListener(new OnClickListener(){
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -46,11 +50,10 @@ public class ChoiceContentActivity extends BaseActivity {
         });
 
         // 选择内容处理
-        if(this.mContents != null && this.mContents.size() > 0) {
-            ListView lstProduct = (ListView)findViewById(R.id.choiceContentLstContent);
-            AptContent adapter = new AptContent(ChoiceContentActivity.this, this.mContents);
-            lstProduct.setAdapter(adapter);
-            lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        if (mContents != null && mContents.size() > 0) {
+            AptContent adapter = new AptContent(this, mContents);
+            mViewBinding.choiceContentLstContent.setAdapter(adapter);
+            mViewBinding.choiceContentLstContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // 返回所选内容
@@ -62,6 +65,17 @@ public class ChoiceContentActivity extends BaseActivity {
                     finish();
                 }
             });
+        }
+
+        initStatusBar();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
         }
     }
 }

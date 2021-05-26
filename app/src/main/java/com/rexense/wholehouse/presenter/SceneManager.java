@@ -1181,7 +1181,7 @@ public class SceneManager {
         requestParameterEntry.addParameter("name", baseInfo.name);
         requestParameterEntry.addParameter("icon", baseInfo.icon);
         requestParameterEntry.addParameter("iconColor", baseInfo.iconColor);
-        requestParameterEntry.addParameter("description", baseInfo.description);
+        requestParameterEntry.addParameter("description", "mode == CA," + baseInfo.description);
         requestParameterEntry.addParameter("mode", "any");
 
         // 构造条件caConditions
@@ -1456,45 +1456,52 @@ public class SceneManager {
             case CScene.SMC_NIGHT_RISE_ON:
             case CScene.SMC_PIR_DEPLOY_ALARM:
                 // 获取PIR
-                Map<String, EDevice.deviceEntry> pir_has = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
+                Map<String, EDevice.deviceEntry> pir_has = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR_HM);
                 if (pir_has == null || pir_has.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, sceneModelCode, productList, list);
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR_HM, sceneModelCode, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, sceneModelCode, pir_has, list);
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR_HM, sceneModelCode, pir_has, list);
                 }
                 break;
             // 无人关灯处理
             case CScene.SMC_UNMANNED_OFF:
                 // 获取PIR
-                Map<String, EDevice.deviceEntry> pir_nohas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
+                Map<String, EDevice.deviceEntry> pir_nohas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR_HM);
                 if (pir_nohas == null || pir_nohas.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, productList, list);
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR_HM, CScene.SMC_UNMANNED_OFF, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, pir_nohas, list);
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR_HM, CScene.SMC_UNMANNED_OFF, pir_nohas, list);
                 }
                 break;
             // 报警开灯处理
             case CScene.SMC_ALARM_ON:
                 // 获取烟感气传感器
-                Map<String, EDevice.deviceEntry> smoke = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_SMOKESENSOR);
+                Map<String, EDevice.deviceEntry> smoke = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_SMOKESENSOR_HM);
                 if (smoke == null || smoke.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, productList, list);
+                    this.addTriggerProduct(CTSL.PK_SMOKESENSOR_HM, CScene.SMC_ALARM_ON, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, smoke, list);
+                    this.addTriggerDevice(CTSL.PK_SMOKESENSOR_HM, CScene.SMC_ALARM_ON, smoke, list);
+                }
+                // 获取烟感气传感器
+                Map<String, EDevice.deviceEntry> smoke1 = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_SMOKESENSOR_MLK);
+                if (smoke1 == null || smoke1.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_SMOKESENSOR_MLK, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_SMOKESENSOR_MLK, CScene.SMC_ALARM_ON, smoke1, list);
                 }
                 // 获取水浸气传感器
-                Map<String, EDevice.deviceEntry> water = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_WATERSENSOR);
+                Map<String, EDevice.deviceEntry> water = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_WATERSENSOR_HM);
                 if (water == null || water.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                    this.addTriggerProduct(CTSL.PK_WATERSENSOR_HM, CScene.SMC_ALARM_ON, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, water, list);
+                    this.addTriggerDevice(CTSL.PK_WATERSENSOR_HM, CScene.SMC_ALARM_ON, water, list);
                 }
                 // 获取燃气传感器
-                Map<String, EDevice.deviceEntry> gas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GASSENSOR);
+                Map<String, EDevice.deviceEntry> gas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GASSENSOR_HM);
                 if (gas == null || gas.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                    this.addTriggerProduct(CTSL.PK_GASSENSOR_HM, CScene.SMC_ALARM_ON, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, gas, list);
+                    this.addTriggerDevice(CTSL.PK_GASSENSOR_HM, CScene.SMC_ALARM_ON, gas, list);
                 }
                 break;
             // 遥控开灯、门铃播报、报警播报处理
@@ -1513,11 +1520,11 @@ public class SceneManager {
             case CScene.SMC_OPEN_DOOR_ON:
             case CScene.SMC_DOOR_DEPLOY_ALARM:
                 // 获取门磁
-                Map<String, EDevice.deviceEntry> door = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_DOORSENSOR);
+                Map<String, EDevice.deviceEntry> door = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_DOORSENSOR_HM);
                 if (door == null || door.size() == 0) {
-                    this.addTriggerProduct(CTSL.PK_DOORSENSOR, sceneModelCode, productList, list);
+                    this.addTriggerProduct(CTSL.PK_DOORSENSOR_HM, sceneModelCode, productList, list);
                 } else {
-                    this.addTriggerDevice(CTSL.PK_DOORSENSOR, sceneModelCode, door, list);
+                    this.addTriggerDevice(CTSL.PK_DOORSENSOR_HM, sceneModelCode, door, list);
                 }
                 break;
             default:
@@ -1575,7 +1582,7 @@ public class SceneManager {
             case CScene.SMC_NIGHT_RISE_ON:
             case CScene.SMC_ALARM_ON:
             case CScene.SMC_REMOTE_CONTROL_ON:
-            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_OPEN_DOOR_ON: {
                 // 1.获取一键单火开关
                 Map<String, EDevice.deviceEntry> oneSwitch_on = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
                 if (oneSwitch_on == null || oneSwitch_on.size() == 0) {
@@ -1591,8 +1598,9 @@ public class SceneManager {
                     this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, sceneModelCode, twoSwitch_on, list);
                 }
                 break;
+            }
             // 无人关灯场景处理
-            case CScene.SMC_UNMANNED_OFF:
+            case CScene.SMC_UNMANNED_OFF: {
                 // 1.获取一键单火开关
                 Map<String, EDevice.deviceEntry> oneSwitch_off = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH);
                 if (oneSwitch_off == null || oneSwitch_off.size() == 0) {
@@ -1608,6 +1616,7 @@ public class SceneManager {
                     this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_UNMANNED_OFF, twoSwitch_off, list);
                 }
                 break;
+            }
             // 门铃播报场景处理
             case CScene.SMC_BELL_PLAY:
                 // 1.获取网关
@@ -1631,7 +1640,7 @@ public class SceneManager {
                 }
                 break;
             // 回家模式场景处理
-            case CScene.SMC_GO_HOME_PATTERN:
+            case CScene.SMC_GO_HOME_PATTERN: {
                 // 1.获取网关
                 Map<String, EDevice.deviceEntry> gateway_gohome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
                 if (gateway_gohome == null || gateway_gohome.size() == 0) {
@@ -1654,9 +1663,10 @@ public class SceneManager {
                     this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, twoSwitch_gonhome, list);
                 }
                 break;
+            }
             // 离家模式、睡觉模式场景处理
             case CScene.SMC_LEAVE_HOME_PATTERN:
-            case CScene.SMC_SLEEP_PATTERN:
+            case CScene.SMC_SLEEP_PATTERN: {
                 // 1.获取网关
                 Map<String, EDevice.deviceEntry> gateway_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
                 if (gateway_leavehome == null || gateway_leavehome.size() == 0) {
@@ -1679,6 +1689,7 @@ public class SceneManager {
                     this.addResponseDevice(CTSL.PK_TWOWAYSWITCH, sceneModelCode, twoSwitch_leavehome, list);
                 }
                 break;
+            }
             // 起床模式场景处理
             case CScene.SMC_GETUP_PATTERN:
                 // 1.获取网关

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".view.AirRemoteControlActivity">
+
+    <include
+        android:id="@+id/top_bar"
+        layout="@layout/layout_common_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tip_test_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/login_bg_2_color"
+            android:gravity="center"
+            android:padding="@dimen/dp_5"
+            android:text="@string/test_switch_button_and_see_if_dev_responds_correctly"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/dp_10"
+                android:layout_weight="1"
+                android:background="@drawable/shape_border">
+
+                <TextView
+                    android:id="@+id/mode_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="@dimen/dp_10"
+                    android:text="制热"
+                    android:textSize="@dimen/sp_18" />
+
+                <TextView
+                    android:id="@+id/fan_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="@dimen/dp_10"
+                    android:text="风速"
+                    android:textSize="@dimen/sp_18" />
+
+                <TextView
+                    android:id="@+id/swing_flap_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_margin="@dimen/dp_10"
+                    android:text="扫风"
+                    android:textSize="@dimen/sp_18" />
+
+                <TextView
+                    android:id="@+id/tem_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="@dimen/dp_10"
+                    android:gravity="center"
+                    android:text="27℃"
+                    android:textSize="@dimen/sp_36" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/switch_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/shape_round_gray"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/icon_switch"
+                            android:textColor="@drawable/color_appcolor_click"
+                            android:textSize="@dimen/sp_36" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/switch_ic"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/dp_30"
+                            android:gravity="center"
+                            android:text="@string/on_off" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/mode_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/shape_round_gray"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/icon_switchover"
+                            android:textColor="@drawable/color_appcolor_click"
+                            android:textSize="@dimen/sp_36" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/mode_ic"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/dp_30"
+                            android:gravity="center"
+                            android:text="@string/mode" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/wind_speed_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/shape_round_gray"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/icon_mid_wind"
+                            android:textColor="@drawable/color_appcolor_click"
+                            android:textSize="@dimen/sp_36" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/wind_speed_ic"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/dp_30"
+                            android:gravity="center"
+                            android:text="@string/wind_speed" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/swing_h_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/shape_round_gray"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/icon_swing_h"
+                            android:textColor="@drawable/color_appcolor_click"
+                            android:textSize="@dimen/sp_36" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/swing_h_ic"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/dp_30"
+                            android:gravity="center"
+                            android:text="@string/wind_flap_h" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/swing_v_ic"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/shape_round_gray"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text="@string/icon_swing_v"
+                            android:textColor="@drawable/color_appcolor_click"
+                            android:textSize="@dimen/sp_36" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/swing_v_ic"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/dp_30"
+                            android:gravity="center"
+                            android:text="@string/wind_flap_v" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:layout_marginTop="@dimen/dp_25"
+                    android:background="@drawable/shape_round_gray_2">
+
+                    <TextView
+                        android:id="@+id/minus_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingLeft="@dimen/dp_30"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_30"
+                        android:paddingBottom="@dimen/dp_10"
+                        android:text="@string/icon_subtraction"
+                        android:textColor="@drawable/color_appcolor_click"
+                        android:textSize="@dimen/sp_18" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/detailsensor_temperature" />
+
+                    <TextView
+                        android:id="@+id/plus_ic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingLeft="@dimen/dp_30"
+                        android:paddingTop="@dimen/dp_10"
+                        android:paddingRight="@dimen/dp_30"
+                        android:paddingBottom="@dimen/dp_10"
+                        android:text="@string/icon_add_3"
+                        android:textColor="@drawable/color_appcolor_click"
+                        android:textSize="@dimen/sp_18" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/previous_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/dp_30"
+            android:text="@string/icon_left_arrow"
+            android:textColor="@drawable/color_appcolor_click"
+            android:textSize="@dimen/sp_25" />
+    </RelativeLayout>
+</RelativeLayout>

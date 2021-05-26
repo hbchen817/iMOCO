@@ -4,23 +4,25 @@
     android:id="@+id/permitJoinLl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     android:paddingTop="10dp"
     android:paddingBottom="5dp">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/permitJoinLblHint"-->
-<!--        style="@style/NormalFontStyle"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:layout_marginLeft="30dp"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:layout_marginRight="30dp"-->
-<!--        android:text="@string/permitjoin_permit" />-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/permitJoinLblHint"-->
+    <!--        style="@style/NormalFontStyle"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_gravity="center"-->
+    <!--        android:layout_marginLeft="30dp"-->
+    <!--        android:layout_marginTop="20dp"-->
+    <!--        android:layout_marginRight="30dp"-->
+    <!--        android:text="@string/permitjoin_permit" />-->
 
     <FrameLayout
         android:id="@+id/permitJoinFLProgress"
@@ -33,14 +35,14 @@
             android:id="@+id/permitJoinCPProgress"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:padding="30dp"
             android:layout_gravity="center"
+            android:padding="30dp"
             app:backColor="@color/topic_color2"
             app:backWidth="3dp"
-            app:progStartColor="#FFD495"
-            app:progFirstColor="@color/topic_color2"
-            app:progWidth="10dp"
             app:maxProgress="100"
+            app:progFirstColor="@color/topic_color2"
+            app:progStartColor="#FFD495"
+            app:progWidth="10dp"
             app:progress="50" />
 
         <ImageView
@@ -72,21 +74,23 @@
 
 
     </FrameLayout>
+
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_30"
         android:text="设备连接中"
-        android:layout_gravity="center_horizontal"
         android:textColor="@color/all_3"
-        android:layout_marginTop="@dimen/dp_30"
-        android:textSize="@dimen/sp_22"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:textSize="@dimen/sp_22" />
+
     <TextView
-        android:text="设备配对中,请避免设备断电。"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/all_3"
-        android:layout_marginTop="@dimen/dp_30"
-        android:textSize="@dimen/sp_14"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/dp_30"
+        android:text="设备配对中,请避免设备断电。"
+        android:textColor="@color/all_3"
+        android:textSize="@dimen/sp_14" />
 
 </LinearLayout>

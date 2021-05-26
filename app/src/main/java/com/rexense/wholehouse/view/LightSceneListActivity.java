@@ -19,6 +19,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CScene;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityLightSceneListBinding;
 import com.rexense.wholehouse.event.CEvent;
 import com.rexense.wholehouse.event.EEvent;
 import com.rexense.wholehouse.model.EScene;
@@ -38,11 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LightSceneListActivity extends BaseActivity {
-
-    @BindView(R.id.recycle_view)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
+    private ActivityLightSceneListBinding mViewBinding;
 
     private String mIotId;
     private SceneManager mSceneManager;
@@ -52,18 +49,20 @@ public class LightSceneListActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_scene_list);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityLightSceneListBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
-        mTitle.setText("场景列表");
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("场景列表");
         initStatusBar();
         mIotId = getIntent().getStringExtra("extra");
-        this.mSceneManager = new SceneManager(this);
+        mSceneManager = new SceneManager(this);
         initAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        mViewBinding.recycleView.setLayoutManager(gridLayoutManager);
+        mViewBinding.recycleView.setAdapter(mAdapter);
         getList();
+        mViewBinding.createSceneView.setOnClickListener(this::onViewClicked);
     }
 
     // 嵌入式状态栏
@@ -105,44 +104,36 @@ public class LightSceneListActivity extends BaseActivity {
             }
         };
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LightSceneActivity.start(this, mList.get(position), mIotId);
+            LightSceneActivity.start(LightSceneListActivity.this, mList.get(position), mIotId);
         });
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_QUERYSCENELIST:
-                    // 处理获取场景列表数据
-                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
-                    if (sceneList != null && sceneList.scenes != null) {
-                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            if (item.description.contains(mIotId)) {
-                                mList.add(item);
-                            }
-                        }
-                        mAdapter.notifyDataSetChanged();
-                        if (sceneList.scenes.size() >= sceneList.pageSize) {
-                            // 数据没有获取完则获取下一页数据
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            if (msg.what == Constant.MSG_CALLBACK_QUERYSCENELIST) {// 处理获取场景列表数据
+                EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                if (sceneList != null && sceneList.scenes != null) {
+                    for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                        if (item.description.contains(mIotId)) {
+                            mList.add(item);
                         }
                     }
-                    break;
-                default:
-                    break;
+                    mAdapter.notifyDataSetChanged();
+                    if (sceneList.scenes.size() >= sceneList.pageSize) {
+                        // 数据没有获取完则获取下一页数据
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
+                }
             }
             return false;
         }
     });
 
-    @OnClick({R.id.create_scene_view})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.create_scene_view:
-                LightSceneActivity.start(this, null, mIotId);
-                break;
+        if (view.getId() == R.id.create_scene_view) {
+            LightSceneActivity.start(this, null, mIotId);
         }
     }
 

@@ -10,54 +10,35 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityAddConditionBinding;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddConditionActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.time_layout)
-    RelativeLayout mTimeLayout;
-    @BindView(R.id.time_range_layout)
-    RelativeLayout mTimeRangeLayout;
-    @BindView(R.id.dev_layout)
-    RelativeLayout mDevLayout;
-    @BindView(R.id.dev_divider)
-    TextView mDevDividerTV;
-    @BindView(R.id.timer_iv)
-    TextView mTimerIV;
-    @BindView(R.id.timer_range_iv)
-    TextView mTimerRangeIV;
-    @BindView(R.id.dev_iv)
-    TextView mDevIV;
-    @BindView(R.id.timer_go_iv)
-    TextView mTimerGoIV;
-    @BindView(R.id.timer_range_go_iv)
-    TextView mTimerRangeGoIV;
-    @BindView(R.id.dev_go_iv)
-    TextView mDevGoIV;
+public class AddConditionActivity extends BaseActivity implements View.OnClickListener {
+    private ActivityAddConditionBinding mViewBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_condition);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityAddConditionBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         initStatusBar();
         boolean hasTimeCondition = getIntent().getBooleanExtra("has_time_condition", false);
-        mTimeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
-        mTimeRangeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
-        mDevDividerTV.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
+        mViewBinding.timeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
+        mViewBinding.timeRangeLayout.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
+        mViewBinding.devDivider.setVisibility(hasTimeCondition ? View.GONE : View.VISIBLE);
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
-        mTimerIV.setTypeface(iconfont);
-        mTimerRangeIV.setTypeface(iconfont);
-        mDevIV.setTypeface(iconfont);
-        mTimerGoIV.setTypeface(iconfont);
-        mTimerRangeGoIV.setTypeface(iconfont);
-        mDevGoIV.setTypeface(iconfont);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.timerIv.setTypeface(iconfont);
+        mViewBinding.timerRangeIv.setTypeface(iconfont);
+        mViewBinding.devIv.setTypeface(iconfont);
+        mViewBinding.timerGoIv.setTypeface(iconfont);
+        mViewBinding.timerRangeGoIv.setTypeface(iconfont);
+        mViewBinding.devGoIv.setTypeface(iconfont);
 
         initView();
     }
@@ -72,27 +53,25 @@ public class AddConditionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.add_condition));
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.add_condition));
+
+        mViewBinding.timeLayout.setOnClickListener(this);
+        mViewBinding.timeRangeLayout.setOnClickListener(this);
+        mViewBinding.devLayout.setOnClickListener(this);
     }
 
-    @OnClick({R.id.time_layout, R.id.time_range_layout, R.id.dev_layout})
-    protected void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.time_layout: {
-                Intent intent = new Intent(this, TimeSelectorActivity.class);
-                startActivity(intent);
-                break;
-            }
-            case R.id.time_range_layout: {
-                Intent intent = new Intent(this, TimeRangeSelectorActivity.class);
-                startActivity(intent);
-                break;
-            }
-            case R.id.dev_layout: {
-                Intent intent = new Intent(this, DevListForCAActivity.class);
-                startActivity(intent);
-                break;
-            }
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.time_layout) {
+            Intent intent = new Intent(this, TimeSelectorActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.time_range_layout) {
+            Intent intent = new Intent(this, TimeRangeSelectorActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.dev_layout) {
+            Intent intent = new Intent(this, DevListForCAActivity.class);
+            startActivity(intent);
         }
     }
 }

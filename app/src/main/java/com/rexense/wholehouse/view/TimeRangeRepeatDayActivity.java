@@ -16,6 +16,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityCustomRepeatDayBinding;
 import com.rexense.wholehouse.utility.ToastUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,16 +29,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TimeRangeRepeatDayActivity extends BaseActivity {
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.repeat_recycler)
-    RecyclerView mRepeatRV;
+    private ActivityCustomRepeatDayBinding mViewBinding;
 
     private BaseQuickAdapter<RepeatDay, BaseViewHolder> mRepeatAdapter;
     private List<RepeatDay> mDayList = new ArrayList<>();
-    private LinearLayoutManager mLayoutManager;
 
     private String mCustomWeekDayResult = null;
 
@@ -45,10 +41,10 @@ public class TimeRangeRepeatDayActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_repeat_day);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityCustomRepeatDayBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         initStatusBar();
         mCustomWeekDayResult = getIntent().getStringExtra("custom_day");
@@ -66,9 +62,9 @@ public class TimeRangeRepeatDayActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText(getString(R.string.custom));
-        tvToolbarRight.setText(getString(R.string.nick_name_save));
-        tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.custom));
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean isChecked = false;
@@ -77,7 +73,7 @@ public class TimeRangeRepeatDayActivity extends BaseActivity {
                     RepeatDay day = mDayList.get(i);
                     if (day.isChecked) {
                         isChecked = true;
-                        String dayValue = String.valueOf(day.getPos()+1);
+                        String dayValue = String.valueOf(day.getPos() + 1);
                         if (stringBuilder.toString().length() == 0) {
                             stringBuilder.append(dayValue);
                         } else stringBuilder.append("," + dayValue);
@@ -129,10 +125,10 @@ public class TimeRangeRepeatDayActivity extends BaseActivity {
                 mRepeatAdapter.notifyDataSetChanged();
             }
         });
-        mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(RecyclerView.VERTICAL);
-        mRepeatRV.setLayoutManager(mLayoutManager);
-        mRepeatRV.setAdapter(mRepeatAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.repeatRecycler.setLayoutManager(layoutManager);
+        mViewBinding.repeatRecycler.setAdapter(mRepeatAdapter);
     }
 
     private class RepeatDay {

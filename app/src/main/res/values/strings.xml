@@ -14,6 +14,7 @@
     <string name="icon_switch">&#xe628;</string>
     <string name="icon_timer">&#xe638;</string>
     <string name="icon_right_arrow">&#xe64c;</string>
+    <string name="icon_left_arrow">&#xe64b;</string>
     <string name="icon_add">&#xe652;</string>
     <string name="icon_add_2">&#xe68a;</string>
     <string name="icon_more">&#xe615;</string>
@@ -37,6 +38,10 @@
     <string name="icon_backlight">&#xe9e2;</string>
     <string name="icon_search">&#xe633;</string>
     <string name="icon_clear">&#xe61b;</string>
+    <string name="icon_switchover">&#xe606;</string>
+    <string name="icon_swing_h">&#xe64f;</string>
+    <string name="icon_swing_v">&#xe646;</string>
+    <string name="icon_pm25">&#xe634;</string>
 
     <string name="app_name">全屋智能家</string>
     <string name="contentDescription_null"></string>
@@ -533,6 +538,7 @@
 
     <string name="power">电量</string>
     <string name="pm25">pm2.5</string>
+    <string name="PM25">PM2.5</string>
     <string name="tvoc">TVOC</string>
     <string name="HCHO">甲醛含量</string>
 
@@ -659,6 +665,7 @@
     <string name="time_period_cannot_be_used_as_condition_to_satisfy_any_of_following_conditions">“时间段”无法作为“满足以下任一条件”的条件</string>
     <string name="time_condition_can_not_more_than_one">“时间点”、“时间段”条件总数不能大于一个</string>
     <string name="this_device_has_no_scene_action">此设备无场景动作</string>
+    <string name="this_device_has_no_scene_condition">此设备无场景条件</string>
     <string name="do_you_really_want_to_delete_the_current_scene">你真的要删除场景？</string>
     <string name="deleting_the_scene">正在删除场景</string>
     <string name="delete_the_success">删除成功</string>
@@ -715,4 +722,29 @@
     <string name="tv">电视</string>
     <string name="fan">风扇</string>
     <string name="pls_input_brand">请输入品牌</string>
+    <string name="service_has_no_parameters">此服务无参数。</string>
+    <string name="pls_select_brand">请选择品牌</string>
+    <string name="test_switch_button_and_see_if_dev_responds_correctly">请测试开关按键，并查看设备是否正确响应</string>
+    <string name="mode">模式</string>
+    <string name="wind_speed">风速</string>
+    <string name="wind_flap_h">左右扫风</string>
+    <string name="wind_flap_v">上下扫风</string>
+
+    <string name="hong_yan">鸿雁</string>
+    <string name="rui_ying">瑞瀛</string>
+    <string name="yue_qi_sheng">粤奇胜</string>
+    <string name="la_fei">拉斐</string>
+    <string name="kai_di_shi">凯迪仕</string>
+    <string name="du_ya">杜亚</string>
+    <string name="hai_man">海曼</string>
+    <string name="mai_le_ke">麦乐克</string>
+    <string name="others">其它</string>
+
+    <string name="add_remote_control">添加遥控器</string>
+    <string name="click_switch_btn_and_check_dev_responds">点击开关按钮，\n然后确认设备是否正确响应。</string>
+    <string name="trying_remote_control_model">正在尝试遥控器型号 %1$d/%2$d</string>
+    <string name="trying_remote_control_model_2">正在尝试遥控器型号</string>
+    <string name="dev_respond_correctly">设备是否正确响应？</string>
+    <string name="remote_control_name_edit">修改遥控器名称</string>
+    <string name="pls_input_name">请输入名称</string>
 </resources>

@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
-                android:textColor="@color/orange3"
+                android:textColor="@color/appcolor2"
                 android:textSize="@dimen/dp_60"
                 android:textStyle="bold"
                 tools:text="--" /><!--#FE5A2F-->
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp_10"
                 android:text="--"
-                android:textColor="@color/orange3"
+                android:textColor="@color/appcolor2"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/centigrade"
-                android:textColor="@color/orange3"
+                android:textColor="@color/appcolor2"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
 
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="--"
-                android:textColor="@color/orange3"
+                android:textColor="@color/appcolor2"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/centigrade"
-                android:textColor="@color/orange3"
+                android:textColor="@color/appcolor2"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
 
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/icon_switch"
-                    android:textColor="@color/orange3"
+                    android:textColor="@color/appcolor2"
                     android:textSize="@dimen/sp_30" />
 
                 <TextView
@@ -258,7 +258,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/icon_timer"
-                    android:textColor="@color/orange3"
+                    android:textColor="@color/appcolor2"
                     android:textSize="@dimen/sp_30" />
 
                 <TextView

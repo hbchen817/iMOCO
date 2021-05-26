@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityChoiceWifiBinding;
 import com.rexense.wholehouse.model.EWiFi;
 import com.rexense.wholehouse.presenter.AptWiFiList;
 import com.rexense.wholehouse.utility.WiFiHelper;
@@ -23,19 +24,20 @@ import com.rexense.wholehouse.utility.WiFiHelper;
  * Description: 选择WiFi
  */
 public class ChoiceWiFiActivity extends Activity {
+    private ActivityChoiceWifiBinding mViewBinding;
+
     private List<EWiFi.WiFiEntry> mWiFiList = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choice_wifi);
+        mViewBinding = ActivityChoiceWifiBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        title.setText(R.string.wifi_title);
+        mViewBinding.includeToolbar.includeTitleLblTitle.setText(R.string.wifi_title);
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -44,11 +46,10 @@ public class ChoiceWiFiActivity extends Activity {
 
         // 获取WiFi
         WiFiHelper wiFiHelper = new WiFiHelper(this);
-        this.mWiFiList = wiFiHelper.getSSIDList();
-        if(this.mWiFiList != null && this.mWiFiList.size() > 0) {
-            ListView wifiList = (ListView)findViewById(R.id.choiceWiFiLstWiFi);
-            wifiList.setAdapter(new AptWiFiList(this, this.mWiFiList));
-            wifiList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        mWiFiList = wiFiHelper.getSSIDList();
+        if (mWiFiList != null && mWiFiList.size() > 0) {
+            mViewBinding.choiceWiFiLstWiFi.setAdapter(new AptWiFiList(this, mWiFiList));
+            mViewBinding.choiceWiFiLstWiFi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // 返回所选WiFi

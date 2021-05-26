@@ -7,16 +7,18 @@
     android:orientation="vertical"
     android:paddingBottom="5dp">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <RelativeLayout
-        android:visibility="visible"
         android:id="@+id/password_layout"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:gravity="center|center_horizontal|center_vertical">
+        android:gravity="center|center_horizontal|center_vertical"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/configureNetworkImgSSID"
@@ -153,10 +155,10 @@
 
     <LinearLayout
         android:id="@+id/process_layout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <FrameLayout
             android:id="@+id/permitJoinFLProgress"
@@ -169,14 +171,14 @@
                 android:id="@+id/permitJoinCPProgress"
                 android:layout_width="300dp"
                 android:layout_height="300dp"
-                android:padding="30dp"
                 android:layout_gravity="center"
+                android:padding="30dp"
                 app:backColor="@color/topic_color2"
                 app:backWidth="3dp"
-                app:progStartColor="#FFD495"
-                app:progFirstColor="@color/topic_color2"
-                app:progWidth="10dp"
                 app:maxProgress="100"
+                app:progFirstColor="@color/topic_color2"
+                app:progStartColor="#FFD495"
+                app:progWidth="10dp"
                 app:progress="50" />
 
             <ImageView

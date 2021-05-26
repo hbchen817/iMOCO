@@ -1,5 +1,6 @@
 package com.rexense.wholehouse.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityEditKeyBinding;
 import com.rexense.wholehouse.event.RefreshKeyListEvent;
 import com.rexense.wholehouse.model.ItemUserKey;
 import com.rexense.wholehouse.presenter.LockManager;
@@ -28,19 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class EditKeyActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.key_no)
-    TextView keyNo;
-    @BindView(R.id.key_id_text)
-    TextView keyIdText;
-    @BindView(R.id.key_belong)
-    TextView keyBelong;
-    @BindView(R.id.key_permission_text)
-    TextView keyPermissionText;
-    @BindView(R.id.delete_key)
-    TextView deleteKey;
+    private ActivityEditKeyBinding mViewBinding;
 
     private ItemUserKey mKey;
     private String mIotId;
@@ -49,8 +39,8 @@ public class EditKeyActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_key);
-        ButterKnife.bind(this);
+        setContentView(mViewBinding.getRoot());
+
         mKey = (ItemUserKey) getIntent().getSerializableExtra("item");
         mIotId = getIntent().getStringExtra("iotId");
         mHandler = new MyProcessHandler(this);
@@ -68,6 +58,7 @@ public class EditKeyActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         String keyType = "";
         String keyTitle = "";
@@ -105,25 +96,25 @@ public class EditKeyActivity extends BaseActivity {
             default:
                 break;
         }
-        tvToolbarTitle.setText(keyTitle + mKey.getLockUserId() + "信息");
-        keyNo.setText(keyType + "编号");
-        keyIdText.setText(String.valueOf(mKey.getLockUserId()));
-        keyBelong.setText(keyType + "归属");
-        keyPermissionText.setText(keyPermission);
-        deleteKey.setText("删除" + keyType);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(keyTitle + mKey.getLockUserId() + "信息");
+        mViewBinding.keyNo.setText(keyType + "编号");
+        mViewBinding.keyIdText.setText(String.valueOf(mKey.getLockUserId()));
+        mViewBinding.keyBelong.setText(keyType + "归属");
+        mViewBinding.keyPermissionText.setText(keyPermission);
+        mViewBinding.deleteKey.setText("删除" + keyType);
+
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
+        mViewBinding.deleteKey.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick({R.id.iv_toolbar_left, R.id.delete_key})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.delete_key:
-                LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        int id = view.getId();
+        if (id == R.id.iv_toolbar_left) {
+            finish();
+        } else if (id == R.id.delete_key) {
+            LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
 //                EventBus.getDefault().post(new RefreshKeyListEvent());
 //                finish();
-                break;
         }
     }
 
@@ -145,13 +136,9 @@ public class EditKeyActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             EditKeyActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_DELETE_KEY:
-                    EventBus.getDefault().post(new RefreshKeyListEvent());
-                    activity.finish();
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_DELETE_KEY) {
+                EventBus.getDefault().post(new RefreshKeyListEvent());
+                activity.finish();
             }
         }
     }

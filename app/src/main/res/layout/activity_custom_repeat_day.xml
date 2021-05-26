@@ -7,7 +7,9 @@
     android:orientation="vertical"
     tools:context=".view.CustomRepeatDayActivity">
 
-    <include layout="@layout/layout_common_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,6 +28,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/repeat_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 </LinearLayout>

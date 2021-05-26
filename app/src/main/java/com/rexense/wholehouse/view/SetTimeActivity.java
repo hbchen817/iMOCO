@@ -3,7 +3,9 @@ package com.rexense.wholehouse.view;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivitySetTimeBinding;
 import com.rexense.wholehouse.model.EChoice;
 import com.rexense.wholehouse.model.EScene;
 
@@ -29,130 +32,123 @@ import com.rexense.wholehouse.model.EScene;
  * Description: 设置时间界面
  */
 public class SetTimeActivity extends Activity {
+    private ActivitySetTimeBinding mViewBinding;
+
     private EScene.conditionTimeEntry mConditionTime;
-    private Switch mSthAllday;
-    private TextView mLblBegin, mLblEnd, mLblSelfDefine;
-    private ImageView mImgBegin, mImgEnd, mImgEveryday, mImgWorkday, mImgWeekend, mImgSelfdefine;
-    private RelativeLayout mWheelPickerLayout;
-    private WheelPicker mFirstWheelPicker, mSecondWheelPicker;
-    private TextView mWheelPickerValue;
     private String mFirstValue, mSecondValue;
     private int mType;
-    private TextView mLblSefldefineHint;
 
     // 设置滑轮选择器
+    @SuppressLint("SetTextI18n")
     private void setWheelPicker(int type, String firstInitValue, String secondInitValue) {
-        this.mType = type;
-        this.mWheelPickerValue.setText(firstInitValue + " : " + secondInitValue);
+        mType = type;
+        mViewBinding.includeWheelPicker.twoItemWheelPickerLblValue.setText(firstInitValue + " : " + secondInitValue);
         mFirstValue = firstInitValue;
         mSecondValue = secondInitValue;
-        TextView ok = (TextView)findViewById(R.id.twoItemWheelPickerLblOk);
-        ok.setOnClickListener(new OnClickListener() {
+        mViewBinding.includeWheelPicker.twoItemWheelPickerLblOk.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWheelPickerLayout.setVisibility(View.GONE);
-                if(mType == 1){
-                    mLblBegin.setText(mFirstValue + ":" + mSecondValue);
+                mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.setVisibility(View.GONE);
+                if (mType == 1) {
+                    mViewBinding.setTimeLblBegin.setText(mFirstValue + ":" + mSecondValue);
                     mConditionTime.beginHour = Integer.parseInt(mFirstValue);
                     mConditionTime.beginMinute = Integer.parseInt(mSecondValue);
                 } else {
-                    mLblEnd.setText(mFirstValue + ":" + mSecondValue);
+                    mViewBinding.setTimeLblEnd.setText(mFirstValue + ":" + mSecondValue);
                     mConditionTime.endHour = Integer.parseInt(mFirstValue);
                     mConditionTime.endMinute = Integer.parseInt(mSecondValue);
                 }
-                mSthAllday.setChecked(mConditionTime.isAllDay());
+                mViewBinding.setTimeSwtAllday.setChecked(mConditionTime.isAllDay());
             }
         });
-        TextView cancel = (TextView)findViewById(R.id.twoItemWheelPickerLblCancel);
-        cancel.setOnClickListener(new OnClickListener() {
+        mViewBinding.includeWheelPicker.twoItemWheelPickerLblCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWheelPickerLayout.setVisibility(View.GONE);
+                mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.setVisibility(View.GONE);
             }
         });
 
         // 第一个滚轮处理
         List<String> firstItems = new ArrayList<String>();
         int selectedIndex = 0;
-        for(int i = 0; i < 24; i++){
-            firstItems.add(String.format("%02d", i));
-            if(firstInitValue.equals(firstItems.get(i))){
+        for (int i = 0; i < 24; i++) {
+            firstItems.add(String.format(Locale.getDefault(), "%02d", i));
+            if (firstInitValue.equals(firstItems.get(i))) {
                 selectedIndex = i;
             }
         }
-        this.mFirstWheelPicker.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
+        mViewBinding.includeWheelPicker.firstItemWheelPickerWPPicker.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
             @Override
             public void onItemSelected(WheelPicker picker, Object data, int position) {
                 mFirstValue = data.toString();
-                mWheelPickerValue.setText(mFirstValue + ":" + mSecondValue);
+                mViewBinding.includeWheelPicker.twoItemWheelPickerLblValue.setText(mFirstValue + ":" + mSecondValue);
             }
         });
         // 加载两次数据是为了正确初始选中位置
-        for(int i = 0; i < 2; i++) {
-            this.mFirstWheelPicker.setData(firstItems);
-            this.mFirstWheelPicker.setSelectedItemPosition(selectedIndex);
+        for (int i = 0; i < 2; i++) {
+            mViewBinding.includeWheelPicker.firstItemWheelPickerWPPicker.setData(firstItems);
+            mViewBinding.includeWheelPicker.firstItemWheelPickerWPPicker.setSelectedItemPosition(selectedIndex);
         }
-        this.mFirstWheelPicker.invalidate();
+        mViewBinding.includeWheelPicker.firstItemWheelPickerWPPicker.invalidate();
 
         // 第二个滚轮处理
         List<String> secondItems = new ArrayList<String>();
         selectedIndex = 0;
-        for(int i = 0; i < 60; i++){
-            secondItems.add(String.format("%02d", i));
-            if(secondInitValue.equals(secondItems.get(i))){
+        for (int i = 0; i < 60; i++) {
+            secondItems.add(String.format(Locale.getDefault(), "%02d", i));
+            if (secondInitValue.equals(secondItems.get(i))) {
                 selectedIndex = i;
             }
         }
-        this.mSecondWheelPicker.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
+        mViewBinding.includeWheelPicker.secondItemWheelPickerWPPicker.setOnItemSelectedListener(new WheelPicker.OnItemSelectedListener() {
             @Override
             public void onItemSelected(WheelPicker picker, Object data, int position) {
                 mSecondValue = data.toString();
-                mWheelPickerValue.setText(mFirstValue + ":" + mSecondValue);
+                mViewBinding.includeWheelPicker.twoItemWheelPickerLblValue.setText(mFirstValue + ":" + mSecondValue);
             }
         });
         // 加载两次数据是为了正确初始选中位置
-        for(int i = 0; i < 2; i++) {
-            this.mSecondWheelPicker.setData(secondItems);
-            this.mSecondWheelPicker.setSelectedItemPosition(selectedIndex);
+        for (int i = 0; i < 2; i++) {
+            mViewBinding.includeWheelPicker.secondItemWheelPickerWPPicker.setData(secondItems);
+            mViewBinding.includeWheelPicker.secondItemWheelPickerWPPicker.setSelectedItemPosition(selectedIndex);
         }
-        this.mSecondWheelPicker.invalidate();
+        mViewBinding.includeWheelPicker.secondItemWheelPickerWPPicker.invalidate();
 
-        this.mWheelPickerLayout.setVisibility(View.VISIBLE);
+        mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.setVisibility(View.VISIBLE);
     }
 
     // 周循环处理
-    private void processWeekReport(){
-        this.mImgEveryday.setVisibility(this.mConditionTime.isEveryDay() ? View.VISIBLE : View.GONE);
-        this.mImgWorkday.setVisibility(this.mConditionTime.isWorkDay() ? View.VISIBLE : View.GONE);
-        this.mImgWeekend.setVisibility(this.mConditionTime.isWeekEnd() ? View.VISIBLE : View.GONE);
-        this.mImgSelfdefine.setVisibility(this.mConditionTime.isSelfDefine() ? View.VISIBLE : View.GONE);
-        this.mLblSelfDefine.setVisibility(View.GONE);
-        if(this.mConditionTime.isSelfDefine()){
-            this.mLblSelfDefine.setVisibility(View.VISIBLE);
+    private void processWeekReport() {
+        mViewBinding.setTimeImgEveryday.setVisibility(mConditionTime.isEveryDay() ? View.VISIBLE : View.GONE);
+        mViewBinding.setTimeImgWorkday.setVisibility(mConditionTime.isWorkDay() ? View.VISIBLE : View.GONE);
+        mViewBinding.setTimeImgWeekend.setVisibility(mConditionTime.isWeekEnd() ? View.VISIBLE : View.GONE);
+        mViewBinding.setTimeImgSefldefine.setVisibility(mConditionTime.isSelfDefine() ? View.VISIBLE : View.GONE);
+        mViewBinding.setTimeLblSefldefine.setVisibility(View.GONE);
+        if (mConditionTime.isSelfDefine()) {
+            mViewBinding.setTimeLblSefldefine.setVisibility(View.VISIBLE);
             //this.mLblSelfDefine.setText(String.format(": %s", this.mConditionTime.getWeekRepeatString(this)));
-            this.mLblSelfDefine.setText(String.format(" %s", this.mConditionTime.getWeekRepeatString(this)));
-            mLblSefldefineHint.setText(R.string.set_time_selfdefine);
+            mViewBinding.setTimeLblSefldefine.setText(String.format(Locale.getDefault(), " %s", mConditionTime.getWeekRepeatString(this)));
+            mViewBinding.setTimeLblSefldefineHint.setText(R.string.set_time_selfdefine);
         } else {
-            mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
+            mViewBinding.setTimeLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_set_time);
+        mViewBinding = ActivitySetTimeBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         // 创建时间条件实例
         Intent intent = getIntent();
         String cron = intent.getStringExtra("cron");
-        this.mConditionTime = new EScene.conditionTimeEntry(cron);
+        mConditionTime = new EScene.conditionTimeEntry(cron);
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
-        title.setText(R.string.set_time_title);
+        mViewBinding.includeToolbar.includeTitleLblTitle.setText(R.string.set_time_title);
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -160,35 +156,17 @@ public class SetTimeActivity extends Activity {
         });
 
         // 控件引用
-        this.mLblBegin = (TextView) findViewById(R.id.setTimeLblBegin);
-        this.mLblEnd = (TextView) findViewById(R.id.setTimeLblEnd);
-        this.mLblSelfDefine = (TextView)findViewById(R.id.setTimeLblSefldefine);
-        this.mImgBegin = (ImageView) findViewById(R.id.setTimeImgBegin);
-        this.mImgEnd = (ImageView) findViewById(R.id.setTimeImgEnd);
-        this.mImgEveryday = (ImageView) findViewById(R.id.setTimeImgEveryday);
-        this.mImgWorkday = (ImageView) findViewById(R.id.setTimeImgWorkday);
-        this.mImgWeekend = (ImageView) findViewById(R.id.setTimeImgWeekend);
-        this.mImgSelfdefine = (ImageView) findViewById(R.id.setTimeImgSefldefine);
-        this.mWheelPickerLayout = (RelativeLayout)findViewById(R.id.twoItemWheelPickerRLPicker);
-        this.mWheelPickerLayout.setVisibility(View.GONE);
-        this.mWheelPickerValue = (TextView)findViewById(R.id.twoItemWheelPickerLblValue);
-        this.mFirstWheelPicker = (WheelPicker) findViewById(R.id.firstItemWheelPickerWPPicker);
-        this.mSecondWheelPicker = (WheelPicker) findViewById(R.id.secondItemWheelPickerWPPicker);
-        this.mLblSefldefineHint = (TextView) findViewById(R.id.setTimeLblSefldefineHint);
+        mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.setVisibility(View.GONE);
 
         // 全天开关处理
-        this.mSthAllday = (Switch)findViewById(R.id.setTimeSwtAllday);
-        if(this.mConditionTime.isAllDay()){
-            this.mSthAllday.setChecked(true);
-        } else {
-            this.mSthAllday.setChecked(false);
-        }
-        this.mSthAllday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mViewBinding.setTimeSwtAllday.setChecked(mConditionTime.isAllDay());
+        mViewBinding.setTimeSwtAllday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    mLblBegin.setText("00:00");
-                    mLblEnd.setText("23:59");
+                if (isChecked) {
+                    mViewBinding.setTimeLblBegin.setText("00:00");
+                    mViewBinding.setTimeLblEnd.setText("23:59");
                     mConditionTime.beginHour = 0;
                     mConditionTime.beginMinute = 0;
                     mConditionTime.endHour = 23;
@@ -196,93 +174,91 @@ public class SetTimeActivity extends Activity {
                 }
             }
         });
-        this.mLblBegin.setText(String.format("%02d:%02d", this.mConditionTime.beginHour, this.mConditionTime.beginMinute));
-        this.mLblEnd.setText(String.format("%02d:%02d", this.mConditionTime.endHour, this.mConditionTime.endMinute));
+        mViewBinding.setTimeLblBegin.setText(String.format(Locale.getDefault(), "%02d:%02d", mConditionTime.beginHour, mConditionTime.beginMinute));
+        mViewBinding.setTimeLblEnd.setText(String.format(Locale.getDefault(), "%02d:%02d", mConditionTime.endHour, mConditionTime.endMinute));
 
         // 开始时间滚轮处理
-        this.mImgBegin.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeImgBegin.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setWheelPicker(1, String.format("%02d", mConditionTime.beginHour), String.format("%02d", mConditionTime.beginMinute));
+                setWheelPicker(1, String.format(Locale.getDefault(), "%02d", mConditionTime.beginHour),
+                        String.format(Locale.getDefault(), "%02d", mConditionTime.beginMinute));
             }
         });
 
         // 结束时间滚轮处理
-        this.mImgEnd.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeImgEnd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setWheelPicker(2, String.format("%02d", mConditionTime.endHour), String.format("%02d", mConditionTime.endMinute));
+                setWheelPicker(2, String.format(Locale.getDefault(), "%02d", mConditionTime.endHour),
+                        String.format(Locale.getDefault(), "%02d", mConditionTime.endMinute));
             }
         });
 
         // 周循环处理
-        this.processWeekReport();
+        processWeekReport();
 
         // 每一天处理
-        RelativeLayout rllEveryday = (RelativeLayout)findViewById(R.id.setTimeRllEveryday);
-        rllEveryday.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeRllEveryday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                if (mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.getVisibility() == View.VISIBLE) {
                     return;
                 }
-                mImgEveryday.setVisibility(View.VISIBLE);
-                mImgWorkday.setVisibility(View.GONE);
-                mImgWeekend.setVisibility(View.GONE);
-                mImgSelfdefine.setVisibility(View.GONE);
+                mViewBinding.setTimeImgEveryday.setVisibility(View.VISIBLE);
+                mViewBinding.setTimeImgWorkday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWeekend.setVisibility(View.GONE);
+                mViewBinding.setTimeImgSefldefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(1);
-                mLblSelfDefine.setVisibility(View.GONE);
-                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
+                mViewBinding.setTimeLblSefldefine.setVisibility(View.GONE);
+                mViewBinding.setTimeLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
         // 工作日处理
-        RelativeLayout rllWorkday = (RelativeLayout)findViewById(R.id.setTimeRllWorkday);
-        rllWorkday.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeRllWorkday.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                if (mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.getVisibility() == View.VISIBLE) {
                     return;
                 }
-                mImgEveryday.setVisibility(View.GONE);
-                mImgWorkday.setVisibility(View.VISIBLE);
-                mImgWeekend.setVisibility(View.GONE);
-                mImgSelfdefine.setVisibility(View.GONE);
+                mViewBinding.setTimeImgEveryday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWorkday.setVisibility(View.VISIBLE);
+                mViewBinding.setTimeImgWeekend.setVisibility(View.GONE);
+                mViewBinding.setTimeImgSefldefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(2);
-                mLblSelfDefine.setVisibility(View.GONE);
-                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
+                mViewBinding.setTimeLblSefldefine.setVisibility(View.GONE);
+                mViewBinding.setTimeLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
         // 周末处理
-        RelativeLayout rllWeekend = (RelativeLayout)findViewById(R.id.setTimeRllWeekend);
-        rllWeekend.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeRllWeekend.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                if (mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.getVisibility() == View.VISIBLE) {
                     return;
                 }
-                mImgEveryday.setVisibility(View.GONE);
-                mImgWorkday.setVisibility(View.GONE);
-                mImgWeekend.setVisibility(View.VISIBLE);
-                mImgSelfdefine.setVisibility(View.GONE);
+                mViewBinding.setTimeImgEveryday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWorkday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWeekend.setVisibility(View.VISIBLE);
+                mViewBinding.setTimeImgSefldefine.setVisibility(View.GONE);
                 mConditionTime.quickGenRepeat(3);
-                mLblSelfDefine.setVisibility(View.GONE);
-                mLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
+                mViewBinding.setTimeLblSefldefine.setVisibility(View.GONE);
+                mViewBinding.setTimeLblSefldefineHint.setText(R.string.set_time_selfdefine_2);
             }
         });
 
         // 自定义处理
-        RelativeLayout rllSelfdefine = (RelativeLayout)findViewById(R.id.setTimeRllSefldefine);
-        rllSelfdefine.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeRllSefldefine.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mWheelPickerLayout.getVisibility() == View.VISIBLE){
+                if (mViewBinding.includeWheelPicker.twoItemWheelPickerRLPicker.getVisibility() == View.VISIBLE) {
                     return;
                 }
-                mImgEveryday.setVisibility(View.GONE);
-                mImgWorkday.setVisibility(View.GONE);
-                mImgWeekend.setVisibility(View.GONE);
+                mViewBinding.setTimeImgEveryday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWorkday.setVisibility(View.GONE);
+                mViewBinding.setTimeImgWeekend.setVisibility(View.GONE);
 
                 List<EChoice.itemEntry> items = mConditionTime.getReportChoiceItems(SetTimeActivity.this);
                 Intent intent = new Intent(SetTimeActivity.this, ChoiceActivity.class);
@@ -290,15 +266,14 @@ public class SetTimeActivity extends Activity {
                 bundle.putString("title", getString(R.string.set_time_seldefine_select));
                 bundle.putBoolean("isMultipleSelect", true);
                 bundle.putInt("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
-                bundle.putSerializable("items", (Serializable)items);
+                bundle.putSerializable("items", (Serializable) items);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLCHOICEACTIVITY);
             }
         });
 
         // 确认处理
-        RelativeLayout relConfirm = (RelativeLayout)findViewById(R.id.setTimeRelConfirm);
-        relConfirm.setOnClickListener(new OnClickListener() {
+        mViewBinding.setTimeRelConfirm.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -322,7 +297,7 @@ public class SetTimeActivity extends Activity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         // 刷新数据
         processWeekReport();
@@ -332,14 +307,14 @@ public class SetTimeActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // 处理自定义周循环
-        if(requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME){
+        if (requestCode == Constant.REQUESTCODE_CALLCHOICEACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME) {
             Bundle bundle = data.getExtras();
             String values = bundle.getString("value");
-            if(values != null && values.length() > 0){
+            if (values != null && values.length() > 0) {
                 String[] days = values.split(",");
                 mConditionTime.repeat.clear();
-                for(String day : days){
-                    if(day != null && day.length() > 0){
+                for (String day : days) {
+                    if (day != null && day.length() > 0) {
                         mConditionTime.addWeekRepeat(Integer.parseInt(day));
                     }
                 }

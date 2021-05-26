@@ -31,6 +31,7 @@ public class StartActivity extends BaseActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        setTheme(R.style.AppTheme_Launcher);
         setContentView(R.layout.activity_start);
         initView();
         initEvent();

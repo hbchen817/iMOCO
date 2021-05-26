@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply from:'dependency.gradle'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd HH:mm", TimeZone.getTimeZone("GMT+08:00"))
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -22,6 +26,10 @@ android {
             keyAlias = 'ray_ni'
             keyPassword '123456'
         }
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     defaultConfig {
@@ -49,12 +57,14 @@ android {
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BRAND", "\"iMOCO\"")
+            buildConfigField("String", "APK_TIME", "\"${releaseTime()}\"")
         }
         release {
             minifyEnabled false
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BRAND", "\"iMOCO\"")
+            buildConfigField("String", "APK_TIME", "\"${releaseTime()}\"")
         }
     }
 
@@ -97,7 +107,7 @@ configurations {
 dependencies {
 
     //更新SDK请参考如下文档：https://living.aliyun.com/doc#pre-app.html
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     /* ScanActivity in here  */
     implementation 'com.aliyun.iot.ilop.page:scan:0.0.1'
     /* 其他.begin */
@@ -175,5 +185,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-tasks:15.0.1'
     implementation 'com.google.android.gms:play-services-basement:15.0.1'
     implementation 'com.google.android.gms:play-services-base:15.0.1'
+
+    compile 'com.truizlop.sectionedrecyclerview:library:1.2.0'
 }
 

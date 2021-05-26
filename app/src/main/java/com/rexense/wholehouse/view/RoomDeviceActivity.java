@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
+import com.rexense.wholehouse.databinding.ActivityRoomDeviceBinding;
 import com.rexense.wholehouse.event.RefreshRoomDevice;
 import com.rexense.wholehouse.event.RefreshRoomName;
 import com.rexense.wholehouse.model.EDevice;
@@ -41,17 +42,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RoomDeviceActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView tvToolbarTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView tvToolbarRight;
-    @BindView(R.id.recycle_view)
-    ListView mListDevice;
-    @BindView(R.id.srl_fragment_me)
-    SmartRefreshLayout mSrlFragmentMe;
-    @BindView(R.id.iv_toolbar_right)
-    ImageView ivToolbarRight;
+    private ActivityRoomDeviceBinding mViewBinding;
 
     private HomeSpaceManager homeSpaceManager;
     private int page = 1;
@@ -60,15 +51,16 @@ public class RoomDeviceActivity extends BaseActivity {
     private String roomName;
     private List<EDevice.deviceEntry> mDeviceList = null;
     private AptDeviceList mAptDeviceList = null;
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            page=1;
+            page = 1;
             getData();
         }
     };
 
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             page++;
@@ -77,14 +69,15 @@ public class RoomDeviceActivity extends BaseActivity {
     };
 
     @Subscribe
-    public void onRefreshRoomDevice(RefreshRoomDevice refreshRoomDevice){
-        page=1;
+    public void onRefreshRoomDevice(RefreshRoomDevice refreshRoomDevice) {
+        page = 1;
         getData();
     }
+
     @Subscribe
-    public void onRefreshRoomName(RefreshRoomName refreshRoomName){
+    public void onRefreshRoomName(RefreshRoomName refreshRoomName) {
         roomName = refreshRoomName.getName();
-        tvToolbarTitle.setText(roomName);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(roomName);
     }
 
 
@@ -97,34 +90,35 @@ public class RoomDeviceActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_room_device);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityRoomDeviceBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         EventBus.getDefault().register(this);
 
         homeId = SystemParameter.getInstance().getHomeId();
         roomId = getIntent().getStringExtra("roomId");
         roomName = getIntent().getStringExtra("roomName");
-        tvToolbarTitle.setText(roomName);
-        ivToolbarRight.setImageResource(R.drawable.more_default);
-        ivToolbarRight.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(roomName);
+        mViewBinding.includeToolbar.ivToolbarRight.setImageResource(R.drawable.more_default);
+        mViewBinding.includeToolbar.ivToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mActivity,AddRoomDeviceActivity.class);
-                intent.putExtra("roomName",getIntent().getStringExtra("roomName"));
-                intent.putExtra("roomId",roomId);
+                Intent intent = new Intent(mActivity, AddRoomDeviceActivity.class);
+                intent.putExtra("roomName", getIntent().getStringExtra("roomName"));
+                intent.putExtra("roomId", roomId);
                 startActivity(intent);
             }
         });
 
         homeSpaceManager = new HomeSpaceManager(mActivity);
-        this.mAptDeviceList = new AptDeviceList(mActivity);
-        this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
-        this.mAptDeviceList.setData(this.mDeviceList);
-        mListDevice.setAdapter(this.mAptDeviceList);
-        mListDevice.setOnItemClickListener(deviceListOnItemClickListener);
+        mAptDeviceList = new AptDeviceList(mActivity);
+        mDeviceList = new ArrayList<EDevice.deviceEntry>();
+        mAptDeviceList.setData(mDeviceList);
+        mViewBinding.recycleView.setAdapter(mAptDeviceList);
+        mViewBinding.recycleView.setOnItemClickListener(deviceListOnItemClickListener);
 
-        mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
-        mSrlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
+        mViewBinding.srlFragmentMe.setOnRefreshListener(onRefreshListener);
+        mViewBinding.srlFragmentMe.setOnLoadMoreListener(onLoadMoreListener);
         getData();
 
         initStatusBar();
@@ -139,22 +133,22 @@ public class RoomDeviceActivity extends BaseActivity {
         }
     }
 
-    private void getData(){
-        homeSpaceManager.getRoomDevice(page,homeId,roomId,mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    private void getData() {
+        homeSpaceManager.getRoomDevice(page, homeId, roomId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETDEVICEINROOM:
-                    if (page==1){
+                    if (page == 1) {
                         mDeviceList.clear();
                     }
                     mDeviceList.addAll(CloudDataParser.processRoomDeviceList((String) msg.obj));
                     mAptDeviceList.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(mSrlFragmentMe,true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe,true);
+                    SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+                    SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
                     break;
                 default:
                     break;
@@ -164,7 +158,7 @@ public class RoomDeviceActivity extends BaseActivity {
     });
 
     // 设备列表点击监听器
-    private AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
@@ -173,7 +167,8 @@ public class RoomDeviceActivity extends BaseActivity {
                 if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null)
                     ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
                             mDeviceList.get(position).status, mDeviceList.get(position).nickName, owned);
-                else ToastUtils.showLongToast(RoomDeviceActivity.this, R.string.pls_try_again_later);
+                else
+                    ToastUtils.showLongToast(RoomDeviceActivity.this, R.string.pls_try_again_later);
             }
         }
     };

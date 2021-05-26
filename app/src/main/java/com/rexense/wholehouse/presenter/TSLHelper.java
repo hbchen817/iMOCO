@@ -190,7 +190,7 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_P_DoorBellSoundVolume, this.mContext.getString(R.string.moregateway_bellvolume), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_P_DoorBellSoundID, this.mContext.getString(R.string.moregateway_bellmusicid), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_GATEWAY_RG4100:
+            case CTSL.PK_GATEWAY_RG4100_RY:
                 //4100网关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_Band, this.mContext.getString(R.string.moregateway_4100_ZB_Band), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_NETWORK_KEY, this.mContext.getString(R.string.moregateway_4100_NETWORK_KEY), Constant.CONTENTTYPE_PROPERTY));
@@ -199,16 +199,25 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_Channel, this.mContext.getString(R.string.moregateway_4100_ZB_Channel), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_PAN_ID, this.mContext.getString(R.string.moregateway_4100_ZB_PAN_ID), Constant.CONTENTTYPE_PROPERTY));
                 break;
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 // 一路开关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.OWS_P_PowerSwitch_1, this.mContext.getString(R.string.oneswitch_state), Constant.CONTENTTYPE_PROPERTY));
                 break;
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
             case CTSL.PK_TWOWAYSWITCH:
                 // 两路开关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_1, this.mContext.getString(R.string.twoswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.TWS_P_PowerSwitch_2, this.mContext.getString(R.string.twoswitch_state_2), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_LF:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四路开关处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.FWS_P_PowerSwitch_1, this.mContext.getString(R.string.twoswitch_state_1), Constant.CONTENTTYPE_PROPERTY));
@@ -216,35 +225,41 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.FWS_P_PowerSwitch_3, this.mContext.getString(R.string.fourswitch_state_3), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.FWS_P_PowerSwitch_4, this.mContext.getString(R.string.fourswitch_state_4), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 // 门磁传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_E_ProtectionAlarm, this.mContext.getString(R.string.sensorstate_protectionalarm), Constant.CONTENTTYPE_EVENT_ALERT));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_E_TamperAlarm, this.mContext.getString(R.string.sensorstate_tamperalarm), Constant.CONTENTTYPE_EVENT_INFO));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.DS_P_ContactState, this.mContext.getString(R.string.sensorstate_contactname), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 // 水浸传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.WS_P_WaterSensorState, this.mContext.getString(R.string.sensorstate_watername), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_HM:
+            case CTSL.PK_GASSENSOR_MLK:
                 // 燃气传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GS_P_GasSensorState, this.mContext.getString(R.string.sensorstate_gasname), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 // 烟雾传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_E_TamperAlarm, this.mContext.getString(R.string.sensorstate_tamperalarm), Constant.CONTENTTYPE_EVENT_INFO));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.SS_P_SmokeSensorState, this.mContext.getString(R.string.sensorstate_smokename), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 // 人体热释传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_E_ProtectionAlarm, this.mContext.getString(R.string.sensorstate_protectionalarm), Constant.CONTENTTYPE_EVENT_ALERT));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.PIR_P_MotionAlarmState, this.mContext.getString(R.string.sensorstate_motionname), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
-            case CTSL.PK_TEMHUMSENSOR:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_TEMHUMSENSOR_MLK:
                 // 温湿度传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.THS_P_CurrentTemperature, this.mContext.getString(R.string.detailsensor_temperature), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.THS_P_CurrentHumidity, this.mContext.getString(R.string.detailsensor_humidity), Constant.CONTENTTYPE_PROPERTY));

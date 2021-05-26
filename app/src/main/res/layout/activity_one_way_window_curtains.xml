@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#71A0F9"
+        android:background="@color/appcolor"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/window_device" />
+                android:src="@drawable/window_device_appcolor" />
         </RelativeLayout>
 
         <LinearLayout
@@ -160,8 +160,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:visibility="gone">
+            android:layout_weight="1">
 
             <RelativeLayout
                 android:id="@+id/back_light_layout"

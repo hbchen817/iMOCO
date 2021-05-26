@@ -3,6 +3,7 @@ package com.rexense.wholehouse.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,7 +36,8 @@ public class IndexFragment3 extends BaseFragment {
     TextView userAccount;
     @BindView(R.id.head_img)
     ImageView headImg;
-    private Intent intent;
+
+    private Intent mIntent;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -64,40 +66,33 @@ public class IndexFragment3 extends BaseFragment {
 
     // 点击事件处理
     @OnClick({R.id.my_info_view, R.id.advice_view, R.id.msg_view, R.id.share_device_view,
-            R.id.service_view, R.id.aboutus_view,R.id.scene_log_view, R.id.tv_toolbar_right})
+            R.id.service_view, R.id.aboutus_view, R.id.scene_log_view, R.id.tv_toolbar_right})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.my_info_view:
-                intent = new Intent(mActivity, MyInfoActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.advice_view:
-                Bundle bundle = new Bundle();
-                bundle.putString("mobileModel",android.os.Build.MODEL); // 手机型号
-                bundle.putString("mobileSystem",android.os.Build.VERSION.RELEASE); // 手机系统
-                bundle.putString("appVersion", AppUtils.getVersionName(mActivity)); // App版本
-                Router.getInstance().toUrlForResult(getActivity(), Constant.PLUGIN_URL_ADVICE, 1, bundle);
-                break;
-            case R.id.msg_view:
-                intent = new Intent(mActivity, MsgCenterActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.scene_log_view:
-                intent = new Intent(mActivity, SceneLogActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.share_device_view:
-                intent = new Intent(mActivity, ShareDeviceActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.service_view:
-                intent = new Intent(mActivity, TmallSpiritActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.aboutus_view:
-                intent = new Intent(mActivity, AboutUsActivity.class);
-                startActivity(intent);
-                break;
+        int id = view.getId();
+        if (id == R.id.my_info_view) {
+            mIntent = new Intent(mActivity, MyInfoActivity.class);
+            startActivity(mIntent);
+        } else if (id == R.id.advice_view) {
+            Bundle bundle = new Bundle();
+            bundle.putString("mobileModel", Build.MODEL); // 手机型号
+            bundle.putString("mobileSystem", Build.VERSION.RELEASE); // 手机系统
+            bundle.putString("appVersion", AppUtils.getVersionName(mActivity)); // App版本
+            Router.getInstance().toUrlForResult(getActivity(), Constant.PLUGIN_URL_ADVICE, 1, bundle);
+        } else if (id == R.id.msg_view) {
+            mIntent = new Intent(mActivity, MsgCenterActivity.class);
+            startActivity(mIntent);
+        } else if (id == R.id.scene_log_view) {
+            mIntent = new Intent(mActivity, SceneLogActivity.class);
+            startActivity(mIntent);
+        } else if (id == R.id.share_device_view) {
+            mIntent = new Intent(mActivity, ShareDeviceActivity.class);
+            startActivity(mIntent);
+        } else if (id == R.id.service_view) {
+            mIntent = new Intent(mActivity, TmallSpiritActivity.class);
+            startActivity(mIntent);
+        } else if (id == R.id.aboutus_view) {
+            mIntent = new Intent(mActivity, AboutUsActivity.class);
+            startActivity(mIntent);
         }
     }
 }

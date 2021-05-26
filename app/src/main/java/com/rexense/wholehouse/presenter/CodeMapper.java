@@ -98,7 +98,7 @@ public class CodeMapper {
                     mapValue = propertyValue;
                 }
                 break;
-            case CTSL.PK_GATEWAY_RG4100:
+            case CTSL.PK_GATEWAY_RG4100_RY:
                 if (propertyName.equals(CTSL.GW_4100_ZB_Band)) {
                     mapName = context.getString(R.string.moregateway_4100_ZB_Band);
                     mapValue = "2_4G";
@@ -119,6 +119,10 @@ public class CodeMapper {
                     mapValue = propertyValue;
                 }
                 break;
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 // 一路开关状态
                 if (propertyName.equals(CTSL.OWS_P_PowerSwitch_1)) {
@@ -130,6 +134,10 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两路开关状态
                 if (propertyName.equals(CTSL.TWS_P_PowerSwitch_1)) {
                     mapName = context.getString(R.string.twoswitch_state_1);
@@ -146,6 +154,7 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_LF:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四路开关状态
                 if (propertyName.equals(CTSL.FWS_P_PowerSwitch_1)) {
@@ -174,7 +183,8 @@ public class CodeMapper {
                     }
                 }
                 break;
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 // 处理门磁传感器状态
                 if (propertyName.equals(CTSL.DS_P_ContactState)) {
                     mapName = context.getString(R.string.sensorstate_contactname);
@@ -184,7 +194,8 @@ public class CodeMapper {
                     }
                 }
                 break;
-            case CTSL.PK_GASSENSOR:
+            case CTSL.PK_GASSENSOR_MLK:
+            case CTSL.PK_GASSENSOR_HM:
                 // 处理燃气传感器状态
                 if (propertyName.equals(CTSL.GS_P_GasSensorState)) {
                     mapName = context.getString(R.string.sensorstate_gasname);
@@ -194,7 +205,8 @@ public class CodeMapper {
                     }
                 }
                 break;
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 // 处理烟雾传感器状态
                 if (propertyName.equals(CTSL.SS_P_SmokeSensorState)) {
                     mapName = context.getString(R.string.sensorstate_smokename);
@@ -204,7 +216,8 @@ public class CodeMapper {
                     }
                 }
                 break;
-            case CTSL.PK_WATERSENSOR:
+            case CTSL.PK_WATERSENSOR_HM:
+            case CTSL.PK_WATERSENSOR_MLK:
                 // 处理水浸传感器状态
                 if (propertyName.equals(CTSL.WS_P_WaterSensorState)) {
                     mapName = context.getString(R.string.sensorstate_watername);
@@ -214,7 +227,8 @@ public class CodeMapper {
                     }
                 }
                 break;
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 // 处理人体热释放传感器状态
                 if (propertyName.equals(CTSL.PIR_P_MotionAlarmState)) {
                     mapName = context.getString(R.string.sensorstate_motionname);
@@ -234,7 +248,8 @@ public class CodeMapper {
                     mapValue = propertyValue;
                 }
                 break;
-            case CTSL.PK_TEMHUMSENSOR:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_TEMHUMSENSOR_MLK:
                 // 处理温湿度状态
                 if (propertyName.equals(CTSL.THS_P_CurrentTemperature)) {
                     mapName = context.getString(R.string.detailsensor_temperature);
@@ -243,6 +258,9 @@ public class CodeMapper {
                 } else if (propertyName.equals(CTSL.THS_P_CurrentHumidity)) {
                     mapName = context.getString(R.string.detailsensor_humidity);
                     mapValue = propertyValue + "%";
+                } else if (propertyName.equals(CTSL.THS_P_PM25)) {
+                    mapName = context.getString(R.string.PM25);
+                    mapValue = propertyValue;
                 }
                 break;
             case CTSL.PK_REMOTECONTRILBUTTON:
@@ -252,45 +270,49 @@ public class CodeMapper {
                     mapValue = context.getString(R.string.sensorstate_trigger);
                 }
                 break;
-            case CTSL.PK_AIRCOMDITION_TWO:{
+            case CTSL.PK_AIRCOMDITION_TWO_LF: {
                 // 处理空调二管制状态
-                if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)){
+                if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
-            case CTSL.PK_AIRCOMDITION_FOUR:{
+            case CTSL.PK_AIRCOMDITION_FOUR: {
                 // 处理空调四管制状态
-                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)){
+                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
-            case CTSL.PK_FLOORHEATING001:{
+            case CTSL.PK_FLOORHEATING001_LF: {
                 // 处理地暖（电机）状态
-                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)){
+                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
+            case CTSL.PK_THREEWAYSWITCH_HY:
+            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_LF:
+            case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
                 // 三路开关状态
                 if (propertyName.equals(CTSL.TWS_P3_PowerSwitch_1)) {
@@ -336,6 +358,10 @@ public class CodeMapper {
 
         String mapName = "", mapValue = "";
         switch (productKey) {
+            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
                 // 一路开关状态
                 if (propertyName.equals(CTSL.OWS_P_PowerSwitch_1)) {
@@ -347,6 +373,10 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两路开关状态
                 if (propertyName.equals(CTSL.TWS_P_PowerSwitch_1)) {
                     mapName = context.getString(R.string.twoswitch_state_1);
@@ -363,6 +393,7 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH_LF:
             case CTSL.PK_FOURWAYSWITCH:
                 // 四路开关状态
                 if (propertyName.equals(CTSL.FWS_P_PowerSwitch_1)) {
@@ -391,6 +422,10 @@ public class CodeMapper {
                     }
                 }
                 break;
+            case CTSL.PK_THREEWAYSWITCH_HY:
+            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_LF:
+            case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
                 // 三路开关状态
                 if (propertyName.equals(CTSL.TWS_P3_PowerSwitch_1)) {
@@ -430,34 +465,44 @@ public class CodeMapper {
             // 起夜开灯、红外布防报警处理
             case CScene.SMC_NIGHT_RISE_ON:
             case CScene.SMC_PIR_DEPLOY_ALARM:
-                if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR_HM)) {
                     // 处理人体热释放传感器状态
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
                             context.getString(R.string.sensorstate_motionhas), CTSL.PIR_P_MotionAlarmState_Has);
                     list.add(stateEntry);
-                }
+                } /*else if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR_MLK)) {
+                    // 处理人体热释放传感器状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
+                            context.getString(R.string.sensorstate_motionhas), CTSL.PIR_P_MotionAlarmState_Has);
+                    list.add(stateEntry);
+                }*/
                 break;
             // 无人关灯处理
             case CScene.SMC_UNMANNED_OFF:
-                if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR_HM)) {
                     // 处理人体热释放传感器状态
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
                             context.getString(R.string.sensorstate_motionnonhas), CTSL.PIR_P_MotionAlarmState_NoHas);
                     list.add(stateEntry);
-                }
+                } /*else if (productKey.equalsIgnoreCase(CTSL.PK_PIRSENSOR_MLK)) {
+                    // 处理人体热释放传感器状态
+                    ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_motionname), CTSL.PIR_P_MotionAlarmState,
+                            context.getString(R.string.sensorstate_motionnonhas), CTSL.PIR_P_MotionAlarmState_NoHas);
+                    list.add(stateEntry);
+                }*/
                 break;
             // 报警开灯处理
             case CScene.SMC_ALARM_ON:
                 ETSL.stateEntry stateEntry_alarm = null;
-                if (productKey.equalsIgnoreCase(CTSL.PK_SMOKESENSOR)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_SMOKESENSOR_HM)) {
                     // 处理烟感传感器状态
                     stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_smokename), CTSL.SS_P_SmokeSensorState,
                             context.getString(R.string.sensorstate_smokehas), CTSL.SS_P_SmokeSensorState_Has);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_WATERSENSOR)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_WATERSENSOR_HM)) {
                     // 处理水浸传感器状态
                     stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_watername), CTSL.WS_P_WaterSensorState,
                             context.getString(R.string.sensorstate_waterhas), CTSL.WS_P_WaterSensorState_Has);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_GASSENSOR)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_GASSENSOR_HM)) {
                     // 处理燃气传感器状态
                     stateEntry_alarm = new ETSL.stateEntry(context.getString(R.string.sensorstate_gasname), CTSL.GS_P_GasSensorState,
                             context.getString(R.string.sensorstate_gashas), CTSL.GS_P_GasSensorState_Has);
@@ -480,7 +525,7 @@ public class CodeMapper {
             // 开门亮灯、门磁布防报警处理
             case CScene.SMC_OPEN_DOOR_ON:
             case CScene.SMC_DOOR_DEPLOY_ALARM:
-                if (productKey.equalsIgnoreCase(CTSL.PK_DOORSENSOR)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_DOORSENSOR_HM)) {
                     // 处理门磁传感器状态
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.sensorstate_contactname), CTSL.DS_P_ContactState,
                             context.getString(R.string.sensorstate_contactopen), CTSL.DS_P_ContactState_Open);
@@ -522,12 +567,20 @@ public class CodeMapper {
             case CScene.SMC_ALARM_ON:
             case CScene.SMC_REMOTE_CONTROL_ON:
             case CScene.SMC_OPEN_DOOR_ON:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -553,12 +606,20 @@ public class CodeMapper {
                 break;
             // 无人关灯处理
             case CScene.SMC_UNMANNED_OFF:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_off), CTSL.S_P_PowerSwitch_Off);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
@@ -584,12 +645,20 @@ public class CodeMapper {
                 break;
             // 回家模式处理
             case CScene.SMC_GO_HOME_PATTERN:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -621,12 +690,20 @@ public class CodeMapper {
             // 离家模式、睡觉模式处理
             case CScene.SMC_LEAVE_HOME_PATTERN:
             case CScene.SMC_SLEEP_PATTERN:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)) {
+                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_off), CTSL.S_P_PowerSwitch_Off);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)) {
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
@@ -712,7 +789,8 @@ public class CodeMapper {
 
         String mapName = "", mapValue = "";
         switch (productKey) {
-            case CTSL.PK_DOORSENSOR:
+            case CTSL.PK_DOORSENSOR_HM:
+            case CTSL.PK_DOORSENSOR_MLK:
                 // 处理门磁传感器事件
                 if (eventCode.equals(CTSL.P_E_ProtectionAlarm)) {
                     mapName = context.getString(R.string.sensorstate_protectionalarm);
@@ -722,14 +800,16 @@ public class CodeMapper {
                     mapValue = context.getString(R.string.sensorstate_tamperalarm);
                 }
                 break;
-            case CTSL.PK_SMOKESENSOR:
+            case CTSL.PK_SMOKESENSOR_MLK:
+            case CTSL.PK_SMOKESENSOR_HM:
                 // 处理烟雾传感器事件
                 if (eventCode.equals(CTSL.P_E_TamperAlarm)) {
                     mapName = context.getString(R.string.sensorstate_tamperalarm);
                     mapValue = context.getString(R.string.sensorstate_tamperalarm);
                 }
                 break;
-            case CTSL.PK_PIRSENSOR:
+            case CTSL.PK_PIRSENSOR_HM:
+            case CTSL.PK_PIRSENSOR_MLK:
                 // 处理人体热释放传感器事件
                 if (eventCode.equals(CTSL.P_E_ProtectionAlarm)) {
                     mapName = context.getString(R.string.sensorstate_protectionalarm);
