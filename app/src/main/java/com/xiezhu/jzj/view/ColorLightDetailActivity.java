@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +41,7 @@ import com.xiezhu.jzj.viewholder.CommonAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,12 +114,13 @@ public class ColorLightDetailActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        this.mTSLHelper = new TSLHelper(this);
-        this.mSceneManager = new SceneManager(this);
+        mTSLHelper = new TSLHelper(this);
+        mSceneManager = new SceneManager(this);
         mBackView.setImageResource(R.drawable.back_default);
-        mTitleText.setTextColor(getResources().getColor(R.color.all_3));
+        mTitleText.setTextColor(ContextCompat.getColor(this, R.color.all_3));
         initView();
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     @Subscribe
@@ -125,7 +128,8 @@ public class ColorLightDetailActivity extends DetailActivity {
         // 处理刷新手动执行场景列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
             mList.clear();
-            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20,
+                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
     }
 
@@ -170,9 +174,9 @@ public class ColorLightDetailActivity extends DetailActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
@@ -233,23 +237,18 @@ public class ColorLightDetailActivity extends DetailActivity {
 
     @OnClick({R.id.timer_view, R.id.scene_view, R.id.switch_view, R.id.temperatureLayout})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.timer_view:
-                PluginHelper.cloudTimer(ColorLightDetailActivity.this, mIOTId, CTSL.PK_LIGHT);
-                break;
-            case R.id.scene_view:
-                LightSceneListActivity.start(mActivity, mIOTId);
-                break;
-            case R.id.switch_view:
-                if (mState == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_POWER}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_POWER}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.temperatureLayout:
-                ColorTemperatureChoiceActivity.start(this, mColorTemperature);
-                break;
+        if (view.getId() == R.id.timer_view) {
+            PluginHelper.cloudTimer(ColorLightDetailActivity.this, mIOTId, CTSL.PK_LIGHT);
+        } else if (view.getId() == R.id.scene_view) {
+            LightSceneListActivity.start(mActivity, mIOTId);
+        } else if (view.getId() == R.id.switch_view) {
+            if (mState == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_POWER}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_POWER}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (view.getId() == R.id.temperatureLayout) {
+            ColorTemperatureChoiceActivity.start(this, mColorTemperature);
         }
     }
 

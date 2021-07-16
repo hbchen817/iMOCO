@@ -28,6 +28,8 @@ import com.xiezhu.jzj.presenter.TSLHelper;
 import com.xiezhu.jzj.presenter.UserCenter;
 import com.xiezhu.jzj.utility.ToastUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
@@ -62,15 +64,15 @@ public class BindSuccessActivity extends BaseActivity {
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mUserCenter = new UserCenter(this);
         Log.i("lzm", "nickName" + mNickName);
-        if (mNickName.contains(getString(R.string.app_brand)) || mNickName.contains(getString(R.string.app_brand_1))){
-            mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
-            mNickName =  mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
+        if (mNickName.contains(getString(R.string.app_brand)) || mNickName.contains(getString(R.string.app_brand_1))) {
+            mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+            mNickName = mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
             mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont/jk/iconfont.ttf");
         mOkView.setTypeface(iconfont);
         TSLHelper helper = new TSLHelper(this);
-        helper.getBaseInformation(mIotId, null, null,new ProcessDataHandler(this));
+        helper.getBaseInformation(mIotId, null, null, new ProcessDataHandler(this));
         mUserCenter.getByAccountAndDev(mIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
         initStatusBar();
@@ -91,9 +93,9 @@ public class BindSuccessActivity extends BaseActivity {
         final View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null);
         builder.setView(view);
         builder.setCancelable(true);
-        TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
+        TextView titleTv = view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText(getString(R.string.moregateway_editname));
-        final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
+        final EditText nameEt = view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setText(mNickName);
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -128,22 +130,22 @@ public class BindSuccessActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback(){
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
-                    Log.i("lzm", "nickname change success "+ (String)msg.obj);
+                    Log.i("lzm", "nickname change success " + (String) msg.obj);
                     // 更新设备缓存备注名称
                     DeviceBuffer.updateDeviceNickName(mIotId, mNickName);
                     break;
                 case Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV:
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    Log.i("lzm", "MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV"+ msg.obj);
+                    Log.i("lzm", "MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV" + msg.obj);
                     mNickName = jsonObject.getString("productName");
-                    if (mNickName.contains(getString(R.string.app_brand))|| mNickName.contains(getString(R.string.app_brand_1))){
-                        mNickName =  mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
-                        mNickName =  mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
+                    if (mNickName.contains(getString(R.string.app_brand)) || mNickName.contains(getString(R.string.app_brand_1))) {
+                        mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
+                        mNickName = mNickName.replace(getString(R.string.app_brand_1), getString(R.string.app_brand_show_1));
                         mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
                     break;
@@ -156,24 +158,18 @@ public class BindSuccessActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left, R.id.current_test_btn, R.id.edit_name_btn})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.current_test_btn) {
+            if (mPK == null) {
+                ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
+            } else {
+                ActivityRouter.toDetail(this, mIotId, mPK,
+                        mStatus, mNickName, mOwned);
                 finish();
-                break;
-            case R.id.current_test_btn:
-                if (mPK == null) {
-                    ToastUtils.showLongToast(BindSuccessActivity.this, R.string.pls_try_again_later);
-                } else {
-                    ActivityRouter.toDetail(this, mIotId, mPK,
-                            mStatus, mNickName, mOwned);
-                    finish();
-                }
-                break;
-            case R.id.edit_name_btn:
-                showDeviceNameDialogEdit();
-                break;
-            default:
-                break;
+            }
+        } else if (view.getId() == R.id.edit_name_btn) {
+            showDeviceNameDialogEdit();
         }
     }
 
@@ -195,14 +191,11 @@ public class BindSuccessActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             BindSuccessActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETTHINGBASEINFO:
-                    JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
-                    activity.mPK = jsonObject.getString("productKey");
-                    activity.mStatus = jsonObject.getIntValue("status");
-                    break;
-                default:
-                    break;
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_GETTHINGBASEINFO) {
+                JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
+                activity.mPK = jsonObject.getString("productKey");
+                activity.mStatus = jsonObject.getIntValue("status");
             }
         }
     }

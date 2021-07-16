@@ -106,7 +106,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
         });
         Log.i("lzm", "0");
         // 关闭输入键盘处理
-        ImageView background = this.findViewById(ResourceUtils.getRId(this,"loginImgBackground"));
+        ImageView background = this.findViewById(ResourceUtils.getRId(this, "loginImgBackground"));
         background.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,20 +120,20 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                 }
             }
         });
-        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this,"yonghuxieyi"));
-        yonghuxieyi.setOnClickListener(v->{
-            if(getString(R.string.app_user_deal_url).length() == 0){
-                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL,getString(R.string.aboutus_user_deal));
+        TextView yonghuxieyi = this.findViewById(ResourceUtils.getRId(this, "yonghuxieyi"));
+        yonghuxieyi.setOnClickListener(v -> {
+            if (getString(R.string.app_user_deal_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL, getString(R.string.aboutus_user_deal));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_user_deal_url),getString(R.string.aboutus_user_deal));
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url), getString(R.string.aboutus_user_deal));
             }
         });
-        TextView yinsi = this.findViewById(ResourceUtils.getRId(this,"yinsi"));
-        yinsi.setOnClickListener(v->{
-            if(getString(R.string.app_privacy_policy_url).length() == 0){
-                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL,getString(R.string.aboutus_privacy_policy));
+        TextView yinsi = this.findViewById(ResourceUtils.getRId(this, "yinsi"));
+        yinsi.setOnClickListener(v -> {
+            if (getString(R.string.app_privacy_policy_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
             } else {
-                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url),getString(R.string.aboutus_privacy_policy));
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url), getString(R.string.aboutus_privacy_policy));
             }
         });
     }
@@ -142,7 +142,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
         this.next.setText(ResourceUtils.getString(this, "ali_sdk_openaccount_text_login"));
         this.next.setOnClickListener(new NetworkCheckOnClickListener() {
             public void afterCheck(View v) {
-                LoginWithSmsCodeActivity.this.goCheckSMSCode((String)null, (String)null, (String)null);
+                LoginWithSmsCodeActivity.this.goCheckSMSCode((String) null, (String) null, (String) null);
             }
         });
         this.smsCodeInputBox.addSendClickListener(new NetworkCheckOnClickListener() {
@@ -206,7 +206,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
 
     private void hideSoftInputForHw() {
         if ("HUAWEI".equalsIgnoreCase(Build.MANUFACTURER) && Build.VERSION.SDK_INT >= 27) {
-            InputMethodManager manager = (InputMethodManager)((InputMethodManager)this.getSystemService("input_method"));
+            InputMethodManager manager = (InputMethodManager) ((InputMethodManager) getSystemService("input_method"));
             if (manager != null) {
                 manager.hideSoftInputFromWindow(this.mobileInputBox.getEditText().getWindowToken(), 2);
             }
@@ -224,7 +224,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                     loginCallback.onSuccess(LoginWithSmsCodeActivity.this.sessionManagerService.getSession());
                 }
 
-                ((ExecutorService)OpenAccountSDK.getService(ExecutorService.class)).postUITask(new Runnable() {
+                ((ExecutorService) OpenAccountSDK.getService(ExecutorService.class)).postUITask(new Runnable() {
                     public void run() {
                         LoginWithSmsCodeActivity.this.finishWithoutCallback();
                     }
@@ -295,16 +295,16 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                 } else {
                     Uri.Builder builder;
                     Intent h5Intent;
-                    switch(result.code) {
+                    switch (result.code) {
                         case 1:
-                            if (result.data != null && ((LoginResult)result.data).loginSuccessResult != null) {
-                                SessionData sessionData = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult)result.data).loginSuccessResult);
+                            if (result.data != null && ((LoginResult) result.data).loginSuccessResult != null) {
+                                SessionData sessionData = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult) result.data).loginSuccessResult);
                                 if (sessionData.scenario == null) {
                                     sessionData.scenario = 1;
                                 }
 
                                 LoginWithSmsCodeActivity.this.sessionManagerService.updateSession(sessionData);
-                                String accountName = ((LoginResult)result.data).userInputName;
+                                String accountName = ((LoginResult) result.data).userInputName;
                                 if (TextUtils.isEmpty(accountName)) {
                                     accountName = this.loginId;
                                 }
@@ -318,7 +318,7 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             }
                             break;
                         case 2:
-                            SessionData sessionData1 = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult)result.data).loginSuccessResult);
+                            SessionData sessionData1 = OpenAccountUtils.createSessionDataFromLoginSuccessResult(((LoginResult) result.data).loginSuccessResult);
                             if (sessionData1.scenario == null) {
                                 sessionData1.scenario = 1;
                             }
@@ -327,8 +327,8 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             LoginWithSmsCodeActivity.this.loginSuccess();
                             break;
                         case 26053:
-                            if (result.data != null && ((LoginResult)result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult)result.data).checkCodeResult.clientVerifyData)) {
-                                builder = Uri.parse(((LoginResult)result.data).checkCodeResult.clientVerifyData).buildUpon();
+                            if (result.data != null && ((LoginResult) result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult) result.data).checkCodeResult.clientVerifyData)) {
+                                builder = Uri.parse(((LoginResult) result.data).checkCodeResult.clientVerifyData).buildUpon();
                                 builder.appendQueryParameter("callback", "https://www.alipay.com/webviewbridge");
                                 h5Intent = new Intent(LoginWithSmsCodeActivity.this, LoginDoubleCheckWebActivity.class);
                                 h5Intent.putExtra("url", builder.toString());
@@ -339,8 +339,8 @@ public class LoginWithSmsCodeActivity extends SendSmsCodeActivity {
                             }
                             break;
                         case 26152:
-                            if (result.data != null && ((LoginResult)result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult)result.data).checkCodeResult.clientVerifyData)) {
-                                builder = Uri.parse(((LoginResult)result.data).checkCodeResult.clientVerifyData).buildUpon();
+                            if (result.data != null && ((LoginResult) result.data).checkCodeResult != null && !TextUtils.isEmpty(((LoginResult) result.data).checkCodeResult.clientVerifyData)) {
+                                builder = Uri.parse(((LoginResult) result.data).checkCodeResult.clientVerifyData).buildUpon();
                                 builder.appendQueryParameter("callback", "https://www.alipay.com/webviewbridge");
                                 h5Intent = new Intent(LoginWithSmsCodeActivity.this, LoginIVWebActivity.class);
                                 h5Intent.putExtra("url", builder.toString());

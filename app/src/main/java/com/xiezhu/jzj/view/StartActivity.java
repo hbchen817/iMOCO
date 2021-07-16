@@ -13,7 +13,6 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.presenter.MocoApplication;
-import com.xiezhu.jzj.utility.QMUITipDialogUtil;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -30,6 +29,7 @@ public class StartActivity extends BaseActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+        //setTheme(R.style.AppTheme_Launcher);
         setContentView(R.layout.activity_start);
         initView();
         initEvent();
@@ -46,11 +46,11 @@ public class StartActivity extends BaseActivity {
         message.arg1 = TOTAL_TIME;
         myHandler.sendMessage(message);
 
-//        mDownCountTextView.setOnClickListener(v -> {
-//            goToNextActivity();
-//            finish();
-//            myHandler.removeMessages(CODE);
-//        });
+        //mDownCountTextView.setOnClickListener(v -> {
+        //    goToNextActivity();
+        //    finish();
+        //    myHandler.removeMessages(CODE);
+        //});
     }
 
     private void goToNextActivity() {
@@ -105,7 +105,7 @@ public class StartActivity extends BaseActivity {
 
             @Override
             public void onLoginFailed(int i, String s) {
-                ToastUtils.showToastCentrally(MocoApplication.getInstance(),s);
+                ToastUtils.showToastCentrally(MocoApplication.getInstance(), s);
             }
         });
         finishLater();

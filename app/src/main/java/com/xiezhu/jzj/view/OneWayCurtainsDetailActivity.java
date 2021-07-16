@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.xiezhu.jzj.R;
 
@@ -43,7 +44,7 @@ public class OneWayCurtainsDetailActivity extends AppCompatActivity {
     }
 
     private void setSwitch(int id) {
-        Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.one_switch_background);
         mCloseCurtains.setBackground(id == mCloseCurtains.getId() ? drawable : null);
         mOpenCurtains.setBackground(id == mOpenCurtains.getId() ? drawable : null);
         mStopCurtains.setBackground(id == mStopCurtains.getId() ? drawable : null);

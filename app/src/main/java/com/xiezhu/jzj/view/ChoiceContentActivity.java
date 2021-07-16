@@ -31,14 +31,14 @@ public class ChoiceContentActivity extends BaseActivity {
         setContentView(R.layout.activity_choice_content);
 
         String productKey = getIntent().getStringExtra("productKey");
-        this.mContents = new TSLHelper(this).getMessageRecordContent(productKey);
+        mContents = new TSLHelper(this).getMessageRecordContent(productKey);
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
+        TextView title = findViewById(R.id.includeTitleLblTitle);
         title.setText(R.string.choicecontent_title);
 
         // 回退处理
-        ImageView imgAdd = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgAdd.setOnClickListener(new OnClickListener(){
+        ImageView imgAdd = findViewById(R.id.includeTitleImgBack);
+        imgAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -46,11 +46,11 @@ public class ChoiceContentActivity extends BaseActivity {
         });
 
         // 选择内容处理
-        if(this.mContents != null && this.mContents.size() > 0) {
-            ListView lstProduct = (ListView)findViewById(R.id.choiceContentLstContent);
-            AptContent adapter = new AptContent(ChoiceContentActivity.this, this.mContents);
+        if (mContents != null && mContents.size() > 0) {
+            ListView lstProduct = (ListView) findViewById(R.id.choiceContentLstContent);
+            AptContent adapter = new AptContent(this, mContents);
             lstProduct.setAdapter(adapter);
-            lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            lstProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // 返回所选内容

@@ -205,14 +205,11 @@ public class ScanGatewayByNetActivity extends BaseActivity {
 
     @OnClick({R.id.includeTitleImgBack, R.id.scanBleLblStop})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.includeTitleImgBack:
-                finish();
-                break;
-            case R.id.scanBleLblStop:
-                stopDiscovery();
-                mHintView.setVisibility(View.GONE);
-                break;
+        if (view.getId() == R.id.includeTitleImgBack) {
+            finish();
+        } else if (view.getId() == R.id.scanBleLblStop) {
+            stopDiscovery();
+            mHintView.setVisibility(View.GONE);
         }
     }
 
@@ -267,6 +264,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ScanGatewayByNetActivity activity = mWeakReference.get();
+            if (activity == null) return;
             if (activity.mDisposable != null && !activity.mDisposable.isDisposed()) {
                 activity.mDisposable.dispose();
             }
@@ -287,6 +285,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ScanGatewayByNetActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_FILTER_DEVICE:
                     JSONArray items = JSON.parseArray((String) msg.obj);

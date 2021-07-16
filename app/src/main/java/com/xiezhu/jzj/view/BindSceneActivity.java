@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,7 +49,7 @@ public class BindSceneActivity extends BaseActivity {
     private void initView() {
         tvToolbarTitle.setText("场景绑定");
         tvToolbarRight.setText("绑定");
-        tvToolbarRight.setTextColor(getResources().getColor(R.color.all_9));
+        tvToolbarRight.setTextColor(ContextCompat.getColor(this, R.color.all_9));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(linearLayoutManager);
         mAdapter = new CommonAdapter(mList, this);

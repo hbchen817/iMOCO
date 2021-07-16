@@ -21,14 +21,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
+import com.xiezhu.jzj.databinding.ActivityDeviceActionBinding;
 import com.xiezhu.jzj.model.ItemAction;
+import com.xiezhu.jzj.presenter.DeviceBuffer;
 import com.xiezhu.jzj.presenter.SceneManager;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -39,13 +43,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DeviceActionActivity extends BaseActivity {
-
-    @BindView(R.id.tv_toolbar_title)
-    TextView mTitle;
-    @BindView(R.id.tv_toolbar_right)
-    TextView mTitleRight;
-    @BindView(R.id.mRecyclerView)
-    RecyclerView mRecyclerView;
+    private ActivityDeviceActionBinding mViewBinding;
 
     private String mIotID;
     private String mDeviceName;
@@ -57,12 +55,16 @@ public class DeviceActionActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_action);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityDeviceActionBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
         mSceneManager = new SceneManager(this);
         mMyHandler = new MyHandler(this);
         mIotID = getIntent().getStringExtra("iotID");
         mDeviceName = getIntent().getStringExtra("deviceName");
+        mIdentifier = getIntent().getStringExtra("identifier");
+        mActionValue = getIntent().getStringExtra("actionValue");
+
         initView();
         getData();
 
@@ -79,25 +81,28 @@ public class DeviceActionActivity extends BaseActivity {
     }
 
     private void initView() {
-        mTitle.setText("选择动作");
-        mTitleRight.setText("保存");
-        mTitleRight.setOnClickListener(v -> {
+        mViewBinding.includeToolbar.tvToolbarTitle.setText("选择动作");
+        mViewBinding.includeToolbar.tvToolbarRight.setText("保存");
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(v -> {
             List<ItemAction> mSelectList = new ArrayList<>();
             for (int i = 0; i < mList.size(); i++) {
                 if (mList.get(i).isSelected()) {
                     mSelectList.add(mList.get(i));
                 }
             }
-            if (mSelectList.size() >= 0) {
+
+            if (mSelectList.size() > 0) {
                 EventBus.getDefault().post(mSelectList);
-                finish();
+                //finish();
+                Intent intent = new Intent(DeviceActionActivity.this, SwitchSceneActivity.class);
+                startActivity(intent);
             } else {
                 ToastUtils.showToastCentrally(mActivity, "请选择动作");
             }
         });
         initAdapter();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter);
+        mViewBinding.mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mViewBinding.mRecyclerView.setAdapter(mAdapter);
     }
 
     private void getData() {
@@ -142,60 +147,78 @@ public class DeviceActionActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             DeviceActionActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_SCENE_ABILITY_TSL:
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    JSONArray simplifyAbilityDTOs = jsonObject.getJSONArray("simplifyAbilityDTOs");
-                    JSONObject abilityDsl = jsonObject.getJSONObject("abilityDsl");
-                    JSONArray services = abilityDsl.getJSONArray("services");
-                    JSONArray properties = abilityDsl.getJSONArray("properties");
-                    JSONArray events = abilityDsl.getJSONArray("events");
-                    int size = simplifyAbilityDTOs.size();
-                    for (int i = 0; i < size; i++) {
-                        JSONObject ability = simplifyAbilityDTOs.getJSONObject(i);
-                        int type = ability.getIntValue("type");//功能类型：1-属性；2-服务；3-事件
-                        switch (type) {
-                            case 1:
-                                int propertiesSize = properties.size();
-                                for (int j = 0; j < propertiesSize; j++) {
-                                    JSONObject property = properties.getJSONObject(j);
-                                    if (property.getString("identifier").equals(ability.getString("identifier"))) {
-                                        JSONObject dataType = property.getJSONObject("dataType");
-                                        String dataTypeValue = dataType.getString("type");
-                                        JSONObject specs = dataType.getJSONObject("specs");
-                                        switch (dataTypeValue) {
-                                            case "enum":
-                                            case "bool":
-                                                for (Map.Entry<String, Object> map : specs.entrySet()) {
-                                                    ItemAction<String> itemAction = new ItemAction<String>();
-                                                    itemAction.setActionName(property.getString("name").trim());
-                                                    itemAction.setIdentifier(property.getString("identifier").trim());
-                                                    itemAction.setActionKey((String) map.getValue());
-                                                    itemAction.setActionValue(map.getKey());
-                                                    itemAction.setIotId(activity.mIotID);
-                                                    itemAction.setDeviceName(activity.mDeviceName);
-                                                    itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
-                                                    activity.mList.add(itemAction);
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_SCENE_ABILITY_TSL) {
+                JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                JSONArray simplifyAbilityDTOs = jsonObject.getJSONArray("simplifyAbilityDTOs");
+                JSONObject abilityDsl = jsonObject.getJSONObject("abilityDsl");
+                JSONArray services = abilityDsl.getJSONArray("services");
+                JSONArray properties = abilityDsl.getJSONArray("properties");
+                JSONArray events = abilityDsl.getJSONArray("events");
+                int size = simplifyAbilityDTOs.size();
+                for (int i = 0; i < size; i++) {
+                    JSONObject ability = simplifyAbilityDTOs.getJSONObject(i);
+                    int type = ability.getIntValue("type");//功能类型：1-属性；2-服务；3-事件
+                    switch (type) {
+                        case 1:
+                            int propertiesSize = properties.size();
+                            for (int j = 0; j < propertiesSize; j++) {
+                                JSONObject property = properties.getJSONObject(j);
+                                if (property.getString("identifier").equals(ability.getString("identifier"))) {
+                                    JSONObject dataType = property.getJSONObject("dataType");
+                                    String dataTypeValue = dataType.getString("type");
+                                    JSONObject specs = dataType.getJSONObject("specs");
+                                    switch (dataTypeValue) {
+                                        case "enum":
+                                        case "bool":
+                                            for (Map.Entry<String, Object> map : specs.entrySet()) {
+                                                String identifier = property.getString("identifier").trim();
+                                                String name = null;
+
+                                                try {
+                                                    if (DeviceBuffer.getExtendedInfo(activity.mIotID) != null) {
+                                                        name = DeviceBuffer.getExtendedInfo(activity.mIotID).getString(identifier);
+                                                        if (name == null || name.length() == 0)
+                                                            name = property.getString("name").trim();
+                                                    } else name = property.getString("name").trim();
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
                                                 }
-                                                break;
-                                            default:
-                                                break;
-                                        }
+
+                                                ItemAction<String> itemAction = new ItemAction<String>();
+                                                itemAction.setActionName(name);
+                                                itemAction.setIdentifier(identifier);
+                                                itemAction.setActionKey((String) map.getValue());
+                                                itemAction.setActionValue(map.getKey());
+                                                itemAction.setIotId(activity.mIotID);
+                                                itemAction.setDeviceName(activity.mDeviceName);
+                                                itemAction.setProductKey(abilityDsl.getJSONObject("profile").getString("productKey").trim());
+
+                                                if (activity.mIdentifier != null && activity.mIdentifier.length() > 0 &&
+                                                        activity.mActionValue != null && activity.mActionValue.length() > 0) {
+                                                    if (activity.mIdentifier.equals(itemAction.getIdentifier()) && activity.mActionValue.equals(itemAction.getActionValue())) {
+                                                        itemAction.setSelected(true);
+                                                    }
+                                                }
+
+                                                activity.mList.add(itemAction);
+                                            }
+                                            break;
+                                        default:
+                                            break;
                                     }
                                 }
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                break;
-                            default:
-                                break;
-                        }
+                            }
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            break;
+                        default:
+                            break;
                     }
-                    activity.mAdapter.notifyDataSetChanged();
-                    break;
-                default:
-                    break;
+                }
+                activity.mAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -205,6 +228,18 @@ public class DeviceActionActivity extends BaseActivity {
         Intent intent = new Intent(context, DeviceActionActivity.class);
         intent.putExtra("iotID", iotID);
         intent.putExtra("deviceName", deviceName);
+        context.startActivity(intent);
+    }
+
+    private String mIdentifier;
+    private String mActionValue;
+
+    public static void start(Context context, String iotID, String deviceName, String identifier, String actionValue) {
+        Intent intent = new Intent(context, DeviceActionActivity.class);
+        intent.putExtra("iotID", iotID);
+        intent.putExtra("deviceName", deviceName);
+        intent.putExtra("identifier", identifier);
+        intent.putExtra("actionValue", actionValue);
         context.startActivity(intent);
     }
 }

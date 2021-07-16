@@ -80,18 +80,15 @@ public class EditUserActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.tv_toolbar_right:
-                String name = mNameEditText.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
-                    return;
-                }
-                UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            String name = mNameEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
+                return;
+            }
+            UserCenter.updateVirtualUser(mUserId, name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
         }
     }
 
@@ -106,6 +103,7 @@ public class EditUserActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             EditUserActivity activity = mWeakReference.get();
+            if (activity == null) return;
             EventBus.getDefault().post(new UserManagerActivity.RefreshUserEvent());
             activity.finish();
         }

@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
     private boolean mSceneAction;
     private int mSceneType;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,21 +82,19 @@ public class ColorTemperatureChoiceActivity extends BaseActivity {
 
     @OnClick({R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                int progress = mSeekBar.getProgress();
-                if (mSceneAction) {
-                    ColorLightSceneEvent event = new ColorLightSceneEvent();
-                    event.setmType(mSceneType == 1 ? ColorLightSceneEvent.TYPE.TYPE_COLOR_TEMPERATURE : ColorLightSceneEvent.TYPE.TYPE_LIGHTNESS);
-                    event.setmValue(mSceneType == 1 ? (progress + 27) * 100 : progress);
-                    EventBus.getDefault().post(event);
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra("temperature", (progress + 27) * 100);
-                    setResult(RESULT_OK, intent);
-                }
-                finish();
-                break;
+        if (view.getId() == R.id.tv_toolbar_right) {
+            int progress = mSeekBar.getProgress();
+            if (mSceneAction) {
+                ColorLightSceneEvent event = new ColorLightSceneEvent();
+                event.setmType(mSceneType == 1 ? ColorLightSceneEvent.TYPE.TYPE_COLOR_TEMPERATURE : ColorLightSceneEvent.TYPE.TYPE_LIGHTNESS);
+                event.setmValue(mSceneType == 1 ? (progress + 27) * 100 : progress);
+                EventBus.getDefault().post(event);
+            } else {
+                Intent intent = new Intent();
+                intent.putExtra("temperature", (progress + 27) * 100);
+                setResult(RESULT_OK, intent);
+            }
+            finish();
         }
     }
 }

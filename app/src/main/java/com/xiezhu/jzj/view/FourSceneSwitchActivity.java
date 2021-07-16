@@ -3,6 +3,7 @@ package com.xiezhu.jzj.view;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +26,7 @@ import com.xiezhu.jzj.utility.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -46,16 +49,20 @@ public class FourSceneSwitchActivity extends DetailActivity {
 
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
-    private String[] mManualIDs = new String[4];
-    private String[] mManualNames = new String[4];
+    private final String[] mManualIDs = new String[4];
+    private final String[] mManualNames = new String[4];
     private String mCurrentKey;
+
+    private String mPressedKey = "1";
+    private DelSceneHandler mDelSceneHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mMyHandler = new MyHandler(this);
+        mDelSceneHandler = new DelSceneHandler(getMainLooper(), this);
+        mMyHandler = new MyHandler(getMainLooper(), this);
         initView();
         getScenes();
 
@@ -67,7 +74,7 @@ public class FourSceneSwitchActivity extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 
@@ -93,66 +100,97 @@ public class FourSceneSwitchActivity extends DetailActivity {
 
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSceneContentText4})
     public void onClickView(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
-                }
-                break;
-            case R.id.mSceneContentText4:
-                if (mManualIDs[3] != null) {
-                    mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                mPressedKey = "1";
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                mPressedKey = "2";
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
+            }
+        } else if (view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                mPressedKey = "3";
+                mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
+            }
+        } else if (view.getId() == R.id.mSceneContentText4) {
+            if (mManualIDs[3] != null) {
+                mPressedKey = "4";
+                mSceneManager.executeScene(mManualIDs[3], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);
+            }
         }
     }
 
+    @Override
+    protected void notifyResponseError(int type) {
+        super.notifyResponseError(type);
+        if (type == 10360) {
+            // scene rule not exist
+            mSceneManager.getExtendedProperty(mIOTId, mPressedKey, null, null, mDelSceneHandler);
+        }
+    }
+
+    private static class DelSceneHandler extends Handler {
+        private final WeakReference<FourSceneSwitchActivity> ref;
+
+        public DelSceneHandler(Looper looper, FourSceneSwitchActivity activity) {
+            super(looper);
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NotNull Message msg) {
+            super.handleMessage(msg);
+            FourSceneSwitchActivity activity = ref.get();
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
+                if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    String keyNo = jsonObject.getString("keyNo");
+                    if (keyNo != null && keyNo.equals(activity.mPressedKey)) {
+                        String autoSceneId = jsonObject.getString("asId");
+                        activity.mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                                null, activity.mDelSceneHandler);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
+                activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                        null, activity.mDelSceneHandler);
+            } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
+                activity.getScenes();
+            }
+        }
+    }
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSceneContentText4})
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText4:
-                if (mManualIDs[3] != null) {
-                    EditSceneBindActivity.start(this, "按键四", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4, mSceneContentText4.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText4) {
+            if (mManualIDs[3] != null) {
+                EditSceneBindActivity.start(this, "按键四", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4, mSceneContentText4.getText().toString());
+            }
         }
         return true;
     }
@@ -161,7 +199,8 @@ public class FourSceneSwitchActivity extends DetailActivity {
     private static class MyHandler extends Handler {
         final WeakReference<FourSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(FourSceneSwitchActivity activity) {
+        public MyHandler(Looper looper, FourSceneSwitchActivity activity) {
+            super(looper);
             mWeakReference = new WeakReference<>(activity);
         }
 
@@ -169,6 +208,7 @@ public class FourSceneSwitchActivity extends DetailActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             FourSceneSwitchActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -183,7 +223,7 @@ public class FourSceneSwitchActivity extends DetailActivity {
                                 } else {
                                     activity.mSceneContentText1.setText(R.string.no_bind_scene);
                                     activity.mManualNames[0] = null;
-                                    activity.mManualIDs[1] = null;
+                                    activity.mManualIDs[0] = null;
                                 }
                                 activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_2;
                                 activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
@@ -247,7 +287,7 @@ public class FourSceneSwitchActivity extends DetailActivity {
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -37,6 +38,8 @@ import com.xiezhu.jzj.utility.Logger;
 import com.xiezhu.jzj.utility.Utility;
 import com.xiezhu.jzj.utility.WiFiHelper;
 import com.xiezhu.jzj.widget.ComCircularProgress;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,9 +131,9 @@ public class ConfigureNetworkActivity extends BaseActivity {
     };
 
     // 处理蓝牙响应数据
-    private Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessBLEResponseDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_PARSE_CONFIGNETWORKFRAME == msg.what) {
                 EConfigureNetwork.parseResultEntry resultEntry = (EConfigureNetwork.parseResultEntry) msg.obj;
                 Logger.d("Received the response information from BLE device:" + String.format("\r\n    cmd: %d\r\n    ack: %d\r\n    data: %s", resultEntry.cmd, resultEntry.ack, resultEntry.content));
@@ -180,9 +183,10 @@ public class ConfigureNetworkActivity extends BaseActivity {
     });
 
     // 处理配网进度
-    private Handler prcessConfigNetworkProgressHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessConfigNetworkProgressHandler = new Handler(new Handler.Callback() {
+        @SuppressLint("SetTextI18n")
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CONFIGNETWORK_STEP_START == msg.what) {
                 // 开始处理
                 permitJoinLblRemainSecond.setText("0");
@@ -230,9 +234,9 @@ public class ConfigureNetworkActivity extends BaseActivity {
     }
 
     // 绑定设备回调
-    private Handler mBindDeviceHandler = new Handler(new Handler.Callback() {
+    private final Handler mBindDeviceHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_BINDEVICE == msg.what) {
                 Message message = new Message();
                 message.what = Constant.MSG_CONFIGNETWORK_STEP_END;
@@ -266,10 +270,10 @@ public class ConfigureNetworkActivity extends BaseActivity {
         mIsDestory = false;
         tvToolbarTitle.setText("网关配网");
         Intent intent = getIntent();
-        this.mBLEDviceAddress = intent.getStringExtra("address");
-        this.mProductKey = intent.getStringExtra("productKey");
+        mBLEDviceAddress = intent.getStringExtra("address");
+        mProductKey = intent.getStringExtra("productKey");
 
-        this.mConfigureNetwork = new ConfigureNetwork(this);
+        mConfigureNetwork = new ConfigureNetwork(this);
 
         // 处理关闭键盘
         LinearLayout ll = findViewById(R.id.configureNetworkLl);
@@ -281,13 +285,13 @@ public class ConfigureNetworkActivity extends BaseActivity {
         });
 
         // 注册GATT广播接收器
-        registerReceiver(this.mGattUpdateReceiver, this.mGattUpdateIntentFilter());
+        registerReceiver(mGattUpdateReceiver, mGattUpdateIntentFilter());
 
         // 创建并绑定蓝牙服务
         Intent gattServiceIntent = new Intent(this, BLEService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-        this.initProcess();
+        initProcess();
 
         initStatusBar();
     }
@@ -304,7 +308,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         // 卸载GATT广播接收器
-        unregisterReceiver(this.mGattUpdateReceiver);
+        unregisterReceiver(mGattUpdateReceiver);
 
         //解绑蓝牙连接服务
         unbindService(mServiceConnection);
@@ -312,11 +316,11 @@ public class ConfigureNetworkActivity extends BaseActivity {
         mBLEService = null;
 
         // 中断计时线程
-        if (this.mTimeThread != null) {
-            if (!this.mTimeThread.isInterrupted()) {
-                this.mTimeThread.interrupt();
+        if (mTimeThread != null) {
+            if (!mTimeThread.isInterrupted()) {
+                mTimeThread.interrupt();
             }
-            this.mTimeThread = null;
+            mTimeThread = null;
         }
         prcessConfigNetworkProgressHandler.removeCallbacksAndMessages(null);
         mIsDestory = true;
@@ -334,8 +338,8 @@ public class ConfigureNetworkActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mSSID = (EditText) findViewById(R.id.configureNetworkTxtSSID);
-        this.mPassword = (EditText) findViewById(R.id.configureNetworkTxtPwd);
+        mSSID = (EditText) findViewById(R.id.configureNetworkTxtSSID);
+        mPassword = (EditText) findViewById(R.id.configureNetworkTxtPwd);
         WiFiHelper wiFiHelper = new WiFiHelper(this);
         mSSID.setText(wiFiHelper.getWIFIName());
 
@@ -390,26 +394,26 @@ public class ConfigureNetworkActivity extends BaseActivity {
     // 向蓝牙设备发送路由器SSID与密码
     private void sendSSIDAndPassword() {
         Log.i("lzm", "send 1");
-        if (!this.mConnectStatus) {
+        if (!mConnectStatus) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_noconnect), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mSSID.requestFocus();
+            mSSID.requestFocus();
             return;
         }
-        if (this.mSSID.getText().toString().equals("")) {
+        if (mSSID.getText().toString().equals("")) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_ssid), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mSSID.requestFocus();
+            mSSID.requestFocus();
             return;
         }
-        if (this.mPassword.getText().toString().equals("")) {
+        if (mPassword.getText().toString().equals("")) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.confignetwork_pwd), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-            this.mPassword.requestFocus();
+            mPassword.requestFocus();
             return;
         }
         Log.i("lzm", "send 2");
 
-        this.mDeviceName = "";
-        this.mToken = "";
-        this.mSendBLEDataStatusMachine = Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0;
+        mDeviceName = "";
+        mToken = "";
+        mSendBLEDataStatusMachine = Constant.CONFIGNETWORK_SEND_STATUSMACHINE_0;
         passwordLayout.setVisibility(View.GONE);
         processLayout.setVisibility(View.VISIBLE);
         Log.i("lzm", "send 3");
@@ -421,8 +425,8 @@ public class ConfigureNetworkActivity extends BaseActivity {
         }
 
         // 创建并运行配网剩余秒数提示线程
-        this.mConfigNetworkIsSuccess = false;
-        this.mTimeThread = new Thread() {
+        mConfigNetworkIsSuccess = false;
+        mTimeThread = new Thread() {
             @Override
             public void run() {
                 Message msg1 = new Message();
@@ -491,31 +495,33 @@ public class ConfigureNetworkActivity extends BaseActivity {
                 this.interrupt();
             }
         };
-        this.mTimeThread.start();
+        mTimeThread.start();
     }
 
     // 绑定网关设备
     private void bindGatewayDevice() {
-        Logger.d(String.format("The information of the gateway:\r\n    DeviceName: %s\r\n    Token: %s", this.mDeviceName, this.mToken));
+        Logger.d(String.format("The information of the gateway:\r\n    DeviceName: %s\r\n    Token: %s", mDeviceName, mToken));
 
-        if (this.mToken == null || this.mToken.length() == 0 || this.mDeviceName == null || this.mDeviceName.length() == 0) {
+        if (mToken == null || mToken.length() == 0 || mDeviceName == null || mDeviceName.length() == 0) {
             return;
         }
 
         // 等待5秒,以确保服务器端处理Token完成。
-        try {
-            Thread.sleep(5 * 1000);
-        } catch (Exception ex) {
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 构造参数
+                EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
+                parameter.homeId = SystemParameter.getInstance().getHomeId();
+                parameter.productKey = mProductKey;
+                parameter.deviceName = mDeviceName;
+                parameter.token = mToken;
 
-        // 构造参数
-        EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
-        parameter.homeId = SystemParameter.getInstance().getHomeId();
-        parameter.productKey = this.mProductKey;
-        parameter.deviceName = this.mDeviceName;
-        parameter.token = this.mToken;
+                mConfigureNetwork.bindDevice(parameter, mCommitFailureHandler, mResponseErrorHandler, mBindDeviceHandler);
+            }
+        }, 5 * 1000);
 
-        this.mConfigureNetwork.bindDevice(parameter, mCommitFailureHandler, mResponseErrorHandler, mBindDeviceHandler);
+
     }
 
     @Override
@@ -523,19 +529,22 @@ public class ConfigureNetworkActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Constant.REQUESTCODE_CALLCHOICEWIFIACTIVITY && resultCode == Constant.RESULTCODE_CALLCHOICEWIFIACTIVITY) {
-            this.mSSID.setText(data.getStringExtra("ssid"));
+            mSSID.setText(data.getStringExtra("ssid"));
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @OnClick(R.id.iv_toolbar_left)
-    public void onViewClicked() {
-        if (mTimeThread != null) {
-            if (!mTimeThread.isInterrupted()) {
-                mTimeThread.interrupt();
-                mTimeThread = null;
+    public void onViewClicked(View view) {
+        if (view.getId() == R.id.iv_toolbar_left) {
+            if (mTimeThread != null) {
+                if (!mTimeThread.isInterrupted()) {
+                    mTimeThread.interrupt();
+                    mTimeThread = null;
+                }
             }
+            finish();
         }
-        finish();
     }
 
 

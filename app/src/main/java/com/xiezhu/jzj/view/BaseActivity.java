@@ -19,6 +19,7 @@ import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.model.EAPIChannel;
 import com.xiezhu.jzj.utility.Logger;
+import com.xiezhu.jzj.utility.QMUITipDialogUtil;
 import com.xiezhu.jzj.utility.ResponseMessageUtil;
 import com.xiezhu.jzj.utility.ToastUtils;
 
@@ -34,6 +35,7 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -57,13 +59,14 @@ public class BaseActivity extends FragmentActivity {
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
+            dismissQMUIDialog();
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
                 sb.append(String.format("提交接口[%s]成功, 但是响应发生错误:", responseErrorEntry.path));
                 if (responseErrorEntry.parameters != null && responseErrorEntry.parameters.size() > 0) {
                     for (Map.Entry<String, Object> entry : responseErrorEntry.parameters.entrySet()) {
-                        sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue().toString()));
+                        sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue() == null ? "" : entry.getValue().toString()));
                     }
                 }
                 sb.append(String.format("\r\n    exception code: %s", responseErrorEntry.code));
@@ -93,10 +96,16 @@ public class BaseActivity extends FragmentActivity {
 //                    });
                 }
                 //非OTA信息查询失败才作提示
-                if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)) {
+                if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)
+                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401) {
+                    // 6401: 拓扑关系不存在
+                    // 403：请求被禁止
+                    // 28700: 设备未和用户绑定
+                    // 10360: scene rule not exist
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                     Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 }
+                notifyResponseError(responseErrorEntry.code);
                 notifyFailureOrError(2);
             }
             return false;
@@ -105,6 +114,13 @@ public class BaseActivity extends FragmentActivity {
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {
+    }
+
+    protected void notifyResponseError(int type) {
+    }
+
+    protected void dismissQMUIDialog() {
+        QMUITipDialogUtil.dismiss();
     }
 
     public Context mActivity;
@@ -120,6 +136,7 @@ public class BaseActivity extends FragmentActivity {
         LoginBusiness.logout(new ILogoutCallback() {
             @Override
             public void onLogoutSuccess() {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_other_device_login));
                 Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -131,6 +148,7 @@ public class BaseActivity extends FragmentActivity {
 
             @Override
             public void onLogoutFailed(int code, String error) {
+                QMUITipDialogUtil.dismiss();
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
             }
         });

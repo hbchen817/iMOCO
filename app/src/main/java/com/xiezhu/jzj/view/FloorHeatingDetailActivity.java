@@ -70,13 +70,12 @@ public class FloorHeatingDetailActivity extends AppCompatActivity {
 
     @OnClick({R.id.lock, R.id.mSwitch, R.id.timer})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.lock:
-                break;
-            case R.id.mSwitch:
-                break;
-            case R.id.timer:
-                break;
+        if (view.getId() == R.id.lock) {
+
+        } else if (view.getId() == R.id.mSwitch) {
+
+        } else if (view.getId() == R.id.timer) {
+
         }
     }
 }

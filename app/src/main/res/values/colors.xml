@@ -34,6 +34,11 @@
     <color name="darkgrey">#6C6C6C</color>
     <color name="grey">#ACACAC</color>
     <color name="blue">#0074A6</color>
+    <color name="blue2">#2071f3</color><!--#1c8ce4-->
+    <color name="blue3">#662071f3</color>
+    <color name="blue4">#3A6293</color>
+    <color name="blue4_2">#663A6293</color>
+    <color name="blue5">#95A9C4</color>
     <color name="darkblue">#0000FF</color>
     <color name="all_c">#cccccc</color>
     <color name="all_3">#333333</color>

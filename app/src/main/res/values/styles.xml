@@ -12,6 +12,7 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <!-- 大字体样式 -->
@@ -106,15 +107,20 @@
 
     <style name="Login" parent="@style/OpenAccountDefault">
         <item name="ali_sdk_openaccount_attrs_login_register_text_color">@color/appcolor</item>
-        <item name="ali_sdk_openaccount_attrs_login_reset_password_text_color">@color/appcolor</item>
+        <item name="ali_sdk_openaccount_attrs_login_reset_password_text_color">@color/appcolor
+        </item>
         <item name="ali_sdk_openaccount_attrs_login_other_plateform_login_text_color">#999999</item>
-        <item name="ali_sdk_openaccount_attrs_title_bar_title">@string/ali_sdk_openaccount_text_login</item>
+        <item name="ali_sdk_openaccount_attrs_title_bar_title">
+            @string/ali_sdk_openaccount_text_login
+        </item>
         <item name="ali_sdk_openaccount_attrs_title_bar_visibility">invisible</item>
-        <item name="ali_sdk_openaccount_attrs_login_oauth_plateform">taobao|qq|weibo|weixin|alipay</item>
+        <item name="ali_sdk_openaccount_attrs_login_oauth_plateform">taobao|qq|weibo|weixin|alipay
+        </item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>
         <item name="ali_sdk_openaccount_attrs_next_step_bg">@drawable/shape_appcolor</item>
     </style>
+
     <style name="Register" parent="@style/OpenAccountDefault">
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_text_color">#999999</item>
         <item name="ali_sdk_openaccount_attrs_login_oauth_text_color">#ffffff</item>
@@ -139,4 +145,10 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@mipmap/splash</item>
+        <item name="android:windowDisablePreview">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

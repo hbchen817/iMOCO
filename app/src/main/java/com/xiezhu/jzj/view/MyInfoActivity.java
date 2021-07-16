@@ -38,7 +38,8 @@ public class MyInfoActivity extends BaseActivity {
     TextView userAccount;
     public static MyInfoActivity myInfoActivity;
     private Intent intent;
-    private DialogInterface.OnClickListener logoutConfirmListener = new DialogInterface.OnClickListener() {
+
+    private final DialogInterface.OnClickListener logoutConfirmListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             LoginBusiness.logout(new ILogoutCallback() {
@@ -55,14 +56,14 @@ public class MyInfoActivity extends BaseActivity {
 
                 @Override
                 public void onLogoutFailed(int code, String error) {
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.account_logout_failed) + error);
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
                 }
             });
         }
     };
 
     @Subscribe
-    public void onRefreshMyInfo(RefreshMyinfo refreshMyinfo){
+    public void onRefreshMyInfo(RefreshMyinfo refreshMyinfo) {
         nickName.setText(Account.getUserNick());
     }
 
@@ -95,26 +96,21 @@ public class MyInfoActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    @OnClick({R.id.head_img,R.id.nick_name_view,R.id.change_password,R.id.delete_account,R.id.logout_btn})
-    void onClick(View view){
-        switch (view.getId()){
-            case R.id.head_img:
-                break;
-            case R.id.nick_name_view:
-                intent = new Intent(mActivity,NickNameActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.change_password:
-                OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
-                openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);
-                break;
-            case R.id.delete_account:
-                intent = new Intent(mActivity,DeleteAccountActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.logout_btn:
-                DialogUtils.showEnsureDialog(mActivity,logoutConfirmListener,getString(R.string.myinfo_logout_tips),null);
-                break;
+    @OnClick({R.id.head_img, R.id.nick_name_view, R.id.change_password, R.id.delete_account, R.id.logout_btn})
+    void onClick(View view) {
+        if (view.getId() == R.id.head_img) {
+
+        } else if (view.getId() == R.id.nick_name_view) {
+            intent = new Intent(mActivity, NickNameActivity.class);
+            startActivity(intent);
+        } else if (view.getId() == R.id.change_password) {
+            OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
+            openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);
+        } else if (view.getId() == R.id.delete_account) {
+            intent = new Intent(mActivity, DeleteAccountActivity.class);
+            startActivity(intent);
+        } else if (view.getId() == R.id.logout_btn) {
+            DialogUtils.showEnsureDialog(mActivity, logoutConfirmListener, getString(R.string.myinfo_logout_tips), null);
         }
     }
 

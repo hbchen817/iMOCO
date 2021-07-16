@@ -27,16 +27,16 @@ public class MySceneListAdapter extends RecyclerView.Adapter {
     private List<Boolean> mDeleteList;
     private Context mContext;
     private MySceneListCallback mCallback;
-    private Handler mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler;
+    private final Handler mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler;
 
     public MySceneListAdapter(Context context, List<EScene.sceneListItemEntry> list, MySceneListCallback callback, Handler commitFailureHandler, Handler responseErrorHandler, Handler processDataHandler) {
         mContext = context;
         mDeleteList = new ArrayList<>();
         mList = list;
         mCallback = callback;
-        this.mCommitFailureHandler = commitFailureHandler;
-        this.mResponseErrorHandler = responseErrorHandler;
-        this.mProcessDataHandler = processDataHandler;
+        mCommitFailureHandler = commitFailureHandler;
+        mResponseErrorHandler = responseErrorHandler;
+        mProcessDataHandler = processDataHandler;
     }
 
     @NonNull
@@ -117,7 +117,7 @@ public class MySceneListAdapter extends RecyclerView.Adapter {
         return mList.size();
     }
 
-    public class ItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ItemViewHolder extends RecyclerView.ViewHolder {
         RelativeLayout sceneListRelItem;
         TextView sceneListLblName;
         TextView sceneListLblType;
@@ -125,10 +125,10 @@ public class MySceneListAdapter extends RecyclerView.Adapter {
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            sceneListRelItem = (RelativeLayout) itemView.findViewById(R.id.sceneListRelItem);
-            sceneListLblName = (TextView) itemView.findViewById(R.id.sceneListLblName);
-            sceneListLblType = (TextView) itemView.findViewById(R.id.sceneListLblType);
-            sceneListLblDelete = (TextView) itemView.findViewById(R.id.sceneListLblDelete);
+            sceneListRelItem = itemView.findViewById(R.id.sceneListRelItem);
+            sceneListLblName = itemView.findViewById(R.id.sceneListLblName);
+            sceneListLblType = itemView.findViewById(R.id.sceneListLblType);
+            sceneListLblDelete = itemView.findViewById(R.id.sceneListLblDelete);
         }
     }
 

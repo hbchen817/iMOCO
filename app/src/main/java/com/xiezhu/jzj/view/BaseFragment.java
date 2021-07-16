@@ -26,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -38,7 +40,7 @@ public abstract class BaseFragment extends Fragment {
     // 提交失败处理器
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -61,7 +63,7 @@ public abstract class BaseFragment extends Fragment {
     // 响应错误处理器
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

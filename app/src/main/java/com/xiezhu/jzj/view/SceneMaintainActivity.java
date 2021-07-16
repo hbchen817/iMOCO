@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.Constant;
@@ -36,6 +37,8 @@ import com.xiezhu.jzj.presenter.ProductHelper;
 import com.xiezhu.jzj.presenter.SceneManager;
 import com.xiezhu.jzj.presenter.SystemParameter;
 import com.xiezhu.jzj.utility.ToastUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Creator: xieshaobing
@@ -59,10 +62,10 @@ public class SceneMaintainActivity extends BaseActivity {
         final View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null);
         builder.setView(view);
         builder.setCancelable(true);
-        TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
+        TextView titleTv = view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText(getString(R.string.scene_maintain_name_edit));
-        final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
-        nameEt.setText(this.mLblName.getText().toString());
+        final EditText nameEt = view.findViewById(R.id.dialogEditTxtEditItem);
+        nameEt.setText(mLblName.getText().toString());
         final android.app.Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
@@ -97,35 +100,35 @@ public class SceneMaintainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scene_maintain);
 
-        this.mSceneManager = new SceneManager(this);
+        mSceneManager = new SceneManager(this);
 
         Intent intent = getIntent();
-        this.mOperateType = intent.getIntExtra("operateType", 1);
-        this.mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
-        this.mSceneNumber = intent.getIntExtra("sceneNumber", 0);
-        this.mName = intent.getStringExtra("name");
-        this.mSceneId = intent.getStringExtra("sceneId");
+        mOperateType = intent.getIntExtra("operateType", 1);
+        mSceneModelCode = intent.getIntExtra("sceneModelCode", 1);
+        mSceneNumber = intent.getIntExtra("sceneNumber", 0);
+        mName = intent.getStringExtra("name");
+        mSceneId = intent.getStringExtra("sceneId");
 
-        TextView title = (TextView) findViewById(R.id.includeTitleLblTitle);
-        ImageView icon = (ImageView) findViewById(R.id.sceneMaintainImgIcon);
-        this.mLblName = (TextView) findViewById(R.id.sceneMaintainLblName);
-        this.mLblName.setMovementMethod(ScrollingMovementMethod.getInstance());
-        this.mLblEnable = (TextView) findViewById(R.id.sceneMaintainLblEnable);
+        TextView title = findViewById(R.id.includeTitleLblTitle);
+        ImageView icon = findViewById(R.id.sceneMaintainImgIcon);
+        mLblName = findViewById(R.id.sceneMaintainLblName);
+        mLblName.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mLblEnable = findViewById(R.id.sceneMaintainLblEnable);
         icon.setImageResource(intent.getIntExtra("sceneModelIcon", 1));
 
-        TextView lblOperate = (TextView) findViewById(R.id.sceneMaintainLblOperate);
-        if (this.mOperateType == CScene.OPERATE_CREATE) {
+        TextView lblOperate = findViewById(R.id.sceneMaintainLblOperate);
+        if (mOperateType == CScene.OPERATE_CREATE) {
             title.setText(String.format("%s%s", getString(R.string.scene_maintain_create), intent.getStringExtra("sceneModelName")));
-            this.mLblName.setText(intent.getStringExtra("sceneModelName"));
+            mLblName.setText(intent.getStringExtra("sceneModelName"));
             lblOperate.setText(getString(R.string.scene_maintain_create));
         } else {
-            title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), this.mName));
-            this.mLblName.setText(this.mName);
+            title.setText(String.format("%s%s", getString(R.string.scene_maintain_edit), mName));
+            mLblName.setText(mName);
             lblOperate.setText(getString(R.string.scene_maintain_edit));
         }
 
         // 修改场景名称处理
-        ImageView editName = (ImageView) findViewById(R.id.sceneMaintainImgName);
+        ImageView editName = findViewById(R.id.sceneMaintainImgName);
         editName.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,13 +137,13 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 设置使用状态处理
-        ImageView setEnable = (ImageView) findViewById(R.id.sceneMaintainImgEnable);
+        ImageView setEnable = findViewById(R.id.sceneMaintainImgEnable);
         setEnable.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<EChoice.itemEntry> items = new ArrayList<EChoice.itemEntry>();
                 items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_startusing), "1", mEnable));
-                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable ? true : false));
+                items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable));
                 Intent intent = new Intent(SceneMaintainActivity.this, ChoiceActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("title", getString(R.string.scene_maintain_setenable));
@@ -153,7 +156,7 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 操作处理
-        RelativeLayout rlOperate = (RelativeLayout) findViewById(R.id.sceneMaintainRlOperate);
+        RelativeLayout rlOperate = findViewById(R.id.sceneMaintainRlOperate);
         rlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,7 +185,7 @@ public class SceneMaintainActivity extends BaseActivity {
         });
 
         // 返回处理
-        ImageView back = (ImageView) findViewById(R.id.includeTitleImgBack);
+        ImageView back = findViewById(R.id.includeTitleImgBack);
         back.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,10 +210,10 @@ public class SceneMaintainActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
-        this.mParameterList = this.mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
-        mAptSceneParameter = new AptSceneParameter(SceneMaintainActivity.this);
-        mAptSceneParameter.setData(this.mParameterList);
-        ListView lstParameter = (ListView) findViewById(R.id.sceneMaintainLstParameter);
+        mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+        mAptSceneParameter = new AptSceneParameter(this);
+        mAptSceneParameter.setData(mParameterList);
+        ListView lstParameter = findViewById(R.id.sceneMaintainLstParameter);
         lstParameter.setAdapter(mAptSceneParameter);
 
         // 列表点击事件处理
@@ -231,9 +234,9 @@ public class SceneMaintainActivity extends BaseActivity {
     }
 
     // 数据处理器
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据

@@ -47,13 +47,10 @@ public class LightActionChoiceActivity extends BaseActivity {
 
     @OnClick({R.id.lightnessView, R.id.temperatureView})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.lightnessView:
-                ColorTemperatureChoiceActivity.start2(this, 2, 0);
-                break;
-            case R.id.temperatureView:
-                ColorTemperatureChoiceActivity.start2(this, 1, 0);
-                break;
+        if (view.getId() == R.id.lightnessView) {
+            ColorTemperatureChoiceActivity.start2(this, 2, 0);
+        } else if (view.getId() == R.id.temperatureView) {
+            ColorTemperatureChoiceActivity.start2(this, 1, 0);
         }
     }
 

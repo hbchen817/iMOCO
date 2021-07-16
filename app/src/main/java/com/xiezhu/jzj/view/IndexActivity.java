@@ -27,6 +27,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -56,7 +58,7 @@ public class IndexActivity extends BaseActivity {
     private IndexFragment2 indexFragment2;
     private IndexFragment3 indexFragment3;
 
-    private String[] tagArr = {"IndexFragment1", "IndexFragment2", "IndexFragment3"};
+    private final String[] tagArr = {"IndexFragment1", "IndexFragment2", "IndexFragment3"};
     /**
      * 第一次按返回键的时间, 默认为0
      */
@@ -79,33 +81,28 @@ public class IndexActivity extends BaseActivity {
     /**
      * RadioGroup的RadioButton选中监听器
      */
-    private RadioGroup.OnCheckedChangeListener mRbOnCheckedChangeListener
+    private final RadioGroup.OnCheckedChangeListener mRbOnCheckedChangeListener
             = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId) {
-                case R.id.rb_tab_one:
-                    TAG = 0;
-                    // 切换至碎片一
-                    switchFragment(indexFragment1);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
-                    break;
-                case R.id.rb_tab_two:
-                    TAG = 1;
-                    // 切换至碎片二
-                    switchFragment(indexFragment2);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
-                    break;
-                case R.id.rb_tab_three:
-                    TAG = 2;
-                    // 切换至碎片三
-                    switchFragment(indexFragment3);
-                    if (Build.VERSION.SDK_INT >= 23)
-                        getWindow().setStatusBarColor(Color.WHITE);
-                    break;
-                default:
+            if (checkedId == R.id.rb_tab_one) {
+                TAG = 0;
+                // 切换至碎片一
+                switchFragment(indexFragment1);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(ContextCompat.getColor(IndexActivity.this, R.color.appbgcolor));
+            } else if (checkedId == R.id.rb_tab_two) {
+                TAG = 1;
+                // 切换至碎片二
+                switchFragment(indexFragment2);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(ContextCompat.getColor(IndexActivity.this, R.color.appbgcolor));
+            } else if (checkedId == R.id.rb_tab_three) {
+                TAG = 2;
+                // 切换至碎片三
+                switchFragment(indexFragment3);
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(Color.WHITE);
             }
         }
     };
@@ -116,7 +113,7 @@ public class IndexActivity extends BaseActivity {
             View decorView = getWindow().getDecorView();
             //int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 
@@ -216,24 +213,21 @@ public class IndexActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0) {
+                for (int result : grantResults) {
+                    if (result != PackageManager.PERMISSION_GRANTED) {
 //                            ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
 //                            PermissionUtil.getAppDetailSettingIntent1(this);
-                        }
                     }
-
-                    // 已经同意了运行时权限, 执行正常逻辑
-                    initView();
-                    initListener();
-                } else {
-                    ToastUtils.showToastCentrally(this, "发生未知错误");
                 }
-                break;
-            default:
+
+                // 已经同意了运行时权限, 执行正常逻辑
+                initView();
+                initListener();
+            } else {
+                ToastUtils.showToastCentrally(this, "发生未知错误");
+            }
         }
     }
 
@@ -281,7 +275,7 @@ public class IndexActivity extends BaseActivity {
      * 保存TAB选中状态
      * */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         //如果用以下这种做法则不保存状态，再次进来的话会显示默认tab
         //总是执行这句代码来调用父类去保存视图层的状态
         //保存tab选中的状态;
@@ -329,8 +323,8 @@ public class IndexActivity extends BaseActivity {
     /**
      * 防止快速点击
      *
-     * @param ev
-     * @return
+     * @param ev 触摸时间
+     * @return 结果
      */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

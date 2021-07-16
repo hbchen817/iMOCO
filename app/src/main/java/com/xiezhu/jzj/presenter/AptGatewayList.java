@@ -20,65 +20,69 @@ import java.util.List;
  * Description: 设备列表适配器
  */
 public class AptGatewayList extends BaseAdapter {
-	private class ViewHolder {
-		private ImageView icon;
-		private TextView name;
-		private TextView status;
-	}
-	private Context mContext;
-	private List<EDevice.deviceEntry> mDeviceList;
+    private class ViewHolder {
+        private ImageView icon;
+        private TextView name;
+        private TextView status;
+    }
 
-	// 构造
-	public AptGatewayList(Context context) {
-		super();
-		this.mContext = context;
-		this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
-	}
+    private Context mContext;
+    private List<EDevice.deviceEntry> mDeviceList;
 
-	// 设置数据
-	public void setData(List<EDevice.deviceEntry> deviceList) {
-		this.mDeviceList = deviceList;
-	}
+    // 构造
+    public AptGatewayList(Context context) {
+        super();
+        mContext = context;
+        mDeviceList = new ArrayList<EDevice.deviceEntry>();
+    }
 
-	// 清除数据
-	public void clearData() {
-		this.mDeviceList.clear();
-	}
+    // 设置数据
+    public void setData(List<EDevice.deviceEntry> deviceList) {
+        mDeviceList = deviceList;
+    }
 
-	// 返回列表条目数量
-	@Override
-	public int getCount() {
-		return this.mDeviceList == null ? 0 : this.mDeviceList.size();
-	}
+    // 清除数据
+    public void clearData() {
+        mDeviceList.clear();
+    }
 
-	@Override
-	public long getItemId(int arg0) {
-		return arg0;
-	}
+    // 返回列表条目数量
+    @Override
+    public int getCount() {
+        return mDeviceList == null ? 0 : mDeviceList.size();
+    }
 
-	@Override
-	public Object getItem(int arg0) {
-		return arg0 > this.mDeviceList.size() ? null : this.mDeviceList.get(arg0);
-	}
+    @Override
+    public long getItemId(int arg0) {
+        return arg0;
+    }
 
-	// 获取列表条目视图
-	@Override
-	public View getView(int position, View convertView, ViewGroup arg2) {
-		ViewHolder viewHolder;
-		if (convertView == null) {
-			viewHolder = new ViewHolder();
-			LayoutInflater inflater = LayoutInflater.from(this.mContext);
-			convertView = inflater.inflate(R.layout.list_gateway, null, true);
-			viewHolder.icon = (ImageView) convertView.findViewById(R.id.deviceListImgIcon);
-			viewHolder.name = (TextView) convertView.findViewById(R.id.deviceListLblName);
-			viewHolder.status = (TextView) convertView.findViewById(R.id.devicelistLblStatus);
-			convertView.setTag(viewHolder);
-		} else {
-			viewHolder = (ViewHolder) convertView.getTag();
-		}
-		viewHolder.icon.setImageResource(ImageProvider.genProductIcon(this.mDeviceList.get(position).productKey));
-		viewHolder.name.setText(this.mDeviceList.get(position).nickName);
-		viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(this.mContext, this.mDeviceList.get(position).status)));
-		return convertView;
-	}
+    @Override
+    public Object getItem(int arg0) {
+        return arg0 > mDeviceList.size() ? null : mDeviceList.get(arg0);
+    }
+
+    // 获取列表条目视图
+    @Override
+    public View getView(int position, View convertView, ViewGroup arg2) {
+        if (mDeviceList == null || mDeviceList.size() <= position) {
+            return LayoutInflater.from(mContext).inflate(R.layout.custom_null, null, true);
+        }
+
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_gateway, null, true);
+            viewHolder.icon = convertView.findViewById(R.id.deviceListImgIcon);
+            viewHolder.name = convertView.findViewById(R.id.deviceListLblName);
+            viewHolder.status = convertView.findViewById(R.id.devicelistLblStatus);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+        viewHolder.icon.setImageResource(ImageProvider.genProductIcon(mDeviceList.get(position).productKey));
+        viewHolder.name.setText(mDeviceList.get(position).nickName);
+        viewHolder.status.setText(String.format(this.mContext.getString(R.string.devicelist_status), CodeMapper.processConnectionStatus(mContext, mDeviceList.get(position).status)));
+        return convertView;
+    }
 }

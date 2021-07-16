@@ -18,11 +18,13 @@ import com.xiezhu.jzj.utility.ToastUtils;
 import com.xiezhu.jzj.widget.DialogUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,18 +42,19 @@ public class MsgCenterActivity extends BaseActivity {
 
     private MsgCenterManager msgCenterManager;
     String[] type = new String[3];
-    private String[] msgTypeArr = {"device","share","announcement"};
-    private int currentPosition=0;
-    private DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
+    private final String[] msgTypeArr = {"device", "share", "announcement"};
+    private int currentPosition = 0;
+    private final DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
-            if (currentPosition==1){
+            if (currentPosition == 1) {
                 msgCenterManager.clearShareNoticeList(mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            }else {
+            } else {
                 msgCenterManager.clearMsgList(msgTypeArr[currentPosition], mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         }
     };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,16 +82,16 @@ public class MsgCenterActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_CLEARMESSAGERECORD:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.msg_center_clear_success));
                     EventBus.getDefault().post(new RefreshMsgCenter(0));
                     break;
                 case Constant.MSG_CALLBACK_CLEARSHARENOTICELIST:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.msg_center_clear_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.msg_center_clear_success));
                     EventBus.getDefault().post(new RefreshMsgCenter(1));
                     break;
                 default:
@@ -100,18 +103,16 @@ public class MsgCenterActivity extends BaseActivity {
 
     @OnClick({R.id.tv_toolbar_right})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                String confirmMsg="";
-                if (currentPosition==0){
-                    confirmMsg = getString(R.string.msg_center_clear_device_msg);
-                }else if (currentPosition==1){
-                    confirmMsg = getString(R.string.msg_center_clear_share_msg);
-                }else if (currentPosition==2){
-                    confirmMsg = getString(R.string.msg_center_clear_notice_msg);
-                }
-                DialogUtils.showEnsureDialog(mActivity,clearMsgListener,confirmMsg,"");
-                break;
+        if (view.getId() == R.id.tv_toolbar_right) {
+            String confirmMsg = "";
+            if (currentPosition == 0) {
+                confirmMsg = getString(R.string.msg_center_clear_device_msg);
+            } else if (currentPosition == 1) {
+                confirmMsg = getString(R.string.msg_center_clear_share_msg);
+            } else if (currentPosition == 2) {
+                confirmMsg = getString(R.string.msg_center_clear_notice_msg);
+            }
+            DialogUtils.showEnsureDialog(mActivity, clearMsgListener, confirmMsg, "");
         }
     }
 

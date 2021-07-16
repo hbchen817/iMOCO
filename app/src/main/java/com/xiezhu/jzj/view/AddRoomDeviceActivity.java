@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.event.RefreshRoomDevice;
@@ -27,6 +28,7 @@ import com.xiezhu.jzj.utility.ToastUtils;
 import com.xiezhu.jzj.viewholder.CommonAdapter;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ import java.util.Map;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,17 +60,15 @@ public class AddRoomDeviceActivity extends BaseActivity {
     TextView deviceOtherRoomTv;
 
     private CommonAdapter adapter1;
-    private List<Visitable> models1 = new ArrayList<Visitable>();
-    private LinearLayoutManager layoutManager1;
+    private final List<Visitable> models1 = new ArrayList<Visitable>();
 
     private CommonAdapter adapter2;
-    private List<Visitable> models2 = new ArrayList<Visitable>();
-    private LinearLayoutManager layoutManager2;
+    private final List<Visitable> models2 = new ArrayList<Visitable>();
     private String roomId;
     private String roomName;
     private String roomNameNew;
 
-    private ArrayList<String> iotIdList = new ArrayList<>();
+    private final ArrayList<String> iotIdList = new ArrayList<>();
     private HomeSpaceManager homeSpaceManager;
 
     @Override
@@ -84,7 +85,7 @@ public class AddRoomDeviceActivity extends BaseActivity {
         homeSpaceManager = new HomeSpaceManager(mActivity);
 
         adapter1 = new CommonAdapter(models1, mActivity);
-        layoutManager1 = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(mActivity);
         recycleView1.setLayoutManager(layoutManager1);
         recycleView1.setAdapter(adapter1);
         adapter1.setOnClickListener(new View.OnClickListener() {
@@ -98,14 +99,14 @@ public class AddRoomDeviceActivity extends BaseActivity {
                     models1.remove(p);
                     adapter1.notifyDataSetChanged();
                     adapter2.notifyDataSetChanged();
-                    deviceThisRoomTv.setVisibility(models1.isEmpty()?View.GONE:View.VISIBLE);
-                    deviceOtherRoomTv.setVisibility(models2.isEmpty()?View.GONE:View.VISIBLE);
+                    deviceThisRoomTv.setVisibility(models1.isEmpty() ? View.GONE : View.VISIBLE);
+                    deviceOtherRoomTv.setVisibility(models2.isEmpty() ? View.GONE : View.VISIBLE);
                 }
             }
         });
 
         adapter2 = new CommonAdapter(models2, mActivity);
-        layoutManager2 = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(mActivity);
         recycleView2.setLayoutManager(layoutManager2);
         recycleView2.setAdapter(adapter2);
         adapter2.setOnClickListener(new View.OnClickListener() {
@@ -119,8 +120,8 @@ public class AddRoomDeviceActivity extends BaseActivity {
                     models2.remove(p);
                     adapter1.notifyDataSetChanged();
                     adapter2.notifyDataSetChanged();
-                    deviceThisRoomTv.setVisibility(models1.isEmpty()?View.GONE:View.VISIBLE);
-                    deviceOtherRoomTv.setVisibility(models2.isEmpty()?View.GONE:View.VISIBLE);
+                    deviceThisRoomTv.setVisibility(models1.isEmpty() ? View.GONE : View.VISIBLE);
+                    deviceOtherRoomTv.setVisibility(models2.isEmpty() ? View.GONE : View.VISIBLE);
                 }
             }
         });
@@ -165,25 +166,22 @@ public class AddRoomDeviceActivity extends BaseActivity {
         }
         adapter1.notifyDataSetChanged();
         adapter2.notifyDataSetChanged();
-        deviceThisRoomTv.setVisibility(models1.isEmpty()?View.GONE:View.VISIBLE);
-        deviceOtherRoomTv.setVisibility(models2.isEmpty()?View.GONE:View.VISIBLE);
+        deviceThisRoomTv.setVisibility(models1.isEmpty() ? View.GONE : View.VISIBLE);
+        deviceOtherRoomTv.setVisibility(models2.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @OnClick({R.id.tv_toolbar_right, R.id.room_name_view})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                iotIdList.clear();
-                for (int i = 0; i < models1.size(); i++) {
-                    ItemAddRoomDevice itemAddRoomDevice = (ItemAddRoomDevice) models1.get(i);
-                    iotIdList.add(itemAddRoomDevice.getId());
-                }
-                homeSpaceManager.updateRoomDevices(SystemParameter.getInstance().getHomeId(), roomId, iotIdList,
-                        this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
-                break;
-            case R.id.room_name_view:
-                showAddDialog();
-                break;
+        if (view.getId() == R.id.tv_toolbar_right) {
+            iotIdList.clear();
+            for (int i = 0; i < models1.size(); i++) {
+                ItemAddRoomDevice itemAddRoomDevice = (ItemAddRoomDevice) models1.get(i);
+                iotIdList.add(itemAddRoomDevice.getId());
+            }
+            homeSpaceManager.updateRoomDevices(SystemParameter.getInstance().getHomeId(), roomId, iotIdList,
+                    this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        } else if (view.getId() == R.id.room_name_view) {
+            showAddDialog();
         }
     }
 
@@ -192,8 +190,8 @@ public class AddRoomDeviceActivity extends BaseActivity {
         final View view = LayoutInflater.from(mActivity).inflate(R.layout.layout_roomname_dialog, null);
         builder.setView(view);
         builder.setCancelable(true);
-        TextView titleTv = (TextView) view.findViewById(R.id.title);
-        final EditText nameEt = (EditText) view.findViewById(R.id.name_et);
+        // TextView titleTv = view.findViewById(R.id.title);
+        final EditText nameEt = view.findViewById(R.id.name_et);
         nameEt.setText(roomName);
         final Dialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -210,10 +208,10 @@ public class AddRoomDeviceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String nameStr = nameEt.getText().toString().trim();
-                if (!nameStr.equals("")){
+                if (!nameStr.equals("")) {
                     dialog.dismiss();
                     roomNameNew = nameStr;
-                    homeSpaceManager.updateRoomInfo(SystemParameter.getInstance().getHomeId(),roomId,roomNameNew,mCommitFailureHandler, mResponseErrorHandler,mAPIDataHandler);
+                    homeSpaceManager.updateRoomInfo(SystemParameter.getInstance().getHomeId(), roomId, roomNameNew, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
             }
         });
@@ -225,9 +223,9 @@ public class AddRoomDeviceActivity extends BaseActivity {
         });
     }
 
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_UPDATEDEVICEROOM:
                     ToastUtils.showToastCentrally(mActivity, getString(R.string.room_device_update_success));

@@ -26,6 +26,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,20 +42,19 @@ public class SceneLogActivity extends BaseActivity {
     SmartRefreshLayout mSrlFragmentMe;
 
     private CommonAdapter adapter;
-    private List<Visitable> models = new ArrayList<Visitable>();
-    private LinearLayoutManager layoutManager;
+    private final List<Visitable> models = new ArrayList<Visitable>();
     private SceneManager sceneManager;
     private int page = 1;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-            page=1;
+            page = 1;
             getData();
         }
     };
 
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             page++;
@@ -69,7 +71,7 @@ public class SceneLogActivity extends BaseActivity {
 
         sceneManager = new SceneManager(mActivity);
         adapter = new CommonAdapter(models, mActivity);
-        layoutManager = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recycleView.setLayoutManager(layoutManager);
         recycleView.setAdapter(adapter);
         mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
@@ -89,25 +91,21 @@ public class SceneLogActivity extends BaseActivity {
         }
     }
 
-    private void getData(){
+    private void getData() {
         sceneManager.getSceneLogList(page, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETSCENELOG:
-                    if (page==1){
-                        models.clear();
-                    }
-                    models.addAll(CloudDataParser.processSceneLogList((String) msg.obj));
-                    adapter.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(mSrlFragmentMe,true);
-                    SrlUtils.finishLoadMore(mSrlFragmentMe,true);
-                    break;
-                default:
-                    break;
+        public boolean handleMessage(@NotNull Message msg) {
+            if (msg.what == Constant.MSG_CALLBACK_GETSCENELOG) {
+                if (page == 1) {
+                    models.clear();
+                }
+                models.addAll(CloudDataParser.processSceneLogList((String) msg.obj));
+                adapter.notifyDataSetChanged();
+                SrlUtils.finishRefresh(mSrlFragmentMe, true);
+                SrlUtils.finishLoadMore(mSrlFragmentMe, true);
             }
             return false;
         }

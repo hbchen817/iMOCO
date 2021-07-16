@@ -22,6 +22,8 @@ import com.xiezhu.jzj.model.EDevice;
 import com.xiezhu.jzj.model.ETSL;
 import com.xiezhu.jzj.utility.StatusBarUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-04-22 18:29
@@ -39,14 +41,14 @@ public class DetailActivity extends BaseActivity {
 
         // 获取参数
         Intent intent = getIntent();
-        this.mIOTId = intent.getStringExtra("iotId");
-        this.mProductKey = intent.getStringExtra("productKey");
-        this.mName = intent.getStringExtra("name");
-        this.mOwned = intent.getIntExtra("owned", 0);
+        mIOTId = intent.getStringExtra("iotId");
+        mProductKey = intent.getStringExtra("productKey");
+        mName = intent.getStringExtra("name");
+        mOwned = intent.getIntExtra("owned", 0);
 
         if (mProductKey == null) mProductKey = "";
         // 处理布局文件
-        switch (this.mProductKey) {
+        switch (mProductKey) {
             case CTSL.PK_DOORSENSOR:
             case CTSL.PK_WATERSENSOR:
             case CTSL.PK_PIRSENSOR:
@@ -65,8 +67,8 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_WHITE_THREE_SWITCH:
                 setContentView(R.layout.activity_detail_threeswitch);
                 break;
-			case CTSL.PK_FOURWAYSWITCH_2:
-			case CTSL.PK_FOURWAYSWITCH:
+            case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_FOURWAYSWITCH:
                 setContentView(R.layout.activity_detail_fourswitch);
                 break;
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS:
@@ -91,12 +93,14 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_six_scene);
                 break;
             case CTSL.PK_TWO_SCENE_SWITCH:
+            case CTSL.PK_TWO_SCENE_SYT_SWITCH:
                 setContentView(R.layout.activity_two_key_scene);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
                 setContentView(R.layout.activity_three_key_scene);
                 break;
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_FOUR_SCENE_SYT_SWITCH:
                 setContentView(R.layout.activity_four_key_scene);
                 break;
             default:
@@ -109,13 +113,13 @@ public class DetailActivity extends BaseActivity {
         }
 
         // 标题处理
-        TextView title = (TextView)findViewById(R.id.includeDetailLblTitle);
-        title.setText(this.mName);
-        Log.i("lzm", "this.mName"+ this.mName);
+        TextView title = (TextView) findViewById(R.id.includeDetailLblTitle);
+        title.setText(mName);
+        Log.i("lzm", "this.mName" + mName);
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeDetailImgBack);
-        imgBack.setOnClickListener(new View.OnClickListener(){
+        ImageView imgBack = (ImageView) findViewById(R.id.includeDetailImgBack);
+        imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -123,12 +127,12 @@ public class DetailActivity extends BaseActivity {
         });
 
         // 更多处理
-        ImageView more = (ImageView)findViewById(R.id.includeDetailImgMore);
-        more.setOnClickListener(new View.OnClickListener(){
+        ImageView more = (ImageView) findViewById(R.id.includeDetailImgMore);
+        more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent;
-                if(mProductKey.equals(CTSL.PK_GATEWAY)||mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
+                if (mProductKey.equals(CTSL.PK_GATEWAY) || mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
                     intent = new Intent(DetailActivity.this, MoreGatewayActivity.class);
                 } else {
                     intent = new Intent(DetailActivity.this, MoreSubdeviceActivity.class);
@@ -136,28 +140,28 @@ public class DetailActivity extends BaseActivity {
                 intent.putExtra("iotId", mIOTId);
                 intent.putExtra("productKey", mProductKey);
                 intent.putExtra("name", mName);
-                Log.i("lzm", "this.mName2"+ mName);
+                Log.i("lzm", "this.mName2" + mName);
                 intent.putExtra("owned", mOwned);
                 startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
             }
         });
 
         // 主动获取设备属性
-        new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIProperyDataHandler);
+        new TSLHelper(this).getProperty(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIProperyDataHandler);
 
         // 添加实时数据属性回调处理器
-        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", this.mRealtimeDataPropertyHandler);
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mRealtimeDataPropertyHandler);
     }
 
     @Override
     protected void onResume() {
         // 刷新标题数据
         super.onResume();
-        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
-        if(deviceEntry != null) {
-            TextView title = (TextView)findViewById(R.id.includeDetailLblTitle);
-            if(title == null) {
-                title = (TextView)findViewById(R.id.includeTitleLblTitle);
+        EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+        if (deviceEntry != null) {
+            TextView title = (TextView) findViewById(R.id.includeDetailLblTitle);
+            if (title == null) {
+                title = (TextView) findViewById(R.id.includeTitleLblTitle);
             }
             title.setText(deviceEntry.nickName);
             mName = deviceEntry.nickName;
@@ -177,17 +181,17 @@ public class DetailActivity extends BaseActivity {
 
     // 更新状态
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
-        if(propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
+        if (propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
             return false;
         }
 
         // 如果是主动获取状态则补全iotId与productKey
-        if(propertyEntry.iotId == null || propertyEntry.iotId.length() == 0) {
+        if (propertyEntry.iotId == null || propertyEntry.iotId.length() == 0) {
             propertyEntry.iotId = mIOTId;
             propertyEntry.productKey = mProductKey;
         }
 
-        if(!propertyEntry.iotId.equals(mIOTId) || !propertyEntry.productKey.equals(mProductKey)) {
+        if (!propertyEntry.iotId.equals(mIOTId) || !propertyEntry.productKey.equals(mProductKey)) {
             return false;
         }
 
@@ -202,38 +206,28 @@ public class DetailActivity extends BaseActivity {
     }
 
     // API属性数据处理器
-    private Handler mAPIProperyDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIProperyDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg){
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETTSLPROPERTY:
-                    // 处理获取属性回调
-                    ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
-                    JSONObject items = JSON.parseObject((String)msg.obj);
-                    if(items != null) {
-                        TSLHelper.parseProperty(mProductKey, items, propertyEntry);
-                        updateState(propertyEntry);
-                    }
-                    break;
-                default:
-                    break;
+        public boolean handleMessage(@NotNull Message msg) {
+            if (msg.what == Constant.MSG_CALLBACK_GETTSLPROPERTY) {// 处理获取属性回调
+                ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                JSONObject items = JSON.parseObject((String) msg.obj);
+                if (items != null) {
+                    TSLHelper.parseProperty(mProductKey, items, propertyEntry);
+                    updateState(propertyEntry);
+                }
             }
             return false;
         }
     });
 
     // 实时数据属性处理器
-    private Handler mRealtimeDataPropertyHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataPropertyHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
-                    // 处理属性通知回调
-                    ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String)msg.obj);
-                    updateState(propertyEntry);
-                    break;
-                default:
-                    break;
+        public boolean handleMessage(@NotNull Message msg) {
+            if (msg.what == Constant.MSG_CALLBACK_LNPROPERTYNOTIFY) {// 处理属性通知回调
+                ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                updateState(propertyEntry);
             }
             return false;
         }

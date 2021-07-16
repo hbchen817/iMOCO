@@ -1,18 +1,25 @@
 package com.xiezhu.jzj.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.Constant;
@@ -35,9 +42,11 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.ButterKnife;
 
@@ -53,6 +62,8 @@ public class IndexFragment2 extends BaseFragment {
     private List<EScene.sceneListItemEntry> mSceneList = null;
     private AptSceneList mAptSceneList;
     private ListView mListSceneModel, mListMy;
+    private RelativeLayout mSceneView;
+    private LinearLayout mSceneNodataView;
     private final int mScenePageSize = 50;
     private String mSceneType;
 
@@ -85,6 +96,12 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
+
+    @Override
     protected int setLayout() {
         return R.layout.fragment_index2;
     }
@@ -92,20 +109,21 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 获取碎片所依附的活动的上下文环境
-        mActivity = getActivity();
         View view = inflater.inflate(setLayout(), container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-        this.mImgAdd = (ImageView) view.findViewById(R.id.sceneImgAdd);
-        this.mLblScene = (TextView) view.findViewById(R.id.sceneLblScene);
-        this.mLblSceneDL = (TextView) view.findViewById(R.id.sceneLblSceneDL);
-        this.mLblMy = (TextView) view.findViewById(R.id.sceneLblMy);
-        this.mLblMyDL = (TextView) view.findViewById(R.id.sceneLblMyDL);
-        this.mListSceneModel = (ListView) view.findViewById(R.id.sceneLstSceneModel);
-        this.mListMy = (ListView) view.findViewById(R.id.sceneLstMy);
+        mImgAdd = view.findViewById(R.id.sceneImgAdd);
+        mLblScene = view.findViewById(R.id.sceneLblScene);
+        mLblSceneDL = view.findViewById(R.id.sceneLblSceneDL);
+        mLblMy = view.findViewById(R.id.sceneLblMy);
+        mLblMyDL = view.findViewById(R.id.sceneLblMyDL);
+        mListSceneModel = view.findViewById(R.id.sceneLstSceneModel);
+        mListMy = view.findViewById(R.id.sceneLstMy);
+        mSceneView = view.findViewById(R.id.mSceneView);
+        mSceneNodataView = view.findViewById(R.id.scene_nodata_view);
         initView();
         // 开始获取场景列表
-        this.startGetSceneList(CScene.TYPE_AUTOMATIC);
+        startGetSceneList(CScene.TYPE_AUTOMATIC);
 
         return view;
     }
@@ -116,61 +134,63 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     private void initView() {
-        this.mSceneManager = new SceneManager(getActivity());
-        this.mModelList = this.mSceneManager.genSceneModelList();
-        AptSceneModel aptSceneModel = new AptSceneModel(getActivity());
-        aptSceneModel.setData(this.mModelList);
-        this.mListSceneModel.setAdapter(aptSceneModel);
-        this.mAptSceneList = new AptSceneList(getActivity(), this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        mSceneManager = new SceneManager(mActivity);
+        mModelList = mSceneManager.genSceneModelList();
+        AptSceneModel aptSceneModel = new AptSceneModel(mActivity);
+        aptSceneModel.setData(mModelList);
+        mListSceneModel.setAdapter(aptSceneModel);
+        mAptSceneList = new AptSceneList(mActivity, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
         mListMy.setAdapter(mAptSceneList);
 
         // 添加点击处理
-        this.mImgAdd.setOnClickListener(new View.OnClickListener() {
+        mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                PluginHelper.createScene(getActivity(), CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+                PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
             }
         });
 
         // 推荐场景点击处理
-        this.mLblScene.setOnClickListener(new View.OnClickListener() {
+        mLblScene.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setTextColor(getResources().getColor(R.color.topic_color2));
+                mLblScene.setTextColor(ContextCompat.getColor(mActivity, R.color.topic_color2));
                 mLblSceneDL.setVisibility(View.VISIBLE);
-                mLblMy.setTextColor(getResources().getColor(R.color.normal_font_color));
+                mLblMy.setTextColor(ContextCompat.getColor(mActivity, R.color.normal_font_color));
                 mLblMyDL.setVisibility(View.INVISIBLE);
 
                 mListSceneModel.setVisibility(View.VISIBLE);
-                mListMy.setVisibility(View.GONE);
+                //mListMy.setVisibility(View.GONE);
+                mSceneView.setVisibility(View.GONE);
             }
         });
 
         // 我的场景点击处理
-        this.mLblMy.setOnClickListener(new View.OnClickListener() {
+        mLblMy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
+                mLblScene.setTextColor(ContextCompat.getColor(mActivity, R.color.normal_font_color));
                 mLblSceneDL.setVisibility(View.INVISIBLE);
-                mLblMy.setTextColor(getResources().getColor(R.color.topic_color2));
+                mLblMy.setTextColor(ContextCompat.getColor(mActivity, R.color.topic_color2));
                 mLblMyDL.setVisibility(View.VISIBLE);
 
                 mListSceneModel.setVisibility(View.GONE);
-                mListMy.setVisibility(View.VISIBLE);
+                //mListMy.setVisibility(View.VISIBLE);
+                mSceneView.setVisibility(View.VISIBLE);
             }
         });
 
         // 场景模板点击处理
-        this.mListSceneModel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListSceneModel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mModelList.get(position).code == CScene.SMC_NONE) {
                     return;
                 }
 
-                Intent intent = new Intent(getActivity(), SceneMaintainActivity.class);
+                Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
                 intent.putExtra("operateType", CScene.OPERATE_CREATE);
                 intent.putExtra("sceneModelCode", mModelList.get(position).code);
                 intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
@@ -182,7 +202,7 @@ public class IndexFragment2 extends BaseFragment {
     }
 
     // 场景列表长按监听器
-    private AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+    private final AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             mAptSceneList.setDelete(position);
@@ -191,7 +211,7 @@ public class IndexFragment2 extends BaseFragment {
     };
 
     // 场景列表单按监听器
-    private AdapterView.OnItemClickListener sceneListOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener sceneListOnItemClickListener = new AdapterView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -225,21 +245,22 @@ public class IndexFragment2 extends BaseFragment {
 
     // 开始获取场景列表
     private void startGetSceneList(String type) {
-        this.mSceneType = type;
-        if (this.mSceneList == null) {
-            this.mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+        mSceneType = type;
+        if (mSceneList == null) {
+            mSceneList = new ArrayList<EScene.sceneListItemEntry>();
         } else {
-            if (this.mSceneType.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)) {
-                this.mSceneList.clear();
+            if (mSceneType.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)) {
+                mSceneList.clear();
             }
         }
-        this.mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, this.mScenePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, mScenePageSize,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
@@ -264,6 +285,13 @@ public class IndexFragment2 extends BaseFragment {
                                 //mListMy.setAdapter(mAptSceneList);
                                 mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
                                 mListMy.setOnItemClickListener(sceneListOnItemClickListener);
+                                if (mSceneList.size() == 0) {
+                                    mSceneNodataView.setVisibility(View.VISIBLE);
+                                    mListMy.setVisibility(View.GONE);
+                                } else {
+                                    mSceneNodataView.setVisibility(View.GONE);
+                                    mListMy.setVisibility(View.VISIBLE);
+                                }
                             }
                             QMUITipDialogUtil.dismiss();
                         }
@@ -274,12 +302,12 @@ public class IndexFragment2 extends BaseFragment {
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据
                     String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
-                    QMUITipDialogUtil.showSuccessDialog(getActivity(), R.string.scene_delete_sucess);
+                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
                         RefreshData.refreshSceneListData();
                     }
-                    //ToastUtils.showToastCentrally(getActivity(), R.string.scene_delete_sucess);
+                    //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     break;
                 default:
                     break;
@@ -295,10 +323,10 @@ public class IndexFragment2 extends BaseFragment {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
 
-            getActivity().runOnUiThread(new Runnable() {
+            mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    QMUITipDialogUtil.showLoadingDialg(getActivity(), getString(R.string.is_loading));
+                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
                 }
             });
         }

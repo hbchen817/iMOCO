@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.presenter.UserCenter;
@@ -65,24 +66,21 @@ public class CreateUserActivity extends BaseActivity {
     private void initView() {
         tvToolbarTitle.setText(R.string.create_user);
         tvToolbarRight.setText(R.string.nick_name_save);
-        tvToolbarRight.setTextColor(getResources().getColor(R.color.topic_color2));
+        tvToolbarRight.setTextColor(ContextCompat.getColor(this, R.color.topic_color2));
         mHandler = new ProcessDataHandler(this);
     }
 
     @OnClick({R.id.iv_toolbar_left, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.tv_toolbar_right:
-                String name = mNameEditText.getText().toString().trim();
-                if (TextUtils.isEmpty(name)) {
-                    ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
-                    return;
-                }
-                UserCenter.createVirtualUser(name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            String name = mNameEditText.getText().toString().trim();
+            if (TextUtils.isEmpty(name)) {
+                ToastUtils.showToastCentrally(this, R.string.create_user_name_hint);
+                return;
+            }
+            UserCenter.createVirtualUser(name, mCommitFailureHandler, mResponseErrorHandler, mHandler);
         }
     }
 

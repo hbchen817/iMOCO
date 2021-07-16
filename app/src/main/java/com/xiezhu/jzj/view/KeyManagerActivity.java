@@ -121,10 +121,8 @@ public class KeyManagerActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
         }
     }
 

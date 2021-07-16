@@ -39,26 +39,26 @@ public class ScanBLEActivity extends Activity {
     private RelativeLayout mScanHint;
 
     // 扫描蓝牙设备
-    private void scanBLEDevice(){
-        this.mScanHint.setVisibility(View.VISIBLE);
-        this.mDevices.clear();
-        this.mAScanBLEDevice.notifyDataSetChanged();
+    private void scanBLEDevice() {
+        mScanHint.setVisibility(View.VISIBLE);
+        mDevices.clear();
+        mAScanBLEDevice.notifyDataSetChanged();
         // 如果支持蓝牙
-        if(BLEScanner.isSupport()){
+        if (BLEScanner.isSupport()) {
             // 如果蓝牙启动成功
-            if(BLEScanner.enabled()){
+            if (BLEScanner.enabled()) {
                 // 开始查找蓝牙设备
-                if(BLEScanner.startDiscoveryDevice(CBLE.BLE_NAME_PREFIX, this.discoveryCallback)){
-                    this.mLblTitle.setText(R.string.scanble_rescan);
+                if (BLEScanner.startDiscoveryDevice(CBLE.BLE_NAME_PREFIX, discoveryCallback)) {
+                    mLblTitle.setText(R.string.scanble_rescan);
                     return;
                 }
             }
         }
-        this.mLblTitle.setText(R.string.scanble_scan);
+        mLblTitle.setText(R.string.scanble_scan);
     }
 
     // 发现BLE设备回调
-    private IBLE.discoveryCallback discoveryCallback = new IBLE.discoveryCallback(){
+    private final IBLE.discoveryCallback discoveryCallback = new IBLE.discoveryCallback() {
         @Override
         public void returnFoundResult(EBLE.DeviceEntry deviceEntry) {
             mAScanBLEDevice.addDevice(deviceEntry);
@@ -70,21 +70,21 @@ public class ScanBLEActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanble);
 
-        if(!BLEScanner.isSupport()) {
+        if (!BLEScanner.isSupport()) {
             Dialog.confirm(this, R.string.dialog_title, getString(R.string.scanble_bleeror_hint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
         }
 
-        this.mProductKey = getIntent().getStringExtra("productKey");
+        mProductKey = getIntent().getStringExtra("productKey");
 
         // 初始化蓝牙扫描器
         BLEScanner.initProcess(this);
 
         // 设备列表处理
-        this.mLstDevice = (ListView)findViewById(R.id.scanBLEDevice);
-        this.mDevices = new ArrayList<EBLE.DeviceEntry>();
-        this.mAScanBLEDevice = new AptScanBLEDevice(ScanBLEActivity.this, this.mDevices);
-        this.mLstDevice.setAdapter(mAScanBLEDevice);
-        this.mLstDevice.setOnItemClickListener(new OnItemClickListener(){
+        mLstDevice = findViewById(R.id.scanBLEDevice);
+        mDevices = new ArrayList<EBLE.DeviceEntry>();
+        mAScanBLEDevice = new AptScanBLEDevice(this, mDevices);
+        mLstDevice.setAdapter(mAScanBLEDevice);
+        mLstDevice.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // 取消BLE设备发现
@@ -99,17 +99,17 @@ public class ScanBLEActivity extends Activity {
             }
         });
 
-        this.mLblTitle = (TextView)findViewById(R.id.includeTitleLblTitle);
-        this.mLblTitle.setText(R.string.scanble_scan);
-        this.mLblTitle.setOnClickListener(new OnClickListener(){
+        mLblTitle = findViewById(R.id.includeTitleLblTitle);
+        mLblTitle.setText(R.string.scanble_scan);
+        mLblTitle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 scanBLEDevice();
             }
         });
 
-        ImageView back = (ImageView)findViewById(R.id.includeTitleImgBack);
-        back.setOnClickListener(new OnClickListener(){
+        ImageView back = findViewById(R.id.includeTitleImgBack);
+        back.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 BLEScanner.cancelDiscoveryDevice();
@@ -117,9 +117,9 @@ public class ScanBLEActivity extends Activity {
             }
         });
 
-        this.mScanHint = (RelativeLayout)findViewById(R.id.scanBLERLHint);
+        mScanHint = findViewById(R.id.scanBLERLHint);
         // 停止扫描处理
-        TextView stopScan = (TextView)findViewById(R.id.scanBleLblStop);
+        TextView stopScan = findViewById(R.id.scanBleLblStop);
         stopScan.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +128,7 @@ public class ScanBLEActivity extends Activity {
             }
         });
 
-        this.scanBLEDevice();
+        scanBLEDevice();
 
         initStatusBar();
     }

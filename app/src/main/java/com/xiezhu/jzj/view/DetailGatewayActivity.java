@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.alibaba.fastjson.JSONObject;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CTSL;
@@ -45,6 +47,7 @@ import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Creator: xieshaobing
@@ -65,9 +68,9 @@ public class DetailGatewayActivity extends DetailActivity {
 
     // 开始获取网关子设备列表
     private void startGetGatewaySubdeive() {
-        this.mAptDeviceList.clearData();
-        this.mDeviceList.clear();
-        new UserCenter(this).getGatewaySubdeviceList(this.mIOTId, 1, this.mPageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.processAPIDataHandler);
+        mAptDeviceList.clearData();
+        mDeviceList.clear();
+        new UserCenter(this).getGatewaySubdeviceList(mIOTId, 1, mPageSize, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
     }
 
     // 更新状态
@@ -78,34 +81,36 @@ public class DetailGatewayActivity extends DetailActivity {
         }
 
         if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode) != null && propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).length() > 0) {
-            this.mAarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
+            mAarmMode = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             ETSL.stateEntry mapperEntry = CodeMapper.processPropertyState(DetailGatewayActivity.this, mProductKey, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode));
             if (mapperEntry != null && mapperEntry.name != null) {
                 TextView lblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
                 lblAarmMode.setText(mapperEntry.value);
             }
-            this.mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
+            mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
 
             LinearLayout rl = (LinearLayout) findViewById(R.id.detailGatewayLlMain);
             if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
-                rl.setBackgroundColor(getResources().getColor(R.color.topic_color1));
+                rl.setBackgroundColor(ContextCompat.getColor(this, R.color.topic_color1));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
-                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color1));
-                if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color1));
+                mFakeStatusbarView.setBackgroundColor(ContextCompat.getColor(this, R.color.topic_color1));
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.topic_color1));
             } else {
-                rl.setBackgroundColor(getResources().getColor(R.color.topic_color2));
+                rl.setBackgroundColor(ContextCompat.getColor(this, R.color.topic_color2));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_deploy_click));
-                if (Build.VERSION.SDK_INT>=23) getWindow().setStatusBarColor(getResources().getColor(R.color.topic_color2));
-                mFakeStatusbarView.setBackgroundColor(getResources().getColor(R.color.topic_color2));
+                if (Build.VERSION.SDK_INT >= 23)
+                    getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.topic_color2));
+                mFakeStatusbarView.setBackgroundColor(ContextCompat.getColor(this, R.color.topic_color2));
             }
         }
         return true;
     }
 
     // 处理API数据处理器
-    private Handler processAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST == msg.what) {
                 EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
                 if (list != null && list.data != null) {
@@ -116,11 +121,13 @@ public class DetailGatewayActivity extends DetailActivity {
                         entry.productKey = e.productKey;
                         entry.status = e.status;
                         entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
+                        entry.image = e.image;
                         mDeviceList.add(entry);
                     }
                     if (list.data.size() >= list.pageSize) {
                         // 数据没有获取完则获取下一页数据
-                        new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, mPageSize, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
+                        new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, mPageSize,
+                                mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
                     } else {
                         // 数据获取完则加载显示
                         ListView subdeviceList = (ListView) findViewById(R.id.detailGatewayLstSubdevice);
@@ -171,9 +178,9 @@ public class DetailGatewayActivity extends DetailActivity {
 
 
     // 实时数据处理器
-    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNSTATUSNOTIFY:
                     // 处理连接状态通知
@@ -188,7 +195,7 @@ public class DetailGatewayActivity extends DetailActivity {
                     } else {
                         // 子设备状态处理
                         boolean isFound = false;
-                        if (mAptDeviceList != null && mDeviceList != null && mDeviceList != null) {
+                        if (mAptDeviceList != null && mDeviceList != null) {
                             for (int i = 0; i < mDeviceList.size(); i++) {
                                 if (mDeviceList.get(i).iotId.equals(entry.iotId)) {
                                     mDeviceList.get(i).status = entry.status;
@@ -220,22 +227,22 @@ public class DetailGatewayActivity extends DetailActivity {
     // 在线统计
     private void onlineCount() {
         TextView lblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
-        if (this.mDeviceList != null && this.mDeviceList.size() > 0) {
+        if (mDeviceList != null && mDeviceList.size() > 0) {
             int online = 0;
-            for (EDevice.deviceEntry e : this.mDeviceList) {
+            for (EDevice.deviceEntry e : mDeviceList) {
                 if (e.status == Constant.CONNECTION_STATUS_ONLINE) {
                     online++;
                 }
             }
-            lblCount.setText(String.format(getString(R.string.detailgateway_count), this.mDeviceList.size(), online));
+            lblCount.setText(String.format(getString(R.string.detailgateway_count), mDeviceList.size(), online));
         } else {
             lblCount.setText(String.format(getString(R.string.detailgateway_count), 0, 0));
         }
-        this.mLblCount.setVisibility(View.VISIBLE);
+        mLblCount.setVisibility(View.VISIBLE);
     }
 
     // 安防模式点击监听器
-    private OnClickListener armModeClick = new OnClickListener() {
+    private final OnClickListener armModeClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mAarmMode == 0) {
@@ -247,7 +254,7 @@ public class DetailGatewayActivity extends DetailActivity {
     };
 
     // 设备列表点击监听器
-    private AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener deviceListOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
@@ -267,11 +274,11 @@ public class DetailGatewayActivity extends DetailActivity {
         // 注意：公共操作已经在父类中处理
         mFakeStatusbarView = (View) findViewById(R.id.fake_statusbar_view);
 
-        this.mLblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
-        this.mLblCount.setVisibility(View.INVISIBLE);
-        this.mTSLHelper = new TSLHelper(this);
-        this.mDeviceList = new ArrayList<EDevice.deviceEntry>();
-        this.mAptDeviceList = new AptDeviceList(this);
+        mLblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
+        mLblCount.setVisibility(View.INVISIBLE);
+        mTSLHelper = new TSLHelper(this);
+        mDeviceList = new ArrayList<EDevice.deviceEntry>();
+        mAptDeviceList = new AptDeviceList(this);
 
         RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
         ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
@@ -281,20 +288,20 @@ public class DetailGatewayActivity extends DetailActivity {
         }
 
         // 获取网关状态
-        this.mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
+        mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
 
         // 安防模式设置处理
-        this.mImgSecurity = (ImageView) findViewById(R.id.detailGatewayImgSecurity);
-        this.mImgSecurityRound = (ImageView) findViewById(R.id.detailGatewayImgSecurityRound);
-        this.mLblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
-        this.mLblAarmModeClick = (TextView) findViewById(R.id.detailGatewayLblArmModeClick);
-        this.mImgSecurity.setOnClickListener(this.armModeClick);
-        this.mImgSecurityRound.setOnClickListener(this.armModeClick);
-        this.mLblAarmMode.setOnClickListener(this.armModeClick);
-        this.mLblAarmModeClick.setOnClickListener(this.armModeClick);
+        mImgSecurity = (ImageView) findViewById(R.id.detailGatewayImgSecurity);
+        mImgSecurityRound = (ImageView) findViewById(R.id.detailGatewayImgSecurityRound);
+        mLblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
+        mLblAarmModeClick = (TextView) findViewById(R.id.detailGatewayLblArmModeClick);
+        mImgSecurity.setOnClickListener(armModeClick);
+        mImgSecurityRound.setOnClickListener(armModeClick);
+        mLblAarmMode.setOnClickListener(armModeClick);
+        mLblAarmModeClick.setOnClickListener(armModeClick);
 
         // 共享网关不能添加子设备
-        if (this.mOwned == 0) {
+        if (mOwned == 0) {
             RelativeLayout rlAdd = (RelativeLayout) findViewById(R.id.detailGatewayRlAdd);
             rlAdd.setVisibility(View.GONE);
         }
@@ -315,9 +322,9 @@ public class DetailGatewayActivity extends DetailActivity {
         lblAdd.setOnClickListener(onAddClickListener);
 
         // 添加实时数据连接状态回调处理器
-        RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", mRealtimeDataHandler);
         // 添加实时数据设备加网回调处理器
-        RealtimeDataReceiver.addJoinCallbackHandler("DetailGatewayJoinCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addJoinCallbackHandler("DetailGatewayJoinCallback", mRealtimeDataHandler);
         // 注册事件总线
         EventBus.getDefault().register(this);
 
@@ -325,7 +332,7 @@ public class DetailGatewayActivity extends DetailActivity {
         startGetGatewaySubdeive();
         // 非共享设备才能去获取版本号信息
         if (mOwned > 0) {
-            OTAHelper.getFirmwareInformation(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
+            OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
         }
         initStatusBar();
     }
@@ -343,20 +350,20 @@ public class DetailGatewayActivity extends DetailActivity {
     protected void onResume() {
         // 刷新数据
         super.onResume();
-        if (this.mDeviceList != null && this.mDeviceList.size() > 0) {
+        if (mDeviceList != null && mDeviceList.size() > 0) {
             EDevice.deviceEntry bufferEntry, displayEntry;
-            for (int i = this.mDeviceList.size() - 1; i >= 0; i--) {
-                displayEntry = this.mDeviceList.get(i);
+            for (int i = mDeviceList.size() - 1; i >= 0; i--) {
+                displayEntry = mDeviceList.get(i);
                 bufferEntry = DeviceBuffer.getDeviceInformation(displayEntry.iotId);
                 if (bufferEntry != null) {
                     // 更新备注名称
                     displayEntry.nickName = bufferEntry.nickName;
                 } else {
                     // 删除不存在的数据
-                    this.mDeviceList.remove(i);
+                    mDeviceList.remove(i);
                 }
             }
-            this.mAptDeviceList.notifyDataSetChanged();
+            mAptDeviceList.notifyDataSetChanged();
         }
     }
 
@@ -375,12 +382,12 @@ public class DetailGatewayActivity extends DetailActivity {
     public void onRefreshRoomData(EEvent eventEntry) {
         // 处理刷新设备数量数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA)) {
-            this.onlineCount();
+            onlineCount();
         }
 
         // 处理刷新设备列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA)) {
-            this.startGetGatewaySubdeive();
+            startGetGatewaySubdeive();
         }
     }
 }

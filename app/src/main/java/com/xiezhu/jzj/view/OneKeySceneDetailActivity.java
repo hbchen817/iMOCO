@@ -27,6 +27,7 @@ import com.xiezhu.jzj.utility.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -95,34 +96,25 @@ public class OneKeySceneDetailActivity extends DetailActivity {
 
     @OnClick({R.id.mSceneContentText1, R.id.device_image_view})
     public void onClickView(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.device_image_view:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
+            }
+        } else if (view.getId() == R.id.device_image_view) {
+            if (mManualIDs[0] != null) {
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
         }
     }
 
     @OnLongClick({R.id.mSceneContentText1})
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+            }
         }
         return true;
     }
@@ -139,34 +131,31 @@ public class OneKeySceneDetailActivity extends DetailActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             OneKeySceneDetailActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                        switch (activity.mCurrentKey) {
-                            case CTSL.SCENE_SWITCH_KEY_CODE_1:
-                                if (!jsonObject.isEmpty()) {
-                                    activity.mSceneContentText1.setText(jsonObject.getString("name"));
-                                    activity.mManualNames[0] = jsonObject.getString("name");
-                                    activity.mManualIDs[0] = jsonObject.getString("msId");
-//                                    activity.mSceneManager.querySceneDetail(jsonObject.getString("asId"), CScene.TYPE_AUTOMATIC,
-//                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
-                                } else {
-                                    activity.mSceneContentText1.setText(R.string.no_bind_scene);
-                                    activity.mManualNames[0] = null;
-                                    activity.mManualIDs[0] = null;
-                                }
-                                break;
-                            default:
-                                break;
+                        if (CTSL.SCENE_SWITCH_KEY_CODE_1.equals(activity.mCurrentKey)) {
+                            if (!jsonObject.isEmpty()) {
+                                activity.mSceneContentText1.setText(jsonObject.getString("name"));
+                                activity.mManualNames[0] = jsonObject.getString("name");
+                                activity.mManualIDs[0] = jsonObject.getString("msId");
+                                //activity.mSceneManager.querySceneDetail(jsonObject.getString("asId"), CScene.TYPE_AUTOMATIC,
+                                //            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
+                            } else {
+                                activity.mSceneContentText1.setText(R.string.no_bind_scene);
+                                activity.mManualNames[0] = null;
+                                activity.mManualIDs[0] = null;
+                            }
                         }
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
-                    //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
-//                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
+                    // Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
+                    //        , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
@@ -180,7 +169,7 @@ public class OneKeySceneDetailActivity extends DetailActivity {
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

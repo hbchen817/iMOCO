@@ -3,15 +3,18 @@ package com.xiezhu.jzj.view;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.contract.Constant;
@@ -22,6 +25,7 @@ import com.xiezhu.jzj.utility.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -43,11 +47,14 @@ public class TwoSceneSwitchActivity extends DetailActivity {
     private String[] mManualIDs = new String[2];
     private String[] mManualNames = new String[2];
     private String mCurrentKey;
+    private String mPressedKey = "1";
+    private DelSceneHandler mDelSceneHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        mDelSceneHandler = new DelSceneHandler(getMainLooper(), this);
         EventBus.getDefault().register(this);
         mMyHandler = new MyHandler(this);
         initView();
@@ -61,7 +68,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 
@@ -87,52 +94,85 @@ public class TwoSceneSwitchActivity extends DetailActivity {
 
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSwitch1, R.id.mSwitch2})
     public void onClickView(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            case R.id.mSwitch1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.mSwitch2:
-                if (mManualIDs[1] != null) {
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                mPressedKey = "1";
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                mPressedKey = "2";
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
+            }
+        } else if (view.getId() == R.id.mSwitch1) {
+            if (mManualIDs[0] != null) {
+                mPressedKey = "1";
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
+        } else if (view.getId() == R.id.mSwitch2) {
+            if (mManualIDs[1] != null) {
+                mPressedKey = "2";
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
         }
     }
 
+    @Override
+    protected void notifyResponseError(int type) {
+        super.notifyResponseError(type);
+        if (type == 10360) {
+            // scene rule not exist
+            mSceneManager.getExtendedProperty(mIOTId, mPressedKey, null, null, mDelSceneHandler);
+        }
+    }
+
+    private static class DelSceneHandler extends Handler {
+        private final WeakReference<TwoSceneSwitchActivity> ref;
+
+        public DelSceneHandler(Looper looper, TwoSceneSwitchActivity activity) {
+            super(looper);
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NotNull Message msg) {
+            super.handleMessage(msg);
+            TwoSceneSwitchActivity activity = ref.get();
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
+                if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    String keyNo = jsonObject.getString("keyNo");
+                    if (keyNo != null && keyNo.equals(activity.mPressedKey)) {
+                        String autoSceneId = jsonObject.getString("asId");
+                        activity.mSceneManager.deleteScene(autoSceneId, null, null, null);
+                        activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                                null, activity.mDelSceneHandler);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_CALLBACK_DELETESCENE) {
+                activity.mSceneManager.setExtendedProperty(activity.mIOTId, activity.mPressedKey, "{}", null,
+                        null, activity.mDelSceneHandler);
+            } else if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET) {
+                activity.getScenes();
+            }
+        }
+    }
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2})
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
+            }
         }
         return true;
     }
@@ -186,9 +226,9 @@ public class TwoSceneSwitchActivity extends DetailActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
-                    String sceneId = (String) msg.obj;
-                    //Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
-//                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();
+                    /*String sceneId = (String) msg.obj;
+                    Toast.makeText(activity, String.format(activity.getString(R.string.main_scene_execute_hint)
+                            , sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName), Toast.LENGTH_LONG).show();*/
                     break;
                 default:
                     break;
@@ -199,7 +239,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

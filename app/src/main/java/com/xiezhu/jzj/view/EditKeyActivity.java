@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -67,6 +68,7 @@ public class EditKeyActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         String keyType = "";
         String keyTitle = "";
@@ -114,15 +116,12 @@ public class EditKeyActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left, R.id.delete_key})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.delete_key:
-                LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-//                EventBus.getDefault().post(new RefreshKeyListEvent());
-//                finish();
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.delete_key) {
+            LockManager.deleteKey(mKey.getLockUserId(), mKey.getLockUserType(), mIotId, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+            // EventBus.getDefault().post(new RefreshKeyListEvent());
+            // finish();
         }
     }
 
@@ -144,13 +143,9 @@ public class EditKeyActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             EditKeyActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_DELETE_KEY:
-                    EventBus.getDefault().post(new RefreshKeyListEvent());
-                    activity.finish();
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_DELETE_KEY) {
+                EventBus.getDefault().post(new RefreshKeyListEvent());
+                activity.finish();
             }
         }
     }

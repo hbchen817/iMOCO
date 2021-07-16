@@ -26,6 +26,10 @@ android {
     //keytool -genkey -alias ray_ni -keypass 123456 -keyalg RSA -keysize 2048 -validity 36500 -keystore D:\StudioProjects\iMOCO\app\appkey_jzj.jks -storepass 123456
     // CN=ry, OU=ry, O=ry, L=hz, ST=hz, C=cn
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId "com.xiezhu.jzj"
         minSdkVersion 19

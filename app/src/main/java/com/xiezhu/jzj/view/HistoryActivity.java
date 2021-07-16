@@ -83,7 +83,7 @@ public class HistoryActivity extends BaseActivity {
     private long mStartTime;
     private String[] mCurrentType;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
             mList.clear();
@@ -91,7 +91,7 @@ public class HistoryActivity extends BaseActivity {
             getData();
         }
     };
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mPageNo++;
@@ -162,16 +162,12 @@ public class HistoryActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left, R.id.mTimeView, R.id.mTypeView})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.mTimeView:
-                showTimeFilterDiaLog();
-                break;
-            case R.id.mTypeView:
-                showTypeFilterDiaLog();
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.mTimeView) {
+            showTimeFilterDiaLog();
+        } else if (view.getId() == R.id.mTypeView) {
+            showTypeFilterDiaLog();
         }
     }
 
@@ -320,30 +316,27 @@ public class HistoryActivity extends BaseActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             HistoryActivity activity = mWeakReference.get();
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_QUERY_HISTORY:
-                    JSONObject js = JSON.parseObject((String) msg.obj);
-                    JSONArray array = js.getJSONArray("data");
-                    int size = array.size();
-                    for (int i = 0; i < size; i++) {
-                        JSONObject jo = array.getJSONObject(i);
-                        if (jo.getIntValue("KeyID") == 103) {
-                            continue;
-                        }
-                        ItemHistoryMsg item = new ItemHistoryMsg();
-                        item.setTime(jo.getString("client_date"));
-                        item.setEvent_code(jo.getString("event_code"));
-                        item.setKeyID(jo.getString("KeyID"));
-                        item.setLockType(jo.getIntValue("LockType"));
-                        activity.mList.add(item);
+            if (activity == null) return;
+            if (msg.what == Constant.MSG_CALLBACK_QUERY_HISTORY) {
+                JSONObject js = JSON.parseObject((String) msg.obj);
+                JSONArray array = js.getJSONArray("data");
+                int size = array.size();
+                for (int i = 0; i < size; i++) {
+                    JSONObject jo = array.getJSONObject(i);
+                    if (jo.getIntValue("KeyID") == 103) {
+                        continue;
                     }
-                    activity.mNoRecordHint.setVisibility(activity.mList.isEmpty() ? View.VISIBLE : View.GONE);
-                    activity.mAdapter.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
-                    SrlUtils.finishLoadMore(activity.mSrlFragmentMe, true);
-                    break;
-                default:
-                    break;
+                    ItemHistoryMsg item = new ItemHistoryMsg();
+                    item.setTime(jo.getString("client_date"));
+                    item.setEvent_code(jo.getString("event_code"));
+                    item.setKeyID(jo.getString("KeyID"));
+                    item.setLockType(jo.getIntValue("LockType"));
+                    activity.mList.add(item);
+                }
+                activity.mNoRecordHint.setVisibility(activity.mList.isEmpty() ? View.VISIBLE : View.GONE);
+                activity.mAdapter.notifyDataSetChanged();
+                SrlUtils.finishRefresh(activity.mSrlFragmentMe, true);
+                SrlUtils.finishLoadMore(activity.mSrlFragmentMe, true);
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -30,6 +31,8 @@ import com.xiezhu.jzj.utility.Logger;
 import com.xiezhu.jzj.utility.Utility;
 import com.xiezhu.jzj.widget.ComCircularProgress;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,7 +62,8 @@ public class PermitJoinActivity extends BaseActivity {
     private String mSubDeviceIotId;
 
     // 处理允许入网进度
-    private Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
+    private final Handler prcessPermitJoinProgressHandler = new Handler(new Handler.Callback() {
+        @SuppressLint("SetTextI18n")
         @Override
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_PERMITJOIN_STEP_START == msg.what) {
@@ -123,9 +127,9 @@ public class PermitJoinActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             SceneManager mSceneManager = new SceneManager(mActivity);
             if (Constant.MSG_CALLBACK_BINDSUBDEVICE == msg.what) {
                 // 绑定子设备回调
@@ -180,28 +184,24 @@ public class PermitJoinActivity extends BaseActivity {
     });
 
     // 实时数据处理器
-    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
-                    // 处理子设备加网通知
-                    Log.i("lzm", "(String) msg.obj" + (String) msg.obj);
-                    ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
-                    mSubDeviceName = joinResultEntry.subDeviceName;
-                    mSubDeviceIotId = joinResultEntry.subIotId;
-                    if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
-                            joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
-                        Logger.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
-                                joinResultEntry.subDeviceName, joinResultEntry.subProductKey));
-                        // 绑定子设备
-                        if (joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
-                            mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                        }
+        public boolean handleMessage(@NotNull Message msg) {
+            if (msg.what == Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY) {// 处理子设备加网通知
+                Log.i("lzm", "(String) msg.obj" + (String) msg.obj);
+                ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
+                mSubDeviceName = joinResultEntry.subDeviceName;
+                mSubDeviceIotId = joinResultEntry.subIotId;
+                if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
+                        joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
+                    Logger.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
+                            joinResultEntry.subDeviceName, joinResultEntry.subProductKey));
+                    // 绑定子设备
+                    if (joinResultEntry.subProductKey.equals(mProductKey) && joinResultEntry.status == Constant.ADD_STATUS_SUCCESS) {
+                        mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                     }
-                    break;
-                default:
-                    break;
+                }
             }
             return false;
         }
@@ -214,13 +214,13 @@ public class PermitJoinActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        this.mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
-        this.mProductKey = intent.getStringExtra("productKey");
-        this.mProductName = intent.getStringExtra("productName");
+        mGatewayIOTId = intent.getStringExtra("gatewayIOTId");
+        mProductKey = intent.getStringExtra("productKey");
+        mProductName = intent.getStringExtra("productName");
 
-        this.mConfigNetwork = new ConfigureNetwork(this);
+        mConfigNetwork = new ConfigureNetwork(this);
         tvToolbarTitle.setText("添加设备");
-        this.initProcess();
+        initProcess();
 
         initStatusBar();
     }
@@ -240,11 +240,11 @@ public class PermitJoinActivity extends BaseActivity {
         RealtimeDataReceiver.deleteCallbackHandler("PermitJoinJoinCallback");
 
         // 中断加网线程
-        if (this.mJoinThread != null) {
-            if (!this.mJoinThread.isInterrupted()) {
-                this.mJoinThread.interrupt();
+        if (mJoinThread != null) {
+            if (!mJoinThread.isInterrupted()) {
+                mJoinThread.interrupt();
             }
-            this.mJoinThread = null;
+            mJoinThread = null;
         }
 
         super.onDestroy();
@@ -252,7 +252,7 @@ public class PermitJoinActivity extends BaseActivity {
 
     // 初始化处理
     private void initProcess() {
-        this.mReaminSecond = (TextView) findViewById(R.id.permitJoinLblRemainSecond);
+        mReaminSecond = findViewById(R.id.permitJoinLblRemainSecond);
 
 
         // 允许入网事件处理
@@ -265,10 +265,10 @@ public class PermitJoinActivity extends BaseActivity {
         };
 
         // 追加长连接实时数据子设备入网回调处理器
-        RealtimeDataReceiver.addJoinCallbackHandler("PermitJoinJoinCallback", this.mRealtimeDataHandler);
+        RealtimeDataReceiver.addJoinCallbackHandler("PermitJoinJoinCallback", mRealtimeDataHandler);
 
         // 发送允许入网120秒命令
-        sendPermitJoinCommand(this.mTimeoutSecond);
+        sendPermitJoinCommand(mTimeoutSecond);
     }
 
     // 发送允许入网命令

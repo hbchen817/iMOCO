@@ -28,10 +28,7 @@ public class MoreServiceActivity extends BaseActivity {
 
     @OnClick({R.id.tv_toolbar_right})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                break;
-        }
+
     }
 
 }

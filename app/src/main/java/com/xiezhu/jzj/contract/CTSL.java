@@ -58,6 +58,7 @@ public class CTSL {
     public static final String PK_THREE_KEY_SWITCH          = "a1orzEATqCz";// 三键面板开关
 
     public static final String PK_FOUR_SCENE_SYT_SWITCH     = "a1wZ4oAtS87";// 四键随意贴
+    public static final String PK_TWO_SCENE_SYT_SWITCH      = "a1gonnY980C";// 二键随意贴
 
     public static final String TEST_PK_ONEWAYWINDOWCURTAINS = "TEST_PK_ONEWAYWINDOWCURTAINS";
 

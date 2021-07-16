@@ -134,9 +134,9 @@ public class CodeMapper {
                     }
                 } else if (propertyName.equals(CTSL.THS_P_PowerSwitch_2)) {
                     mapName = context.getString(R.string.twoswitch_state_2);
-                    mapValue = context.getString(R.string.twoswitch_state_3_off);
+                    mapValue = context.getString(R.string.twoswitch_state_2_off);
                     if (propertyValue.equals(CTSL.S_P_PowerSwitch_On)) {
-                        mapValue = context.getString(R.string.twoswitch_state_3_on);
+                        mapValue = context.getString(R.string.twoswitch_state_2_on);
                     }
                 } else if (propertyName.equals(CTSL.THS_P_PowerSwitch_3)) {
                     mapName = context.getString(R.string.twoswitch_state_3);
@@ -147,7 +147,7 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_FOURWAYSWITCH_2:
-			case CTSL.PK_FOURWAYSWITCH:
+            case CTSL.PK_FOURWAYSWITCH:
                 // 四路开关状态
                 if (propertyName.equals(CTSL.FWS_P_PowerSwitch_1)) {
                     mapName = context.getString(R.string.twoswitch_state_1);
@@ -253,42 +253,42 @@ public class CodeMapper {
                     mapValue = context.getString(R.string.sensorstate_trigger);
                 }
                 break;
-            case CTSL.PK_AIRCOMDITION_TWO:{
+            case CTSL.PK_AIRCOMDITION_TWO: {
                 // 处理空调二管制状态
-                if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)){
+                if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
-            case CTSL.PK_AIRCOMDITION_FOUR:{
+            case CTSL.PK_AIRCOMDITION_FOUR: {
                 // 处理空调四管制状态
-                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)){
+                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
-            case CTSL.PK_FLOORHEATING001:{
+            case CTSL.PK_FLOORHEATING001: {
                 // 处理地暖（电机）状态
-                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)){
+                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
@@ -436,7 +436,7 @@ public class CodeMapper {
                             context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry1);
                     list.add(stateEntry2);
-                } else if(productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)){
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)) {
                     // 处理三键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.THS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -478,7 +478,7 @@ public class CodeMapper {
                             context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
                     list.add(stateEntry1);
                     list.add(stateEntry2);
-                } else if(productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)){
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)) {
                     // 处理三键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.THS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);
@@ -520,7 +520,7 @@ public class CodeMapper {
                             context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry1);
                     list.add(stateEntry2);
-                } else if(productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)){
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.THS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -568,7 +568,7 @@ public class CodeMapper {
                             context.getString(R.string.twoswitch_state_2_off), CTSL.S_P_PowerSwitch_Off);
                     list.add(stateEntry1);
                     list.add(stateEntry2);
-                } else if(productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)){
+                } else if (productKey.equalsIgnoreCase(CTSL.PK_WHITE_THREE_SWITCH)) {
                     // 处理三键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.THS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_off), CTSL.S_P_PowerSwitch_Off);

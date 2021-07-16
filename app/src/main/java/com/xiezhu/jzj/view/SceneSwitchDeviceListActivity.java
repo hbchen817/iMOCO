@@ -65,7 +65,7 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
     @BindView(R.id.mRecyclerView)
     RecyclerView mRecyclerView;
 
-    private List<EDevice.deviceEntry> mList = new ArrayList<>();
+    private final List<EDevice.deviceEntry> mList = new ArrayList<>();
     private BaseQuickAdapter<EDevice.deviceEntry, BaseViewHolder> mAdapter;
     private HomeSpaceManager mHomeSpaceManager = null;
     private UserCenter mUserCenter = null;
@@ -76,10 +76,10 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
         setContentView(R.layout.activity_scene_switch_device_list);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        this.mHomeSpaceManager = new HomeSpaceManager(this);
-        this.mUserCenter = new UserCenter(this);
+        mHomeSpaceManager = new HomeSpaceManager(this);
+        mUserCenter = new UserCenter(this);
         initView();
-//        startGetDeviceList();
+        // startGetDeviceList();
         getDeviceData();
 
         initStatusBar();
@@ -118,19 +118,22 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
         DeviceBuffer.initProcess();
         mList.clear();
         // 获取家设备列表
-        this.mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
-        try {
-            Thread.sleep(200);
-        } catch (Exception ex) {
-        }
-        // 获取用户设备列表
-        this.mUserCenter.getDeviceList(1, this.mDevicePageSize, this.mCommitFailureHandler, this.mResponseErrorHandler, this.mAPIDataHandler);
+        mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, mDevicePageSize,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 获取用户设备列表
+                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        }, 200);
     }
 
     // 同步设备列表数据
     private void syncDeviceListData() {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
-        this.mList.clear();
+        mList.clear();
         if (all != null && all.size() > 0) {
             // 网关排前面
             for (EDevice.deviceEntry e : all.values()) {
@@ -142,7 +145,7 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
                     deviceEntry.status = e.status;
                     deviceEntry.owned = e.owned;
                     deviceEntry.roomName = e.roomName;
-                    this.mList.add(deviceEntry);
+                    mList.add(deviceEntry);
                 }
             }
             for (EDevice.deviceEntry e : all.values()) {
@@ -154,7 +157,7 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
                     deviceEntry.status = e.status;
                     deviceEntry.owned = e.owned;
                     deviceEntry.roomName = e.roomName;
-                    this.mList.add(deviceEntry);
+                    mList.add(deviceEntry);
                 }
             }
         }
@@ -162,9 +165,9 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
@@ -174,7 +177,8 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
                         DeviceBuffer.addHomeDeviceList(homeDeviceList);
                         if (homeDeviceList.data.size() >= homeDeviceList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", homeDeviceList.pageNo + 1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", homeDeviceList.pageNo + 1, mDevicePageSize,
+                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则同步刷新设备列表数据
                             syncDeviceListData();
@@ -194,8 +198,6 @@ public class SceneSwitchDeviceListActivity extends BaseActivity {
                             // 数据获取完则同步刷新设备列表数据
                             syncDeviceListData();
                         }
-                    } else {
-
                     }
                     break;
                 default:

@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,6 +28,7 @@ import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -82,6 +84,7 @@ public class EditSceneBindActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @SuppressLint("SetTextI18n")
     private void initView() {
         String title = getIntent().getStringExtra("title");
         tvToolbarTitle.setText(title + "绑定场景");
@@ -99,16 +102,12 @@ public class EditSceneBindActivity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left, R.id.mSceneContentText, R.id.unbind})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.mSceneContentText:
-                SwitchSceneListActivity.start(this, mIotId, mKeyCode);
-                break;
-            case R.id.unbind:
-                mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.mSceneContentText) {
+            SwitchSceneListActivity.start(this, mIotId, mKeyCode);
+        } else if (view.getId() == R.id.unbind) {
+            mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
         }
     }
 
@@ -156,7 +155,7 @@ public class EditSceneBindActivity extends BaseActivity {
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

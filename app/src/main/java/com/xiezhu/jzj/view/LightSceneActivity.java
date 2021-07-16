@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CScene;
 import com.xiezhu.jzj.contract.CTSL;
@@ -39,6 +40,7 @@ import com.xiezhu.jzj.view.BaseActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,9 +177,9 @@ public class LightSceneActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-    private Handler processDataHandler = new Handler(new Handler.Callback() {
+    private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果
@@ -237,63 +239,56 @@ public class LightSceneActivity extends BaseActivity {
 
     @OnClick({R.id.nameLayout, R.id.addBtn, R.id.lightnessView, R.id.temperatureView, R.id.deleteButton, R.id.tv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.nameLayout:
-                showDeviceNameDialogEdit();
-                break;
-            case R.id.addBtn:
-                LightActionChoiceActivity.start(this);
-                break;
-            case R.id.lightnessView:
-                ColorTemperatureChoiceActivity.start2(this, 2, Integer.parseInt(mLightnessText.getText().toString()));
-                break;
-            case R.id.temperatureView:
-                ColorTemperatureChoiceActivity.start2(this, 1, Integer.parseInt(mTemperatureText.getText().toString()));
-                break;
-            case R.id.deleteButton:
-                mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                break;
-            case R.id.tv_toolbar_right:
-                if (mScene == null) {
-                    //创建场景
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
-                    baseInfoEntry.enable = true;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    if (mLightnessView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    if (mTemperatureView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                } else {
-                    EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                            CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
-                    baseInfoEntry.enable = true;
-                    baseInfoEntry.sceneId = mScene.id;
-                    List<EScene.responseEntry> parameters = new ArrayList<>();
-                    if (mLightnessView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    if (mTemperatureView.getVisibility() == View.VISIBLE) {
-                        EScene.responseEntry entry = new EScene.responseEntry();
-                        entry.iotId = mIotID;
-                        entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
-                        parameters.add(entry);
-                    }
-                    mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        if (view.getId() == R.id.nameLayout) {
+            showDeviceNameDialogEdit();
+        } else if (view.getId() == R.id.addBtn) {
+            LightActionChoiceActivity.start(this);
+        } else if (view.getId() == R.id.lightnessView) {
+            ColorTemperatureChoiceActivity.start2(this, 2, Integer.parseInt(mLightnessText.getText().toString()));
+        } else if (view.getId() == R.id.temperatureView) {
+            ColorTemperatureChoiceActivity.start2(this, 1, Integer.parseInt(mTemperatureText.getText().toString()));
+        } else if (view.getId() == R.id.deleteButton) {
+            mSceneManager.deleteScene(mScene.id, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        } else if (view.getId() == R.id.tv_toolbar_right) {
+            if (mScene == null) {
+                //创建场景
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
+                baseInfoEntry.enable = true;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                if (mLightnessView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
+                    parameters.add(entry);
                 }
-                break;
+                if (mTemperatureView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
+                    parameters.add(entry);
+                }
+                mSceneManager.createCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            } else {
+                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
+                        CScene.TYPE_MANUAL, mSceneName.getText().toString(), mIotID);
+                baseInfoEntry.enable = true;
+                baseInfoEntry.sceneId = mScene.id;
+                List<EScene.responseEntry> parameters = new ArrayList<>();
+                if (mLightnessView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_BRIGHTNESS, "", mLightnessText.getText().toString());
+                    parameters.add(entry);
+                }
+                if (mTemperatureView.getVisibility() == View.VISIBLE) {
+                    EScene.responseEntry entry = new EScene.responseEntry();
+                    entry.iotId = mIotID;
+                    entry.state = new ETSL.stateEntry("", CTSL.LIGHT_P_COLOR_TEMPERATURE, "", mTemperatureText.getText().toString());
+                    parameters.add(entry);
+                }
+                mSceneManager.updateCAScene(baseInfoEntry, parameters, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            }
         }
     }
 

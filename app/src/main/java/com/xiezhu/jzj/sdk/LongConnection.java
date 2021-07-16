@@ -7,6 +7,7 @@ import com.aliyun.alink.linksdk.channel.mobile.api.IMobileDownstreamListener;
 import com.aliyun.alink.linksdk.channel.mobile.api.MobileChannel;
 import com.aliyun.alink.linksdk.channel.mobile.api.MobileConnectState;
 import com.gary.hi.library.log.HiLog;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.model.ERealtimeData;
 import com.xiezhu.jzj.utility.Logger;
 
@@ -42,7 +43,7 @@ public class LongConnection {
             try {
                 for (String key : mCallbackHandlerList.keySet()) {
                     ERealtimeData.callbackHandlerEntry entry = mCallbackHandlerList.get(key);
-                    if (entry != null && s.indexOf(entry.topic) >= 0 && entry.handler != null) {
+                    if (entry != null && s.contains(entry.topic) && entry.handler != null) {
                         Message msg = new Message();
                         msg.what = entry.messageType;
                         msg.obj = s1;
@@ -60,7 +61,7 @@ public class LongConnection {
         public boolean shouldHandle(String s) {
             Logger.d(String.format("Received confirm of handle topic [%s]", s));
             // 允许在onCommand中处理主题
-            if(mTopics.containsKey(s)) {
+            if (mTopics.containsKey(s)) {
                 Logger.d(String.format("Should handle topic [%s]", s));
                 return true;
             }
@@ -71,7 +72,7 @@ public class LongConnection {
     private static IMobileConnectListener mConnectListener = new IMobileConnectListener() {
         @Override
         public void onConnectStateChange(MobileConnectState mobileConnectState) {
-            HiLog.i("长连接通道连接状态"+ mobileConnectState);
+            HiLog.i("长连接通道连接状态" + mobileConnectState);
             if (MobileConnectState.CONNECTED == mobileConnectState) {
                 mIsConnected = true;
             } else if (MobileConnectState.DISCONNECTED == mobileConnectState) {
@@ -89,7 +90,7 @@ public class LongConnection {
     public static void initProcess(List<String> topics) {
         mTopics = new HashMap<String, Integer>();
         int i = 0;
-        for(String topic : topics) {
+        for (String topic : topics) {
             mTopics.put(topic, i++);
         }
         mLock = new ReentrantLock();
@@ -111,15 +112,14 @@ public class LongConnection {
         mLock.lock();
         boolean r = true;
         try {
-            if(mCallbackHandlerList.containsKey(key)) {
+            if (mCallbackHandlerList.containsKey(key)) {
                 mCallbackHandlerList.remove(key);
             }
             mCallbackHandlerList.put(key, entry);
         } catch (Exception ex) {
             r = false;
             Logger.e("Failed to add callback handler of long connection, may is: " + ex.getMessage());
-        }
-        finally {
+        } finally {
             mLock.unlock();
         }
         return r;
@@ -131,14 +131,13 @@ public class LongConnection {
         mLock.lock();
         boolean r = true;
         try {
-            if(mCallbackHandlerList.containsKey(key)) {
+            if (mCallbackHandlerList.containsKey(key)) {
                 mCallbackHandlerList.remove(key);
             }
         } catch (Exception ex) {
             r = false;
             Logger.e("Failed to delete callback handler of long connection");
-        }
-        finally {
+        } finally {
             mLock.unlock();
         }
         return r;
@@ -151,7 +150,7 @@ public class LongConnection {
 
     // 停止接收数据
     public static void stopReceiveData() {
-        if(mIsConnected) {
+        if (mIsConnected) {
             MobileChannel.getInstance().registerDownstreamListener(true, mDownstreamListener);
             MobileChannel.getInstance().registerConnectListener(true, mConnectListener);
             Logger.d("Stopped receiving data from long connection");

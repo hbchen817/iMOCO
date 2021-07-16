@@ -27,7 +27,7 @@ public class DeleteAccountActivity extends BaseActivity {
     @BindView(R.id.tv_toolbar_title)
     TextView tvToolbarTitle;
 
-    private DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener confirmListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             AccountHelper.unregister(mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -55,39 +55,35 @@ public class DeleteAccountActivity extends BaseActivity {
 
     @OnClick({R.id.confirm_btn})
     void onClick(View view){
-        switch (view.getId()){
-            case R.id.confirm_btn:
-                DialogUtils.showEnsureDialog(mActivity,confirmListener,getString(R.string.delete_account_confirm_again_tips),
-                        getString(R.string.delete_account_confirm_again));
-                break;
+        if (view.getId() == R.id.confirm_btn) {
+            DialogUtils.showEnsureDialog(mActivity, confirmListener, getString(R.string.delete_account_confirm_again_tips),
+                    getString(R.string.delete_account_confirm_again));
         }
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_UNREGISTER:
-                    ToastUtils.showToastCentrally(mActivity, getString(R.string.delete_account_success));
-                    LoginBusiness.logout(new ILogoutCallback() {
-                        @Override
-                        public void onLogoutSuccess() {
-                            Intent intent = new Intent(getApplicationContext(), StartActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            IndexActivity.mainActivity.finish();
-                            MyInfoActivity.myInfoActivity.finish();
-                            finish();
-                            overridePendingTransition(0, 0);
-                        }
+            if (msg.what == Constant.MSG_CALLBACK_UNREGISTER) {
+                ToastUtils.showToastCentrally(mActivity, getString(R.string.delete_account_success));
+                LoginBusiness.logout(new ILogoutCallback() {
+                    @Override
+                    public void onLogoutSuccess() {
+                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        IndexActivity.mainActivity.finish();
+                        MyInfoActivity.myInfoActivity.finish();
+                        finish();
+                        overridePendingTransition(0, 0);
+                    }
 
-                        @Override
-                        public void onLogoutFailed(int code, String error) {
-                            ToastUtils.showToastCentrally(mActivity,getString(R.string.account_logout_failed) + error);
-                        }
-                    });
-                    break;
+                    @Override
+                    public void onLogoutFailed(int code, String error) {
+                        ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
+                    }
+                });
             }
             return false;
         }

@@ -41,19 +41,18 @@ public class FreshAirDetailActivity extends AppCompatActivity {
 
     @OnClick({R.id.wind_low, R.id.wind_mid, R.id.wind_high, R.id.timer, R.id.mSwitch, R.id.lock})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.wind_low:
-                break;
-            case R.id.wind_mid:
-                break;
-            case R.id.wind_high:
-                break;
-            case R.id.timer:
-                break;
-            case R.id.mSwitch:
-                break;
-            case R.id.lock:
-                break;
+        if (view.getId() == R.id.wind_low) {
+
+        } else if (view.getId() == R.id.wind_mid) {
+
+        } else if (view.getId() == R.id.wind_high) {
+
+        } else if (view.getId() == R.id.timer) {
+
+        } else if (view.getId() == R.id.mSwitch) {
+
+        } else if (view.getId() == R.id.lock) {
+
         }
     }
 }

@@ -40,7 +40,7 @@ public class UserCenter {
         requestParameterEntry.path = Constant.API_PATH_GETGATEWAYSUBDEVICELIST;
         requestParameterEntry.version = "1.0.2";
         requestParameterEntry.addParameter("iotId", gatewayIOTId);
-        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageNo", Math.max(pageNo, 1));
         requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST;
         //提交
@@ -61,7 +61,7 @@ public class UserCenter {
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_GETUSERDEVICELIST;
         requestParameterEntry.version = "1.0.8";
-        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageNo", Math.max(pageNo, 1));
         requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETUSERDEVICTLIST;
         //提交
@@ -88,11 +88,12 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     //查询设备与用户的关系
     public void getByAccountAndDev(String iotId,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  Handler processDataHandler) {
+                                   Handler commitFailureHandler,
+                                   Handler responseErrorHandler,
+                                   Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
@@ -130,6 +131,7 @@ public class UserCenter {
 
     /**
      * 创建虚拟用户
+     *
      * @param name 虚拟用户名称
      */
     public static void createVirtualUser(String name,
@@ -156,10 +158,10 @@ public class UserCenter {
      * 查询账号下的虚拟用户
      */
     public static void queryVirtualUserListInAccount(int pageNo,//从1开始
-                                         int pageSize,
-                                         Handler commitFailureHandler,
-                                         Handler responseErrorHandler,
-                                         Handler processDataHandler) {
+                                                     int pageSize,
+                                                     Handler commitFailureHandler,
+                                                     Handler responseErrorHandler,
+                                                     Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;
@@ -175,13 +177,14 @@ public class UserCenter {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
     /**
      * 查询设备下的虚拟用户列表
      */
     public static void queryVirtualUserListInDevice(String iotId,
-                                         Handler commitFailureHandler,
-                                         Handler responseErrorHandler,
-                                         Handler processDataHandler) {
+                                                    Handler commitFailureHandler,
+                                                    Handler responseErrorHandler,
+                                                    Handler processDataHandler) {
         if (processDataHandler == null) {
             Logger.e("The processDataHandler is not null!");
             return;

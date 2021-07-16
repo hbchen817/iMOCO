@@ -18,9 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.sdk.android.push.common.util.NetworkUtils;
 import com.just.agentweb.AgentWeb;
-import com.just.agentweb.LogUtils;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.utility.Network;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -63,7 +61,7 @@ public class H5Activity extends BaseActivity {
      */
     private String mUrl;
 
-    private OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
 
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -73,7 +71,7 @@ public class H5Activity extends BaseActivity {
         }
     };
 
-    private WebViewClient mWebViewClient = new WebViewClient() {
+    private final WebViewClient mWebViewClient = new WebViewClient() {
 
         @Override
         public void onPageFinished(WebView view, String url) {
@@ -82,37 +80,33 @@ public class H5Activity extends BaseActivity {
             // 在RefreshLayout处于刷新状态情况下,判断当前网络状态,
             if (mSrlH5.getState() == RefreshState.Refreshing) {
                 // 如果网络正常, 则设置刷新成功; 如果网络不可用, 则设置刷新失败;
-                if (Network.isNetworkAvailable(H5Activity.this)) {
-                    mSrlH5.finishRefresh(true);
-                } else {
-                    mSrlH5.finishRefresh(false);
-                }
+                mSrlH5.finishRefresh(Network.isNetworkAvailable(H5Activity.this));
             }
         }
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             super.onReceivedSslError(view, handler, error);
-            ViseLog.d("onReceivedSslError error = "+error.toString());
+            ViseLog.d("onReceivedSslError error = " + error.toString());
         }
 
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             super.onReceivedHttpError(view, request, errorResponse);
-            ViseLog.d("onReceivedSslError error = "+errorResponse.toString());
+            ViseLog.d("onReceivedSslError error = " + errorResponse.toString());
         }
 
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-            ViseLog.d("onReceivedError 1111111111111 = "+error.getDescription().toString()+" , "+error.getErrorCode());
+            ViseLog.d("onReceivedError 1111111111111 = " + error.getDescription().toString() + " , " + error.getErrorCode());
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             super.onReceivedError(view, errorCode, description, failingUrl);
-            ViseLog.d("onReceivedError 2222222222222 = "+description+" , "+failingUrl);
+            ViseLog.d("onReceivedError 2222222222222 = " + description + " , " + failingUrl);
         }
     };
 
@@ -184,12 +178,9 @@ public class H5Activity extends BaseActivity {
 
     @OnClick({R.id.iv_toolbar_left})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                // 关闭当前界面
-                finish();
-                break;
-            default:
+        if (view.getId() == R.id.iv_toolbar_left) {
+            // 关闭当前界面
+            finish();
         }
     }
 

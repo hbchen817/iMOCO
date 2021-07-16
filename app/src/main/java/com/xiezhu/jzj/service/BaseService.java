@@ -20,6 +20,8 @@ import com.xiezhu.jzj.utility.ToastUtils;
 import com.xiezhu.jzj.view.IndexActivity;
 import com.xiezhu.jzj.view.StartActivity;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public class BaseService extends Service {
@@ -32,7 +34,7 @@ public class BaseService extends Service {
     // 提交失败处理器
     protected Handler mCommitFailureHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APICOMMITFAIL == msg.what) {
                 EAPIChannel.commitFailEntry commitFailEntry = (EAPIChannel.commitFailEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -55,7 +57,7 @@ public class BaseService extends Service {
     // 响应错误处理器
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App

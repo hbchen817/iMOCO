@@ -12,6 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
+import androidx.core.content.ContextCompat;
+
 import com.xiezhu.jzj.R;
 
 import java.io.IOException;
@@ -98,7 +100,7 @@ public class StatusBarUtils {
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(option);
             if (useThemestatusBarColor) {
-                activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.white));
+                activity.getWindow().setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
             } else {
                 activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             }
@@ -156,8 +158,8 @@ public class StatusBarUtils {
             Class<?> layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
             Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
             darkModeFlag = field.getInt(layoutParams);
-            Method extraFlagField = clazz.getMethod("setExtraFlags",int.class,int.class);
-            extraFlagField.invoke(activity.getWindow(), lightStatusBar? darkModeFlag : 0, darkModeFlag);
+            Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
+            extraFlagField.invoke(activity.getWindow(), lightStatusBar ? darkModeFlag : 0, darkModeFlag);
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
@@ -169,6 +171,7 @@ public class StatusBarUtils {
 
     /**
      * 判断手机是否是小米
+     *
      * @return
      */
     public static boolean isMIUI() {
@@ -184,6 +187,7 @@ public class StatusBarUtils {
 
     /**
      * 判断手机是否是魅族
+     *
      * @return
      */
     public static boolean isFlyme() {
@@ -198,7 +202,8 @@ public class StatusBarUtils {
 
     /**
      * 设置状态栏文字色值为深色调
-     * @param useDart 是否使用深色调
+     *
+     * @param useDart  是否使用深色调
      * @param activity
      */
     public static void setStatusTextColor(boolean useDart, Activity activity) {

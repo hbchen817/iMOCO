@@ -23,6 +23,8 @@ import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.presenter.ShareDeviceManager;
 import com.xiezhu.jzj.utility.ToastUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -78,9 +80,9 @@ public class DeviceQrcodeActivity extends BaseActivity {
     }
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_SHAREQRCODE:
                     String resultStr = (String) msg.obj;
@@ -111,7 +113,7 @@ public class DeviceQrcodeActivity extends BaseActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_SHAREDEVICEORSCENE:
-                    ToastUtils.showToastCentrally(mActivity,getString(R.string.share_device_share_success));
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.share_device_share_success));
                     finish();
                     break;
                 default:
@@ -123,29 +125,25 @@ public class DeviceQrcodeActivity extends BaseActivity {
 
     @OnClick({R.id.tv_toolbar_right, R.id.qrcode_tv, R.id.account_tv})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                String mobileStr = mobileAccountEt.getText().toString().trim();
-                if (TextUtils.isEmpty(mobileStr)) {
-                    ToastUtils.showToastCentrally(mActivity, mobileAccountEt.getHint().toString());
-                    return;
-                }
-                shareDeviceManager.shareDeviceByMobile(iotIdList,mobileStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                break;
-            case R.id.qrcode_tv:
-                qrcodeTv.setTextColor(getResources().getColor(R.color.appcolor));
-                accountTv.setTextColor(getResources().getColor(R.color.black));
-                qrcodeView.setVisibility(View.VISIBLE);
-                accountView.setVisibility(View.GONE);
-                tvToolbarRight.setVisibility(View.GONE);
-                break;
-            case R.id.account_tv:
-                qrcodeTv.setTextColor(getResources().getColor(R.color.black));
-                accountTv.setTextColor(getResources().getColor(R.color.appcolor));
-                qrcodeView.setVisibility(View.GONE);
-                accountView.setVisibility(View.VISIBLE);
-                tvToolbarRight.setVisibility(View.VISIBLE);
-                break;
+        if (view.getId() == R.id.tv_toolbar_right) {
+            String mobileStr = mobileAccountEt.getText().toString().trim();
+            if (TextUtils.isEmpty(mobileStr)) {
+                ToastUtils.showToastCentrally(mActivity, mobileAccountEt.getHint().toString());
+                return;
+            }
+            shareDeviceManager.shareDeviceByMobile(iotIdList, mobileStr, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        } else if (view.getId() == R.id.qrcode_tv) {
+            qrcodeTv.setTextColor(getResources().getColor(R.color.appcolor));
+            accountTv.setTextColor(getResources().getColor(R.color.black));
+            qrcodeView.setVisibility(View.VISIBLE);
+            accountView.setVisibility(View.GONE);
+            tvToolbarRight.setVisibility(View.GONE);
+        } else if (view.getId() == R.id.account_tv) {
+            qrcodeTv.setTextColor(getResources().getColor(R.color.black));
+            accountTv.setTextColor(getResources().getColor(R.color.appcolor));
+            qrcodeView.setVisibility(View.GONE);
+            accountView.setVisibility(View.VISIBLE);
+            tvToolbarRight.setVisibility(View.VISIBLE);
         }
     }
 

@@ -34,13 +34,13 @@ public class ChoiceActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice);
 
-        TextView title = (TextView)findViewById(R.id.includeTitleLblTitle);
+        TextView title = findViewById(R.id.includeTitleLblTitle);
         title.setText(getIntent().getStringExtra("title"));
-        this.mItems = (List<EChoice.itemEntry>)getIntent().getSerializableExtra("items");
+        mItems = (List<EChoice.itemEntry>) getIntent().getSerializableExtra("items");
 
         // 回退处理
-        ImageView imgBack = (ImageView)findViewById(R.id.includeTitleImgBack);
-        imgBack.setOnClickListener(new OnClickListener(){
+        ImageView imgBack = findViewById(R.id.includeTitleImgBack);
+        imgBack.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -48,16 +48,16 @@ public class ChoiceActivity extends Activity {
         });
 
         boolean isMultipleSelect = getIntent().getBooleanExtra("isMultipleSelect", false);
-        ListView listItem = (ListView)findViewById(R.id.choiceLstItem);
-        listItem.setAdapter(new AptChoiceList(this, this.mItems, isMultipleSelect));
-        RelativeLayout relOk = (RelativeLayout)findViewById(R.id.choiceRelOk);
+        ListView listItem = (ListView) findViewById(R.id.choiceLstItem);
+        listItem.setAdapter(new AptChoiceList(this, mItems, isMultipleSelect));
+        RelativeLayout relOk = (RelativeLayout) findViewById(R.id.choiceRelOk);
 
-        this.mResultCode = getIntent().getIntExtra("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
+        mResultCode = getIntent().getIntExtra("resultCode", Constant.RESULTCODE_CALLCHOICEACTIVITY_TIME);
 
-        if(!isMultipleSelect){
+        if (!isMultipleSelect) {
             // 单选处理
             relOk.setVisibility(View.GONE);
-            listItem.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            listItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // 返回当前选项
@@ -75,9 +75,9 @@ public class ChoiceActivity extends Activity {
                     // 返回所选选项
                     String values = "";
                     int i = 0;
-                    for(EChoice.itemEntry item : mItems){
-                        if(mItems.get(i).isSelected){
-                            if(values.length() > 0){
+                    for (EChoice.itemEntry item : mItems) {
+                        if (mItems.get(i).isSelected) {
+                            if (values.length() > 0) {
                                 values = values + ",";
                             }
                             values = values + mItems.get(i).value;
