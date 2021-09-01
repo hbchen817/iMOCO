@@ -2,6 +2,7 @@ package com.laffey.smart.view;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.laffey.smart.R;
 import com.laffey.smart.event.ShareDeviceEvent;
@@ -32,6 +33,8 @@ public class ShareDeviceFragment extends BaseFragment {
 
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
+    @BindView(R.id.msg_nodata_view)
+    LinearLayout mDevNodataView;
 
     private CommonAdapter adapter;
     private List<Visitable> models = new ArrayList<Visitable>();
@@ -133,6 +136,13 @@ public class ShareDeviceFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+        if (models.isEmpty()) {
+            recycleView.setVisibility(View.GONE);
+            mDevNodataView.setVisibility(View.VISIBLE);
+        } else {
+            recycleView.setVisibility(View.VISIBLE);
+            mDevNodataView.setVisibility(View.GONE);
+        }
     }
 
     private void changeStatus(int status) {

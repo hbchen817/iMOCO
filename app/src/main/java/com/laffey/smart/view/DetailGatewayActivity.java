@@ -367,6 +367,7 @@ public class DetailGatewayActivity extends DetailActivity {
                 }
             }
             mAptDeviceList.notifyDataSetChanged();
+            onlineCount();
         }
     }
 

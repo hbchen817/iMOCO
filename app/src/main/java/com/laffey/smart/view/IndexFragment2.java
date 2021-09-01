@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +68,8 @@ public class IndexFragment2 extends BaseFragment {
     protected ListView mListMy;
     @BindView(R.id.sceneLstMy_rl)
     protected SmartRefreshLayout mListMyRL;
+    @BindView(R.id.scene_nodata_view)
+    protected LinearLayout mSceneNodataView;
 
     private final int SCENE_PAGE_SIZE = 50;
 
@@ -106,6 +110,14 @@ public class IndexFragment2 extends BaseFragment {
             //this.startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
             RefreshData.refreshSceneListData();
+        } else {
+            if (mSceneList.size() == 0) {
+                mSceneNodataView.setVisibility(View.VISIBLE);
+                mListMy.setVisibility(View.GONE);
+            } else {
+                mSceneNodataView.setVisibility(View.GONE);
+                mListMy.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -166,6 +178,16 @@ public class IndexFragment2 extends BaseFragment {
                                     break;
                                 }
                             }
+                            if (mSceneList.size() == 0) {
+                                mSceneNodataView.setVisibility(View.VISIBLE);
+                                mListMy.setVisibility(View.GONE);
+                            } else {
+                                mSceneNodataView.setVisibility(View.GONE);
+                                mListMy.setVisibility(View.VISIBLE);
+                            }
+                        } else {
+                            mSceneNodataView.setVisibility(View.VISIBLE);
+                            mListMy.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -388,6 +410,14 @@ public class IndexFragment2 extends BaseFragment {
                         QMUITipDialogUtil.dismiss();
                     }
                     mListMyRL.finishRefresh(true);
+
+                    if (mSceneList.size() == 0) {
+                        mSceneNodataView.setVisibility(View.VISIBLE);
+                        mListMy.setVisibility(View.GONE);
+                    } else {
+                        mSceneNodataView.setVisibility(View.GONE);
+                        mListMy.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
                     // 处理删除列表数据

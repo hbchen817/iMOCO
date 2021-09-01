@@ -126,8 +126,12 @@ public class IndexFragment1 extends BaseFragment {
     protected View allDeviceView;
     @BindView(R.id.share_device_view)
     protected View shareDeviceView;
-    @BindView(R.id.alldevice_nodata_view)
-    protected View allDeviceNoDataView;
+    // @BindView(R.id.alldevice_nodata_view)
+    // protected View allDeviceNoDataView;
+    @BindView(R.id.list_dev_nodata_view)
+    protected LinearLayout mListDevNodataView;
+    @BindView(R.id.grid_dev_nodata_view)
+    protected LinearLayout mGridDevNodataView;
     @BindView(R.id.sharedevice_nodata_view)
     protected View shareDeviceNoDataView;
     @BindView(R.id.grid_rl)
@@ -350,7 +354,7 @@ public class IndexFragment1 extends BaseFragment {
                 mImgList.setAlpha((float) 1.0);
             }
         });
-        mGetSceneHandler = new GetSceneHandler(this);
+        mGetSceneHandler = new GetSceneHandler(mActivity.getMainLooper(), this);
     }
 
     @Override
@@ -380,7 +384,6 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
         // 注销事件总线
         EventBus.getDefault().unregister(this);
-        mUnbinder.unbind();
         super.onDestroyView();
     }
 
@@ -450,7 +453,24 @@ public class IndexFragment1 extends BaseFragment {
                 }
                 mAptDeviceList.notifyDataSetChanged();
                 mAptDeviceGrid.notifyDataSetChanged();
-                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mDeviceList == null) {
+                mListDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                if (mDeviceList.isEmpty()) {
+                    mListDevNodataView.setVisibility(View.VISIBLE);
+                    mGridDevNodataView.setVisibility(View.VISIBLE);
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    mListDevNodataView.setVisibility(View.GONE);
+                    mGridDevNodataView.setVisibility(View.GONE);
+                    mGridDevice.setVisibility(View.VISIBLE);
+                    mListDevice.setVisibility(View.VISIBLE);
+                }
             }
 
             // 分享设备处理
@@ -468,7 +488,18 @@ public class IndexFragment1 extends BaseFragment {
                     }
                 }
                 mAptShareDeviceList.notifyDataSetChanged();
-                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mShareDeviceList == null) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                if (mShareDeviceList.isEmpty()) {
+                    shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mListShare.setVisibility(View.GONE);
+                } else {
+                    shareDeviceNoDataView.setVisibility(View.GONE);
+                    mListShare.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -605,7 +636,8 @@ public class IndexFragment1 extends BaseFragment {
     private static class GetSceneHandler extends Handler {
         private final WeakReference<IndexFragment1> ref;
 
-        public GetSceneHandler(IndexFragment1 fragment) {
+        public GetSceneHandler(Looper looper, IndexFragment1 fragment) {
+            super(looper);
             ref = new WeakReference<>(fragment);
         }
 
@@ -767,8 +799,38 @@ public class IndexFragment1 extends BaseFragment {
         mListShare.setAdapter(mAptShareDeviceList);
         mListShare.setOnItemClickListener(shareDeviceListOnItemClickListener);
 
-        allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
-        shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+        // allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+        if (mDeviceList == null) {
+            mListDevNodataView.setVisibility(View.VISIBLE);
+            mGridDevNodataView.setVisibility(View.VISIBLE);
+            mGridDevice.setVisibility(View.GONE);
+            mListDevice.setVisibility(View.GONE);
+        } else {
+            if (mDeviceList.isEmpty()) {
+                mListDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                mListDevNodataView.setVisibility(View.GONE);
+                mGridDevNodataView.setVisibility(View.GONE);
+                mGridDevice.setVisibility(View.VISIBLE);
+                mListDevice.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (mShareDeviceList == null) {
+            shareDeviceNoDataView.setVisibility(View.VISIBLE);
+            mListShare.setVisibility(View.GONE);
+        } else {
+            if (mShareDeviceList.isEmpty()) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                shareDeviceNoDataView.setVisibility(View.GONE);
+                mListShare.setVisibility(View.VISIBLE);
+            }
+        }
         deviceCount();
     }
 
@@ -990,7 +1052,7 @@ public class IndexFragment1 extends BaseFragment {
                 case Constant.MSG_CALLBACK_LNSTATUSNOTIFY:
                     // 处理连接状态通知
                     ERealtimeData.deviceConnectionStatusEntry entry = RealtimeDataParser.processConnectStatus((String) msg.obj);
-                    if (entry != null && mAptDeviceList != null && mDeviceList != null && mDeviceList != null) {
+                    if (entry != null && mAptDeviceList != null && mDeviceList != null) {
                         for (int i = 0; i < mDeviceList.size(); i++) {
                             if (mDeviceList.get(i).iotId.equalsIgnoreCase(entry.iotId)) {
                                 mDeviceList.get(i).status = entry.status;
@@ -1142,7 +1204,7 @@ public class IndexFragment1 extends BaseFragment {
 
     private static class ExtendedHandler extends Handler {
         private final WeakReference<IndexFragment1> ref;
-        private String iotId;
+        private final String iotId;
 
         public ExtendedHandler(IndexFragment1 fragment, String iotId) {
             ref = new WeakReference<>(fragment);

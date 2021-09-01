@@ -64,7 +64,6 @@ public class Initializer {
         GlobalConfig.getInstance().setApiEnv(GlobalConfig.API_ENV_ONLINE);
         GlobalConfig.getInstance().setBoneEnv(GlobalConfig.BONE_ENV_RELEASE);
 
-        Log.d("wyyLog", new Gson().toJson(initConfig));
         // 初始化（App须继承自AApplication，否则会报错）
         IoTSmart.init((MocoApplication)context.getApplicationContext(), initConfig);
         //IoTSmart.setProductScope(IoTSmart.PRODUCT_SCOPE_PUBLISHED);

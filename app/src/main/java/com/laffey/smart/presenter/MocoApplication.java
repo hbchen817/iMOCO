@@ -64,14 +64,14 @@ public class MocoApplication extends AApplication {
         SystemParameter.initProcess(this);
 
         // 初始化SDK
-        Initializer.sdkProcess(this);
+        /*Initializer.sdkProcess(this);
+        Log.d("wyylog", "初始化SDK");*/
 
         //登录页为自定制的登录页
-        OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
+        /*OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
-        }
-
+        }*/
         initLog();
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
@@ -141,6 +141,17 @@ public class MocoApplication extends AApplication {
         ViseLog.plant(new LogcatTree());
 
         SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
+    }
+
+    public static void initAliSDK() {
+        // 初始化SDK
+        Initializer.sdkProcess(sContext);
+
+        //登录页为自定制的登录页
+        OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
+        if (adapter != null) {
+            adapter.setDefaultLoginClass(OALoginActivity.class);
+        }
     }
 
     public static String getProcessName(Context cxt, int pid) {

@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLl"
-    android:background="@color/appbgcolor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="@color/appbgcolor"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/mainRlTitle"
@@ -17,13 +17,13 @@
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
             android:background="@drawable/shape_frame_txt"
+            android:text="@string/main_home"
             android:textColor="#FFFFFF"
-            android:visibility="gone"
-            android:text="@string/main_home" />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/mainImgChoice"
@@ -32,15 +32,15 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
             android:layout_toRightOf="@+id/mainLblHome"
-            android:visibility="gone"
-            android:src="@drawable/home" />
+            android:src="@drawable/home"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/mainImgAdd"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginTop="9dp"
             android:layout_marginRight="5dp"
             android:src="@drawable/add_default" />
@@ -54,8 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
-        android:visibility="gone"
-        android:text="@string/main_home_description" />
+        android:text="@string/main_home_description"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/mainLblSceneTitle"
@@ -64,8 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
-        android:visibility="gone"
-        android:text="@string/main_onekeyscene" />
+        android:text="@string/main_onekeyscene"
+        android:visibility="gone" />
 
     <HorizontalScrollView
         android:id="@+id/mainSclSceneList"
@@ -73,6 +73,7 @@
         android:layout_height="70dp"
         android:layout_margin="10dp"
         android:scrollbars="none">
+
         <LinearLayout
             android:id="@+id/ll_add_market"
             android:layout_width="wrap_content"
@@ -101,79 +102,79 @@
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
             android:paddingLeft="10dp"
             android:paddingRight="@dimen/dp_14"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:textColor="@color/topic_color1"
-            android:text="@string/main_device" />
+            android:text="@string/main_device"
+            android:textColor="@color/topic_color1" />
 
         <TextView
             android:id="@+id/mainLblDeviceDL"
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
-            android:layout_below="@+id/mainLblDevice"
             android:layout_height="2dp"
-            android:layout_marginTop="2dp"
+            android:layout_below="@+id/mainLblDevice"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
+            android:layout_marginTop="2dp"
             android:background="@color/topic_color1"
-            android:textColor="@color/topic_color1"
-            android:text="@string/main_device" />
+            android:text="@string/main_device"
+            android:textColor="@color/topic_color1" />
 
         <TextView
             android:id="@+id/mainLblRoom"
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
-            android:paddingHorizontal="@dimen/dp_14"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/mainLblDevice"
-            android:text="@string/main_room"/>
+            android:paddingHorizontal="@dimen/dp_14"
+            android:text="@string/main_room" />
 
         <TextView
             android:id="@+id/mainLblRoomDL"
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
+            android:layout_height="2dp"
             android:layout_below="@+id/mainLblRoom"
             android:layout_alignLeft="@+id/mainLblRoom"
-            android:layout_height="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="@dimen/dp_14"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_14"
+            android:layout_marginTop="2dp"
             android:background="@color/topic_color1"
+            android:text="@string/main_room"
             android:textColor="@color/topic_color1"
-            android:visibility="invisible"
-            android:text="@string/main_room" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/mainLblShare"
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentTop="true"
-            android:paddingHorizontal="@dimen/dp_14"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/mainLblRoom"
-            android:text="@string/main_share"/>
+            android:paddingHorizontal="@dimen/dp_14"
+            android:text="@string/main_share" />
 
         <TextView
             android:id="@+id/mainLblShareDL"
             style="@style/TitleBarFontStyle"
             android:layout_width="wrap_content"
+            android:layout_height="2dp"
             android:layout_below="@+id/mainLblShare"
             android:layout_alignLeft="@+id/mainLblShare"
-            android:layout_height="2dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="@dimen/dp_14"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp_14"
+            android:layout_marginTop="2dp"
             android:background="@color/topic_color1"
+            android:text="@string/main_share"
             android:textColor="@color/topic_color1"
-            android:visibility="invisible"
-            android:text="@string/main_share" />
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
@@ -187,9 +188,9 @@
             style="@style/SmallFontStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
             android:text="@string/main_home" />
 
         <ImageView
@@ -205,8 +206,8 @@
             android:id="@+id/mainImgList"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginTop="9dp"
             android:layout_marginRight="10dp"
             android:alpha="0.4"
@@ -218,8 +219,8 @@
         android:id="@+id/all_device_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/appbgcolor"
         android:layout_weight="1"
+        android:background="@color/appbgcolor"
         android:orientation="vertical">
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -232,13 +233,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <ListView
-                android:id="@+id/mainLstDevice"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:dividerHeight="6dp"
-                android:horizontalSpacing="1dip" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:id="@+id/mainLstDevice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@null"
+                    android:dividerHeight="6dp"
+                    android:horizontalSpacing="1dip" />
+
+                <LinearLayout
+                    android:id="@+id/list_dev_nodata_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_100"
+                        android:layout_height="@dimen/dp_100"
+                        android:src="@drawable/no_data" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="@string/no_data"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </RelativeLayout>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -248,59 +274,64 @@
 
             <com.scwang.smartrefresh.layout.header.ClassicsHeader
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
-            <GridView
-                android:id="@+id/mainGrdDevice"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="10dp"
-                android:numColumns="2"/>
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-        <LinearLayout
-            android:id="@+id/alldevice_nodata_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:gravity="center"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="@dimen/dp_100"
-                android:layout_height="@dimen/dp_100"
-                android:src="@drawable/no_data"/>
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:textColor="@color/black"
-                android:text="@string/no_data"/>
-        </LinearLayout>
+                android:layout_height="wrap_content">
+
+                <GridView
+                    android:id="@+id/mainGrdDevice"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="10dp"
+                    android:numColumns="2" />
+
+                <LinearLayout
+                    android:id="@+id/grid_dev_nodata_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/dp_100"
+                        android:layout_height="@dimen/dp_100"
+                        android:src="@drawable/no_data" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:text="@string/no_data"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </RelativeLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>
 
     <ListView
         android:id="@+id/mainLstRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/appbgcolor"
         android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="@color/appbgcolor"
         android:divider="@null"
         android:dividerHeight="6dp"
-        android:layout_weight="1"
-        android:visibility="gone"
-        android:horizontalSpacing="1dip">
-    </ListView>
+        android:horizontalSpacing="1dip"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/share_device_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="8dp"
-        android:background="@color/appbgcolor"
-        android:visibility="gone"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="@color/appbgcolor"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ListView
             android:id="@+id/mainLstShare"
@@ -308,27 +339,28 @@
             android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="4dp"
-            android:visibility="visible"
-            android:horizontalSpacing="1dip">
-        </ListView>
+            android:horizontalSpacing="1dip"
+            android:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/sharedevice_nodata_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
+
             <ImageView
                 android:layout_width="@dimen/dp_100"
                 android:layout_height="@dimen/dp_100"
-                android:src="@drawable/no_data"/>
+                android:src="@drawable/no_data" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
-                android:textColor="@color/black"
-                android:text="@string/no_data"/>
+                android:text="@string/no_data"
+                android:textColor="@color/black" />
         </LinearLayout>
 
     </LinearLayout>

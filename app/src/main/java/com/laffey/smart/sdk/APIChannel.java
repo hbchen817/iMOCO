@@ -2,6 +2,7 @@ package com.laffey.smart.sdk;
 
 import android.os.Handler;
 import android.os.Message;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,11 +13,13 @@ import com.aliyun.iot.aep.sdk.apiclient.callback.IoTResponse;
 import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequest;
 import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequestBuilder;
 import com.aliyun.iot.aep.sdk.apiclient.emuns.Scheme;
+import com.google.gson.Gson;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.widget.DialogUtils;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -33,7 +36,7 @@ public class APIChannel {
                        Handler commitFailureHandler,
                        Handler responseErrorHandler,
                        Handler processDataHandler) {
-        if(entry.path == null || entry.path.length() == 0){
+        if (entry.path == null || entry.path.length() == 0) {
             Logger.e("The parameter[path] of APIChannel is not null!");
             return;
         }
@@ -46,24 +49,23 @@ public class APIChannel {
 
         // 构造请求参数
         IoTRequestBuilder requestBuilder = new IoTRequestBuilder();
-        if(entry.scheme == null){
+        if (entry.scheme == null) {
             requestBuilder.setScheme(Scheme.HTTPS);
-        }else{
+        } else {
             requestBuilder.setScheme(entry.scheme);
         }
-        if(entry.version == null || entry.version.length() == 0)
-        {
+        if (entry.version == null || entry.version.length() == 0) {
             requestBuilder.setApiVersion("1.0.0");
-        }else{
+        } else {
             requestBuilder.setApiVersion(entry.version);
         }
-        if(entry.authType == null){
+        if (entry.authType == null) {
             requestBuilder.setAuthType("iotAuth");
-        }else{
+        } else {
             requestBuilder.setAuthType(entry.authType);
         }
         requestBuilder.setPath(entry.path);
-        if(entry.parameters != null && entry.parameters.size() > 0){
+        if (entry.parameters != null && entry.parameters.size() > 0) {
             requestBuilder.setParams(entry.parameters);
         }
         IoTRequest request = requestBuilder.build();
@@ -78,16 +80,15 @@ public class APIChannel {
                 Logger.e("Failed to submit the interface of API channel!\r\n");
                 printfRequestInfo(request, "API channel failed callback returns request information", 3);
                 Logger.e("The reason for the failure is:\r\n    Exception: " + e.toString());
-                if(mCommitFailureHandler != null)
-                {
+                if (mCommitFailureHandler != null) {
                     EAPIChannel.commitFailEntry commitFailEntry = new EAPIChannel.commitFailEntry(e);
                     commitFailEntry.path = request.getPath();
                     commitFailEntry.version = request.getAPIVersion();
                     commitFailEntry.authType = request.getAuthType();
                     commitFailEntry.scheme = request.getScheme();
                     commitFailEntry.parameters = new HashMap<>();
-                    if(request.getParams() != null && request.getParams().size() > 0){
-                        for(Map.Entry<String, Object> entry : request.getParams().entrySet()){
+                    if (request.getParams() != null && request.getParams().size() > 0) {
+                        for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
                             commitFailEntry.parameters.put(entry.getKey(), entry.getValue());
                         }
                     }
@@ -104,13 +105,13 @@ public class APIChannel {
                 Logger.i("Successfully submitted the interface of API channel and got response.");
                 DialogUtils.dismissLoadingDialog();
                 // 返回失败数据处理
-                if(Constant.API_CODE_SUCCESS != response.getCode()){
+                if (Constant.API_CODE_SUCCESS != response.getCode()) {
                     printfRequestInfo(request, "API channel response callback returns request information", 2);
-                    String  warnInfo = "Server response returned failed data!\r\n    code: " + Integer.toString(response.getCode());
+                    String warnInfo = "Server response returned failed data!\r\n    code: " + Integer.toString(response.getCode());
                     warnInfo = warnInfo + "\r\n    message: " + response.getMessage();
-                    warnInfo = warnInfo + "\r\n    localizedMsg: " + response.getLocalizedMsg() ;
+                    warnInfo = warnInfo + "\r\n    localizedMsg: " + response.getLocalizedMsg();
                     Logger.w(warnInfo);
-                    if(mResponseErrorHandler != null){
+                    if (mResponseErrorHandler != null) {
                         EAPIChannel.responseErrorEntry responseErrorEntry = new EAPIChannel.responseErrorEntry();
                         responseErrorEntry.path = request.getPath();
                         responseErrorEntry.version = request.getAPIVersion();
@@ -120,8 +121,8 @@ public class APIChannel {
                         responseErrorEntry.code = response.getCode();
                         responseErrorEntry.message = response.getMessage();
                         responseErrorEntry.localizedMsg = response.getLocalizedMsg();
-                        if(request.getParams() != null && request.getParams().size() > 0){
-                            for(Map.Entry<String, Object> entry : request.getParams().entrySet()){
+                        if (request.getParams() != null && request.getParams().size() > 0) {
+                            for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
                                 responseErrorEntry.parameters.put(entry.getKey(), entry.getValue());
                             }
                         }
@@ -138,7 +139,7 @@ public class APIChannel {
                 printfRequestInfo(request, "API channel response callback returns request information", 1);
                 String data = response.getData().toString();
                 Logger.i("The ALi Cloud Server returned correct data\r\n    data: " + data);
-                if(mProcessDataHandler != null){
+                if (mProcessDataHandler != null) {
                     Message msg = new Message();
                     msg.what = mCallbackMessageType;
                     msg.obj = data;
@@ -149,7 +150,7 @@ public class APIChannel {
     }
 
     // 输出请求信息
-    private void printfRequestInfo(IoTRequest request, String type, int displayType){
+    private void printfRequestInfo(IoTRequest request, String type, int displayType) {
         try {
             String info = type + ":\r\n";
             info = info + "    host: " + request.getHost() + "\r\n";

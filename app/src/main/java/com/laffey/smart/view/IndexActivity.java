@@ -194,10 +194,10 @@ public class IndexActivity extends BaseActivity {
         }
 
         // 开启摄像头的权限
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             mPermissionList.add(Manifest.permission.CAMERA);
-        }
+        }*/
 
         // 位置的权限 蓝牙搜索相关
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -224,8 +224,8 @@ public class IndexActivity extends BaseActivity {
             if (grantResults.length > 0) {
                 for (int result : grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
-                        ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
-                        PermissionUtil.getAppDetailSettingIntent1(this);
+                        ToastUtils.showLongToastCentrally(this, R.string.missing_permissions_will_render_some_functionality_unusable);
+                        // PermissionUtil.getAppDetailSettingIntent1(this);
                     }
                 }
 
@@ -233,7 +233,7 @@ public class IndexActivity extends BaseActivity {
                 initView();
                 initListener();
             } else {
-                ToastUtils.showToastCentrally(this, "发生未知错误");
+                ToastUtils.showLongToastCentrally(this, R.string.unknown_err);
             }
         }
     }

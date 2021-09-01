@@ -10,29 +10,35 @@ import android.widget.Toast;
  * @date 2018/5/15
  */
 public class ToastUtils {
+    private static Toast mToast;
 
     /**
      * 在屏幕正中间弹短吐司
      */
     public static void showToastCentrally(Context context, String message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(message);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else
+            mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(message);
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
     }
 
     /**
      * 在屏幕正中间弹短吐司
      */
     public static void showToastCentrally(Context context, String message, int delay) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(message);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(message);
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                toast.cancel();
+                mToast.cancel();
             }
         }, delay);
     }
@@ -41,75 +47,90 @@ public class ToastUtils {
      * 在屏幕正中间弹短吐司
      */
     public static void showToastCentrally(Context context, int message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(context.getString(message));
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(context.getString(message));
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
     }
 
     /**
      * 在屏幕正中间弹短吐司
      */
     public static void showLongToastCentrally(Context context, String message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        toast.setText(message);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        else mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.setText(message);
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
     }
 
     /**
      * 在屏幕正中间弹短吐司
      */
     public static void showLongToastCentrally(Context context, int message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        toast.setText(context.getResources().getString(message));
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        else mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.setText(context.getResources().getString(message));
+        mToast.setGravity(Gravity.CENTER, 0, 0);
+        mToast.show();
     }
 
     /**
      * 在屏幕弹短吐司
      */
     public static void showLongToast(Context context, int message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        toast.setText(context.getResources().getString(message));
-        toast.show();
+        if (mToast == null || mToast.getGravity() == Gravity.CENTER)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        else mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.setText(context.getResources().getString(message));
+        mToast.show();
     }
 
     /**
      * 在屏幕弹短吐司
      */
     public static void showLongToast(Context context, String message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        toast.setText(message);
-        toast.show();
+        if (mToast == null || mToast.getGravity() == Gravity.CENTER)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        else mToast.setDuration(Toast.LENGTH_LONG);
+        mToast.setText(message);
+        mToast.show();
     }
 
     /**
      * 在屏幕弹短吐司
      */
     public static void showShortToast(Context context, int message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(context.getResources().getString(message));
-        toast.show();
+        if (mToast == null || mToast.getGravity() == Gravity.CENTER)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(context.getResources().getString(message));
+        mToast.show();
     }
 
     /**
      * 在屏幕弹短吐司
      */
     public static void showShortToast(Context context, String message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(message);
-        toast.show();
+        if (mToast == null || mToast.getGravity() == Gravity.CENTER)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(message);
+        mToast.show();
     }
 
     /**
      * 显示服务端返回的信息
      */
     public static void showRespMsg(Context context, String message) {
-        Toast toast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
-        toast.setText(message);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        if (mToast == null || mToast.getGravity() == Gravity.CENTER)
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+        else mToast.setDuration(Toast.LENGTH_SHORT);
+        mToast.setText(message);
+        mToast.show();
     }
 }

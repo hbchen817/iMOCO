@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -142,18 +143,21 @@ public class RoomDeviceActivity extends BaseActivity {
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case Constant.MSG_CALLBACK_GETDEVICEINROOM:
-                    if (page == 1) {
-                        mDeviceList.clear();
-                    }
-                    mDeviceList.addAll(CloudDataParser.processRoomDeviceList((String) msg.obj));
-                    mAptDeviceList.notifyDataSetChanged();
-                    SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
-                    SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
-                    break;
-                default:
-                    break;
+            if (msg.what == Constant.MSG_CALLBACK_GETDEVICEINROOM) {
+                if (page == 1) {
+                    mDeviceList.clear();
+                }
+                mDeviceList.addAll(CloudDataParser.processRoomDeviceList((String) msg.obj));
+                mAptDeviceList.notifyDataSetChanged();
+                SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
+                SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
+            }
+            if (mDeviceList.isEmpty()) {
+                mViewBinding.recycleView.setVisibility(View.GONE);
+                mViewBinding.devNodataView.setVisibility(View.VISIBLE);
+            } else {
+                mViewBinding.recycleView.setVisibility(View.VISIBLE);
+                mViewBinding.devNodataView.setVisibility(View.GONE);
             }
             return false;
         }

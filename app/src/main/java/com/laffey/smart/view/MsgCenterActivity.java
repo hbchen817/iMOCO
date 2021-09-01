@@ -35,7 +35,7 @@ public class MsgCenterActivity extends BaseActivity implements View.OnClickListe
 
     private MsgCenterManager msgCenterManager;
     String[] type = new String[3];
-    private String[] msgTypeArr = {"device", "share", "announcement"};
+    private final String[] msgTypeArr = {"device", "share", "announcement"};
     private int currentPosition = 0;
     private final DialogInterface.OnClickListener clearMsgListener = new DialogInterface.OnClickListener() {
         @Override

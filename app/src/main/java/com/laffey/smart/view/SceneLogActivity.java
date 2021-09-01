@@ -100,6 +100,13 @@ public class SceneLogActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
                 SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
                 SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
+                if (models.isEmpty()) {
+                    mViewBinding.recycleView.setVisibility(View.GONE);
+                    mViewBinding.sceneNodataView.setVisibility(View.VISIBLE);
+                } else {
+                    mViewBinding.recycleView.setVisibility(View.VISIBLE);
+                    mViewBinding.sceneNodataView.setVisibility(View.GONE);
+                }
             }
             return false;
         }

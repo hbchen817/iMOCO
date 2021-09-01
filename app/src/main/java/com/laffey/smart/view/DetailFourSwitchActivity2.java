@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
@@ -150,7 +152,7 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
 
         mTSLHelper = new TSLHelper(this);
         mSceneManager = new SceneManager(this);
-        mHandler = new MyHandler(this);
+        mHandler = new MyHandler(getMainLooper(), this);
 
         // 键1操作事件处理
         OnClickListener operateOnClickListener1 = new OnClickListener() {
@@ -276,14 +278,15 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     }
 
     private void initKeyNickName() {
-        MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
+        MyResponseErrHandler errHandler = new MyResponseErrHandler(getMainLooper(), this);
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mHandler);
     }
 
     private static class MyResponseErrHandler extends Handler {
         private final WeakReference<DetailFourSwitchActivity2> ref;
 
-        public MyResponseErrHandler(DetailFourSwitchActivity2 activity) {
+        public MyResponseErrHandler(Looper looper, DetailFourSwitchActivity2 activity) {
+            super(looper);
             ref = new WeakReference<>(activity);
         }
 
@@ -324,7 +327,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     private static class MyHandler extends Handler {
         private final WeakReference<DetailFourSwitchActivity2> ref;
 
-        public MyHandler(DetailFourSwitchActivity2 activity) {
+        public MyHandler(Looper looper, DetailFourSwitchActivity2 activity) {
+            super(looper);
             ref = new WeakReference<>(activity);
         }
 
@@ -387,7 +391,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
 
         nameEt.setSelection(nameEt.getText().toString().length());
         final android.app.Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -465,7 +470,7 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 }
