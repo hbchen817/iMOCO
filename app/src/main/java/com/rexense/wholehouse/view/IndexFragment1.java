@@ -4,21 +4,25 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -81,6 +85,7 @@ import androidx.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author fyy
@@ -125,8 +130,12 @@ public class IndexFragment1 extends BaseFragment {
     protected View allDeviceView;
     @BindView(R.id.share_device_view)
     protected View shareDeviceView;
-    @BindView(R.id.alldevice_nodata_view)
-    protected View allDeviceNoDataView;
+    @BindView(R.id.list_dev_nodata_view)
+    protected LinearLayout mListDevNodataView;
+    @BindView(R.id.grid_dev_nodata_view)
+    protected LinearLayout mGridDevNodataView;
+    // @BindView(R.id.alldevice_nodata_view)
+    // protected View allDeviceNoDataView;
     @BindView(R.id.sharedevice_nodata_view)
     protected View shareDeviceNoDataView;
     @BindView(R.id.grid_rl)
@@ -139,6 +148,10 @@ public class IndexFragment1 extends BaseFragment {
     protected ImageView mImgGrid;
     @BindView(R.id.mainImgList)
     protected ImageView mImgList;
+    @BindView(R.id.mainImgChoice)
+    protected TextView mImgChoice;
+
+    private FrameLayout mActivityRootView;
 
     private static final int SCENE_PAGE_SIZE = 50;
     private final int DEV_PAGE_SIZE = 50;
@@ -180,6 +193,10 @@ public class IndexFragment1 extends BaseFragment {
         return R.layout.fragment_index1;
     }
 
+    public void setRootLayout(FrameLayout layout) {
+        mActivityRootView = layout;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -192,6 +209,10 @@ public class IndexFragment1 extends BaseFragment {
         View view = inflater.inflate(setLayout(), container, false);
         // 绑定ButterKnife
         mUnbinder = ButterKnife.bind(this, view);
+
+        Typeface typeface = Typeface.createFromAsset(mActivity.getAssets(), Constant.ICON_FONT_TTF);
+        mImgChoice.setTypeface(typeface);
+        mImgChoice.setText(R.string.icon_more);
 
         mSceneManager = new SceneManager(mActivity);
         mLblSceneTitle.setVisibility(View.GONE);
@@ -352,6 +373,24 @@ public class IndexFragment1 extends BaseFragment {
         mGetSceneHandler = new GetSceneHandler(this);
     }
 
+    @OnClick({R.id.mainLblHome, R.id.mainImgChoice})
+    protected void onViewClicked(View view) {
+        if (view.getId() == R.id.mainLblHome || view.getId() == R.id.mainImgChoice) {
+            // 家
+            mPWCallback.showPopupWindow();
+        }
+    }
+
+    private PopupWindow4Fragment mPWCallback;
+
+    public void setPWCallback(PopupWindow4Fragment callback) {
+        mPWCallback = callback;
+    }
+
+    public interface PopupWindow4Fragment {
+        void showPopupWindow();
+    }
+
     @Override
     protected void notifyFailureOrError(int type) {
         super.notifyFailureOrError(type);
@@ -379,7 +418,6 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
         // 注销事件总线
         EventBus.getDefault().unregister(this);
-        mUnbinder.unbind();
         super.onDestroyView();
     }
 
@@ -449,7 +487,25 @@ public class IndexFragment1 extends BaseFragment {
                 }
                 mAptDeviceList.notifyDataSetChanged();
                 mAptDeviceGrid.notifyDataSetChanged();
-                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+                // allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mDeviceList == null) {
+                mListDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                if (mDeviceList.isEmpty()) {
+                    mListDevNodataView.setVisibility(View.VISIBLE);
+                    mGridDevNodataView.setVisibility(View.VISIBLE);
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    mListDevNodataView.setVisibility(View.GONE);
+                    mGridDevNodataView.setVisibility(View.GONE);
+                    mGridDevice.setVisibility(View.VISIBLE);
+                    mListDevice.setVisibility(View.VISIBLE);
+                }
             }
 
             // 分享设备处理
@@ -467,7 +523,18 @@ public class IndexFragment1 extends BaseFragment {
                     }
                 }
                 mAptShareDeviceList.notifyDataSetChanged();
-                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mShareDeviceList == null) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                if (mShareDeviceList.isEmpty()) {
+                    shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mListShare.setVisibility(View.GONE);
+                } else {
+                    shareDeviceNoDataView.setVisibility(View.GONE);
+                    mListShare.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -766,8 +833,38 @@ public class IndexFragment1 extends BaseFragment {
         mListShare.setAdapter(mAptShareDeviceList);
         mListShare.setOnItemClickListener(shareDeviceListOnItemClickListener);
 
-        allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
-        shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+        if (mDeviceList == null) {
+            mListDevNodataView.setVisibility(View.VISIBLE);
+            mGridDevNodataView.setVisibility(View.VISIBLE);
+            mGridDevice.setVisibility(View.GONE);
+            mListDevice.setVisibility(View.GONE);
+        } else {
+            if (mDeviceList.isEmpty()) {
+                mListDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevNodataView.setVisibility(View.VISIBLE);
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                mListDevNodataView.setVisibility(View.GONE);
+                mGridDevNodataView.setVisibility(View.GONE);
+                mGridDevice.setVisibility(View.VISIBLE);
+                mListDevice.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (mShareDeviceList == null) {
+            shareDeviceNoDataView.setVisibility(View.VISIBLE);
+            mListShare.setVisibility(View.GONE);
+        } else {
+            if (mShareDeviceList.isEmpty()) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                shareDeviceNoDataView.setVisibility(View.GONE);
+                mListShare.setVisibility(View.VISIBLE);
+            }
+        }
+
         deviceCount();
     }
 
@@ -823,6 +920,7 @@ public class IndexFragment1 extends BaseFragment {
                 case Constant.MSG_CALLBACK_GETHOMELIST:
                     // 处理获取家列表数据
                     EHomeSpace.homeListEntry homeList = CloudDataParser.processHomeList((String) msg.obj);
+                    DeviceBuffer.addHomeInfo(homeList.data);
                     if (homeList == null || homeList.total == 0 || homeList.data == null || homeList.data.size() == 0) {
                         // 如果没有创建家空间则自动创建我的家
                         mHomeSpaceManager.createHome(getString(R.string.homespace_defaulthome), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);

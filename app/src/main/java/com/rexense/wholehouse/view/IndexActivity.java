@@ -1,23 +1,37 @@
 package com.rexense.wholehouse.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityIndexBinding;
+import com.rexense.wholehouse.model.EHomeSpace;
+import com.rexense.wholehouse.presenter.DeviceBuffer;
 import com.rexense.wholehouse.utility.PermissionUtil;
 import com.rexense.wholehouse.utility.SpUtils;
 import com.rexense.wholehouse.utility.ToastUtils;
@@ -30,6 +44,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +83,8 @@ public class IndexActivity extends BaseActivity {
 
 
     public static IndexActivity mainActivity;
+
+    private Typeface mIconFont;
 
     public static void start(Context context) {
         ToastUtils.showToastCentrally(context, context.getString(R.string.login_success));
@@ -119,6 +139,8 @@ public class IndexActivity extends BaseActivity {
         setContentView(mViewBinding.getRoot());
         // 绑定ButterKnife
 
+        mIconFont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+
         mFragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState != null) {
@@ -150,7 +172,64 @@ public class IndexActivity extends BaseActivity {
             init();
         }
 
+        if (indexFragment1 != null) {
+            indexFragment1.setPWCallback(new IndexFragment1.PopupWindow4Fragment() {
+                @Override
+                public void showPopupWindow() {
+                    View contentView = LayoutInflater.from(IndexActivity.this).inflate(R.layout.pw_home_list, null);
+
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+                    PopupWindow window = new PopupWindow(contentView, RelativeLayout.LayoutParams.MATCH_PARENT,
+                            metrics.heightPixels / 2, true);
+                    window.setAnimationStyle(R.style.pop_anim_style);
+                    window.setTouchable(true);
+                    setBackgroundAlpha((float) 0.5, IndexActivity.this);
+                    window.showAtLocation((View) (mViewBinding.rootLayout), Gravity.BOTTOM, 0, 0);
+                    window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            setBackgroundAlpha((float) 1, IndexActivity.this);
+                        }
+                    });
+
+                    TextView popClose = (TextView) contentView.findViewById(R.id.pop_close);
+                    popClose.setTypeface(mIconFont);
+                    popClose.setText(R.string.icon_close);
+                    popClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            window.dismiss();
+                        }
+                    });
+
+                    List<EHomeSpace.homeEntry> list = new ArrayList<>();
+                    list.addAll(DeviceBuffer.getHomeInfoList());
+                    RecyclerView homeRV = (RecyclerView) contentView.findViewById(R.id.home_rv);
+                    BaseQuickAdapter<EHomeSpace.homeEntry, BaseViewHolder> adapter = new BaseQuickAdapter<EHomeSpace.homeEntry, BaseViewHolder>(R.layout.item_home, list) {
+                        @Override
+                        protected void convert(@NotNull BaseViewHolder holder, EHomeSpace.homeEntry entry) {
+                            TextView homeIcon = holder.getView(R.id.home_icon);
+                            homeIcon.setTypeface(mIconFont);
+                            homeIcon.setText(R.string.icon_home);
+                            holder.setText(R.id.home_name, entry.name);
+                        }
+                    };
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(IndexActivity.this);
+                    layoutManager.setOrientation(RecyclerView.VERTICAL);
+                    homeRV.setLayoutManager(layoutManager);
+                    homeRV.setAdapter(adapter);
+                }
+            });
+        }
         initStatusBar();
+    }
+
+    public static void setBackgroundAlpha(float bgAlpha, Context mContext) {
+        WindowManager.LayoutParams lp = ((Activity) mContext).getWindow().getAttributes();
+        lp.alpha = bgAlpha;
+        ((Activity) mContext).getWindow().setAttributes(lp);
     }
 
     private void init() {
@@ -191,10 +270,10 @@ public class IndexActivity extends BaseActivity {
         }
 
         // 开启摄像头的权限
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             mPermissionList.add(Manifest.permission.CAMERA);
-        }
+        }*/
 
         // 位置的权限 蓝牙搜索相关
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -221,8 +300,8 @@ public class IndexActivity extends BaseActivity {
             if (grantResults.length > 0) {
                 for (int result : grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
-                        ToastUtils.showToastCentrally(this, "您必须同意所需权限才能使用本应用");
-                        PermissionUtil.getAppDetailSettingIntent1(this);
+                        ToastUtils.showLongToastCentrally(this, R.string.missing_permissions_will_render_some_functionality_unusable);
+                        // PermissionUtil.getAppDetailSettingIntent1(this);
                     }
                 }
 
@@ -230,7 +309,7 @@ public class IndexActivity extends BaseActivity {
                 initView();
                 initListener();
             } else {
-                ToastUtils.showToastCentrally(this, "发生未知错误");
+                ToastUtils.showLongToastCentrally(this, R.string.unknown_err);
             }
         }
     }

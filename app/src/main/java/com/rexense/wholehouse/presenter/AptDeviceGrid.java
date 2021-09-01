@@ -2,7 +2,6 @@ package com.rexense.wholehouse.presenter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,7 +195,8 @@ public class AptDeviceGrid extends BaseAdapter {
                     viewHolder.state.setText(mDeviceList.get(position).stateTimes.get(0).value);
                     if (CTSL.PK_ONEWAYSWITCH.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAYSWITCH_HY.equals(deviceEntry.productKey)
-                            || CTSL.PK_ONEWAYSWITCH_YQS.equals(deviceEntry.productKey)
+                            || CTSL.PK_ONEWAYSWITCH_YQS_XB.equals(deviceEntry.productKey)
+                            || CTSL.PK_ONEWAYSWITCH_YQS_ZR.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAYSWITCH_LF.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAY_DANHUO_RY.equals(deviceEntry.productKey)) {
                         JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
@@ -227,7 +227,8 @@ public class AptDeviceGrid extends BaseAdapter {
                         viewHolder.state2.setText(devItem.stateTimes.get(1).value + " / " + devItem.stateTimes.get(1).time);
                         if (CTSL.PK_TWOWAYSWITCH.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_HY.equals(deviceEntry.productKey)
-                                || CTSL.PK_TWOWAYSWITCH_YQS.equals(deviceEntry.productKey)
+                                || CTSL.PK_TWOWAYSWITCH_YQS_XB.equals(deviceEntry.productKey)
+                                || CTSL.PK_TWOWAYSWITCH_YQS_ZR.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_LF.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAY_DANHUO_RY.equals(deviceEntry.productKey)) {
                             JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
@@ -273,9 +274,10 @@ public class AptDeviceGrid extends BaseAdapter {
                         viewHolder.state2.setText(mDeviceList.get(position).stateTimes.get(1).value + "");
                         if (CTSL.PK_THREE_KEY_SWITCH.equals(deviceEntry.productKey) ||
                                 CTSL.PK_THREEWAYSWITCH_HY.equals(deviceEntry.productKey) ||
-                                CTSL.PK_THREEWAYSWITCH_YQS.equals(deviceEntry.productKey) ||
+                                CTSL.PK_THREEWAYSWITCH_YQS_XB.equals(deviceEntry.productKey) ||
                                 CTSL.PK_THREEWAYSWITCH_LF.equals(deviceEntry.productKey) ||
-                                CTSL.PK_THREEWAY_DANHUO_RY.equals(deviceEntry.productKey)) {
+                                CTSL.PK_THREEWAY_DANHUO_RY.equals(deviceEntry.productKey) ||
+                                CTSL.PK_THREEWAYSWITCH_YQS_ZR.equals(deviceEntry.productKey)) {
                             JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
                             if (jsonObject != null) {
                                 int switchPos1 = 0;

@@ -9,8 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CScene;
@@ -29,12 +27,7 @@ import com.rexense.wholehouse.presenter.SystemParameter;
 import com.rexense.wholehouse.utility.Dialog;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.rexense.wholehouse.utility.Utility;
-import com.rexense.wholehouse.widget.ComCircularProgress;
 import com.vise.log.ViseLog;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Creator: xieshaobing
@@ -108,7 +101,8 @@ public class PermitJoinActivity extends BaseActivity {
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
-            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_XB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR:
             case CTSL.PK_U_SIX_SCENE_SWITCH:
             case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
             case CTSL.PK_SIX_SCENE_SWITCH:

@@ -1,6 +1,5 @@
 package com.rexense.wholehouse.view;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +20,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.cncoderx.wheelview.Wheel3DView;
 import com.google.gson.Gson;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CTSL;
@@ -46,9 +43,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class EditPropertyValueActivity extends BaseActivity {
     private ActivityEditPropertyValueBinding mViewBinding;
@@ -427,7 +421,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                         } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
                                             activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
                                             activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
-                                        } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
+                                        } else
+                                            activity.mViewBinding.unitTv.setVisibility(View.GONE);
                                     }
                                     break;
                                 }
@@ -472,7 +467,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             activity.mList.add(value6);
                                         } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(event.getProductKey())
                                                 || CTSL.PK_U_SIX_SCENE_SWITCH.equals(event.getProductKey())
-                                                || CTSL.PK_SIX_SCENE_SWITCH_YQSXB.equals(event.getProductKey())) {
+                                                || CTSL.PK_SIX_SCENE_SWITCH_YQS_XB.equals(event.getProductKey())
+                                                || CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -676,7 +672,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                         } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
                                             activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
                                             activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
-                                        } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
+                                        } else
+                                            activity.mViewBinding.unitTv.setVisibility(View.GONE);
                                     } else if ("enum".equals(dataType.getString("type"))) {
                                         activity.mList.clear();
                                         activity.mViewBinding.valueRv.setVisibility(View.VISIBLE);

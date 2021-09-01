@@ -19,9 +19,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
@@ -53,6 +50,7 @@ import com.rexense.wholehouse.model.EHomeSpace;
 import com.rexense.wholehouse.model.ETSL;
 import com.rexense.wholehouse.utility.Dialog;
 import com.rexense.wholehouse.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -180,6 +178,7 @@ public class MoreGatewayActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
                     // 处理获取OTA固件信息
                     JSONObject dataJson = JSONObject.parseObject((String) msg.obj);
+                    ViseLog.d("dataJson = " + dataJson);
                     currentVersion = dataJson.getString("currentVersion");
                     theNewVersion = dataJson.getString("version");
                     hasNewerVersion = !currentVersion.equals(theNewVersion);
@@ -216,7 +215,8 @@ public class MoreGatewayActivity extends BaseActivity {
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
-                                case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+                                case CTSL.PK_SIX_SCENE_SWITCH_YQS_XB:
+                                case CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR:
                                 case CTSL.PK_U_SIX_SCENE_SWITCH:
                                 case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
                                 case CTSL.PK_SIX_SCENE_SWITCH:

@@ -31,10 +31,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:paddingTop="@dimen/dp_15"
             android:paddingBottom="@dimen/dp_10"
-            android:text="@string/privacy_policy_dialog_lgout_app"
+            android:text="@string/privacy_policy_dialog_disagree2"
             android:textColor="@drawable/selector_theme_click" />
 
         <TextView
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:paddingTop="@dimen/dp_15"
             android:paddingBottom="@dimen/dp_10"

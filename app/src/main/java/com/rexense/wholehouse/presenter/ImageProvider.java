@@ -40,7 +40,8 @@ public class ImageProvider {
             case CTSL.PK_GATEWAY_RG4100_RY:
                 return R.drawable.icon_gateway_fton;
             case CTSL.PK_ONEWAYSWITCH_HY:
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
@@ -50,7 +51,8 @@ public class ImageProvider {
                     return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
@@ -76,10 +78,19 @@ public class ImageProvider {
                 return R.drawable.icon_pirsensor;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
                 return R.drawable.icon_thsensor;
             case CTSL.PK_KDS_SMART_LOCK_A7:
+            case CTSL.PK_KDS_SMART_LOCK_K100:
+            case CTSL.PK_KDS_SMART_LOCK_S6:
+            case CTSL.PK_MM_SMART_LOCK:
+            case CTSL.PK_MS_SMART_LOCK:
                 return R.drawable.icon_smart_lock;
-            case CTSL.PK_DY_ELE:
+            case CTSL.PK_DY_ELE_D82:
+            case CTSL.PK_DY_ELE_D52:
+            case CTSL.PK_DY_ELE_DC:
+            case CTSL.PK_WSD_ELE_DC:
+            case CTSL.PK_WSD_ELE_AC:
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
@@ -88,7 +99,8 @@ public class ImageProvider {
             case CTSL.PK_TWO_KEY_SWITCH:
                 return R.drawable.icon_two_key_switch;*/
             case CTSL.PK_THREEWAYSWITCH_HY:
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
@@ -136,11 +148,26 @@ public class ImageProvider {
             case CTSL.PK_ONE_SCENE_SWITCH:
                 return R.drawable.icon_one_scene_switch;
             case CTSL.PK_AIRCOMDITION_TWO_LF:
+            case CTSL.PK_AIRCOMDITION_TWO_HY_U1:
+            case CTSL.PK_AIRCOMDITION_TWO_HY_U2:
             case CTSL.PK_FAU:
+            case CTSL.PK_FAU_HY_U1:
+            case CTSL.PK_FAU_LF:
             case CTSL.PK_FLOORHEATING001_LF:
+            case CTSL.PK_WATER_FLOORHEAT_HY_U1:
+            case CTSL.PK_WATER_FLOORHEAT_HY_U2:
+            case CTSL.PK_ELEC_FLOORHEAT_HY_U1:
+            case CTSL.PK_ELEC_FLOORHEAT_HY_U2:
             case CTSL.PK_VRV_AC:
                 return R.drawable.icon_ac;
-            case CTSL.PK_OUTLET_LF:
+            case CTSL.PK_OUTLET_10A_LF:
+            case CTSL.PK_OUTLET_10A_HY_U1:
+            case CTSL.PK_OUTLET_10A_HY_U2:
+            case CTSL.PK_OUTLET_16A_HY_U1:
+            case CTSL.PK_OUTLET_16A_HY_U2:
+            case CTSL.PK_OUTLET_16A_LF:
+            case CTSL.PK_OUTLET_16A_YQS:
+            case CTSL.PK_OUTLET_10A_YQS:
                 return R.drawable.icon_outlet;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
             case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
@@ -150,7 +177,17 @@ public class ImageProvider {
                 return R.drawable.icon_three_scene_switch;
             }
             case CTSL.PK_TWOWAYWINDOWCURTAINS_LF:
-            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF: {
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D9:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9: {
                 // 窗帘电机
                 return R.drawable.icon_dianji;
             }
@@ -209,6 +246,7 @@ public class ImageProvider {
                 return R.drawable.state_icon_water;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
                 if (propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentHumidity)) {
                     return R.drawable.state_icon_humdity;
                 }
@@ -238,7 +276,8 @@ public class ImageProvider {
                     }
                 }
             case CTSL.PK_ONEWAYSWITCH_HY:
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
@@ -254,7 +293,8 @@ public class ImageProvider {
                 }
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两键开关处理
@@ -278,7 +318,8 @@ public class ImageProvider {
                     }
                 }
             case CTSL.PK_THREEWAYSWITCH_HY:
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:

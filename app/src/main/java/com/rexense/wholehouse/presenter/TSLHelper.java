@@ -200,7 +200,8 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.GW_4100_ZB_PAN_ID, this.mContext.getString(R.string.moregateway_4100_ZB_PAN_ID), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_ONEWAYSWITCH_HY:
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
@@ -208,7 +209,8 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.OWS_P_PowerSwitch_1, this.mContext.getString(R.string.oneswitch_state), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
             case CTSL.PK_TWOWAYSWITCH:
@@ -260,6 +262,7 @@ public class TSLHelper {
                 break;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
                 // 温湿度传感器处理
                 list.add(new ETSL.messageRecordContentEntry(CTSL.THS_P_CurrentTemperature, this.mContext.getString(R.string.detailsensor_temperature), Constant.CONTENTTYPE_PROPERTY));
                 list.add(new ETSL.messageRecordContentEntry(CTSL.THS_P_CurrentHumidity, this.mContext.getString(R.string.detailsensor_humidity), Constant.CONTENTTYPE_PROPERTY));

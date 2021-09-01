@@ -92,7 +92,7 @@
         android:background="@color/appbgcolor"
         android:divider="@null"
         android:dividerHeight="6dp"
-        android:horizontalSpacing="1dip"></ListView>
+        android:horizontalSpacing="1dip" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/sceneLstMy_rl"
@@ -103,16 +103,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ListView
-            android:id="@+id/sceneLstMy"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:background="@color/appbgcolor"
-            android:divider="@null"
-            android:dividerHeight="6dp"
-            android:horizontalSpacing="1dip"
-            android:visibility="gone" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ListView
+                android:id="@+id/sceneLstMy"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:background="@color/appbgcolor"
+                android:divider="@null"
+                android:dividerHeight="6dp"
+                android:horizontalSpacing="1dip"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/scene_nodata_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="@dimen/dp_100"
+                    android:layout_height="@dimen/dp_100"
+                    android:src="@drawable/no_data" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@string/no_data"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </RelativeLayout>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <com.yanzhenjie.recyclerview.SwipeRecyclerView

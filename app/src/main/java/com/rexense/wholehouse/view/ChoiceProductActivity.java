@@ -17,9 +17,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView;
 
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.rexense.wholehouse.R;
@@ -37,8 +35,10 @@ import com.rexense.wholehouse.model.EProduct;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.utility.Dialog;
 import com.rexense.wholehouse.utility.QMUITipDialogUtil;
+import com.rexense.wholehouse.utility.SpUtils;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.rexense.wholehouse.viewholder.CountSectionAdapter;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -47,9 +47,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Creator: xieshaobing
@@ -76,7 +73,8 @@ public class ChoiceProductActivity extends BaseActivity {
     private int mGatewayNumber = 0;
     private ShareDeviceManager shareDeviceManager;
 
-    private ProductTeam mHYTeam, mRYTeam, mYQSTeam, mLFTeam, mDDTeam, mKDSTeam, mDYTeam, mHMTeam, mMLKTeam;
+    private ProductTeam mHYTeam, mRYTeam, mYQSTeam, mLFTeam, mDDTeam, mKDSTeam, mDYTeam, mHMTeam, mMLKTeam, mWSDTeam,
+            mMMTeam, mMSTeam;
     private List<ProductTeam> mProductTeamList = new ArrayList<>();
 
     // 产品类型点击处理
@@ -95,6 +93,9 @@ public class ChoiceProductActivity extends BaseActivity {
         mDYTeam.getProductList().clear();
         mHMTeam.getProductList().clear();
         mMLKTeam.getProductList().clear();
+        mWSDTeam.getProductList().clear();
+        mMMTeam.getProductList().clear();
+        mMSTeam.getProductList().clear();
 
         mConfigProductList = new ArrayList<EProduct.configListEntry>();
         for (EProduct.configListEntry entry : this.mConfigProductListAll) {
@@ -107,38 +108,85 @@ public class ChoiceProductActivity extends BaseActivity {
                         CTSL.PK_U_SIX_SCENE_SWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_FULL_SCREEN_SWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_10A_MEASURING_OUTLET_HY.equals(entry.productKey) ||
-                        CTSL.PK_PM_TEMHUMSENSOR_HY.equals(entry.productKey)) {
+                        CTSL.PK_PM_TEMHUMSENSOR_HY.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_10A_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_10A_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_16A_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_16A_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_16A_MEASURING_OUTLET_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_16A_MEASURING_OUTLET_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_AIRCOMDITION_TWO_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_AIRCOMDITION_TWO_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_WATER_FLOORHEAT_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_WATER_FLOORHEAT_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_ELEC_FLOORHEAT_HY_U1.equals(entry.productKey) ||
+                        CTSL.PK_ELEC_FLOORHEAT_HY_U2.equals(entry.productKey) ||
+                        CTSL.PK_FAU_HY_U1.equals(entry.productKey)) {
                     mHYTeam.getProductList().add(entry);
-                } else if (CTSL.PK_ONEWAYSWITCH_YQS.equals(entry.productKey) ||
-                        CTSL.PK_TWOWAYSWITCH_YQS.equals(entry.productKey) ||
-                        CTSL.PK_THREEWAYSWITCH_YQS.equals(entry.productKey) ||
-                        CTSL.PK_SIX_SCENE_SWITCH_YQSXB.equals(entry.productKey)) {
+                } else if (CTSL.PK_ONEWAYSWITCH_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYSWITCH_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_THREEWAYSWITCH_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_SIX_SCENE_SWITCH_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYSWITCH_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYSWITCH_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_THREEWAYSWITCH_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_ZR.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_XB.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_10A_YQS.equals(entry.productKey) ||
+                        CTSL.PK_10A_MEASURING_OUTLET_YQS.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_16A_YQS.equals(entry.productKey) ||
+                        CTSL.PK_16A_MEASURING_OUTLET_YQS.equals(entry.productKey)) {
                     mYQSTeam.getProductList().add(entry);
                 } else if (CTSL.PK_ONEWAYSWITCH_LF.equals(entry.productKey) ||
                         CTSL.PK_TWOWAYSWITCH_LF.equals(entry.productKey) ||
                         CTSL.PK_THREEWAYSWITCH_LF.equals(entry.productKey) ||
                         CTSL.PK_FOURWAYSWITCH_LF.equals(entry.productKey) ||
                         CTSL.PK_FOUR_SCENE_SWITCH_LF.equals(entry.productKey) ||
-                        CTSL.PK_OUTLET_LF.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_10A_LF.equals(entry.productKey) ||
                         CTSL.PK_ONEWAYWINDOWCURTAINS_LF.equals(entry.productKey) ||
                         CTSL.PK_TWOWAYWINDOWCURTAINS_LF.equals(entry.productKey) ||
                         CTSL.PK_FLOORHEATING001_LF.equals(entry.productKey) ||
-                        CTSL.PK_AIRCOMDITION_TWO_LF.equals(entry.productKey)) {
+                        CTSL.PK_AIRCOMDITION_TWO_LF.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D8.equals(entry.productKey) ||
+                        CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D9.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D8.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9.equals(entry.productKey) ||
+                        CTSL.PK_10A_MEASURING_OUTLET_LF.equals(entry.productKey) ||
+                        CTSL.PK_OUTLET_16A_LF.equals(entry.productKey) ||
+                        CTSL.PK_16A_MEASURING_OUTLET_LF.equals(entry.productKey) ||
+                        CTSL.PK_FAU_LF.equals(entry.productKey)) {
                     mLFTeam.getProductList().add(entry);
                 } else if (CTSL.PK_ONEWAY_DANHUO_RY.equals(entry.productKey) ||
                         CTSL.PK_TWOWAY_DANHUO_RY.equals(entry.productKey) ||
                         CTSL.PK_THREEWAY_DANHUO_RY.equals(entry.productKey) ||
                         CTSL.PK_GATEWAY_RG4100_RY.equals(entry.productKey)) {
                     mRYTeam.getProductList().add(entry);
-                } else if (CTSL.PK_KDS_SMART_LOCK_A7.equals(entry.productKey)) {
+                } else if (CTSL.PK_KDS_SMART_LOCK_A7.equals(entry.productKey) ||
+                        CTSL.PK_KDS_SMART_LOCK_K100.equals(entry.productKey) ||
+                        CTSL.PK_KDS_SMART_LOCK_S6.equals(entry.productKey)) {
                     mKDSTeam.getProductList().add(entry);
-                } else if (CTSL.PK_DY_ELE.equals(entry.productKey)) {
+                } else if (CTSL.PK_MM_SMART_LOCK.equals(entry.productKey)) {
+                    mMMTeam.getProductList().add(entry);
+                } else if (CTSL.PK_MS_SMART_LOCK.equals(entry.productKey)) {
+                    mMSTeam.getProductList().add(entry);
+                } else if (CTSL.PK_DY_ELE_D82.equals(entry.productKey) ||
+                        CTSL.PK_DY_ELE_DC.equals(entry.productKey) ||
+                        CTSL.PK_DY_ELE_D52.equals(entry.productKey)) {
                     mDYTeam.getProductList().add(entry);
+                } else if (CTSL.PK_WSD_ELE_DC.equals(entry.productKey) ||
+                        CTSL.PK_WSD_ELE_AC.equals(entry.productKey)) {
+                    mWSDTeam.getProductList().add(entry);
                 } else if (CTSL.PK_DOORSENSOR_HM.equals(entry.productKey) ||
                         CTSL.PK_WATERSENSOR_HM.equals(entry.productKey) ||
                         CTSL.PK_PIRSENSOR_HM.equals(entry.productKey) ||
                         CTSL.PK_SMOKESENSOR_HM.equals(entry.productKey) ||
-                        CTSL.PK_GASSENSOR_HM.equals(entry.productKey)) {
+                        CTSL.PK_GASSENSOR_HM.equals(entry.productKey) ||
+                        CTSL.PK_TEMHUMSENSOR_HM.equals(entry.productKey)) {
                     mHMTeam.getProductList().add(entry);
                 } else if (CTSL.PK_SMOKESENSOR_MLK.equals(entry.productKey) ||
                         CTSL.PK_PIRSENSOR_MLK.equals(entry.productKey) ||
@@ -190,6 +238,12 @@ public class ChoiceProductActivity extends BaseActivity {
             mProductTeamList.add(mMLKTeam);
         if (mDDTeam.getProductList().size() > 0)
             mProductTeamList.add(mDDTeam);
+        if (mWSDTeam.getProductList().size() > 0)
+            mProductTeamList.add(mWSDTeam);
+        if (mMMTeam.getProductList().size() > 0)
+            mProductTeamList.add(mMMTeam);
+        if (mMSTeam.getProductList().size() > 0)
+            mProductTeamList.add(mMSTeam);
         mCountSectionAdapter.notifyDataSetChanged();
     }
 
@@ -364,6 +418,9 @@ public class ChoiceProductActivity extends BaseActivity {
         mDYTeam = new ProductTeam(getString(R.string.du_ya));
         mHMTeam = new ProductTeam(getString(R.string.hai_man));
         mMLKTeam = new ProductTeam(getString(R.string.mai_le_ke));
+        mWSDTeam = new ProductTeam(getString(R.string.wei_shi_da));
+        mMMTeam = new ProductTeam(getString(R.string.ming_men));
+        mMSTeam = new ProductTeam(getString(R.string.man_shen));
         mDDTeam = new ProductTeam(getString(R.string.others));
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
@@ -424,12 +481,22 @@ public class ChoiceProductActivity extends BaseActivity {
 
     private void requestPermission() {
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            boolean hasRequstCamera = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, false);
+            // 未有权限
+            // 第一次请求权限 false
+            // 第一次请求权限拒绝，但未选择“不再提醒” true
+            // 第一次请求权限拒绝，并选择“不再提醒” false
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) || !hasRequstCamera) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+
+                SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, true);
             } else {
-                ToastUtils.showToastCentrally(mActivity, getString(R.string.camera_denied_and_dont_ask_msg));
+                ToastUtils.showLongToast(mActivity, getString(R.string.camera_denied_and_dont_ask_msg));
             }
+
+            ViseLog.d("flag = " + ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA));
         } else {
+            // 已经获取权限
             Intent intent = new Intent(mActivity, ScanActivity.class);
             startActivityForResult(intent, 1);
         }
@@ -443,7 +510,7 @@ public class ChoiceProductActivity extends BaseActivity {
                 Intent intent = new Intent(this, ScanActivity.class);
                 startActivityForResult(intent, 1);
             } else {
-                ToastUtils.showToastCentrally(this, getString(R.string.camera_denied_msg));
+                ToastUtils.showLongToast(this, R.string.camera_denied_msg);
             }
         }
     }

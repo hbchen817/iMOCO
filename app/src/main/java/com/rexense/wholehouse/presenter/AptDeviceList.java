@@ -170,7 +170,8 @@ public class AptDeviceList extends BaseAdapter {
                     viewHolder.status.setText(txt);
                     if (CTSL.PK_ONEWAYSWITCH.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAYSWITCH_HY.equals(deviceEntry.productKey)
-                            || CTSL.PK_ONEWAYSWITCH_YQS.equals(deviceEntry.productKey)
+                            || CTSL.PK_ONEWAYSWITCH_YQS_XB.equals(deviceEntry.productKey)
+                            || CTSL.PK_ONEWAYSWITCH_YQS_ZR.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAYSWITCH_LF.equals(deviceEntry.productKey)
                             || CTSL.PK_ONEWAY_DANHUO_RY.equals(deviceEntry.productKey)) {
                         JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);

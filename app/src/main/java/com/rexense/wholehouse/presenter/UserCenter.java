@@ -38,7 +38,7 @@ public class UserCenter {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_GETGATEWAYSUBDEVICELIST;
-        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.version = "1.0.6";
         requestParameterEntry.addParameter("iotId", gatewayIOTId);
         requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
         requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);

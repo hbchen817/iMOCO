@@ -51,7 +51,8 @@ public class ActivityRouter {
                 intent = new Intent(context, DetailGatewayActivity.class);
                 break;
             case CTSL.PK_ONEWAYSWITCH_HY:
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
@@ -60,7 +61,8 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两键开关处理
@@ -92,6 +94,7 @@ public class ActivityRouter {
                 // 人体热释传感器处理
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
                 // 温湿度传感器处理
             case CTSL.PK_REMOTECONTRILBUTTON:
                 // 遥控按钮处理
@@ -103,6 +106,10 @@ public class ActivityRouter {
                 }
                 break;
             case CTSL.PK_KDS_SMART_LOCK_A7:
+            case CTSL.PK_KDS_SMART_LOCK_K100:
+            case CTSL.PK_KDS_SMART_LOCK_S6:
+            case CTSL.PK_MM_SMART_LOCK:
+            case CTSL.PK_MS_SMART_LOCK:
                 intent = new Intent(context, LockDetailActivity.class);
                 break;
             case CTSL.PK_LIGHT:
@@ -118,7 +125,8 @@ public class ActivityRouter {
             case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
                 intent = new Intent(context, USixSceneSwitchActivity2.class);
                 break;
-            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_XB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR:
             case CTSL.PK_SIX_SCENE_SWITCH:
                 intent = new Intent(context, SixSceneSwitchActivity2.class);
                 break;
@@ -141,7 +149,8 @@ public class ActivityRouter {
                 break;
             }
             case CTSL.PK_THREEWAYSWITCH_HY:
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH: {
@@ -149,13 +158,24 @@ public class ActivityRouter {
                 intent = new Intent(context, DetailThreeSwitchActivity.class);
                 break;
             }
-            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF: {
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D9: {
                 // 单路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, OneWayCurtainsDetailActivity.class);
                 break;
             }
-            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF: {
+            case "a1UnLiHBScD":
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9: {
                 // 双路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, TwoWayCurtainsDetailActivity.class);

@@ -226,7 +226,8 @@ public class AptSceneParameter extends BaseAdapter {
                     if (jsonObject != null) {
                         if (CTSL.PK_ONEWAYSWITCH.equals(pk)
                                 || CTSL.PK_ONEWAYSWITCH_HY.equals(pk)
-                                || CTSL.PK_ONEWAYSWITCH_YQS.equals(pk)
+                                || CTSL.PK_ONEWAYSWITCH_YQS_XB.equals(pk)
+                                || CTSL.PK_ONEWAYSWITCH_YQS_ZR.equals(pk)
                                 || CTSL.PK_ONEWAYSWITCH_LF.equals(pk)
                                 || CTSL.PK_ONEWAY_DANHUO_RY.equals(pk)) {
                             String name = jsonObject.getString(CTSL.OWS_P_PowerSwitch_1);
@@ -237,7 +238,8 @@ public class AptSceneParameter extends BaseAdapter {
                             }
                         } else if (CTSL.PK_TWOWAYSWITCH.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_HY.equals(pk)
-                                || CTSL.PK_TWOWAYSWITCH_YQS.equals(pk)
+                                || CTSL.PK_TWOWAYSWITCH_YQS_XB.equals(pk)
+                                || CTSL.PK_TWOWAYSWITCH_YQS_ZR.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_LF.equals(pk)
                                 || CTSL.PK_TWOWAY_DANHUO_RY.equals(pk)) {
                             String stateString = "1".equals(rawValue) ? mContext.getString(R.string.twoswitch_state_on) :

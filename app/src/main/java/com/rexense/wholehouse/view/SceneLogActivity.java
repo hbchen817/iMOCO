@@ -20,6 +20,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -98,6 +100,13 @@ public class SceneLogActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
                 SrlUtils.finishRefresh(mViewBinding.srlFragmentMe, true);
                 SrlUtils.finishLoadMore(mViewBinding.srlFragmentMe, true);
+                if (models.isEmpty()) {
+                    mViewBinding.recycleView.setVisibility(View.GONE);
+                    mViewBinding.sceneNodataView.setVisibility(View.VISIBLE);
+                } else {
+                    mViewBinding.recycleView.setVisibility(View.VISIBLE);
+                    mViewBinding.sceneNodataView.setVisibility(View.GONE);
+                }
             }
             return false;
         }

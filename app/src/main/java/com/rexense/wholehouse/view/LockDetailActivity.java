@@ -186,7 +186,11 @@ public class LockDetailActivity extends DetailActivity {
                 mKeyTime = timestamp;
                 String startTime = DateFormatUtils.long2Str(timestamp, true);
                 String endTime = DateFormatUtils.long2Str(timestamp + 1000 * 60 * 5, true);
-                if (mProductKey.equals(CTSL.PK_KDS_SMART_LOCK_A7)) {
+                if (CTSL.PK_KDS_SMART_LOCK_A7.equals(mProductKey) ||
+                        CTSL.PK_KDS_SMART_LOCK_K100.equals(mProductKey) ||
+                        CTSL.PK_KDS_SMART_LOCK_S6.equals(mProductKey) ||
+                        CTSL.PK_MM_SMART_LOCK.equals(mProductKey) ||
+                        CTSL.PK_MS_SMART_LOCK.equals(mProductKey)) {
                     LockManager.setTemporaryKey(mIOTId, randomKey, startTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 } else {
                     LockManager.setTemporaryKey(mIOTId, randomKey, startTime, endTime, mCommitFailureHandler, mResponseErrorHandler, mHandler);

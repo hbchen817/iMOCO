@@ -119,7 +119,8 @@ public class CodeMapper {
                     mapValue = propertyValue;
                 }
                 break;
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_HY:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
@@ -135,7 +136,8 @@ public class CodeMapper {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两路开关状态
@@ -250,6 +252,7 @@ public class CodeMapper {
                 break;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
                 // 处理温湿度状态
                 if (propertyName.equals(CTSL.THS_P_CurrentTemperature)) {
                     mapName = context.getString(R.string.detailsensor_temperature);
@@ -270,7 +273,9 @@ public class CodeMapper {
                     mapValue = context.getString(R.string.sensorstate_trigger);
                 }
                 break;
-            case CTSL.PK_AIRCOMDITION_TWO_LF: {
+            case CTSL.PK_AIRCOMDITION_TWO_LF:
+            case CTSL.PK_AIRCOMDITION_TWO_HY_U1:
+            case CTSL.PK_AIRCOMDITION_TWO_HY_U2: {
                 // 处理空调二管制状态
                 if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
@@ -296,7 +301,11 @@ public class CodeMapper {
                 }
                 break;
             }
-            case CTSL.PK_FLOORHEATING001_LF: {
+            case CTSL.PK_FLOORHEATING001_LF:
+            case CTSL.PK_WATER_FLOORHEAT_HY_U1:
+            case CTSL.PK_WATER_FLOORHEAT_HY_U2:
+            case CTSL.PK_ELEC_FLOORHEAT_HY_U1:
+            case CTSL.PK_ELEC_FLOORHEAT_HY_U2: {
                 // 处理地暖（电机）状态
                 if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
@@ -310,7 +319,8 @@ public class CodeMapper {
                 break;
             }
             case CTSL.PK_THREEWAYSWITCH_HY:
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
@@ -358,7 +368,8 @@ public class CodeMapper {
 
         String mapName = "", mapValue = "";
         switch (productKey) {
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_HY:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
@@ -374,7 +385,8 @@ public class CodeMapper {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两路开关状态
@@ -423,7 +435,8 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_THREEWAYSWITCH_HY:
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
             case CTSL.PK_THREE_KEY_SWITCH:
@@ -569,7 +582,7 @@ public class CodeMapper {
             case CScene.SMC_OPEN_DOOR_ON:
                 if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
@@ -578,7 +591,7 @@ public class CodeMapper {
                     list.add(stateEntry);
                 } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
@@ -608,7 +621,7 @@ public class CodeMapper {
             case CScene.SMC_UNMANNED_OFF:
                 if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
@@ -617,7 +630,7 @@ public class CodeMapper {
                     list.add(stateEntry);
                 } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
@@ -647,7 +660,7 @@ public class CodeMapper {
             case CScene.SMC_GO_HOME_PATTERN:
                 if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
@@ -656,7 +669,7 @@ public class CodeMapper {
                     list.add(stateEntry);
                 } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
@@ -692,7 +705,7 @@ public class CodeMapper {
             case CScene.SMC_SLEEP_PATTERN:
                 if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
@@ -701,7 +714,7 @@ public class CodeMapper {
                     list.add(stateEntry);
                 } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关

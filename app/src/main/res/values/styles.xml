@@ -29,6 +29,12 @@
         <item name="android:typeface">sans</item>
     </style>
 
+    <style name="TitleBarFontStyle2">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/appcolor</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
     <!-- 标题字体加粗样式 -->
     <style name="TitleBoldFontStyle">
         <item name="android:textSize">16sp</item>
@@ -157,11 +163,15 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <style name="pop_anim_style" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_enter</item>
+        <item name="android:windowExitAnimation">@anim/pop_exit</item>
+    </style>
+
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/start</item>
         <item name="android:windowDisablePreview">false</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
 </resources>

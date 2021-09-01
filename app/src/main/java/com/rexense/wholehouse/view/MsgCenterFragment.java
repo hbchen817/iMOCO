@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
@@ -24,6 +25,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 
 /**
@@ -43,6 +46,8 @@ public class MsgCenterFragment extends BaseFragment {
     RecyclerView recycleView;
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
+    @BindView(R.id.msg_nodata_view)
+    LinearLayout mMsgNodataView;
 
     private CommonAdapter adapter;
     private List<Visitable> models = new ArrayList<Visitable>();
@@ -50,7 +55,7 @@ public class MsgCenterFragment extends BaseFragment {
     private int type;
     private MsgCenterManager msgCenterManager;
     private ShareDeviceManager shareDeviceManager;
-    private String[] msgTypeArr = {"device", "share", "announcement"};
+    private final String[] msgTypeArr = {"device", "share", "announcement"};
     private ArrayList<String> recordIdList = new ArrayList<>();
     private boolean agreeFlag;
     private int page = 1;
@@ -154,7 +159,7 @@ public class MsgCenterFragment extends BaseFragment {
     // API数据处理器
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_MSGCENTER:
                     if (page == 0) {
@@ -164,6 +169,13 @@ public class MsgCenterFragment extends BaseFragment {
                     adapter.notifyDataSetChanged();
                     SrlUtils.finishRefresh(mSrlFragmentMe, true);
                     SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    if (models.isEmpty()) {
+                        recycleView.setVisibility(View.GONE);
+                        mMsgNodataView.setVisibility(View.VISIBLE);
+                    } else {
+                        recycleView.setVisibility(View.VISIBLE);
+                        mMsgNodataView.setVisibility(View.GONE);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_SHARENOTICELIST:
                     if (page == 1) {
@@ -173,6 +185,13 @@ public class MsgCenterFragment extends BaseFragment {
                     adapter.notifyDataSetChanged();
                     SrlUtils.finishRefresh(mSrlFragmentMe, true);
                     SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    if (models.isEmpty()) {
+                        recycleView.setVisibility(View.GONE);
+                        mMsgNodataView.setVisibility(View.VISIBLE);
+                    } else {
+                        recycleView.setVisibility(View.VISIBLE);
+                        mMsgNodataView.setVisibility(View.GONE);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_CONFIRMSHARE:
                     ToastUtils.showToastCentrally(mActivity, getString(agreeFlag ? R.string.msg_center_agree_success : R.string.msg_center_disagree_success));

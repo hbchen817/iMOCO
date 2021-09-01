@@ -55,51 +55,98 @@ public class CTSL {
     public static final String PK_VRV_AC = "a1hGRYll4OE";// 拉斐VRV温控器LFWK001
     public static final String PK_FAU    = "a1gIYJJMkrd";// 拉斐新风LFXF001
 
-    public static final String PK_ONEWAYSWITCH_HY         = "a1DcTTIWrC9";// 一键面板开关-鸿雁-HY0030
-    public static final String PK_TWOWAYSWITCH_HY         = "a1GUG9ePrOP";// 两键面板开关-鸿雁-HY0031
-    public static final String PK_THREEWAYSWITCH_HY       = "a1tt2P7XzKe";// 三键面板开关-鸿雁-HY0032
-    public static final String PK_U_SIX_SCENE_SWITCH_HY   = "a1C6uQIrq0Y";// U型六场景开关-鸿雁-5f0c3b
-    public static final String PK_FULL_SCREEN_SWITCH_HY   = "a18MYdaR9Cd";// 全面屏开关-鸿雁-HY0134
-    public static final String PK_10A_MEASURING_OUTLET_HY = "a15rJERCbFB";// 10A计量插座-鸿雁-HY0104-HY0105(usb)
-    public static final String PK_PM_TEMHUMSENSOR_HY      = "a1eZ835Td0z";// PM2.5温湿度传感器-鸿雁-01112b
+    public static final String PK_ONEWAYSWITCH_HY            = "a1DcTTIWrC9";// 一键面板开关-鸿雁-HY0030
+    public static final String PK_TWOWAYSWITCH_HY            = "a1GUG9ePrOP";// 两键面板开关-鸿雁-HY0031
+    public static final String PK_THREEWAYSWITCH_HY          = "a1tt2P7XzKe";// 三键面板开关-鸿雁-HY0032
+    public static final String PK_U_SIX_SCENE_SWITCH_HY      = "a1C6uQIrq0Y";// U型六场景开关-鸿雁-5f0c3b
+    public static final String PK_FULL_SCREEN_SWITCH_HY      = "a18MYdaR9Cd";// 全面屏开关-鸿雁-HY0134
+    public static final String PK_10A_MEASURING_OUTLET_HY    = "a15rJERCbFB";// 10A计量插座-鸿雁-HY0104-HY0105(usb)
+    public static final String PK_PM_TEMHUMSENSOR_HY         = "a1eZ835Td0z";// PM2.5温湿度传感器-鸿雁-01112b
+    public static final String PK_ONEWAYWINDOWCURTAINS_HY_U1 = "a1VDne8nT4s";// 一路三键窗帘开关-鸿雁-?
+    public static final String PK_ONEWAYWINDOWCURTAINS_HY_U2 = "a14KMrCD2q6";// 一路三键窗帘开关-鸿雁-?
+    public static final String PK_OUTLET_10A_HY_U1           = "a1BSsZhVN6c";// 10A插座-鸿雁U1-?
+    public static final String PK_OUTLET_10A_HY_U2           = "a1DI9AfW8su";// 10A插座-鸿雁U2-?
+    public static final String PK_OUTLET_16A_HY_U1           = "a1DhrOJdnaG";// 16A插座-鸿雁U1-?
+    public static final String PK_OUTLET_16A_HY_U2           = "a1CrnMEzaIN";// 16A插座-鸿雁U2-?
+    public static final String PK_16A_MEASURING_OUTLET_HY_U1 = "a1MolqiDnOO";// 16A计量插座-鸿雁U1-?
+    public static final String PK_16A_MEASURING_OUTLET_HY_U2 = "a1Vqomw4iN8";// 16A计量插座-鸿雁U2-?
+    public static final String PK_AIRCOMDITION_TWO_HY_U1     = "a15fno9Hpb5";// 空调二管制-鸿雁U1-0212c3
+    public static final String PK_AIRCOMDITION_TWO_HY_U2     = "a1320Rmfc4i";// 空调二管制-鸿雁U2-?
+    public static final String PK_WATER_FLOORHEAT_HY_U1      = "a18mJ9TA9NU";// 水地暖-鸿雁U1-5e0edb
+    public static final String PK_WATER_FLOORHEAT_HY_U2      = "a10RQMMy5mt";// 水地暖-鸿雁U2-?
+    public static final String PK_ELEC_FLOORHEAT_HY_U1       = "a1B7kaf8Rrp";// 电地暖-鸿雁U1-?
+    public static final String PK_ELEC_FLOORHEAT_HY_U2       = "a1PTP3l9VPO";// 电地暖-鸿雁U2-?
+    public static final String PK_FAU_HY_U1                  = "a1C5uadGOon";// 新风-鸿雁U1-280eda
 
-    public static final String PK_ONEWAYSWITCH_YQS       = "a1JdJgkgHOs";// 一键面板开关-粤奇胜肖邦-HY0001
-    public static final String PK_TWOWAYSWITCH_YQS       = "a1M1NHS5qQP";// 两键面板开关-粤奇胜肖邦-HY0002
-    public static final String PK_THREEWAYSWITCH_YQS     = "a12raDNHQWl";// 三键面板开关-粤奇胜肖邦-HY0003
-    public static final String PK_SIX_SCENE_SWITCH_YQSXB = "a1emXV7oUHE";// 三开六场景开关-粤奇胜肖邦-0106-G
+    public static final String PK_ONEWAYSWITCH_YQS_XB         = "a1JdJgkgHOs";// 一键面板开关-粤奇胜肖邦-HY0001
+    public static final String PK_TWOWAYSWITCH_YQS_XB         = "a1M1NHS5qQP";// 两键面板开关-粤奇胜肖邦-HY0002
+    public static final String PK_THREEWAYSWITCH_YQS_XB       = "a12raDNHQWl";// 三键面板开关-粤奇胜肖邦-HY0003
+    public static final String PK_SIX_SCENE_SWITCH_YQS_XB     = "a1emXV7oUHE";// 三开六场景开关-粤奇胜肖邦-0106-G
+    public static final String PK_ONEWAYSWITCH_YQS_ZR         = "a1RxwXI9F1a";// 一键面板开关-粤奇胜智睿-？
+    public static final String PK_TWOWAYSWITCH_YQS_ZR         = "a19mS4sBYyd";// 两键面板开关-粤奇胜智睿-？
+    public static final String PK_THREEWAYSWITCH_YQS_ZR       = "a1J1xRl39gH";// 三键面板开关-粤奇胜智睿-？
+    public static final String PK_SIX_SCENE_SWITCH_YQS_ZR     = "a1q2LpdEHNL";// 三开六场景开关-粤奇胜智睿-？
+    public static final String PK_ONEWAYWINDOWCURTAINS_YQS_ZR = "a1ivs8pYOXp";// 一路三键窗帘开关-粤奇胜智睿-?
+    public static final String PK_ONEWAYWINDOWCURTAINS_YQS_XB = "a1NlxeGSUhk";// 一路三键窗帘开关-粤奇胜肖邦-?
+    public static final String PK_TWOWAYWINDOWCURTAINS_YQS_ZR = "a1XnI3GX53E";// 两路六键窗帘开关-粤奇胜智睿-?
+    public static final String PK_TWOWAYWINDOWCURTAINS_YQS_XB = "a1vPBDfi6Lm";// 两路六键窗帘开关-粤奇胜肖邦-?
+    public static final String PK_OUTLET_10A_YQS              = "a1ElYXt09mL";// 10A插座-粤奇胜-?
+    public static final String PK_10A_MEASURING_OUTLET_YQS    = "a1q8qHB6jFl";// 10A计量插座-粤奇胜-?
+    public static final String PK_OUTLET_16A_YQS              = "a1g6hfxATn9";// 16A插座-粤奇胜-?
+    public static final String PK_16A_MEASURING_OUTLET_YQS    = "a15kdxAmoMs";// 16A计量插座-粤奇胜-?
 
-    public static final String PK_ONEWAYSWITCH_LF         = "a1r1FYSVdPS";// 一键面板开关-拉斐-LF0001
-    public static final String PK_TWOWAYSWITCH_LF         = "a1c06gP2cFR";// 两键面板开关-拉斐-LF0002
-    public static final String PK_THREEWAYSWITCH_LF       = "a1TzI1KbSgh";// 三键面板开关-拉斐-LF0003
-    public static final String PK_FOURWAYSWITCH_LF        = "a1EESHO4gBR";// 四键面板开关-拉斐-LF0004
-    public static final String PK_FOUR_SCENE_SWITCH_LF    = "a135fBmsioZ";// 二开四场景开关-拉斐-LF0009
-    public static final String PK_OUTLET_LF               = "a1mneuA9e7t";// 10A插座-拉斐-LF0031
-    public static final String PK_ONEWAYWINDOWCURTAINS_LF = "a1th1FeuVij";// 窗帘单路开关-拉斐-LF0016
-    public static final String PK_TWOWAYWINDOWCURTAINS_LF = "a1cs9K2oE8t";// 窗帘双路开关-拉斐-LF0017
-    public static final String PK_FLOORHEATING001_LF      = "a1sSgiInktz";// 拉菲地暖(电机)-拉斐-LF0020
-    public static final String PK_AIRCOMDITION_TWO_LF     = "a1N0PnSSB67";// 空调二管制-拉斐-LF0019
+    public static final String PK_ONEWAYSWITCH_LF             = "a1r1FYSVdPS";// 一键面板开关-拉斐-LF0001
+    public static final String PK_TWOWAYSWITCH_LF             = "a1c06gP2cFR";// 两键面板开关-拉斐-LF0002
+    public static final String PK_THREEWAYSWITCH_LF           = "a1TzI1KbSgh";// 三键面板开关-拉斐-LF0003
+    public static final String PK_FOURWAYSWITCH_LF            = "a1EESHO4gBR";// 四键面板开关-拉斐-LF0004
+    public static final String PK_FOUR_SCENE_SWITCH_LF        = "a135fBmsioZ";// 二开四场景开关-拉斐-LF0009
+    public static final String PK_OUTLET_10A_LF               = "a1mneuA9e7t";// 10A插座-拉斐-LF0031
+    public static final String PK_ONEWAYWINDOWCURTAINS_LF     = "a1th1FeuVij";// 窗帘单路开关-拉斐-LF0016
+    public static final String PK_TWOWAYWINDOWCURTAINS_LF     = "a1cs9K2oE8t";// 窗帘双路开关-拉斐-LF0017
+    public static final String PK_FLOORHEATING001_LF          = "a1sSgiInktz";// 拉菲地暖(电机)-拉斐-LF0020
+    public static final String PK_AIRCOMDITION_TWO_LF         = "a1N0PnSSB67";// 空调二管制-拉斐-LF0019
+    public static final String PK_ONEWAYWINDOWCURTAINS_LF_D8  = "a1frPuBITYB";// 一路三键窗帘开关-拉斐D8-?
+    public static final String PK_ONEWAYWINDOWCURTAINS_LF_D9  = "a1WGncVvB5l";// 一路三键窗帘开关-拉斐D9-?
+    public static final String PK_TWOWAYWINDOWCURTAINS_LF_D8  = "a1HtchMBFwD";// 两路六键窗帘开关-拉斐D8-?
+    public static final String PK_TWOWAYWINDOWCURTAINS_LF_D9  = "a1ZfxTCHjKT";// 两路六键窗帘开关-拉斐D9-?
+    public static final String PK_10A_MEASURING_OUTLET_LF     = "a1c8aaG7lC3";// 10A计量插座-拉斐-?
+    public static final String PK_OUTLET_16A_LF               = "a1U2pgAaGnX";// 16A插座-拉斐-?
+    public static final String PK_16A_MEASURING_OUTLET_LF     = "a1me1Uuq41S";// 16A计量插座-拉斐-?
+    public static final String PK_FAU_LF                      = "a1u8WuSNAso";// 新风-拉斐-LF0021
 
     public static final String PK_ONEWAY_DANHUO_RY   = "a13mQibAGGf";// 一键单火开关-瑞瀛-RT0101
     public static final String PK_TWOWAY_DANHUO_RY   = "a1FE80tCMhO";// 两键单火开关-瑞瀛-RT0102
     public static final String PK_THREEWAY_DANHUO_RY = "a1Ftp4WZKI1";// 三键单火开关-瑞瀛-RT0103
     public static final String PK_GATEWAY_RG4100_RY  = "b17wpNLgyIe";// RG4100网关-瑞瀛
 
-    public static final String PK_KDS_SMART_LOCK_A7 = "a1Pmh01sy65";//智能锁-凯迪仕-142855 临时密码StartTime
+    public static final String PK_KDS_SMART_LOCK_A7   = "a1Pmh01sy65";//智能锁-凯迪仕-142855 临时密码StartTime
+    public static final String PK_KDS_SMART_LOCK_K100 = "a1S3WQJiwhJ";//智能锁-凯迪仕-?
+    public static final String PK_KDS_SMART_LOCK_S6   = "a1pxAENkml3";//智能锁-凯迪仕-?
 
-    public static final String PK_DY_ELE = "a1aqlH5qWN8";//窗帘电机-杜亚-onoff_curtain
+    public static final String PK_MM_SMART_LOCK       = "a1BZi3GhxP4";//智能锁-名门-?
 
-    public static final String PK_DOORSENSOR_HM  = "a1cErKvfSFv";// 门磁传感器-海曼-DoorSensor-N-3.0
-    public static final String PK_WATERSENSOR_HM = "a1kUeHPrUxn";// 水浸传感器-海曼-WaterSensor-EM
-    public static final String PK_PIRSENSOR_HM   = "a1E86BI3l3S";// 人体红外传感器-海曼-PIRSensor-N-3.0
-    public static final String PK_SMOKESENSOR_HM = "a1aSgTD95QR";// 烟雾传感器-海曼-SmokeSensor-EF-3.0
-    public static final String PK_GASSENSOR_HM   = "a110ym9xmvS";// 燃气传感器-海曼-GASSensor-EM
+    public static final String PK_MS_SMART_LOCK       = "a17421mNBde";//智能锁-曼申-?
 
-    public static final String PK_DOORSENSOR_MLK  = "a1uxEMucJWM";// 门磁传感器-麦乐克-DoorSensor-N-3.0 a1cErKvfSFv
-    public static final String PK_TEMHUMSENSOR_MLK= "a1XHr0x5Ysa";// 温湿度传感器-麦乐克-RH3050
-    public static final String PK_PIRSENSOR_MLK   = "a1k8MdaB0S3";// 人体红外传感器-麦乐克-RH3040
-    public static final String PK_SMOKESENSOR_MLK = "a1TVRM8gUyj";// 烟雾传感器-麦乐克-RH3010
-    public static final String PK_GASSENSOR_MLK   = "a1XAGsws0cs";// 燃气传感器-麦乐克-RH3070
-    public static final String PK_WATERSENSOR_MLK = "a18zsto5W7k";// 水浸传感器-麦乐克-RH3020
+    public static final String PK_DY_ELE_D82 = "a1aqlH5qWN8";//窗帘电机-D82-杜亚-onoff_curtain
+    public static final String PK_DY_ELE_D52 = "a1aSCxdlCZQ";//窗帘电机-D52-杜亚-?
+    public static final String PK_DY_ELE_DC  = "a1lvoRKHprq";//窗帘电机-直流-杜亚-?
+
+    public static final String PK_WSD_ELE_DC = "a1vfk06D7tx";//直流窗帘电机-威仕达-RLCMA01
+    public static final String PK_WSD_ELE_AC = "a163tg5bgpY";//交流窗帘电机-威仕达-?
+
+    public static final String PK_DOORSENSOR_HM   = "a1cErKvfSFv";// 门磁传感器-海曼-DoorSensor-N-3.0
+    public static final String PK_WATERSENSOR_HM  = "a1kUeHPrUxn";// 水浸传感器-海曼-WaterSensor-EM
+    public static final String PK_PIRSENSOR_HM    = "a1E86BI3l3S";// 人体红外传感器-海曼-PIRSensor-N-3.0
+    public static final String PK_SMOKESENSOR_HM  = "a1aSgTD95QR";// 烟雾传感器-海曼-SmokeSensor-EF-3.0
+    public static final String PK_GASSENSOR_HM    = "a110ym9xmvS";// 燃气传感器-海曼-GASSensor-EM
+    public static final String PK_TEMHUMSENSOR_HM = "a10d8QkzrLu";// 温湿度传感器-海曼-?
+
+    public static final String PK_DOORSENSOR_MLK   = "a1uxEMucJWM";// 门磁传感器-麦乐克-RH3001
+    public static final String PK_TEMHUMSENSOR_MLK = "a1XHr0x5Ysa";// 温湿度传感器-麦乐克-RH3050
+    public static final String PK_PIRSENSOR_MLK    = "a1k8MdaB0S3";// 人体红外传感器-麦乐克-RH3040
+    public static final String PK_SMOKESENSOR_MLK  = "a1TVRM8gUyj";// 烟雾传感器-麦乐克-RH3010
+    public static final String PK_GASSENSOR_MLK    = "a1XAGsws0cs";// 燃气传感器-麦乐克-RH3070
+    public static final String PK_WATERSENSOR_MLK  = "a18zsto5W7k";// 水浸传感器-麦乐克-RH3020
 
     // 定义属性类型
     public static enum PTYPE {
@@ -490,13 +537,15 @@ public class CTSL {
             put(PK_GATEWAY, GW_Properties);
             put(PK_GATEWAY_RG4100_RY, GW_4100_Properties);
             put(PK_ONEWAYSWITCH_HY, OWS_Properties);
-            put(PK_ONEWAYSWITCH_YQS, OWS_Properties);
+            put(PK_ONEWAYSWITCH_YQS_XB, OWS_Properties);
+            put(PK_ONEWAYSWITCH_YQS_ZR, OWS_Properties);
             put(PK_ONEWAYSWITCH_LF, OWS_Properties);
             put(PK_ONEWAY_DANHUO_RY, OWS_Properties);
             put(PK_ONEWAYSWITCH, OWS_Properties);
             put(PK_TWOWAYSWITCH, TWS_Properties);
             put(PK_TWOWAYSWITCH_HY, TWS_Properties);
-            put(PK_TWOWAYSWITCH_YQS, TWS_Properties);
+            put(PK_TWOWAYSWITCH_YQS_XB, TWS_Properties);
+            put(PK_TWOWAYSWITCH_YQS_ZR, TWS_Properties);
             put(PK_TWOWAYSWITCH_LF, TWS_Properties);
             put(PK_TWOWAY_DANHUO_RY, TWS_Properties);
             put(PK_GASSENSOR_HM, GS_Properties);
@@ -505,6 +554,7 @@ public class CTSL {
             put(PK_SMOKESENSOR_MLK, SS_Properties);
             put(PK_PM_TEMHUMSENSOR_HY, THS_Properties);
             put(PK_TEMHUMSENSOR_MLK, THS_Properties);
+            put(PK_TEMHUMSENSOR_HM, THS_Properties);
             put(PK_WATERSENSOR_HM, WS_Properties);
             put(PK_WATERSENSOR_MLK, WS_Properties);
             put(PK_DOORSENSOR_HM, DS_Properties);
@@ -519,18 +569,46 @@ public class CTSL {
             put(PK_FOURWAYSWITCH_LF, FWS_Properties);
             put(PK_SIX_TWO_SCENE_SWITCH, SIX_SCENE_SWITCH_Properties);
             put(PK_AIRCOMDITION_TWO_LF, AIRC_T_Properties);
+            put(PK_AIRCOMDITION_TWO_HY_U1, AIRC_T_Properties);
+            put(PK_AIRCOMDITION_TWO_HY_U2, AIRC_T_Properties);
             put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
             put(PK_FLOORHEATING001_LF, FLOORH_001_Properties);
+            put(PK_WATER_FLOORHEAT_HY_U1, FLOORH_001_Properties);
+            put(PK_WATER_FLOORHEAT_HY_U2, FLOORH_001_Properties);
+            put(PK_ELEC_FLOORHEAT_HY_U1, FLOORH_001_Properties);
+            put(PK_ELEC_FLOORHEAT_HY_U2, FLOORH_001_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
             put(PK_THREEWAYSWITCH_HY, TWS_3_Properties);
-            put(PK_THREEWAYSWITCH_YQS, TWS_3_Properties);
+            put(PK_THREEWAYSWITCH_YQS_XB, TWS_3_Properties);
+            put(PK_THREEWAYSWITCH_YQS_ZR, TWS_3_Properties);
             put(PK_THREEWAYSWITCH_LF, TWS_3_Properties);
             put(PK_THREEWAY_DANHUO_RY, TWS_3_Properties);
             put(PK_KDS_SMART_LOCK_A7, SL_Properties);
+            put(PK_KDS_SMART_LOCK_K100, SL_Properties);
+            put(PK_KDS_SMART_LOCK_S6, SL_Properties);
+            put(PK_MM_SMART_LOCK, SL_Properties);
+            put(PK_MS_SMART_LOCK, SL_Properties);
             put(PK_ONEWAYWINDOWCURTAINS_LF, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_HY_U1, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_HY_U2, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_YQS_ZR, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_YQS_XB, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_LF_D8, WC_Properties);
+            put(PK_ONEWAYWINDOWCURTAINS_LF_D9, WC_Properties);
             put(PK_TWOWAYWINDOWCURTAINS_LF, TWC_Properties);
+            put(PK_TWOWAYWINDOWCURTAINS_YQS_ZR, TWC_Properties);
+            put(PK_TWOWAYWINDOWCURTAINS_YQS_XB, TWC_Properties);
+            put(PK_TWOWAYWINDOWCURTAINS_LF_D8, TWC_Properties);
+            put(PK_TWOWAYWINDOWCURTAINS_LF_D9, TWC_Properties);
             put(PK_SIX_SCENE_SWITCH, PSS_Properties);
-            put(PK_OUTLET_LF, PK_OUTLET_Properties);
+            put(PK_OUTLET_10A_LF, PK_OUTLET_Properties);
+            put(PK_OUTLET_10A_HY_U1, PK_OUTLET_Properties);
+            put(PK_OUTLET_10A_HY_U2, PK_OUTLET_Properties);
+            put(PK_OUTLET_16A_HY_U1, PK_OUTLET_Properties);
+            put(PK_OUTLET_16A_HY_U2, PK_OUTLET_Properties);
+            put(PK_OUTLET_16A_LF, PK_OUTLET_Properties);
+            put(PK_OUTLET_16A_YQS, PK_OUTLET_Properties);
+            put(PK_OUTLET_10A_YQS, PK_OUTLET_Properties);
             put(PK_FOUR_SCENE_SWITCH, PFS_Properties);
             put(PK_FOUR_SCENE_SWITCH_LF, PFS_Properties);
             put(PK_ONE_SCENE_SWITCH, POS_Properties);

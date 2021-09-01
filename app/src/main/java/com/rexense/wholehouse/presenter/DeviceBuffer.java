@@ -5,7 +5,9 @@ import com.rexense.wholehouse.model.EDevice;
 import com.rexense.wholehouse.model.EHomeSpace;
 import com.rexense.wholehouse.model.EUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,10 +19,46 @@ import java.util.Objects;
 public class DeviceBuffer {
     private static Map<String, EDevice.deviceEntry> mBuffer = new HashMap<String, EDevice.deviceEntry>();
     private static Map<String, JSONObject> mExtendedBuffer = new HashMap<String, JSONObject>();
+    private static Map<String, EHomeSpace.homeEntry> mHomeBuffer = new HashMap<>();
 
     // 初始化处理
     public static void initProcess() {
         mBuffer.clear();
+    }
+
+    // 添加家信息
+    public static void addHomeInfo(String homeId, EHomeSpace.homeEntry entry) {
+        if (homeId != null && entry != null) {
+            mHomeBuffer.put(homeId, entry);
+        }
+    }
+
+    // 添加家信息
+    public static void addHomeInfo(List<EHomeSpace.homeEntry> list) {
+        for (EHomeSpace.homeEntry entry : list) {
+            mHomeBuffer.put(entry.homeId, entry);
+        }
+    }
+
+    // 获取家信息
+    public static EHomeSpace.homeEntry getHomeInfo(String homeId) {
+        if (homeId != null)
+            return mHomeBuffer.get(homeId);
+        return null;
+    }
+
+    // 获取家列表
+    public static List<EHomeSpace.homeEntry> getHomeInfoList() {
+        List<EHomeSpace.homeEntry> list = new ArrayList<>();
+        list.addAll(mHomeBuffer.values());
+        return list;
+    }
+
+    // 删除家信息
+    public static void removeHomeInfo(String homeId) {
+        if (mHomeBuffer.containsKey(homeId)) {
+            mHomeBuffer.remove(homeId);
+        }
     }
 
     // 添加扩展信息

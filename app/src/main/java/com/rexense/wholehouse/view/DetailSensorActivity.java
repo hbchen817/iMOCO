@@ -66,7 +66,8 @@ public class DetailSensorActivity extends DetailActivity {
         }
 
         // 温湿度处理
-        if (mProductKey.equals(CTSL.PK_PM_TEMHUMSENSOR_HY) || CTSL.PK_TEMHUMSENSOR_MLK.equals(mProductKey)) {
+        if (mProductKey.equals(CTSL.PK_PM_TEMHUMSENSOR_HY) || CTSL.PK_TEMHUMSENSOR_MLK.equals(mProductKey)
+                || CTSL.PK_TEMHUMSENSOR_HM.equals(mProductKey)) {
             if (propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature) != null && propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature).length() > 0) {
                 ETSL.stateEntry tempEntry = CodeMapper.processPropertyState(this, mProductKey, CTSL.THS_P_CurrentTemperature, propertyEntry.getPropertyValue(CTSL.THS_P_CurrentTemperature));
                 if (tempEntry != null && tempEntry.name != null && tempEntry.value != null) {
@@ -146,7 +147,8 @@ public class DetailSensorActivity extends DetailActivity {
         // 初始化设备状态图标
         mIcon.setImageResource(ImageProvider.genProductIcon(mProductKey));
         if (mProductKey.equalsIgnoreCase(CTSL.PK_PM_TEMHUMSENSOR_HY) ||
-                CTSL.PK_TEMHUMSENSOR_MLK.equalsIgnoreCase(mProductKey)) {
+                CTSL.PK_TEMHUMSENSOR_MLK.equalsIgnoreCase(mProductKey) ||
+                CTSL.PK_TEMHUMSENSOR_HM.equalsIgnoreCase(mProductKey)) {
             mStateIcon.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentTemperature));
         }
 
@@ -167,7 +169,8 @@ public class DetailSensorActivity extends DetailActivity {
         mLayoutState2.setVisibility(View.GONE);
         // 温湿度要使用状态2显示栏
         if (mProductKey.equals(CTSL.PK_PM_TEMHUMSENSOR_HY) ||
-                mProductKey.equals(CTSL.PK_TEMHUMSENSOR_MLK)) {
+                mProductKey.equals(CTSL.PK_TEMHUMSENSOR_MLK) ||
+                mProductKey.equals(CTSL.PK_TEMHUMSENSOR_HM)) {
             mLayoutState2.setVisibility(View.VISIBLE);
             mStateIcon2 = (ImageView) findViewById(R.id.detailSensorImgStateIcon2);
             mStateIcon2.setImageResource(ImageProvider.genProductPropertyIcon(mProductKey, CTSL.THS_P_CurrentHumidity));

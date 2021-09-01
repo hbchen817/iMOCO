@@ -2,6 +2,7 @@ package com.rexense.wholehouse.view;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.event.ShareDeviceEvent;
@@ -11,6 +12,7 @@ import com.rexense.wholehouse.model.Visitable;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.rexense.wholehouse.viewholder.CommonAdapter;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +23,7 @@ import java.util.Map;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 
 /**
@@ -31,6 +34,8 @@ public class ShareDeviceFragment extends BaseFragment {
 
     @BindView(R.id.recycle_view)
     RecyclerView recycleView;
+    @BindView(R.id.msg_nodata_view)
+    LinearLayout mDevNodataView;
 
     private CommonAdapter adapter;
     private List<Visitable> models = new ArrayList<Visitable>();
@@ -132,6 +137,13 @@ public class ShareDeviceFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+        if (models.isEmpty()) {
+            recycleView.setVisibility(View.GONE);
+            mDevNodataView.setVisibility(View.VISIBLE);
+        } else {
+            recycleView.setVisibility(View.VISIBLE);
+            mDevNodataView.setVisibility(View.GONE);
+        }
     }
 
     private void changeStatus(int status) {

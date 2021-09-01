@@ -60,11 +60,13 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_SMOKESENSOR_MLK:
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
             case CTSL.PK_TEMHUMSENSOR_MLK:
+            case CTSL.PK_TEMHUMSENSOR_HM:
             case CTSL.PK_REMOTECONTRILBUTTON:
                 setContentView(R.layout.activity_detail_sensor);
                 break;
             case CTSL.PK_ONEWAYSWITCH_HY:
-            case CTSL.PK_ONEWAYSWITCH_YQS:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
             case CTSL.PK_ONEWAYSWITCH_LF:
             case CTSL.PK_ONEWAY_DANHUO_RY:
             case CTSL.PK_ONEWAYSWITCH:
@@ -73,7 +75,8 @@ public class DetailActivity extends BaseActivity {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
-            case CTSL.PK_TWOWAYSWITCH_YQS:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 setContentView(R.layout.activity_detail_twoswitch_2);
@@ -86,15 +89,27 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_detail_fourswitch_2);
                 break;
             case CTSL.PK_ONEWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D9:
                 // 单路窗帘
                 setContentView(R.layout.activity_one_way_window_curtains);
                 break;
-            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF: {
+            case "a1UnLiHBScD":
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_ZR:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_XB:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D8:
+            case CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9: {
                 // 双路窗帘
                 setContentView(R.layout.activity_two_way_curtains);
                 break;
             }
-            case CTSL.PK_THREEWAYSWITCH_YQS:
+            case CTSL.PK_THREEWAYSWITCH_YQS_XB:
+            case CTSL.PK_THREEWAYSWITCH_YQS_ZR:
             case CTSL.PK_THREEWAYSWITCH_HY:
             case CTSL.PK_THREEWAYSWITCH_LF:
             case CTSL.PK_THREEWAY_DANHUO_RY:
@@ -104,6 +119,10 @@ public class DetailActivity extends BaseActivity {
                 break;
             }
             case CTSL.PK_KDS_SMART_LOCK_A7:
+            case CTSL.PK_KDS_SMART_LOCK_K100:
+            case CTSL.PK_KDS_SMART_LOCK_S6:
+            case CTSL.PK_MM_SMART_LOCK:
+            case CTSL.PK_MS_SMART_LOCK:
             case CTSL.PK_SMART_LOCK:
                 StatusBarUtils.getStatusBarHeight(this);
                 setContentView(R.layout.activity_detail_lock);
@@ -126,7 +145,8 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
                 setContentView(R.layout.activity_u_six_scene_2);
                 break;
-            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_XB:
+            case CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR:
                 setContentView(R.layout.activity_six_scene_3);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
