@@ -25,7 +25,7 @@ public class TmallSpiritActivity1 extends BaseActivity {
     TextView tvToolbarRight;
     @BindView(R.id.web_view)
     WebView webView;
-    private String mAuthCode="TAOBAO";
+    private String mAuthCode = "TAOBAO";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,7 @@ public class TmallSpiritActivity1 extends BaseActivity {
             public void onPageFinished(WebView view, String url) {
                 tvToolbarTitle.setText(view.getTitle());
             }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if (isTokenUrl(url)) {
@@ -54,10 +55,10 @@ public class TmallSpiritActivity1 extends BaseActivity {
                 return false;
             }
         });
-        String tmallUrl = "https://oauth.taobao.com/authorize?response_type=code&client_id="+
-                Constant.APPKEY+
-                "&redirect_uri="+
-                Constant.TAOBAOREDIRECTURI+
+        String tmallUrl = "https://oauth.taobao.com/authorize?response_type=code&client_id=" +
+                Constant.APPKEY +
+                "&redirect_uri=" +
+                Constant.TAOBAOREDIRECTURI +
                 "&view=wap";
         webView.loadUrl(tmallUrl);
 
@@ -75,7 +76,7 @@ public class TmallSpiritActivity1 extends BaseActivity {
 
     private boolean isTokenUrl(String url) {
         if (!TextUtils.isEmpty(url)) {
-            if ( url.contains("code=")) {
+            if (url.contains("code=")) {
                 String[] urlArray = url.split("code=");
                 if (urlArray.length > 1) {
                     String[] paramArray = urlArray[1].split("&");
@@ -91,9 +92,7 @@ public class TmallSpiritActivity1 extends BaseActivity {
 
     @OnClick({R.id.tv_toolbar_right})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_toolbar_right:
-                break;
+        if (view.getId() == R.id.tv_toolbar_right) {
         }
     }
 

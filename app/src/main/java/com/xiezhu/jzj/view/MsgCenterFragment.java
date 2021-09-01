@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.Constant;
@@ -45,16 +46,17 @@ public class MsgCenterFragment extends BaseFragment {
     RecyclerView recycleView;
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
+    @BindView(R.id.msg_nodata_view)
+    LinearLayout mMsgNodataView;
 
     private CommonAdapter adapter;
     private List<Visitable> models = new ArrayList<Visitable>();
-    private LinearLayoutManager layoutManager;
     private Intent intent;
     private int type;
     private MsgCenterManager msgCenterManager;
     private ShareDeviceManager shareDeviceManager;
-    private String[] msgTypeArr = {"device", "share", "announcement"};
-    private ArrayList<String> recordIdList = new ArrayList<>();
+    private final String[] msgTypeArr = {"device", "share", "announcement"};
+    private final ArrayList<String> recordIdList = new ArrayList<>();
     private boolean agreeFlag;
     private int page = 1;
 
@@ -108,8 +110,8 @@ public class MsgCenterFragment extends BaseFragment {
 
     @Override
     protected void init() {
-        msgCenterManager = new MsgCenterManager(getActivity());
-        shareDeviceManager = new ShareDeviceManager(getActivity());
+        msgCenterManager = new MsgCenterManager(mActivity);
+        shareDeviceManager = new ShareDeviceManager(mActivity);
         type = getArguments().getInt("type");
         if (type == 1) {
             page = 1;
@@ -118,7 +120,7 @@ public class MsgCenterFragment extends BaseFragment {
         }
 
         adapter = new CommonAdapter(models, mActivity);
-        layoutManager = new LinearLayoutManager(mActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
         recycleView.setLayoutManager(layoutManager);
         recycleView.setAdapter(adapter);
         mSrlFragmentMe.setOnRefreshListener(onRefreshListener);
@@ -167,6 +169,13 @@ public class MsgCenterFragment extends BaseFragment {
                     adapter.notifyDataSetChanged();
                     SrlUtils.finishRefresh(mSrlFragmentMe, true);
                     SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    if (models.isEmpty()) {
+                        recycleView.setVisibility(View.GONE);
+                        mMsgNodataView.setVisibility(View.VISIBLE);
+                    } else {
+                        recycleView.setVisibility(View.VISIBLE);
+                        mMsgNodataView.setVisibility(View.GONE);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_SHARENOTICELIST:
                     if (page == 1) {
@@ -176,6 +185,13 @@ public class MsgCenterFragment extends BaseFragment {
                     adapter.notifyDataSetChanged();
                     SrlUtils.finishRefresh(mSrlFragmentMe, true);
                     SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                    if (models.isEmpty()) {
+                        recycleView.setVisibility(View.GONE);
+                        mMsgNodataView.setVisibility(View.VISIBLE);
+                    } else {
+                        recycleView.setVisibility(View.VISIBLE);
+                        mMsgNodataView.setVisibility(View.GONE);
+                    }
                     break;
                 case Constant.MSG_CALLBACK_CONFIRMSHARE:
                     ToastUtils.showToastCentrally(mActivity, getString(agreeFlag ? R.string.msg_center_agree_success : R.string.msg_center_disagree_success));

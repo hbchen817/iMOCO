@@ -6,13 +6,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.xiezhu.jzj.R;
+import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.presenter.MocoApplication;
+import com.xiezhu.jzj.utility.LogcatFileManager;
+import com.xiezhu.jzj.utility.SpUtils;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -32,14 +40,88 @@ public class StartActivity extends BaseActivity {
         //setTheme(R.style.AppTheme_Launcher);
         setContentView(R.layout.activity_start);
         initView();
-        initEvent();
+
+        boolean isFirst = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", false);
+        if (!isFirst) {
+            showPrivacyPolicyDialog();
+        } else {
+            initEvent();
+        }
     }
 
     private void initView() {
         //mDownCountTextView = findViewById(R.id.tv_count_down_splash);
+        if (SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "log_state", false)) {
+            String path = getApplicationContext().getExternalCacheDir() + "/Log/";
+            LogcatFileManager.getInstance().start(path);
+        } else {
+            LogcatFileManager.getInstance().stop();
+        }
+    }
+
+    private void showPrivacyPolicyDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_policy, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+        dialog.setCanceledOnTouchOutside(false);
+
+        TextView linkTV = view.findViewById(R.id.policy_link);
+        TextView disagreeTV = view.findViewById(R.id.disagree_btn);
+        TextView agreeTV = view.findViewById(R.id.agree_btn);
+
+        linkTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                H5Activity.actionStart(StartActivity.this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
+            }
+        });
+        disagreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                showPrivacyPolicyCheckDialog();
+            }
+        });
+        agreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpUtils.putBooleanValue(StartActivity.this, SpUtils.SP_APP_INFO, "show_policy", true);
+                dialog.dismiss();
+                initEvent();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showPrivacyPolicyCheckDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_privacy_policy_check, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+        dialog.setCanceledOnTouchOutside(false);
+
+        TextView lgoutTV = view.findViewById(R.id.lgout_btn);
+        TextView checkAgainTV = view.findViewById(R.id.check_again_btn);
+
+        lgoutTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        checkAgainTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                showPrivacyPolicyDialog();
+            }
+        });
+
+        dialog.show();
     }
 
     private void initEvent() {
+        MocoApplication.initAliSDK();
+
         MyHandler myHandler = new MyHandler(this);
         Message message = Message.obtain();
         message.what = CODE;

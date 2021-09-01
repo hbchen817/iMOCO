@@ -2,6 +2,7 @@ package com.xiezhu.jzj.view;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.xiezhu.jzj.utility.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -94,7 +96,7 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mMyHandler = new MyHandler(this);
+        mMyHandler = new MyHandler(getMainLooper(), this);
         mTSLHelper = new TSLHelper(this);
         initView();
         getScenes();
@@ -130,69 +132,55 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.switch1:
-                if (mState1 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch2:
-                if (mState2 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch3:
-                if (mState3 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.switch4:
-                if (mState4 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mFirstManualSceneId != null) {
-                    mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.mSceneContentText5:
-                if (mSecondManualSceneId != null) {
-                    mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.switch1) {
+            if (mState1 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (view.getId() == R.id.switch2) {
+            if (mState2 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (view.getId() == R.id.switch3) {
+            if (mState3 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (view.getId() == R.id.switch4) {
+            if (mState4 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mFirstManualSceneId != null) {
+                mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+            }
+        } else if (view.getId() == R.id.mSceneContentText5) {
+            if (mSecondManualSceneId != null) {
+                mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
+            }
         }
     }
 
     @Override
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText2:
-                if (mFirstManualSceneId != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText5:
-                if (mSecondManualSceneId != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText2) {
+            if (mFirstManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText5) {
+            if (mSecondManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
+            }
         }
         return true;
     }
@@ -201,7 +189,8 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
     private static class MyHandler extends Handler {
         final WeakReference<SixTwoSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(SixTwoSceneSwitchActivity activity) {
+        public MyHandler(Looper looper, SixTwoSceneSwitchActivity activity) {
+            super(looper);
             mWeakReference = new WeakReference<>(activity);
         }
 
@@ -209,6 +198,7 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             SixTwoSceneSwitchActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据
@@ -254,7 +244,7 @@ public class SixTwoSceneSwitchActivity extends DetailActivity implements View.On
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();

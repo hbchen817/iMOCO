@@ -14,6 +14,8 @@ public class SpUtils {
 
     public static final String KEY_IS_FIRST = "key_is_first";//是否首次启动app
 
+    public static final String PS_REQUEST_CAMERA_PERMISSION = "request_camera";
+
     /**
      * 存储boolean类型的数据
      */

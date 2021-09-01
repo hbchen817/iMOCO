@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.view;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import com.xiezhu.jzj.presenter.ImageProvider;
 import com.xiezhu.jzj.presenter.OTAHelper;
 import com.xiezhu.jzj.presenter.RealtimeDataReceiver;
 import com.xiezhu.jzj.widget.DialogUtils;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -56,9 +59,9 @@ public class UpgradeFirmwareActivity extends BaseActivity {
     private boolean upgradingFlag;
     private String theNewVersion;
     private String currentVersion;
-    private ArrayList<String> iotIdList=new ArrayList<>();
+    private final ArrayList<String> iotIdList = new ArrayList<>();
 
-    private DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             versionInfoView.setVisibility(View.GONE);
@@ -71,7 +74,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
         }
     };
 
-    private DialogInterface.OnClickListener onSuccessClickListener = new DialogInterface.OnClickListener() {
+    private final DialogInterface.OnClickListener onSuccessClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
             mProgressTimer.cancel();
@@ -119,16 +122,17 @@ public class UpgradeFirmwareActivity extends BaseActivity {
         }
     };
 
-    private Handler mProgressHandler = new Handler(new Handler.Callback() {
+    private final Handler mProgressHandler = new Handler(new Handler.Callback() {
+        @SuppressLint("SetTextI18n")
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what == 1) {
                 //模拟升级进度
                 int percent = mProgressNum;
-                FrameLayout.LayoutParams layoutParams= (FrameLayout.LayoutParams) processView.getLayoutParams();
-                if (percent < 100){
-                    processTv.setText(percent+"%");
-                    layoutParams.width = percent*processBgView.getWidth()/100;
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) processView.getLayoutParams();
+                if (percent < 100) {
+                    processTv.setText(percent + "%");
+                    layoutParams.width = percent * processBgView.getWidth() / 100;
                     processView.setLayoutParams(layoutParams);
                 } else {
                     processTv.setText("100%");
@@ -141,7 +145,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
     });
 
     // API数据处理器
-    private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
@@ -156,20 +160,20 @@ public class UpgradeFirmwareActivity extends BaseActivity {
     });
 
     // 实时数据处理器
-    private Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
+    private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what){
+        public boolean handleMessage(@NotNull Message msg) {
+            switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNOTAUPGRADENOTIFY:
                     JSONObject resultJson = JSONObject.parseObject((String) msg.obj);
                     //upgradeStatus表示升级结果，可取值包括，0：待升级或待确认，1：升级中，2：升级异常，3：升级失败，4：升级完成。
                     int upgradeStatus = resultJson.getInteger("upgradeStatus");
-                    if(1 == upgradeStatus){
+                    if (1 == upgradeStatus) {
                         //step -1：表示升级失败，-2：表示下载失败，-3：表示校验失败，-4：表示烧写失败 1-100为进度
                         int step = resultJson.getInteger("step");
-                        if (step >= 0 && step <= 100){
+                        if (step >= 0 && step <= 100) {
                             // 如果模拟进度小于实际进度则强制为实际进度
-                            if(step > mProgressNum){
+                            if (step > mProgressNum) {
                                 mProgressNum = step;
                                 Message message = new Message();
                                 message.what = 1;
@@ -177,7 +181,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
                             }
                         } else {
                             String failMsg = "";
-                            switch (step){
+                            switch (step) {
                                 case -1:
                                     failMsg = getString(R.string.upgrade_step_1);
                                     break;
@@ -195,7 +199,7 @@ public class UpgradeFirmwareActivity extends BaseActivity {
                         }
                     } else {
                         String hintMsg = "";
-                        switch (upgradeStatus){
+                        switch (upgradeStatus) {
                             case 0:
                                 hintMsg = getString(R.string.upgrade_status_0);
                                 break;
@@ -209,15 +213,15 @@ public class UpgradeFirmwareActivity extends BaseActivity {
                                 hintMsg = getString(R.string.upgrade_status_4);
                                 break;
                         }
-                        if(4 == upgradeStatus){
+                        if (4 == upgradeStatus) {
                             // 升级成功处理
-                            FrameLayout.LayoutParams layoutParams= (FrameLayout.LayoutParams) processView.getLayoutParams();
+                            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) processView.getLayoutParams();
                             processTv.setText("100%");
                             layoutParams.width = processBgView.getWidth();
                             processView.setLayoutParams(layoutParams);
                             // 发送刷新网关固件数据事件
                             RefreshData.refreshGatewayFirmwareData();
-                            DialogUtils.showConfirmDialog(mActivity, onSuccessClickListener, hintMsg,getString(R.string.dialog_title));
+                            DialogUtils.showConfirmDialog(mActivity, onSuccessClickListener, hintMsg, getString(R.string.dialog_title));
                         } else {
                             // 升级失败处理
                             DialogUtils.showMsgDialog(mActivity, hintMsg);
@@ -232,10 +236,8 @@ public class UpgradeFirmwareActivity extends BaseActivity {
 
     @OnClick({R.id.upgrade_btn})
     void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.upgrade_btn:
-                DialogUtils.showEnsureDialog(mActivity, onClickListener, getString(R.string.upgrading_please_waiting_here),"");
-                break;
+        if (view.getId() == R.id.upgrade_btn) {
+            DialogUtils.showEnsureDialog(mActivity, onClickListener, getString(R.string.upgrading_please_waiting_here), "");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.xiezhu.jzj.presenter;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.Log;
@@ -24,6 +25,8 @@ import com.tencent.bugly.crashreport.CrashReport;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.LogcatTree;
 
+import java.util.List;
+
 /**
  * Creator: xieshaobing
  * creat time: 2020-03-31 15:29
@@ -43,8 +46,10 @@ public class MocoApplication extends AApplication {
         crashHandler.init(getApplicationContext());
 
         //设置日志级别
-        Logger.setLogLevel(2);
-        CrashReport.initCrashReport(getApplicationContext(), "e867a40409", BuildConfig.DEBUG);
+        if (!BuildConfig.DEBUG) {
+            Logger.setLogLevel(2);
+            CrashReport.initCrashReport(getApplicationContext(), "e867a40409", BuildConfig.DEBUG);
+        }
 
         //安装MultiDex
         MultiDex.install(this);
@@ -54,13 +59,14 @@ public class MocoApplication extends AApplication {
         SystemParameter.initProcess(this);
 
         // 初始化SDK
-        Initializer.sdkProcess(this);
+        /*Initializer.sdkProcess(this);
+        Log.d("wyylog", "初始化SDK");*/
 
         //登录页为自定制的登录页
-        OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
+        /*OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
-        }
+        }*/
         initLog();
 //        IoTSmart.setDebug(true);
 //        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
@@ -132,7 +138,32 @@ public class MocoApplication extends AApplication {
         SystemParameter.getInstance().setSceneItemWidth(getSceneItemWidth());
     }
 
-    private void initLog(){
+    public static void initAliSDK() {
+        // 初始化SDK
+        Initializer.sdkProcess(sContext);
+
+        //登录页为自定制的登录页
+        OALoginAdapter adapter = (OALoginAdapter) LoginBusiness.getLoginAdapter();
+        if (adapter != null) {
+            adapter.setDefaultLoginClass(OALoginActivity.class);
+        }
+    }
+
+    public static String getProcessName(Context cxt, int pid) {
+        ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return null;
+    }
+
+    private void initLog() {
         HiLogManager.init(new HiLogConfig() {
             @Override
             public JsonParser injectJsonParser() {
@@ -163,7 +194,7 @@ public class MocoApplication extends AApplication {
             public int stackTraceDepth() {
                 return 0;
             }
-        },new HiConsolePrinter(), HiFilePrinter.getInstance( getFilesDir().getPath()+"/HiLog", 7 * 24 * 60 * 60 * 1000));
+        }, new HiConsolePrinter(), HiFilePrinter.getInstance(getFilesDir().getPath() + "/HiLog", 7 * 24 * 60 * 60 * 1000));
     }
 
     // 根据屏幕大小获取场景水平列表的列宽

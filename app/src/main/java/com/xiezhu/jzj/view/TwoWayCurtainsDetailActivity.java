@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.xiezhu.jzj.R;
 
@@ -19,7 +20,6 @@ import butterknife.OnClick;
  */
 
 public class TwoWayCurtainsDetailActivity extends AppCompatActivity {
-
 
     @BindView(R.id.status)
     TextView mStatus;
@@ -46,14 +46,14 @@ public class TwoWayCurtainsDetailActivity extends AppCompatActivity {
     }
 
     private void setSwitch(int id) {
-        Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.one_switch_background);
         mCloseCurtains.setBackground(id == mCloseCurtains.getId() ? drawable : null);
         mOpenCurtains.setBackground(id == mOpenCurtains.getId() ? drawable : null);
         mStopCurtains.setBackground(id == mStopCurtains.getId() ? drawable : null);
     }
 
     private void setSecondSwitch(int id) {
-        Drawable drawable = getResources().getDrawable(R.drawable.one_switch_background);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.one_switch_background);
         mTwoCloseCurtains.setBackground(id == mTwoCloseCurtains.getId() ? drawable : null);
         mTwoOpenCurtains.setBackground(id == mTwoOpenCurtains.getId() ? drawable : null);
         mTwoStopCurtains.setBackground(id == mTwoStopCurtains.getId() ? drawable : null);
@@ -61,19 +61,12 @@ public class TwoWayCurtainsDetailActivity extends AppCompatActivity {
 
     @OnClick({R.id.close_curtains, R.id.open_curtains, R.id.stop_curtains, R.id.two_close_curtains, R.id.two_open_curtains, R.id.two_stop_curtains})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.close_curtains:
-            case R.id.open_curtains:
-            case R.id.stop_curtains:
-                mStatus.setText(((TextView) view).getText());
-                setSwitch(view.getId());
-                break;
-            case R.id.two_close_curtains:
-            case R.id.two_open_curtains:
-            case R.id.two_stop_curtains:
-                mTwoStatus.setText(((TextView) view).getText());
-                setSecondSwitch(view.getId());
-                break;
+        if (view.getId() == R.id.close_curtains || view.getId() == R.id.open_curtains || view.getId() == R.id.stop_curtains) {
+            mStatus.setText(((TextView) view).getText());
+            setSwitch(view.getId());
+        } else if (view.getId() == R.id.two_close_curtains || view.getId() == R.id.two_open_curtains || view.getId() == R.id.two_stop_curtains) {
+            mTwoStatus.setText(((TextView) view).getText());
+            setSecondSwitch(view.getId());
         }
     }
 }

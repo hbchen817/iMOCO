@@ -3,6 +3,7 @@ package com.xiezhu.jzj.view;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -51,7 +52,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mMyHandler = new MyHandler(this);
+        mMyHandler = new MyHandler(getMainLooper(), this);
         initView();
         getScenes();
 
@@ -89,70 +90,54 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
 
     @OnClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3, R.id.mSwitch1, R.id.mSwitch2, R.id.mSwitch3})
     public void onClickView(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
-                }
-                break;
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                } else {
-                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
-                }
-                break;
-
-            case R.id.mSwitch1:
-                if (mManualIDs[0] != null) {
-                    mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.mSwitch2:
-                if (mManualIDs[1] != null) {
-                    mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            case R.id.mSwitch3:
-                if (mManualIDs[2] != null) {
-                    mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1);
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2);
+            }
+        } else if (view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            } else {
+                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
+            }
+        } else if (view.getId() == R.id.mSwitch1) {
+            if (mManualIDs[0] != null) {
+                mSceneManager.executeScene(mManualIDs[0], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
+        } else if (view.getId() == R.id.mSwitch2) {
+            if (mManualIDs[1] != null) {
+                mSceneManager.executeScene(mManualIDs[1], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
+        } else if (view.getId() == R.id.mSwitch3) {
+            if (mManualIDs[2] != null) {
+                mSceneManager.executeScene(mManualIDs[2], mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            }
         }
     }
 
 
     @OnLongClick({R.id.mSceneContentText1, R.id.mSceneContentText2, R.id.mSceneContentText3})
     public boolean onLongClick(View view) {
-        switch (view.getId()) {
-            case R.id.mSceneContentText1:
-                if (mManualIDs[0] != null) {
-                    EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText2:
-                if (mManualIDs[1] != null) {
-                    EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
-                }
-                break;
-            case R.id.mSceneContentText3:
-                if (mManualIDs[2] != null) {
-                    EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
-                }
-                break;
-            default:
-                break;
+        if (view.getId() == R.id.mSceneContentText1) {
+            if (mManualIDs[0] != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1, mSceneContentText1.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText2) {
+            if (mManualIDs[1] != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2, mSceneContentText2.getText().toString());
+            }
+        } else if (view.getId() == R.id.mSceneContentText3) {
+            if (mManualIDs[2] != null) {
+                EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
+            }
         }
         return true;
     }
@@ -161,7 +146,8 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
     private static class MyHandler extends Handler {
         final WeakReference<ThreeSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(ThreeSceneSwitchActivity activity) {
+        public MyHandler(Looper looper, ThreeSceneSwitchActivity activity) {
+            super(looper);
             mWeakReference = new WeakReference<>(activity);
         }
 
@@ -169,6 +155,7 @@ public class ThreeSceneSwitchActivity extends DetailActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             ThreeSceneSwitchActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据

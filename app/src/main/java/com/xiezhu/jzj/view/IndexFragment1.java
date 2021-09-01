@@ -234,15 +234,25 @@ public class IndexFragment1 extends BaseFragment {
 
                 mRlDevice.setVisibility(View.VISIBLE);
                 allDeviceView.setVisibility(View.VISIBLE);
-                if (mDeviceDisplayType == 1) {
-                    mGridDevice.setVisibility(View.VISIBLE);
-                    mListDevice.setVisibility(View.GONE);
-                } else {
-                    mGridDevice.setVisibility(View.GONE);
-                    mListDevice.setVisibility(View.VISIBLE);
-                }
                 mListRoom.setVisibility(View.GONE);
                 shareDeviceView.setVisibility(View.GONE);
+
+                if (mDeviceList.isEmpty()) {
+                    allDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    allDeviceNoDataView.setVisibility(View.GONE);
+                    if (mDeviceDisplayType == 1) {
+                        // 表格
+                        mGridDevice.setVisibility(View.VISIBLE);
+                        mListDevice.setVisibility(View.GONE);
+                    } else {
+                        // 列表
+                        mGridDevice.setVisibility(View.GONE);
+                        mListDevice.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         });
 
@@ -286,11 +296,22 @@ public class IndexFragment1 extends BaseFragment {
         imgGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGridDevice.setVisibility(View.VISIBLE);
-                mListDevice.setVisibility(View.GONE);
+                //mGridDevice.setVisibility(View.VISIBLE);
+                //mListDevice.setVisibility(View.GONE);
                 mDeviceDisplayType = 1;
                 imgGrid.setAlpha((float) 1.0);
                 imgList.setAlpha((float) 0.4);
+
+                if (mDeviceList.isEmpty()) {
+                    allDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    allDeviceNoDataView.setVisibility(View.GONE);
+                    // 表格
+                    mGridDevice.setVisibility(View.VISIBLE);
+                    mListDevice.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -298,11 +319,22 @@ public class IndexFragment1 extends BaseFragment {
         imgList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListDevice.setVisibility(View.VISIBLE);
-                mGridDevice.setVisibility(View.GONE);
+                // mListDevice.setVisibility(View.VISIBLE);
+                // mGridDevice.setVisibility(View.GONE);
                 mDeviceDisplayType = 2;
                 imgGrid.setAlpha((float) 0.4);
                 imgList.setAlpha((float) 1.0);
+
+                if (mDeviceList.isEmpty()) {
+                    allDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    allDeviceNoDataView.setVisibility(View.GONE);
+                    // 列表
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -396,7 +428,23 @@ public class IndexFragment1 extends BaseFragment {
                 }
                 mAptDeviceList.notifyDataSetChanged();
                 mAptDeviceGrid.notifyDataSetChanged();
-                allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+                // allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mDeviceList.isEmpty()) {
+                allDeviceNoDataView.setVisibility(View.VISIBLE);
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                allDeviceNoDataView.setVisibility(View.GONE);
+                if (mDeviceDisplayType == 1) {
+                    // 表格
+                    mGridDevice.setVisibility(View.VISIBLE);
+                    mListDevice.setVisibility(View.GONE);
+                } else {
+                    // 列表
+                    mGridDevice.setVisibility(View.GONE);
+                    mListDevice.setVisibility(View.VISIBLE);
+                }
             }
 
             // 分享设备处理
@@ -414,7 +462,18 @@ public class IndexFragment1 extends BaseFragment {
                     }
                 }
                 mAptShareDeviceList.notifyDataSetChanged();
-                shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+            }
+            if (mShareDeviceList == null) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                if (mShareDeviceList.isEmpty()) {
+                    shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                    mListShare.setVisibility(View.GONE);
+                } else {
+                    shareDeviceNoDataView.setVisibility(View.GONE);
+                    mListShare.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -643,8 +702,36 @@ public class IndexFragment1 extends BaseFragment {
         this.mListShare.setAdapter(this.mAptShareDeviceList);
         this.mListShare.setOnItemClickListener(shareDeviceListOnItemClickListener);
 
-        allDeviceNoDataView.setVisibility(mDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
-        shareDeviceNoDataView.setVisibility(mShareDeviceList.isEmpty() ? View.VISIBLE : View.GONE);
+        if (mDeviceList.isEmpty()) {
+            allDeviceNoDataView.setVisibility(View.VISIBLE);
+            mGridDevice.setVisibility(View.GONE);
+            mListDevice.setVisibility(View.GONE);
+        } else {
+            allDeviceNoDataView.setVisibility(View.GONE);
+            if (mDeviceDisplayType == 1) {
+                // 表格
+                mGridDevice.setVisibility(View.VISIBLE);
+                mListDevice.setVisibility(View.GONE);
+            } else {
+                // 列表
+                mGridDevice.setVisibility(View.GONE);
+                mListDevice.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (mShareDeviceList == null) {
+            shareDeviceNoDataView.setVisibility(View.VISIBLE);
+            mListShare.setVisibility(View.GONE);
+        } else {
+            if (mShareDeviceList.isEmpty()) {
+                shareDeviceNoDataView.setVisibility(View.VISIBLE);
+                mListShare.setVisibility(View.GONE);
+            } else {
+                shareDeviceNoDataView.setVisibility(View.GONE);
+                mListShare.setVisibility(View.VISIBLE);
+            }
+        }
+
         this.deviceCount();
     }
 

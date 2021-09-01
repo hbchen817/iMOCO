@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xiezhu.jzj.R;
@@ -40,6 +41,8 @@ public class SceneLogActivity extends BaseActivity {
     RecyclerView recycleView;
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
+    @BindView(R.id.scene_nodata_view)
+    LinearLayout mSceneNodataView;
 
     private CommonAdapter adapter;
     private final List<Visitable> models = new ArrayList<Visitable>();
@@ -106,6 +109,13 @@ public class SceneLogActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
                 SrlUtils.finishRefresh(mSrlFragmentMe, true);
                 SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+                if (models.isEmpty()) {
+                    recycleView.setVisibility(View.GONE);
+                    mSceneNodataView.setVisibility(View.VISIBLE);
+                } else {
+                    recycleView.setVisibility(View.VISIBLE);
+                    mSceneNodataView.setVisibility(View.GONE);
+                }
             }
             return false;
         }

@@ -71,7 +71,7 @@ public class SwitchSceneActivity extends BaseActivity {
     private SceneManager mSceneManager;
     private String mIotID;
     private BaseQuickAdapter mAdapter;
-    private List<ItemAction> mList = new ArrayList<>();
+    private final List<ItemAction> mList = new ArrayList<>();
 
     private int mEditPos = -1;
 
@@ -195,9 +195,9 @@ public class SwitchSceneActivity extends BaseActivity {
         final View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null);
         builder.setView(view);
         builder.setCancelable(true);
-        TextView titleTv = (TextView) view.findViewById(R.id.dialogEditLblTitle);
+        TextView titleTv = view.findViewById(R.id.dialogEditLblTitle);
         titleTv.setText("输入场景名称");
-        final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
+        final EditText nameEt = view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setText(mViewBinding.sceneName.getText());
         if (mViewBinding.sceneName.getText() != null && mViewBinding.sceneName.getText().toString() != null) {
             int length = mViewBinding.sceneName.getText().toString().length();
@@ -265,7 +265,7 @@ public class SwitchSceneActivity extends BaseActivity {
 
     private final Handler processDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_CREATESCENE:
                     // 处理创建场景结果

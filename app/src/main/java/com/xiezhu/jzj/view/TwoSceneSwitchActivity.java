@@ -56,7 +56,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         ButterKnife.bind(this);
         mDelSceneHandler = new DelSceneHandler(getMainLooper(), this);
         EventBus.getDefault().register(this);
-        mMyHandler = new MyHandler(this);
+        mMyHandler = new MyHandler(getMainLooper(), this);
         initView();
         getScenes();
 
@@ -181,7 +181,8 @@ public class TwoSceneSwitchActivity extends DetailActivity {
     private static class MyHandler extends Handler {
         final WeakReference<TwoSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(TwoSceneSwitchActivity activity) {
+        public MyHandler(Looper looper, TwoSceneSwitchActivity activity) {
+            super(looper);
             mWeakReference = new WeakReference<>(activity);
         }
 
@@ -189,6 +190,7 @@ public class TwoSceneSwitchActivity extends DetailActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             TwoSceneSwitchActivity activity = mWeakReference.get();
+            if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
                     //处理获取拓展数据

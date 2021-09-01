@@ -36,6 +36,7 @@ import com.xiezhu.jzj.model.EProduct;
 import com.xiezhu.jzj.contract.Constant;
 import com.xiezhu.jzj.utility.Dialog;
 import com.xiezhu.jzj.utility.QMUITipDialogUtil;
+import com.xiezhu.jzj.utility.SpUtils;
 import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -294,12 +295,22 @@ public class ChoiceProductActivity extends BaseActivity {
 
     private void requestPermission() {
         if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+            boolean hasRequstCamera = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, false);
+            // 未有权限
+            // 第一次请求权限 false
+            // 第一次请求权限拒绝，但未选择“不再提醒” true
+            // 第一次请求权限拒绝，并选择“不再提醒” false
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) || !hasRequstCamera) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+
+                SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, true);
             } else {
-                ToastUtils.showToastCentrally(mActivity, getString(R.string.camera_denied_and_dont_ask_msg));
+                ToastUtils.showLongToast(mActivity, getString(R.string.camera_denied_and_dont_ask_msg));
             }
+
+            ViseLog.d("flag = " + ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA));
         } else {
+            // 已经获取权限
             Intent intent = new Intent(mActivity, ScanActivity.class);
             startActivityForResult(intent, 1);
         }
@@ -313,7 +324,7 @@ public class ChoiceProductActivity extends BaseActivity {
                 Intent intent = new Intent(this, ScanActivity.class);
                 startActivityForResult(intent, 1);
             } else {
-                ToastUtils.showToastCentrally(this, getString(R.string.camera_denied_msg));
+                ToastUtils.showLongToast(this, R.string.camera_denied_msg);
             }
         }
     }

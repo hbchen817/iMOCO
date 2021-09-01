@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
@@ -60,7 +61,7 @@ public class UserManagerActivity extends BaseActivity {
     @BindView(R.id.srl_fragment_me)
     SmartRefreshLayout mSrlFragmentMe;
 
-    private List<Visitable> mList = new ArrayList<>();
+    private final List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
     private ProcessDataHandler mHandler;
     private int mPageNo = 1;
@@ -68,7 +69,7 @@ public class UserManagerActivity extends BaseActivity {
 
     private String mIotId;
 
-    private OnRefreshListener onRefreshListener = new OnRefreshListener() {
+    private final OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh(@NonNull RefreshLayout refreshLayout) {
             mList.clear();
@@ -76,7 +77,7 @@ public class UserManagerActivity extends BaseActivity {
             getData();
         }
     };
-    private OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
+    private final OnLoadMoreListener onLoadMoreListener = new OnLoadMoreListener() {
         @Override
         public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
             mPageNo++;
@@ -133,19 +134,16 @@ public class UserManagerActivity extends BaseActivity {
     }
 
     private void getData() {
-        mHandler = new ProcessDataHandler(this);
+        mHandler = new ProcessDataHandler(getMainLooper(), this);
         UserCenter.queryVirtualUserListInAccount(mPageNo, mPageSize, mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     @OnClick({R.id.iv_toolbar_left, R.id.iv_toolbar_right})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbar_left:
-                finish();
-                break;
-            case R.id.iv_toolbar_right:
-                CreateUserActivity.start(this);
-                break;
+        if (view.getId() == R.id.iv_toolbar_left) {
+            finish();
+        } else if (view.getId() == R.id.iv_toolbar_right) {
+            CreateUserActivity.start(this);
         }
     }
 
@@ -166,7 +164,8 @@ public class UserManagerActivity extends BaseActivity {
     private static class ProcessDataHandler extends Handler {
         final WeakReference<UserManagerActivity> mWeakReference;
 
-        public ProcessDataHandler(UserManagerActivity activity) {
+        public ProcessDataHandler(Looper looper, UserManagerActivity activity) {
+            super(looper);
             mWeakReference = new WeakReference<>(activity);
         }
 

@@ -61,7 +61,7 @@ public class SwitchSceneListActivity extends BaseActivity {
 
     private String mIotId;
     private SceneManager mSceneManager;
-    private List<EScene.sceneListItemEntry> mList = new ArrayList<>();
+    private final List<EScene.sceneListItemEntry> mList = new ArrayList<>();
     private BaseQuickAdapter<EScene.sceneListItemEntry, BaseViewHolder> mAdapter;
     private int mClickPosition = -1;
     private String mKeyCode;
@@ -120,7 +120,7 @@ public class SwitchSceneListActivity extends BaseActivity {
     // API数据处理器
     private Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
@@ -224,17 +224,13 @@ public class SwitchSceneListActivity extends BaseActivity {
         mAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                switch (view.getId()) {
-                    case R.id.editBtn:
-                        SwitchSceneActivity.start(mActivity, mList.get(position), mIotId);
-                        break;
-                    case R.id.bindBtn:
-                        mBindPosition = position;
-                        mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mAPIDataHandler);
-                        break;
-                    default:
-                        break;
+                if (view.getId() == R.id.editBtn) {
+                    SwitchSceneActivity.start(mActivity, mList.get(position), mIotId);
+                } else if (view.getId() == R.id.bindBtn) {
+                    mBindPosition = position;
+                    mSceneManager.getExtendedProperty(mIotId, mKeyCode, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mAPIDataHandler);
                 }
+
                 mClickPosition = -1;
                 mAdapter.notifyDataSetChanged();
             }
@@ -243,10 +239,8 @@ public class SwitchSceneListActivity extends BaseActivity {
 
     @OnClick({R.id.create_scene_view})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.create_scene_view:
-                SwitchSceneActivity.start(this, null, mIotId);
-                break;
+        if (view.getId() == R.id.create_scene_view) {
+            SwitchSceneActivity.start(this, null, mIotId);
         }
     }
 
@@ -260,7 +254,7 @@ public class SwitchSceneListActivity extends BaseActivity {
     // 响应错误处理器
     protected Handler mExtendedPropertyResponseErrorHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
                 StringBuilder sb = new StringBuilder();
@@ -274,7 +268,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                 sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
                 sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
                 Logger.e(sb.toString());
-                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
+                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {// 检查用户是否登录了其他App
                     Logger.e("401 identityId is null 检查用户是否登录了其他App");
                     logOut();
                     return false;

@@ -9,6 +9,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ import com.xiezhu.jzj.utility.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,8 @@ public class RoomDeviceActivity extends BaseActivity {
     SmartRefreshLayout mSrlFragmentMe;
     @BindView(R.id.iv_toolbar_right)
     ImageView ivToolbarRight;
+    @BindView(R.id.dev_nodata_view)
+    LinearLayout mDevNodataView;
 
     private HomeSpaceManager homeSpaceManager;
     private int page = 1;
@@ -148,7 +152,7 @@ public class RoomDeviceActivity extends BaseActivity {
 
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
-        public boolean handleMessage(Message msg) {
+        public boolean handleMessage(@NotNull Message msg) {
             if (msg.what == Constant.MSG_CALLBACK_GETDEVICEINROOM) {
                 if (page == 1) {
                     mDeviceList.clear();
@@ -157,6 +161,13 @@ public class RoomDeviceActivity extends BaseActivity {
                 mAptDeviceList.notifyDataSetChanged();
                 SrlUtils.finishRefresh(mSrlFragmentMe, true);
                 SrlUtils.finishLoadMore(mSrlFragmentMe, true);
+            }
+            if (mDeviceList.isEmpty()) {
+                mListDevice.setVisibility(View.GONE);
+                mDevNodataView.setVisibility(View.VISIBLE);
+            } else {
+                mListDevice.setVisibility(View.VISIBLE);
+                mDevNodataView.setVisibility(View.GONE);
             }
             return false;
         }

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSONObject;
+import com.vise.log.ViseLog;
 import com.xiezhu.jzj.R;
 import com.xiezhu.jzj.contract.CTSL;
 import com.xiezhu.jzj.event.CEvent;
@@ -89,7 +90,7 @@ public class DetailGatewayActivity extends DetailActivity {
             }
             mImgSecurity.setImageResource(ImageProvider.genDeviceStateIcon(CTSL.PK_GATEWAY, CTSL.GW_P_ArmMode, propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode)));
 
-            LinearLayout rl = (LinearLayout) findViewById(R.id.detailGatewayLlMain);
+            LinearLayout rl = findViewById(R.id.detailGatewayLlMain);
             if (propertyEntry.getPropertyValue(CTSL.GW_P_ArmMode).equals(CTSL.GW_P_ArmMode_deploy)) {
                 rl.setBackgroundColor(ContextCompat.getColor(this, R.color.topic_color1));
                 mLblAarmModeClick.setText(getString(R.string.detailgateway_armmode_cancel_click));
@@ -185,6 +186,7 @@ public class DetailGatewayActivity extends DetailActivity {
                 case Constant.MSG_CALLBACK_LNSTATUSNOTIFY:
                     // 处理连接状态通知
                     ERealtimeData.deviceConnectionStatusEntry entry = RealtimeDataParser.processConnectStatus((String) msg.obj);
+                    ViseLog.d("处理连接状态通知");
                     if (entry == null || entry.iotId == null) {
                         return false;
                     }
@@ -226,7 +228,7 @@ public class DetailGatewayActivity extends DetailActivity {
 
     // 在线统计
     private void onlineCount() {
-        TextView lblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
+        TextView lblCount = findViewById(R.id.detailGatewayLblCount);
         if (mDeviceList != null && mDeviceList.size() > 0) {
             int online = 0;
             for (EDevice.deviceEntry e : mDeviceList) {
@@ -272,16 +274,16 @@ public class DetailGatewayActivity extends DetailActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 注意：公共操作已经在父类中处理
-        mFakeStatusbarView = (View) findViewById(R.id.fake_statusbar_view);
+        mFakeStatusbarView = findViewById(R.id.fake_statusbar_view);
 
-        mLblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
+        mLblCount = findViewById(R.id.detailGatewayLblCount);
         mLblCount.setVisibility(View.INVISIBLE);
         mTSLHelper = new TSLHelper(this);
         mDeviceList = new ArrayList<EDevice.deviceEntry>();
         mAptDeviceList = new AptDeviceList(this);
 
-        RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
-        ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
+        RelativeLayout armView = findViewById(R.id.mArmViw);
+        ImageView gateway4100 = findViewById(R.id.mGateway4100);
         if (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             gateway4100.setVisibility(View.VISIBLE);
             armView.setVisibility(View.GONE);
@@ -291,10 +293,10 @@ public class DetailGatewayActivity extends DetailActivity {
         mStatus = getIntent().getIntExtra("status", Constant.CONNECTION_STATUS_OFFLINE);
 
         // 安防模式设置处理
-        mImgSecurity = (ImageView) findViewById(R.id.detailGatewayImgSecurity);
-        mImgSecurityRound = (ImageView) findViewById(R.id.detailGatewayImgSecurityRound);
-        mLblAarmMode = (TextView) findViewById(R.id.detailGatewayLblArmMode);
-        mLblAarmModeClick = (TextView) findViewById(R.id.detailGatewayLblArmModeClick);
+        mImgSecurity = findViewById(R.id.detailGatewayImgSecurity);
+        mImgSecurityRound = findViewById(R.id.detailGatewayImgSecurityRound);
+        mLblAarmMode = findViewById(R.id.detailGatewayLblArmMode);
+        mLblAarmModeClick = findViewById(R.id.detailGatewayLblArmModeClick);
         mImgSecurity.setOnClickListener(armModeClick);
         mImgSecurityRound.setOnClickListener(armModeClick);
         mLblAarmMode.setOnClickListener(armModeClick);
@@ -302,7 +304,7 @@ public class DetailGatewayActivity extends DetailActivity {
 
         // 共享网关不能添加子设备
         if (mOwned == 0) {
-            RelativeLayout rlAdd = (RelativeLayout) findViewById(R.id.detailGatewayRlAdd);
+            RelativeLayout rlAdd = findViewById(R.id.detailGatewayRlAdd);
             rlAdd.setVisibility(View.GONE);
         }
 
@@ -316,8 +318,8 @@ public class DetailGatewayActivity extends DetailActivity {
                 startActivity(intent);
             }
         };
-        ImageView imgAdd = (ImageView) findViewById(R.id.detailGatewayImgAdd);
-        TextView lblAdd = (TextView) findViewById(R.id.detailGatewayLblAdd);
+        ImageView imgAdd = findViewById(R.id.detailGatewayImgAdd);
+        TextView lblAdd = findViewById(R.id.detailGatewayLblAdd);
         imgAdd.setOnClickListener(onAddClickListener);
         lblAdd.setOnClickListener(onAddClickListener);
 
@@ -364,6 +366,7 @@ public class DetailGatewayActivity extends DetailActivity {
                 }
             }
             mAptDeviceList.notifyDataSetChanged();
+            onlineCount();
         }
     }
 
