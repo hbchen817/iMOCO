@@ -24,8 +24,10 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityBindSuccessBinding;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -36,8 +38,10 @@ public class BindSuccessActivity extends BaseActivity {
 
     private static final String EXTRA_IOT_ID = "EXTRA_IOT_ID";
     private static final String EXTRA_NICKNAME = "EXTRA_NICKNAME";
+    private static final String GATEWAY_ID = "GATEWAY_ID";
 
     private String mIotId;
+    private String mGatewayId;
     private UserCenter mUserCenter;
     private String mNewNickName;
     private String mPK;
@@ -57,6 +61,7 @@ public class BindSuccessActivity extends BaseActivity {
         setContentView(mViewBinding.getRoot());
 
         mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.bind_result);
+        mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
         mIotId = getIntent().getStringExtra(EXTRA_IOT_ID);
         mNickName = getIntent().getStringExtra(EXTRA_NICKNAME);
         mDeviceName = mNickName;
@@ -78,6 +83,11 @@ public class BindSuccessActivity extends BaseActivity {
         mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
         mViewBinding.currentTestBtn.setOnClickListener(this::onViewClicked);
         mViewBinding.editNameBtn.setOnClickListener(this::onViewClicked);
+
+        if (!mIotId.equals(mGatewayId)) {
+            // TAG_GATEWAY_FOR_DEV
+            new SceneManager(this).setExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, mGatewayId, null, null, null);
+        }
     }
 
     // 嵌入式状态栏
@@ -181,8 +191,9 @@ public class BindSuccessActivity extends BaseActivity {
         }
     }
 
-    public static void start(Context context, String iotId, String nickName) {
+    public static void start(Context context, String gatewayId, String iotId, String nickName) {
         Intent intent = new Intent(context, BindSuccessActivity.class);
+        intent.putExtra(GATEWAY_ID, gatewayId);
         intent.putExtra(EXTRA_IOT_ID, iotId);
         intent.putExtra(EXTRA_NICKNAME, nickName);
         context.startActivity(intent);

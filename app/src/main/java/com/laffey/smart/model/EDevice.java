@@ -29,6 +29,7 @@ public class EDevice {
         public int status;
         public String nodeType;
         public String bindTime;
+        public String gatewayId;
         public List<ETSL.stateTimeEntry> stateTimes;
 
         // 构造
@@ -45,6 +46,7 @@ public class EDevice {
             this.bindTime = "";
             this.stateTimes = new ArrayList<ETSL.stateTimeEntry>();
             this.image = "";
+            this.gatewayId = "";
         }
 
         // 处理状态时间

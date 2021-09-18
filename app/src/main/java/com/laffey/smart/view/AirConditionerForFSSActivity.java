@@ -143,7 +143,7 @@ public class AirConditionerForFSSActivity extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getColor(R.color.blue2));
+            getWindow().setStatusBarColor(getColor(R.color.appcolor));
         }
 
         mViewBinding.includeToolbar.includeDetailImgMore.setVisibility(View.GONE);

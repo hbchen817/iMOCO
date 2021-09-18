@@ -50,6 +50,7 @@ public class LightSceneListActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarTitle.setText("场景列表");
         initStatusBar();
         mIotId = getIntent().getStringExtra("extra");
+        mActivityTag = getIntent().getStringExtra("activity_tag");
         mSceneManager = new SceneManager(this);
         initAdapter();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -98,7 +99,7 @@ public class LightSceneListActivity extends BaseActivity {
             }
         };
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LightSceneActivity.start(LightSceneListActivity.this, mList.get(position), mIotId);
+            LightSceneActivity.start(LightSceneListActivity.this, mList.get(position), mIotId, mActivityTag);
         });
     }
 
@@ -127,13 +128,16 @@ public class LightSceneListActivity extends BaseActivity {
 
     public void onViewClicked(View view) {
         if (view.getId() == R.id.create_scene_view) {
-            LightSceneActivity.start(this, null, mIotId);
+            LightSceneActivity.start(this, null, mIotId, mActivityTag);
         }
     }
 
-    public static void start(Context context, String iotId) {
+    private String mActivityTag;
+
+    public static void start(Context context, String iotId, String tag) {
         Intent intent = new Intent(context, LightSceneListActivity.class);
         intent.putExtra("extra", iotId);
+        intent.putExtra("activity_tag", tag);
         context.startActivity(intent);
     }
 

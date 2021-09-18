@@ -52,6 +52,7 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -176,6 +177,7 @@ public class MoreGatewayActivity extends BaseActivity {
                     SystemParameter.getInstance().setIsRefreshDeviceData(true);
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
+                    //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
                     Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
                     break;
                 case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
@@ -192,6 +194,7 @@ public class MoreGatewayActivity extends BaseActivity {
                         for (EUser.deviceEntry e : list.data) {
                             switch (e.productKey) {
                                 case CTSL.PK_LIGHT:
+                                case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                                 case CTSL.PK_ONE_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);

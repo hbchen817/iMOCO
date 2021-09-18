@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 设置进度条背景 -->
+    <item android:id="@android:id/background">
+        <shape>
+            <solid android:color="@color/appcolor3" />
+            <!--<stroke android:color="#979797"
+                android:width="@dimen/dp_1"/>-->
+            <size android:height="@dimen/dp_40" />
+            <!-- 设置进度条的圆角 -->
+            <corners android:radius="@dimen/dp_5" />
+        </shape>
+    </item>
+    <!-- 设置进度条的二级进度 -->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <solid android:color="@color/appcolor2" />
+                <!--<stroke android:color="#979797"
+                    android:width="@dimen/dp_1"/>-->
+                <size android:height="@dimen/dp_40" />
+                <corners android:radius="@dimen/dp_5" />
+            </shape>
+        </clip>
+    </item>
+    <!-- 正常的进度设置 -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="@color/appcolor2" />
+                <!--<stroke android:color="#979797"
+                    android:width="@dimen/dp_1"/>-->
+                <size android:height="@dimen/dp_40" />
+                <corners android:radius="@dimen/dp_5" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>

@@ -184,6 +184,10 @@ public class AptDeviceList extends BaseAdapter {
                                 viewHolder.status.setText(txt);
                             }
                         }
+                    } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(deviceEntry.productKey)) {
+                        // 单调光面板
+                        txt = deviceEntry.stateTimes.get(0).time + " 亮度：" + deviceEntry.stateTimes.get(0).value + "%";
+                        viewHolder.status.setText(txt);
                     }
                 }
                 // 有多种状态的处理
@@ -236,6 +240,10 @@ public class AptDeviceList extends BaseAdapter {
                         // 调光调色面板
                         state = deviceEntry.stateTimes.get(0).time + " 亮度 " + deviceEntry.stateTimes.get(0).value + "%  /  " +
                                 deviceEntry.stateTimes.get(1).time + " 色温 " + deviceEntry.stateTimes.get(1).value + "K";
+                        viewHolder.status.setText(state);
+                    } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(deviceEntry.productKey)) {
+                        // 单调光面板
+                        state = deviceEntry.stateTimes.get(0).time + " 亮度 " + deviceEntry.stateTimes.get(0).value + "%";
                         viewHolder.status.setText(state);
                     }
                 }

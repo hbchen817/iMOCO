@@ -37,6 +37,10 @@
     <string name="icon_backlight">&#xe9e2;</string>
     <string name="icon_search">&#xe633;</string>
     <string name="icon_clear">&#xe61b;</string>
+    <string name="icon_auto">&#xe60b;</string>
+    <string name="icon_temp">&#xe630;</string>
+    <string name="icon_brightness">&#xe994;</string>
+    <string name="icon_associated">&#xe63d;</string>
 
     <string name="app_name">拉斐智能</string><!--莫科智家-->
     <string name="contentDescription_null"></string>
@@ -722,4 +726,9 @@
     <string name="pls_input_brand">请输入品牌</string>
 
     <string name="service_has_no_parameters">此服务无参数。</string>
+    <string name="associated_switch">双控</string>
+    <string name="choice_associated_switch">选择双控按键</string>
+    <string name="bind_list">%1$s绑定列表</string>
+    <string name="select_dev">选择设备</string>
+    <string name="select_key">选择按键</string>
 </resources>

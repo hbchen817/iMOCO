@@ -9,6 +9,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -1886,4 +1888,20 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 调用服务
+    public static void invokeService(String iotId, String identifier, JSONObject args, int tag,
+                                     Handler commitFailureHandler,
+                                     Handler responseErrorHandler,
+                                     @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", identifier);
+        requestParameterEntry.addParameter("args", args);
+        requestParameterEntry.callbackMessageType = tag;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 }

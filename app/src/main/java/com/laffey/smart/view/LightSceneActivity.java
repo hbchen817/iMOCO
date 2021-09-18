@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,10 +65,15 @@ public class LightSceneActivity extends BaseActivity implements View.OnLongClick
         EventBus.getDefault().register(this);
         mScene = (EScene.sceneListItemEntry) getIntent().getSerializableExtra("extra");
         mIotID = getIntent().getStringExtra("iotID");
+        mActivityTag = getIntent().getStringExtra("activity_tag");
         mSceneManager = new SceneManager(this);
         initView();
 
         initStatusBar();
+
+        Typeface iconface = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.lightnessIc.setTypeface(iconface);
+        mViewBinding.tempIc.setTypeface(iconface);
     }
 
     // 嵌入式状态栏
@@ -161,10 +167,13 @@ public class LightSceneActivity extends BaseActivity implements View.OnLongClick
         mViewBinding.temperatureView.setOnLongClickListener(this);
     }
 
-    public static void start(Context context, EScene.sceneListItemEntry item, String iotID) {
+    private String mActivityTag;
+
+    public static void start(Context context, EScene.sceneListItemEntry item, String iotID, String tag) {
         Intent intent = new Intent(context, LightSceneActivity.class);
         intent.putExtra("extra", item);
         intent.putExtra("iotID", iotID);
+        intent.putExtra("activity_tag", tag);
         context.startActivity(intent);
     }
 
@@ -232,7 +241,7 @@ public class LightSceneActivity extends BaseActivity implements View.OnLongClick
         if (view.getId() == R.id.nameLayout) {
             showDeviceNameDialogEdit();
         } else if (view.getId() == R.id.addBtn) {
-            LightActionChoiceActivity.start(this);
+            LightActionChoiceActivity.start(this, mActivityTag);
         } else if (view.getId() == R.id.lightnessView) {
             ColorTemperatureChoiceActivity.start2(this, 2, Integer.parseInt(mViewBinding.lightnessText.getText().toString()));
         } else if (view.getId() == R.id.temperatureView) {

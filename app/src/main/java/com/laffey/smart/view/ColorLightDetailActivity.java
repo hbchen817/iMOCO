@@ -294,7 +294,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                 break;
             case R.id.scene_view:
                 if (mState == CTSL.STATUS_ON)
-                    LightSceneListActivity.start(mActivity, mIOTId);
+                    LightSceneListActivity.start(mActivity, mIOTId, "ColorLightDetailActivity");
                 break;
             case R.id.switch_view:
                 if (mState == CTSL.STATUS_ON) {

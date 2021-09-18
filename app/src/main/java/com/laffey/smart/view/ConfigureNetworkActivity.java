@@ -271,7 +271,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
         QMUITipDialogUtil.dismiss();
         String devName = getIntent().getStringExtra("name");
         if (mIotId != null && mIotId.length() > 0 && devName != null && devName.length() > 0) {
-            BindSuccessActivity.start(this, mIotId, getIntent().getStringExtra("name"));
+            BindSuccessActivity.start(this, mIotId, mIotId, getIntent().getStringExtra("name"));
             finish();
         }
     }
@@ -291,7 +291,7 @@ public class ConfigureNetworkActivity extends BaseActivity {
             if (msg.what == Constant.MSG_CALLBACK_GET_BY_ACCOUNT_AND_DEV) {
                 QMUITipDialogUtil.dismiss();
                 JSONObject object = JSON.parseObject((String) msg.obj);
-                BindSuccessActivity.start(activity, object.getString("iotId"), object.getString("productName"));
+                BindSuccessActivity.start(activity, object.getString("iotId"), object.getString("iotId"), object.getString("productName"));
                 activity.finish();
             }
         }

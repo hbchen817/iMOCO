@@ -23,7 +23,9 @@ import com.laffey.smart.view.DetailTwoSwitchActivity;
 import com.laffey.smart.view.DetailTwoSwitchActivity2;
 import com.laffey.smart.view.FourSceneSwitchActivity;
 import com.laffey.smart.view.FourSceneSwitchActivity2;
+import com.laffey.smart.view.LightDetailActivity;
 import com.laffey.smart.view.LockDetailActivity;
+import com.laffey.smart.view.MultiDevActivity;
 import com.laffey.smart.view.OneKeySceneDetailActivity;
 import com.laffey.smart.view.OneKeySceneDetailActivity2;
 import com.laffey.smart.view.OneWayCurtainsDetailActivity;
@@ -51,11 +53,11 @@ public class ActivityRouter {
     public static void toDetail(Context context, String iotId, String productKey, int status, String name, int owned) {
         Intent intent = null;
 
-        ViseLog.d("跳转插件 iotId = " + iotId + " , productKey = " + productKey
+        /*ViseLog.d("跳转插件 iotId = " + iotId + " , productKey = " + productKey
                 + "\nBuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID
                 + "\nstatus = " + status
                 + "\nname = " + name
-                + "\nowned = " + owned);
+                + "\nowned = " + owned);*/
         switch (productKey) {
             case CTSL.PK_GATEWAY:
             case CTSL.PK_GATEWAY_RG4100:
@@ -102,6 +104,9 @@ public class ActivityRouter {
             case CTSL.PK_LIGHT:
                 intent = new Intent(context, ColorLightDetailActivity.class);
                 break;
+            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
+                intent = new Intent(context, LightDetailActivity.class);
+                break;
             case CTSL.PK_ONE_SCENE_SWITCH:
                 intent = new Intent(context, OneKeySceneDetailActivity2.class);
                 break;
@@ -147,6 +152,11 @@ public class ActivityRouter {
                 // 双路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
+                break;
+            }
+            case CTSL.PK_MULTI_THREE_IN_ONE: {
+                // 多功能设备（三合一、二合一）
+                intent = new Intent(context, MultiDevActivity.class);
                 break;
             }
             default:

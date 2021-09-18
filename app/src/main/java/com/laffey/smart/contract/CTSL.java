@@ -31,6 +31,7 @@ public class CTSL {
     public static final String PK_THREE_SCENE_SWITCH        = "a1S5xUUURz4";
     public static final String PK_FOUR_SCENE_SWITCH         = "a1uaG4drs1e";
     public static final String PK_LIGHT                     = "a1OlU25BrOu";// 调光调色面板
+    public static final String PK_ONE_WAY_DIMMABLE_LIGHT    = "a1CybIIFZIr";// 单调光面板
     public static final String PK_ONE_SCENE_SWITCH          = "a1HurDIuRiW";
 
     public static final String PK_WSD_ELE                   = "a1DnAUOVHtX";//微仕达电机pk
@@ -71,6 +72,7 @@ public class CTSL {
     public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
 
     public static final String TEST_PK_FULL_SCREEN_SWITCH   = "a1EnbCHcEHj";// 全面屏开关
+    public static final String PK_MULTI_THREE_IN_ONE        = "a1FSqDW2oMb";// 三合一设备
 
     // 定义属性类型
     public static enum PTYPE {
@@ -246,6 +248,21 @@ public class CTSL {
     public static final String FWS_P_PowerSwitch_2             = "PowerSwitch_2";
     public static final String FWS_P_PowerSwitch_3             = "PowerSwitch_3";
     public static final String FWS_P_PowerSwitch_4             = "PowerSwitch_4";
+    public static final String FWS_P_LOCALCONFIG_1             = "LocalConfig_1";
+    public static final String FWS_P_LOCALCONFIG_2             = "LocalConfig_2";
+    public static final String FWS_P_LOCALCONFIG_3             = "LocalConfig_3";
+    public static final String FWS_P_LOCALCONFIG_4             = "LocalConfig_4";
+    public static final String FWS_P_ACTION_1                  = "Action_1";
+    public static final String FWS_P_ACTION_2                  = "Action_2";
+    public static final String FWS_P_ACTION_3                  = "Action_3";
+    public static final String FWS_P_ACTION_4                  = "Action_4";
+    public static final String FWS_P_BINDINGTABLE              = "BindingTable";
+
+    public static final String FWS_P_FUNCTION                  = "Function";
+    public static final String FWS_P_DSTADDRMODE               = "DstAddrMode";
+    public static final String FWS_P_DSTADDR                   = "DstAddr";
+    public static final String FWS_P_DSTENDPOINTID             = "DstEndpointId";
+
     public static final String FWS_P_BackLightMode             = "BackLightMode";
     public static final Map<String, PTYPE> FWS_Properties      = new HashMap<String, PTYPE>() {
         {
@@ -253,6 +270,19 @@ public class CTSL {
             put(FWS_P_PowerSwitch_2, PTYPE.t_bool);
             put(FWS_P_PowerSwitch_3, PTYPE.t_bool);
             put(FWS_P_PowerSwitch_4, PTYPE.t_bool);
+            put(FWS_P_LOCALCONFIG_1, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_2, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_3, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_4, PTYPE.t_enum);
+            put(FWS_P_ACTION_1, PTYPE.t_text);
+            put(FWS_P_ACTION_2, PTYPE.t_text);
+            put(FWS_P_ACTION_3, PTYPE.t_text);
+            put(FWS_P_ACTION_4, PTYPE.t_text);
+            put(FWS_P_BINDINGTABLE, PTYPE.t_text);
+            put(FWS_P_FUNCTION, PTYPE.t_text);
+            put(FWS_P_DSTADDRMODE, PTYPE.t_text);
+            put(FWS_P_DSTADDR, PTYPE.t_text);
+            put(FWS_P_DSTENDPOINTID, PTYPE.t_text);
             put(FWS_P_BackLightMode, PTYPE.t_enum);
         }
     };
@@ -382,14 +412,17 @@ public class CTSL {
 
     // 全面屏开关 TargetTemperature_3
     public static final String FSS_CurrentTemperature_1             = "CurrentTemperature_1";
+    public static final String FSS_CurrentTemperature_2             = "CurrentTemperature_2";
     public static final String FSS_TargetTemperature_1              = "TargetTemperature_1";
     public static final String FSS_WorkMode_1                       = "WorkMode_1";
     public static final String FSS_PowerSwitch_1                    = "PowerSwitch_1";
     public static final String FSS_WindSpeed_1                      = "WindSpeed_1";
     public static final String FSS_PowerSwitch_2                    = "PowerSwitch_2";
     public static final String FSS_WindSpeed_2                      = "WindSpeed_2";
+    public static final String FSS_WindSpeed_3                      = "WindSpeed_3";
     public static final String FSS_PowerSwitch_3                    = "PowerSwitch_3";
     public static final String FSS_TargetTemperature_3              = "TargetTemperature_3";
+    public static final String FSS_TargetTemperature_2              = "TargetTemperature_2";
     public static final Map<String, PTYPE> FSS_Properties           = new HashMap<String, PTYPE>() {
         {
             put(FSS_CurrentTemperature_1, PTYPE.t_double);
@@ -399,8 +432,11 @@ public class CTSL {
             put(FSS_WindSpeed_1, PTYPE.t_enum);
             put(FSS_PowerSwitch_2, PTYPE.t_bool);
             put(FSS_WindSpeed_2, PTYPE.t_enum);
+            put(FSS_WindSpeed_3, PTYPE.t_enum);
             put(FSS_PowerSwitch_3, PTYPE.t_bool);
             put(FSS_TargetTemperature_3, PTYPE.t_double);
+            put(FSS_TargetTemperature_2, PTYPE.t_double);
+            put(FSS_CurrentTemperature_2, PTYPE.t_double);
         }
     };
 
@@ -468,6 +504,7 @@ public class CTSL {
             put(PK_PIRSENSOR, PIR_Properties);
             put(PK_REMOTECONTRILBUTTON, RCB_Properties);
             put(PK_LIGHT, LIGHT_Properties);
+            put(PK_ONE_WAY_DIMMABLE_LIGHT, LIGHT_Properties);
             put(PK_RGB_COLOR_LIGHT_STRIP, RGBLS_Properties);
             put(PK_FOURWAYSWITCH, FWS_Properties);
             put(PK_FOURWAYSWITCH_2, FWS_Properties);
@@ -486,6 +523,7 @@ public class CTSL {
             put(PK_THREE_SCENE_SWITCH, PTS_Properties);
             put(PK_TWO_SCENE_SWITCH, P2S_Properties);
             put(TEST_PK_FULL_SCREEN_SWITCH, FSS_Properties);
+            put(PK_MULTI_THREE_IN_ONE, FSS_Properties);
         }
     };
 
@@ -497,6 +535,9 @@ public class CTSL {
     // 定义状态常量
     public static final int STATUS_ON  = 1;
     public static final int STATUS_OFF = 0;
+
+    public static final int MASTER_CONTROL     = 2;// 主控
+    public static final int AUXILIARY_CONTROL  = 0;// 辅控
 
     // 窗帘状态常量
     public static final int WC_STATUS_STOP  = 0;

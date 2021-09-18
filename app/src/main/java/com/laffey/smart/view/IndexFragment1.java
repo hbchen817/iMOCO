@@ -648,7 +648,7 @@ public class IndexFragment1 extends BaseFragment {
             if (fragment == null) return;
             if (msg.what == Constant.MSG_CALLBACK_QUERYSCENELIST) {
                 // 处理获取场景列表数据
-                ViseLog.d("处理获取场景列表数据 = " + (String) msg.obj);
+                //ViseLog.d("处理获取场景列表数据 = " + (String) msg.obj);
                 EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                 if (sceneList != null && sceneList.scenes != null) {
                     for (EScene.sceneListItemEntry item : sceneList.scenes) {
@@ -705,7 +705,7 @@ public class IndexFragment1 extends BaseFragment {
         int online = 0;
         int total = mDeviceList == null ? 0 : mDeviceList.size();
         if (total > 0) {
-            ViseLog.d(new Gson().toJson(mDeviceList));
+            //ViseLog.d(new Gson().toJson(mDeviceList));
             for (EDevice.deviceEntry device : mDeviceList) {
                 if (Constant.KEY_NICK_NAME_PK.contains(device.productKey) && mRefreshExtendedBuffer) {
                     mSceneManager.getExtendedProperty(device.iotId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, null,

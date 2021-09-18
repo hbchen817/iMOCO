@@ -85,11 +85,23 @@
         <item>除湿</item>
     </string-array>
 
+    <string-array name="work_modes_2">
+        <item>制冷</item>
+        <item>制热</item>
+        <item>送风</item>
+    </string-array>
+
     <string-array name="work_mode_ics">
         <item>@string/icon_refrigeration</item>
         <item>@string/icon_heating</item>
         <item>@string/icon_air_supply</item>
         <item>@string/icon_dehumidification</item>
+    </string-array>
+
+    <string-array name="work_mode_ics_2">
+        <item>@string/icon_refrigeration</item>
+        <item>@string/icon_heating</item>
+        <item>@string/icon_air_supply</item>
     </string-array>
 
     <string-array name="fan_modes">
@@ -98,7 +110,21 @@
         <item>高风</item>
     </string-array>
 
+    <string-array name="fan_modes_2">
+        <item>自动</item>
+        <item>低风</item>
+        <item>中风</item>
+        <item>高风</item>
+    </string-array>
+
     <string-array name="fan_mode_ics">
+        <item>@string/icon_low_wind</item>
+        <item>@string/icon_mid_wind</item>
+        <item>@string/icon_high_wind</item>
+    </string-array>
+
+    <string-array name="fan_mode_ics_2">
+        <item>@string/icon_auto</item>
         <item>@string/icon_low_wind</item>
         <item>@string/icon_mid_wind</item>
         <item>@string/icon_high_wind</item>

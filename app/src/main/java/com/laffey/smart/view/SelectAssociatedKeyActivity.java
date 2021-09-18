@@ -1,0 +1,403 @@
+package com.laffey.smart.view;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
+import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivitySelectAssociatedKeyBinding;
+import com.laffey.smart.model.EDevice;
+import com.laffey.smart.model.MacByIotIdRequest;
+import com.laffey.smart.model.MacByIotIdResponse;
+import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.vise.log.ViseLog;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+public class SelectAssociatedKeyActivity extends BaseActivity {
+    private ActivitySelectAssociatedKeyBinding mViewBinding;
+
+    private static final String PRODUCT_KEY = "product_key";
+    private static final String IOT_ID = "iot_id";
+    private static final String A_IOT_ID = "a_iot_id";
+    private static final String SELECT_POS = "select_pos";
+    private static final String A_MAC = "a_mac";
+    private static final String SRC_ENDPOINT_ID = "src_endpoint_id";
+    private static final String SRC_PRODUCT_KEY = "src_product_key";
+
+    private String mPk;
+    private String mIotId;
+    private String mAIotId;
+    private int mSelectPos;
+    private String mAMac;
+    private String mBMac;
+    private int mSrcEndId;
+    private String mSrcPK;
+
+    private Typeface mIconFace;
+    private List<KeyItem> mList = new ArrayList<>();
+    private BaseQuickAdapter<KeyItem, BaseViewHolder> mAdapter;
+    private TSLHelper mTSLHelper;
+
+    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK) {
+        Intent intent = new Intent(context, SelectAssociatedKeyActivity.class);
+        intent.putExtra(PRODUCT_KEY, pk);
+        intent.putExtra(IOT_ID, iotId);
+        intent.putExtra(A_IOT_ID, aIotId);
+        intent.putExtra(SELECT_POS, pos);
+        intent.putExtra(A_MAC, aMac);
+        intent.putExtra(SRC_ENDPOINT_ID, srcEndId);
+        intent.putExtra(SRC_PRODUCT_KEY, srcPK);
+        context.startActivity(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewBinding = ActivitySelectAssociatedKeyBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
+
+        mPk = getIntent().getStringExtra(PRODUCT_KEY);
+        mIotId = getIntent().getStringExtra(IOT_ID);
+        mAIotId = getIntent().getStringExtra(A_IOT_ID);
+        mSelectPos = getIntent().getIntExtra(SELECT_POS, 0);
+        mAMac = getIntent().getStringExtra(A_MAC);
+        mSrcEndId = getIntent().getIntExtra(SRC_ENDPOINT_ID, 0);
+        mSrcPK = getIntent().getStringExtra(SRC_PRODUCT_KEY);
+        mTSLHelper = new TSLHelper(this);
+        mIconFace = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+
+        initStatusBar();
+
+        EDevice.deviceEntry entry = DeviceBuffer.getDeviceInformation(mIotId);
+        mBMac = entry.deviceName;
+
+        mAdapter = new BaseQuickAdapter<KeyItem, BaseViewHolder>(R.layout.item_identifier, mList) {
+            @Override
+            protected void convert(@NotNull BaseViewHolder holder, KeyItem item) {
+                holder.setText(R.id.name_tv, item.keyName)
+                        .setBackgroundColor(R.id.root_layout, ContextCompat.getColor(SelectAssociatedKeyActivity.this, R.color.white));
+                TextView goTV = holder.getView(R.id.go_iv);
+                goTV.setText(R.string.icon_checked);
+                goTV.setTypeface(mIconFace);
+                goTV.setTextColor(ContextCompat.getColor(SelectAssociatedKeyActivity.this, R.color.appcolor));
+                goTV.setTextSize(getResources().getDimension(R.dimen.sp_8));
+                goTV.setVisibility(mSelectPos == mList.indexOf(item) ? View.VISIBLE : View.GONE);
+            }
+        };
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                mSelectPos = position;
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        mViewBinding.keyRv.setLayoutManager(layoutManager);
+        mViewBinding.keyRv.setAdapter(mAdapter);
+
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        initData();
+        /*MacByIotIdRequest request = new MacByIotIdRequest(Constant.GET_MAC_BY_IOTID_VER, new MacByIotIdRequest.Param("0", mIotId));
+        RetrofitUtil.getInstance().getService()
+                .getMacByIotId("token", request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MacByIotIdResponse>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull MacByIotIdResponse response) {
+                        if (response.getCode() == 0) {
+                            mBMac = response.getMac();
+                            initData();
+                        } else {
+                            QMUITipDialogUtil.showFailDialog(SelectAssociatedKeyActivity.this, response.getMessage());
+                            mViewBinding.nodataTv.setText(response.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        mViewBinding.nodataTv.setText(e.getMessage());
+                        QMUITipDialogUtil.showFailDialog(SelectAssociatedKeyActivity.this, R.string.unknown_err);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });*/
+    }
+
+    private void initData() {
+        JSONObject object = DeviceBuffer.getExtendedInfo(mIotId);
+        switch (mPk) {
+            case CTSL.PK_ONEWAYSWITCH: {
+                // 一键
+                mList.clear();
+                KeyItem item;
+                if (object != null) {
+                    item = new KeyItem(object.getString(CTSL.OWS_P_PowerSwitch_1), 1);
+                } else {
+                    item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
+                }
+                mList.add(item);
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case CTSL.PK_TWOWAYSWITCH: {
+                // 二键
+                mList.clear();
+                KeyItem item;
+                if (object != null) {
+                    item = new KeyItem(object.getString(CTSL.TWS_P_PowerSwitch_1), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.TWS_P_PowerSwitch_2), 2);
+                    mList.add(item);
+                } else {
+                    item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.two_way_powerswitch), 2);
+                    mList.add(item);
+                }
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case CTSL.PK_THREE_KEY_SWITCH: {
+                // 三键
+                mList.clear();
+                KeyItem item;
+                if (object != null) {
+                    item = new KeyItem(object.getString(CTSL.TWS_P3_PowerSwitch_1), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.TWS_P3_PowerSwitch_2), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.TWS_P3_PowerSwitch_3), 3);
+                    mList.add(item);
+                } else {
+                    item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.two_way_powerswitch), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.three_way_powerswitch), 3);
+                    mList.add(item);
+                }
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case CTSL.PK_FOURWAYSWITCH_2: {
+                // 四键
+                mList.clear();
+                KeyItem item;
+                if (object != null) {
+                    item = new KeyItem(object.getString(CTSL.FWS_P_PowerSwitch_1), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.FWS_P_PowerSwitch_2), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.FWS_P_PowerSwitch_3), 3);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.FWS_P_PowerSwitch_4), 4);
+                    mList.add(item);
+                } else {
+                    item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.two_way_powerswitch), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.three_way_powerswitch), 3);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.four_way_powerswitch), 4);
+                    mList.add(item);
+                }
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH: {
+                // 六键四开关二场景
+                mList.clear();
+                KeyItem item;
+                if (object != null) {
+                    item = new KeyItem(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3), 3);
+                    mList.add(item);
+
+                    item = new KeyItem(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4), 4);
+                    mList.add(item);
+                } else {
+                    item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.two_way_powerswitch), 2);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.three_way_powerswitch), 3);
+                    mList.add(item);
+
+                    item = new KeyItem(getString(R.string.four_way_powerswitch), 4);
+                    mList.add(item);
+                }
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+        mViewBinding.nodataView.setVisibility(View.GONE);
+        mViewBinding.keyRv.setVisibility(View.VISIBLE);
+        QMUITipDialogUtil.dismiss();
+    }
+
+    // 嵌入式状态栏
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            View view = getWindow().getDecorView();
+            view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
+        }
+
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.select_key);
+        mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mViewBinding.includeToolbar.tvToolbarRight.setText(R.string.sure);
+        mViewBinding.includeToolbar.tvToolbarRight.setTextColor(ContextCompat.getColor(this, R.color.appcolor));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (mSelectPos) {
+                    case 0: {
+                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                        break;
+                    }
+                    case 1: {
+                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                        break;
+                    }
+                    case 2: {
+                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                        break;
+                    }
+                    case 3: {
+                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                        break;
+                    }
+                }
+
+                ViseLog.d("mAMac == " + mAMac + " , mBMac = " + mBMac + " , mSelectPos = " + (mSelectPos + 1) + " , mSrcEndId = " + mSrcEndId);
+                switch (mSrcEndId) {
+                    case 1: {
+                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                        break;
+                    }
+                    case 2: {
+                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                        break;
+                    }
+                    case 3: {
+                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                        break;
+                    }
+                    case 4: {
+                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                        break;
+                    }
+                }
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (mSelectPos + 1) {
+                            case 1: {
+                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
+                                break;
+                            }
+                            case 2: {
+                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
+                                break;
+                            }
+                            case 3: {
+                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
+                                break;
+                            }
+                            case 4: {
+                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
+                                break;
+                            }
+                        }
+
+
+                    }
+                }, 1000);
+            }
+        });
+    }
+
+    private class KeyItem {
+        public String keyName;
+        public int endPointId;
+
+        public KeyItem(String keyName, int endPointId) {
+            this.keyName = keyName;
+            this.endPointId = endPointId;
+        }
+    }
+}

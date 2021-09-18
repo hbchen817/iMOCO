@@ -93,6 +93,7 @@ public class DetailActivity extends BaseActivity {
                 StatusBarUtils.setStatusBar(this, false, false);
                 break;
             case CTSL.PK_LIGHT:
+            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                 setContentView(R.layout.activity_color_light);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
@@ -136,6 +137,26 @@ public class DetailActivity extends BaseActivity {
             case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {
                 // 全面屏
                 setContentView(R.layout.activity_full_screen_switch);
+                break;
+            }
+            case CTSL.PK_MULTI_THREE_IN_ONE: {
+                // 三合一
+                setContentView(R.layout.activity_multi_dev_for_three);
+                break;
+            }
+            case "空调+地暖": {
+                // 空调+地暖
+                setContentView(R.layout.activity_multi_dev_for_ac_and_fh);
+                break;
+            }
+            case "空调+新风": {
+                // 空调+新风
+                setContentView(R.layout.activity_multi_dev_for_ac_and_na);
+                break;
+            }
+            case "地暖+新风": {
+                // 地暖+新风
+                setContentView(R.layout.activity_multi_dev_for_fh_and_na);
                 break;
             }
             default:

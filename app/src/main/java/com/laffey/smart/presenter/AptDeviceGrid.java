@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
@@ -209,6 +210,9 @@ public class AptDeviceGrid extends BaseAdapter {
                                 }
                             }
                         }
+                    } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(deviceEntry.productKey)) {
+                        // 单调光面板
+                        viewHolder.state.setText("亮度："+mDeviceList.get(position).stateTimes.get(0).value+"%");
                     }
                     viewHolder.time.setText(mDeviceList.get(position).stateTimes.get(0).time);
                 }

@@ -41,6 +41,7 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -100,6 +101,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
+                    //SpUtils.removeKey(MoreSubdeviceActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
                     Dialog.confirm(MoreSubdeviceActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
@@ -118,7 +120,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                             // 如果自动场景获取结束则开始获取手动场景
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 mSceneType = CScene.TYPE_MANUAL;
-                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
@@ -389,6 +391,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mSceneManager.delExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, null, null, null);
         switch (mProductKey) {
             case CTSL.PK_LIGHT:
+            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
             case CTSL.PK_ONE_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
             case CTSL.PK_THREE_SCENE_SWITCH:

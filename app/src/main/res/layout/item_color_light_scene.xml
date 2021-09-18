@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_20"
-    android:background="@drawable/color_k_background"
+    android:background="@drawable/shape_white_solid"
     android:orientation="vertical">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginBottom="@dimen/dp_20"
-        android:textColor="#3A6293"
+        android:textColor="@color/appcolor"
         android:textSize="@dimen/sp_14"
         tools:text="工作场景" />
 
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="@dimen/dp_30"
-        android:layout_marginBottom="@dimen/dp_30">
+        android:layout_marginBottom="@dimen/dp_10">
 
         <LinearLayout
             android:id="@+id/temperatureLayout"
@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="色温："
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
@@ -43,14 +43,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="6000"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="K"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
 
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_10"
             android:text="|"
-            android:textColor="#3A6293"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14" />
 
         <LinearLayout
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="亮度："
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
@@ -81,14 +81,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="50"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="%"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_14" />
         </LinearLayout>
 

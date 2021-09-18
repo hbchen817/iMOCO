@@ -11,6 +11,7 @@ public class SpUtils {
 
     public static final String SP_USER_INFO = "sp_user_info";
     public static final String SP_APP_INFO = "sp_app_info";
+    public static final String SP_DEVS_INFO = "sp_devs_info";
 
     public static final String KEY_IS_FIRST = "key_is_first";//是否首次启动app
 
@@ -86,5 +87,20 @@ public class SpUtils {
     public static int getIntValue(Context context, String spName, String key, int defaultValue) {
         SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
         return sp.getInt(key, defaultValue);
+    }
+
+
+    /**
+     * 删除关键字
+     *
+     * @param context
+     * @param spName
+     * @param key
+     */
+    public static void removeKey(Context context, String spName, String key) {
+        SharedPreferences sp = context.getSharedPreferences(spName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(key);
+        editor.apply();
     }
 }

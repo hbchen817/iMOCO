@@ -21,6 +21,7 @@ public class EUser {
         public int owned;
         public String nodeType;
         public String bindTime;
+        public String gatewayId;
 
         // 构造
         public deviceEntry() {
@@ -34,6 +35,7 @@ public class EUser {
             this.owned = 0;
             this.nodeType = "DEVICE";
             this.bindTime = "";
+            this.gatewayId = "";
         }
     }
 

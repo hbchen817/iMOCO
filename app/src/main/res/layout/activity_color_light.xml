@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
     android:orientation="vertical">
 
     <include layout="@layout/include_detail_black" />
@@ -10,12 +11,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/dp_40"
         android:paddingTop="@dimen/dp_50">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -27,7 +28,7 @@
                     android:id="@+id/lightnessText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#3A6293"
+                    android:textColor="@color/appcolor"
                     android:textSize="@dimen/sp_40"
                     android:textStyle="bold"
                     tools:text="50" />
@@ -36,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="%"
-                    android:textColor="#3A6293"
+                    android:textColor="@color/appcolor"
                     android:textSize="@dimen/sp_40"
                     android:textStyle="bold" />
 
@@ -47,19 +48,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
                 android:text="@string/lightness"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_16"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/temp_value_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -71,7 +69,7 @@
                     android:id="@+id/kText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#3A6293"
+                    android:textColor="@color/appcolor"
                     android:textSize="@dimen/sp_40"
                     android:textStyle="bold"
                     tools:text="6000" />
@@ -80,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="K"
-                    android:textColor="#3A6293"
+                    android:textColor="@color/appcolor"
                     android:textSize="@dimen/sp_40"
                     android:textStyle="bold" />
 
@@ -91,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
                 android:text="@string/color_temperature"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_16"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -103,7 +101,7 @@
         android:layout_marginLeft="@dimen/dp_25"
         android:layout_marginTop="@dimen/dp_10"
         android:text="@string/lightness"
-        android:textColor="#3A6293"
+        android:textColor="@color/appcolor"
         android:textSize="@dimen/sp_14"
         android:textStyle="bold" />
 
@@ -117,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_20"
             android:text="0"
-            android:textColor="#7A94B5"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14" />
 
         <View
@@ -130,7 +128,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/dp_20"
             android:text="100"
-            android:textColor="#7A94B5"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14" />
     </LinearLayout>
 
@@ -141,7 +139,7 @@
         android:layout_marginTop="@dimen/dp_5"
         android:max="100"
         android:progress="50"
-        android:progressDrawable="@drawable/color_light_progress"
+        android:progressDrawable="@drawable/color_light_progress_for_appcolor"
         android:thumb="@null" />
 
     <LinearLayout
@@ -150,21 +148,25 @@
         android:layout_height="@dimen/dp_50"
         android:layout_marginHorizontal="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_20"
-        android:background="@drawable/color_k_background"
+        android:background="@drawable/shape_white_solid"
         android:gravity="center_vertical">
 
-        <ImageView
-            android:layout_width="@dimen/dp_20"
-            android:layout_height="@dimen/dp_20"
+        <TextView
+            android:id="@+id/color_temp_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_20"
-            android:src="@drawable/temperature" />
+            android:text="@string/icon_temp"
+            android:textColor="@color/appcolor"
+            android:gravity="center"
+            android:textSize="@dimen/sp_20" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp_10"
             android:text="@string/color_temperature"
-            android:textColor="#3A6293"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_13"
             android:textStyle="bold" />
 
@@ -174,7 +176,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:textColor="#3A6293"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14"
             android:textStyle="bold"
             tools:text="--" />
@@ -183,7 +185,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="K"
-            android:textColor="#3A6293"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14"
             android:textStyle="bold" />
 
@@ -192,7 +194,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_10"
             android:text=">"
-            android:textColor="#3A6293"
+            android:textColor="@color/appcolor"
             android:textSize="@dimen/sp_14"
             android:textStyle="bold" />
 
@@ -221,7 +223,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_30"
             android:layout_weight="1"
-            android:background="@drawable/color_k_background"
+            android:background="@drawable/shape_white_solid"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
@@ -233,7 +235,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/icon_timer"
-                android:textColor="@color/blue4"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_30" />
 
             <TextView
@@ -242,7 +244,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
                 android:text="@string/detail_state_timer"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
 
@@ -251,7 +253,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/color_k_background"
+            android:background="@drawable/shape_white_solid"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
@@ -263,7 +265,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/icon_scene"
-                android:textColor="@color/blue4"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_30" />
 
             <TextView
@@ -272,7 +274,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
                 android:text="@string/rb_tab_two_desc"
-                android:textColor="@color/blue4"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
 
@@ -282,7 +284,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/dp_30"
             android:layout_weight="1"
-            android:background="@drawable/color_k_background"
+            android:background="@drawable/shape_white_solid"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingVertical="@dimen/dp_10">
@@ -294,7 +296,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/icon_switch"
-                android:textColor="@color/blue4"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_30" />
 
             <TextView
@@ -303,7 +305,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_5"
                 android:text="@string/on_off"
-                android:textColor="#3A6293"
+                android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_13" />
         </LinearLayout>
     </LinearLayout>

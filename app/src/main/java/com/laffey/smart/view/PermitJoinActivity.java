@@ -23,6 +23,7 @@ import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.ConfigureNetwork;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
@@ -87,6 +88,7 @@ public class PermitJoinActivity extends BaseActivity {
     private void deviceHandle(SceneManager mSceneManager) {
         switch (mProductKey) {
             case CTSL.PK_LIGHT:
+            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                 mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
@@ -151,7 +153,7 @@ public class PermitJoinActivity extends BaseActivity {
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
                     deviceHandle(mSceneManager);
-                    BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
+                    BindSuccessActivity.start(PermitJoinActivity.this, mGatewayIOTId, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
                     RefreshData.refreshDeviceListData();

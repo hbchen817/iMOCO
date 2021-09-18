@@ -225,6 +225,7 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_LIGHT:
+            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                 //调光调色面板
                 if (propertyName.equals(CTSL.LIGHT_P_BRIGHTNESS)) {
                     mapName = context.getString(R.string.lightness);

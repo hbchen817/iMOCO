@@ -330,6 +330,7 @@ public class Constant {
     public static final String ICON_FONT_TTF                        = "iconfont/jk/iconfont.ttf";
 
     public static final String TAG_DEV_KEY_NICKNAME                 = "devKeyNickName";
+    public static final String TAG_GATEWAY_FOR_DEV                  = "gatewayForDev";
 
     public static final String KEY_NICK_NAME_PK                     = CTSL.PK_SIX_TWO_SCENE_SWITCH + " , "
             + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , "
@@ -344,5 +345,9 @@ public class Constant {
     public static final int REMOTE_CONTROL_TV                       = 2;// 电视
     public static final int REMOTE_CONTROL_AIR_CONDITIONER          = 7;// 空调
     public static final int REMOTE_CONTROL_FAN                      = 6;// 风扇
+
+    // 根据iotId查询mac
+    public static final String GET_MAC_BY_IOTID                     = "/app/device/getMacByIotId";
+    public static final String GET_MAC_BY_IOTID_VER                 = "1.0";
 }
 

@@ -154,4 +154,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="pop_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pw_enter</item>
+        <item name="android:windowExitAnimation">@anim/pw_exit</item>
+    </style>
+
 </resources>

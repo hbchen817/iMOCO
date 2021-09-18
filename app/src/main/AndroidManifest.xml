@@ -26,8 +26,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
@@ -45,6 +44,15 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
+        <activity
+            android:name=".view.SelectAssociatedKeyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SelectAssociatedDevActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AssociatedBindListActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.ChoiceBrandActivity"
             android:screenOrientation="portrait" />
@@ -121,8 +129,7 @@
             android:name=".view.NewSceneActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-        <activity android:name=".demoTest.DemoEditSceneActivity" />
-        <!-- huawei push start -->
+        <activity android:name=".demoTest.DemoEditSceneActivity" /> <!-- huawei push start -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="103546039" /> <!-- huawei push end -->
@@ -137,7 +144,7 @@
             android:name=".view.StartActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Launcher"><!--@style/AppTheme.NoActionBar-->
+            android:theme="@style/AppTheme.Launcher"> <!-- @style/AppTheme.NoActionBar -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -380,6 +387,7 @@
         <activity
             android:name=".view.DetailFourSwitchActivity2"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.DetailGatewayActivity"
@@ -480,6 +488,21 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.AddRoomDeviceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.MultiDevActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AirConditionerForMultiDevActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.FloorHeatingForMultiDevActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.NewAirForMultiDevActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LightDetailActivity"
             android:screenOrientation="portrait" />
 
         <service

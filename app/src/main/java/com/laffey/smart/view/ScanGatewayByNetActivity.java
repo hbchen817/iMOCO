@@ -295,7 +295,8 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                         activity.mDisposable.dispose();
                     }
                     activity.mProgressDialog.dismiss();
-                    BindSuccessActivity.start(activity, JSON.parseObject((String) msg.obj).getString("iotId"), activity.mBindName);
+                    String iotId = JSON.parseObject((String) msg.obj).getString("iotId");
+                    BindSuccessActivity.start(activity, iotId, iotId, activity.mBindName);
                     activity.finish();
                     break;
                 default:
