@@ -288,8 +288,9 @@ public class DetailActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知回调
-                    ViseLog.d("实时 = " + (String) msg.obj);
+                    //ViseLog.d("实时 = " + (String) msg.obj);
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                    //ViseLog.d(new Gson().toJson(propertyEntry));
                     updateState(propertyEntry);
                     break;
                 default:

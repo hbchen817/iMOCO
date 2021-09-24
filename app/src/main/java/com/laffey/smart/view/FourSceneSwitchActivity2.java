@@ -1,6 +1,5 @@
 package com.laffey.smart.view;
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,22 +18,18 @@ import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
-import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
-import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -349,5 +349,9 @@ public class Constant {
     // 根据iotId查询mac
     public static final String GET_MAC_BY_IOTID                     = "/app/device/getMacByIotId";
     public static final String GET_MAC_BY_IOTID_VER                 = "1.0";
+
+    // 查询本地场景列表
+    public static final String QUERY_SCENE_LIST                     = "/app/scene/queryList";
+    public static final String QUERY_SCENE_LIST_VER                 = "1.0";
 }
 

@@ -21,8 +21,8 @@
             android:id="@+id/all_day_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
-            android:background="@android:color/white"
+            android:layout_margin="@dimen/dp_10"
+            android:background="@drawable/shape_white_solid"
             android:clickable="true"
             android:focusable="true">
 
@@ -49,14 +49,16 @@
             android:id="@+id/range_time_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:background="@drawable/shape_white_solid"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/begin_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -92,7 +94,6 @@
                 android:id="@+id/end_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -134,15 +135,16 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/dp_10"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_marginRight="@dimen/dp_10"
+            android:background="@drawable/shape_white_solid"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:id="@+id/once_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -171,7 +173,6 @@
                 android:id="@+id/everyday_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -207,7 +208,6 @@
                 android:id="@+id/working_days_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -243,7 +243,6 @@
                 android:id="@+id/weekend_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -279,7 +278,6 @@
                 android:id="@+id/custom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
                 android:clickable="true"
                 android:focusable="true">
 

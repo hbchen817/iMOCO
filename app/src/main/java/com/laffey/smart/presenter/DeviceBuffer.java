@@ -136,6 +136,16 @@ public class DeviceBuffer {
         return list;
     }
 
+    // 通过mac地址获取设备信息
+    public static EDevice.deviceEntry getDevByMac(String mac) {
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if (mac.equals(entry.deviceName)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     // 更新设备房间
     public static void updateDeviceRoom(String iotId, String roomId, String roomName) {
         if (mBuffer.containsKey(iotId)) {

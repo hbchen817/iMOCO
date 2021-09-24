@@ -324,6 +324,14 @@ public class DetailGatewayActivity extends DetailActivity {
         imgAdd.setOnClickListener(onAddClickListener);
         lblAdd.setOnClickListener(onAddClickListener);
 
+        ImageView sceneAdd = (ImageView) findViewById(R.id.scene_add_img);
+        sceneAdd.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocalSceneListActivity.start(DetailGatewayActivity.this, mIOTId);
+            }
+        });
+
         // 添加实时数据连接状态回调处理器
         RealtimeDataReceiver.addStatusCallbackHandler("DetailGatewayStatusCallback", mRealtimeDataHandler);
         // 添加实时数据设备加网回调处理器

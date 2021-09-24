@@ -6,18 +6,19 @@
     android:layout_height="match_parent"
     android:background="@color/appbgcolor"
     android:orientation="vertical"
-    tools:context=".view.AssociatedBindListActivity">
+    tools:context=".view.LocalConditionDevsActivity">
 
     <include
         android:id="@+id/include_toolbar"
         layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
-        android:id="@+id/grid_dev_nodata_view"
+        android:id="@+id/nodata_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="@dimen/dp_100"
@@ -32,10 +33,29 @@
             android:textColor="@color/black" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/binding_rv"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/dev_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_10"
-        android:visibility="gone" />
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_10"
+        android:visibility="gone">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:id="@+id/dev_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dev_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:background="@drawable/shape_white_solid" />
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:id="@+id/dev_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

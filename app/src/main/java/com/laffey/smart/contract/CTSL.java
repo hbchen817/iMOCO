@@ -263,6 +263,9 @@ public class CTSL {
     public static final String FWS_P_DSTADDR                   = "DstAddr";
     public static final String FWS_P_DSTENDPOINTID             = "DstEndpointId";
 
+    public static final String FWS_P_RESPONSETYPE              = "ResponseType";
+    public static final String FWS_P_RESULT                    = "Result";
+
     public static final String FWS_P_BackLightMode             = "BackLightMode";
     public static final Map<String, PTYPE> FWS_Properties      = new HashMap<String, PTYPE>() {
         {
@@ -282,6 +285,8 @@ public class CTSL {
             put(FWS_P_FUNCTION, PTYPE.t_text);
             put(FWS_P_DSTADDRMODE, PTYPE.t_text);
             put(FWS_P_DSTADDR, PTYPE.t_text);
+            put(FWS_P_RESPONSETYPE, PTYPE.t_text);
+            put(FWS_P_RESULT, PTYPE.t_text);
             put(FWS_P_DSTENDPOINTID, PTYPE.t_text);
             put(FWS_P_BackLightMode, PTYPE.t_enum);
         }

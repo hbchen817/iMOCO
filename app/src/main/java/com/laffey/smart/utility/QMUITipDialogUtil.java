@@ -1,6 +1,7 @@
 package com.laffey.smart.utility;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
@@ -66,6 +67,22 @@ public class QMUITipDialogUtil {
                 if (mDailog != null) mDailog.dismiss();
             }
         }, 2000);
+    }
+
+    public static void showSuccessDialog(Context context, int tip, DialogInterface.OnDismissListener listener) {
+        dismiss();
+        mDailog = new QMUITipDialog.Builder(context)
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
+                .setTipWord(context.getString(tip))
+                .create();
+        mDailog.show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mDailog != null) mDailog.dismiss();
+            }
+        }, 2000);
+        mDailog.setOnDismissListener(listener);
     }
 
     public static void showFailDialog(Context context, String tip) {

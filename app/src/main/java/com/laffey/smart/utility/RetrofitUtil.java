@@ -1,9 +1,15 @@
 package com.laffey.smart.utility;
 
 import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
+import com.http.okhttp.OkHttpManager;
 import com.vise.log.ViseLog;
 
+import java.security.cert.CertificateFactory;
+
+import anet.channel.util.Utils;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -24,7 +30,7 @@ public class RetrofitUtil {
 
     public RetrofitUtil() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.kuaidi100.com")
+                .baseUrl("https://192.168.1.102:6443")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(getOkHttpClient())
@@ -45,7 +51,7 @@ public class RetrofitUtil {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                //ViseLog.d("Http请求参数：" + message);
+                // ViseLog.d("Http请求参数：" + message);
             }
         });
         loggingInterceptor.setLevel(level);
@@ -58,5 +64,9 @@ public class RetrofitUtil {
 
     public RetrofitService getService() {
         return service;
+    }
+
+    public static RequestBody convertToBody(String json) {
+        return RequestBody.create(MediaType.parse("application/json"), json);
     }
 }

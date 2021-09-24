@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,14 +20,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySelectAssociatedKeyBinding;
 import com.laffey.smart.model.EDevice;
+import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.MacByIotIdRequest;
 import com.laffey.smart.model.MacByIotIdResponse;
+import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.RealtimeDataParser;
+import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -34,6 +40,7 @@ import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +59,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
     private static final String A_MAC = "a_mac";
     private static final String SRC_ENDPOINT_ID = "src_endpoint_id";
     private static final String SRC_PRODUCT_KEY = "src_product_key";
+    private static final String EDIT_POSITION = "edit_pos";
 
     private String mPk;
     private String mIotId;
@@ -61,11 +69,19 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
     private String mBMac;
     private int mSrcEndId;
     private String mSrcPK;
+    private int mEditPos;
+
+    private String mFirstIotId;
+    private String mSecondIotId;
+    private String mFirstMac;
+    private String mSecondMac;
 
     private Typeface mIconFace;
     private List<KeyItem> mList = new ArrayList<>();
     private BaseQuickAdapter<KeyItem, BaseViewHolder> mAdapter;
     private TSLHelper mTSLHelper;
+
+    private MyHandler mHandler;
 
     public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK) {
         Intent intent = new Intent(context, SelectAssociatedKeyActivity.class);
@@ -76,6 +92,19 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         intent.putExtra(A_MAC, aMac);
         intent.putExtra(SRC_ENDPOINT_ID, srcEndId);
         intent.putExtra(SRC_PRODUCT_KEY, srcPK);
+        context.startActivity(intent);
+    }
+
+    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK, int editPos) {
+        Intent intent = new Intent(context, SelectAssociatedKeyActivity.class);
+        intent.putExtra(PRODUCT_KEY, pk);
+        intent.putExtra(IOT_ID, iotId);
+        intent.putExtra(A_IOT_ID, aIotId);
+        intent.putExtra(SELECT_POS, pos);
+        intent.putExtra(A_MAC, aMac);
+        intent.putExtra(SRC_ENDPOINT_ID, srcEndId);
+        intent.putExtra(SRC_PRODUCT_KEY, srcPK);
+        intent.putExtra(EDIT_POSITION, editPos);
         context.startActivity(intent);
     }
 
@@ -92,8 +121,13 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         mAMac = getIntent().getStringExtra(A_MAC);
         mSrcEndId = getIntent().getIntExtra(SRC_ENDPOINT_ID, 0);
         mSrcPK = getIntent().getStringExtra(SRC_PRODUCT_KEY);
+        mEditPos = getIntent().getIntExtra(EDIT_POSITION, -1);
         mTSLHelper = new TSLHelper(this);
         mIconFace = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+
+        mHandler = new MyHandler(this);
+        // 添加实时数据属性回调处理器
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
 
         initStatusBar();
 
@@ -314,81 +348,201 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (mSelectPos) {
-                    case 0: {
-                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                        break;
-                    }
-                    case 1: {
-                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                        break;
-                    }
-                    case 2: {
-                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                        break;
-                    }
-                    case 3: {
-                        mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                        break;
-                    }
+                QMUITipDialogUtil.showLoadingDialg(SelectAssociatedKeyActivity.this, R.string.is_submitted);
+                if (mEditPos != -1 && mEditPos != mSelectPos) {
+                    delBinding();
+                } else {
+                    addBinding();
                 }
-
-                ViseLog.d("mAMac == " + mAMac + " , mBMac = " + mBMac + " , mSelectPos = " + (mSelectPos + 1) + " , mSrcEndId = " + mSrcEndId);
-                switch (mSrcEndId) {
-                    case 1: {
-                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
-                        break;
-                    }
-                    case 2: {
-                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
-                        break;
-                    }
-                    case 3: {
-                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
-                        break;
-                    }
-                    case 4: {
-                        mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
-                        break;
-                    }
-                }
-
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        switch (mSelectPos + 1) {
-                            case 1: {
-                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
-                                break;
-                            }
-                            case 2: {
-                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
-                                break;
-                            }
-                            case 3: {
-                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
-                                break;
-                            }
-                            case 4: {
-                                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                        new String[]{"B", "0006", "3", mAMac, String.valueOf(mSrcEndId)});
-                                break;
-                            }
-                        }
-
-
-                    }
-                }, 1000);
             }
         });
+    }
+
+    private void delBinding() {
+        mFirstIotId = mAIotId;
+        mSecondIotId = mIotId;
+
+        mFirstMac = mAMac;
+        mSecondMac = mBMac;
+
+        switch (mSrcEndId) {
+            case 1: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"U", "0006", "3", mBMac, String.valueOf(mEditPos + 1)});
+                break;
+            }
+            case 2: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"U", "0006", "3", mBMac, String.valueOf(mEditPos + 1)});
+                break;
+            }
+            case 3: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"U", "0006", "3", mBMac, String.valueOf(mEditPos + 1)});
+                break;
+            }
+            case 4: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"U", "0006", "3", mBMac, String.valueOf(mEditPos + 1)});
+                break;
+            }
+        }
+    }
+
+    private void addBinding() {
+        mFirstIotId = mAIotId;
+        mSecondIotId = mIotId;
+
+        switch (mSelectPos) {
+            case 0: {
+                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                break;
+            }
+            case 1: {
+                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                break;
+            }
+            case 2: {
+                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                break;
+            }
+            case 3: {
+                mTSLHelper.setProperty(mIotId, mPk, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                break;
+            }
+        }
+
+        // ViseLog.d("mAMac == " + mAMac + " , mBMac = " + mBMac + " , mSelectPos = " + (mSelectPos + 1) + " , mSrcEndId = " + mSrcEndId);
+        switch (mSrcEndId) {
+            case 1: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                break;
+            }
+            case 2: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                break;
+            }
+            case 3: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                break;
+            }
+            case 4: {
+                mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                        new String[]{"B", "0006", "3", mBMac, String.valueOf((mSelectPos + 1))});
+                break;
+            }
+        }
+    }
+
+    private final static int RESULT = 10000;
+    private final static int RESULT_DEL = 10001;
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<SelectAssociatedKeyActivity> ref;
+
+        public MyHandler(SelectAssociatedKeyActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            SelectAssociatedKeyActivity activity = ref.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
+                        // 处理属性通知回调
+                        ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                        if ("B".equals(propertyEntry.getPropertyValue("ResponseType"))) {
+                            if ("0".equals(propertyEntry.getPropertyValue("Result"))) {
+                                if (activity.mFirstIotId.equals(propertyEntry.iotId)) {
+                                    switch (activity.mSelectPos + 1) {
+                                        case 1: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"B", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 2: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"B", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 3: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"B", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 4: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"B", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                    }
+                                } else if (activity.mSecondIotId.equals(propertyEntry.iotId)) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            EDevice.deviceEntry entry = DeviceBuffer.getDeviceInformation(activity.mAIotId);
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    QMUITipDialogUtil.dismiss();
+                                                    AssociatedBindListActivity.start(activity, activity.mAIotId, entry.productKey, entry.nickName, activity.mSrcEndId, 0);
+                                                }
+                                            });
+                                        }
+                                    }).start();
+                                }
+                            } else {
+                                QMUITipDialogUtil.showFailDialog(activity, R.string.bind_fail);
+                            }
+                        } else if ("U".equals(propertyEntry.getPropertyValue("ResponseType"))) {
+                            ViseLog.d(new Gson().toJson(propertyEntry));
+                            if ("0".equals(propertyEntry.getPropertyValue("Result"))) {
+                                if (activity.mFirstIotId.equals(propertyEntry.iotId)) {
+                                    switch (activity.mEditPos + 1) {
+                                        case 1: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"U", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 2: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"U", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 3: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"U", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                        case 4: {
+                                            activity.mTSLHelper.setProperty(activity.mIotId, activity.mPk, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                                    new String[]{"U", "0006", "3", activity.mAMac, String.valueOf(activity.mSrcEndId)});
+                                            break;
+                                        }
+                                    }
+                                } else if (activity.mSecondIotId.equals(propertyEntry.iotId)) {
+                                    activity.addBinding();
+                                }
+                            } else if (!"136".equals(propertyEntry.getPropertyValue("Result"))) {
+                                QMUITipDialogUtil.showFailDialog(activity, R.string.edit_fail);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealtimeDataReceiver.deleteCallbackHandler(this.toString() + "Property");
     }
 
     private class KeyItem {
