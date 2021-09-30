@@ -2,17 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ripple_bg"
     android:clickable="true"
     android:orientation="horizontal">
 
-    <ImageView
+    <TextView
         android:id="@+id/icon_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:src="@drawable/conditon_timer" />
+        android:layout_margin="@dimen/dp_10"
+        android:text="@string/icon_timer_2"
+        android:textColor="@color/appcolor"
+        android:textSize="@dimen/sp_30" />
 
     <TextView
         android:id="@+id/go_iv"
@@ -23,39 +24,27 @@
         android:layout_marginHorizontal="@dimen/dp_10"
         android:text="@string/icon_right_arrow"
         android:textColor="@color/normal_font_color"
-        android:textSize="@dimen/sp_30" />
+        android:textSize="@dimen/sp_25" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/go_iv"
-        android:layout_toRightOf="@id/icon_iv"
-        android:orientation="vertical">
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/icon_iv">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_10"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/timer_point"
             android:textSize="@dimen/sp_14" />
-
-        <TextView
-            android:id="@+id/detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_10"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/timer_point_txt"
-            android:textColor="@color/darkgrey"
-            android:textSize="@dimen/sp_11" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <TextView
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_1"
         android:layout_alignParentTop="true"

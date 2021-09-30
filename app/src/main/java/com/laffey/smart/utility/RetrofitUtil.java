@@ -1,72 +1,94 @@
 package com.laffey.smart.utility;
 
-import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
-import com.http.okhttp.OkHttpManager;
+import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.contract.Constant;
+import com.laffey.smart.model.ERetrofit;
+import com.laffey.smart.model.ItemScene;
 import com.vise.log.ViseLog;
 
-import java.security.cert.CertificateFactory;
-
-import anet.channel.util.Utils;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import io.reactivex.Observable;
 
 public class RetrofitUtil {
-    private RetrofitService service;
-
-    public static RetrofitUtil instance;
+    private static RetrofitUtil instance;
 
     public static RetrofitUtil getInstance() {
         synchronized (RetrofitUtil.class) {
             if (instance == null) {
                 instance = new RetrofitUtil();
             }
+            return instance;
         }
-        return instance;
     }
 
     public RetrofitUtil() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://192.168.1.102:6443")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getOkHttpClient())
-                .build();
-        service = retrofit.create(RetrofitService.class);
+
     }
 
-    /**
-     * 获取OkHttpClient
-     * 用于打印请求参数
-     *
-     * @return OkHttpClient
-     */
-    public static OkHttpClient getOkHttpClient() {
-        // 日志显示级别
-        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
-        // 新建log拦截器
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-                // ViseLog.d("Http请求参数：" + message);
-            }
-        });
-        loggingInterceptor.setLevel(level);
-        // 定制OkHttp
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        // OkHttp进行添加拦截器loggingInterceptor
-        httpClientBuilder.addInterceptor(loggingInterceptor);
-        return httpClientBuilder.build();
+    private RetrofitService getRetrofitService() {
+        return ERetrofit.getInstance().getService();
     }
 
-    public RetrofitService getService() {
-        return service;
+    // 根据IotId查询Mac
+    public Observable<JSONObject> queryMacByIotId(String token, String apiVer, String plantForm, String iotId) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", apiVer);
+
+        JSONObject params = new JSONObject();
+        params.put("plantForm", plantForm);
+        params.put("iotId", iotId);
+
+        object.put("params", params);
+
+        return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
-    public static RequestBody convertToBody(String json) {
-        return RequestBody.create(MediaType.parse("application/json"), json);
+    // 查询本地场景列表
+    public Observable<JSONObject> querySceneList(String token, String mac, String type) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.QUERY_SCENE_LIST_VER);
+
+        JSONObject params = new JSONObject();
+        params.put("mac", mac);
+        params.put("type", type);
+
+        object.put("params", params);
+
+        return getRetrofitService().querySceneList(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 增加本地场景
+    public Observable<JSONObject> addScene(String token, String apiVer, ItemScene scene) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", apiVer);
+        object.put("params", scene);
+        ViseLog.d(GsonUtil.toJson(object));
+        return getRetrofitService().addScene(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 删除场景
+    public Observable<JSONObject> deleteScene(String token, String apiVer, String gatewayMac, String sceneId) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", apiVer);
+
+        JSONObject params = new JSONObject();
+        params.put("mac", gatewayMac);
+        params.put("sceneId", sceneId);
+        object.put("params", params);
+
+        return getRetrofitService().deleteScene(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 根据Mac查询IotId
+    public Observable<JSONObject> queryIotIdByMac(String token, String plantForm, String mac) {
+        JSONObject obj = new JSONObject();
+        obj.put("apiVer", Constant.QUERY_IOT_ID_BY_MAC_VER);
+
+        JSONObject params = new JSONObject();
+        params.put("plantForm", plantForm);
+        params.put("mac", mac);
+
+        obj.put("params", params);
+
+        return getRetrofitService().queryIotIdByMac(token, ERetrofit.convertToBody(obj.toJSONString()));
     }
 }

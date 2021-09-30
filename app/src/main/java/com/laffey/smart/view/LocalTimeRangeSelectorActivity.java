@@ -138,6 +138,7 @@ public class LocalTimeRangeSelectorActivity extends BaseActivity {
                 }
                 default: {
                     // 自定义
+                    mViewBinding.customChecked.setVisibility(View.VISIBLE);
                     StringBuilder result = new StringBuilder();
                     String[] days = timers[4].split(",");
                     for (int i = 0; i < days.length; i++) {

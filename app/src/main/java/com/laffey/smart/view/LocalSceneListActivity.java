@@ -1,9 +1,12 @@
 package com.laffey.smart.view;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -11,44 +14,57 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.listener.OnItemLongClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalSceneListBinding;
-import com.laffey.smart.model.SceneListResponse;
+import com.laffey.smart.model.EEventScene;
+import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
+import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 public class LocalSceneListActivity extends AppCompatActivity implements View.OnClickListener {
     private ActivityLocalSceneListBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
+    private final int SCENE_LIST_REQUEST_CODE = 10000;
+    private final int SCENE_LIST_RESULT_CODE = 10001;
 
-    private BaseQuickAdapter<SceneItem, BaseViewHolder> mAdapter;
-    private List<SceneItem> mList = new ArrayList<>();
+    private BaseQuickAdapter<ItemScene, BaseViewHolder> mAdapter;
+    private List<ItemScene> mList = new ArrayList<>();
 
     private TypedArray mSceneBgs;
     private String mGatewayId;
+    private String mSceneType = "0";
+    private String mGatewayMac;
 
     public static void start(Context context, String gatewayId) {
         Intent intent = new Intent(context, LocalSceneListActivity.class);
@@ -73,49 +89,109 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
     private void initData() {
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
 
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景1"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景2"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景3"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景4"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景5"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景6"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景7"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景8"));
-        mList.add(new SceneItem(UUID.randomUUID().toString(), "场景9"));
-        if (mList.size() > 0) {
-            mViewBinding.sceneRl.setVisibility(View.VISIBLE);
-            mViewBinding.nodataView.setVisibility(View.GONE);
-        } else {
-            mViewBinding.sceneRl.setVisibility(View.GONE);
-            mViewBinding.nodataView.setVisibility(View.VISIBLE);
-        }
-        mAdapter.notifyDataSetChanged();
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        queryMacByIotId();
+    }
 
-        JSONObject obj = new JSONObject();
-        obj.put("apiVer", "1.0");
-        JSONObject params = new JSONObject();
-        params.put("mac", "00-50-56-C0-00-10");
-        params.put("type", "1");
-        obj.put("params", params);
-
-        RetrofitUtil.getInstance().getService()
-                .querySceneList("chengxunfei", RetrofitUtil.convertToBody(obj.toJSONString()))
+    // 根据IotId查询网关Mac
+    private void queryMacByIotId() {
+        RetrofitUtil.getInstance().queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", "i1cU8RQDuaUsaNvw4ScgeND83D")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SceneListResponse>() {
+                .subscribe(new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.annotations.NonNull SceneListResponse response) {
-                        ViseLog.d(new Gson().toJson(response));
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        QMUITipDialogUtil.dismiss();
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        String mac = response.getString("mac");
+                        mSceneType = "0";
+                        if (code == 200) {
+                            mGatewayMac = mac;
+                            ViseLog.d("mGatewayMac = " + mGatewayMac);
+                            querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                        } else {
+                            if (msg != null && msg.length() > 0)
+                                ToastUtils.showLongToast(LocalSceneListActivity.this, msg);
+                            else
+                                ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                        }
                     }
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.d(e);
+                        QMUITipDialogUtil.dismiss();
+                        ViseLog.e(e);
+                        mSceneType = "0";
+                        ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 查询本地场景列表
+    private void querySceneList(String token, String apiVer, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(token, apiVer, mac, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        JSONArray sceneList = response.getJSONArray("sceneList");
+                        if (code == 0) {
+                            for (int i = 0; i < sceneList.size(); i++) {
+                                JSONObject sceneObj = sceneList.getJSONObject(i);
+                                ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                mList.add(scene);
+                            }
+                            if ("0".equals(mSceneType)) {
+                                mSceneType = "1";
+                                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                            } else if ("1".equals(mSceneType)) {
+                                QMUITipDialogUtil.dismiss();
+                                if (mList.size() == 0) {
+                                    mViewBinding.nodataView.setVisibility(View.VISIBLE);
+                                    mViewBinding.sceneRl.setVisibility(View.GONE);
+                                } else {
+                                    mViewBinding.nodataView.setVisibility(View.GONE);
+                                    mViewBinding.sceneRl.setVisibility(View.VISIBLE);
+                                }
+                                mAdapter.notifyDataSetChanged();
+                                mSceneType = "0";
+                                mViewBinding.sceneRl.finishRefresh(true);
+                            }
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            mSceneType = "0";
+                            if (msg != null && msg.length() > 0)
+                                ToastUtils.showLongToast(LocalSceneListActivity.this, msg);
+                            else
+                                ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                            mViewBinding.sceneRl.finishRefresh(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        mSceneType = "0";
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
                     }
 
                     @Override
@@ -135,22 +211,45 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
         mViewBinding.sceneRl.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-
+                mSceneType = "0";
+                mList.clear();
+                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
             }
         });
     }
 
     private void initAdapter() {
-        mAdapter = new BaseQuickAdapter<SceneItem, BaseViewHolder>(R.layout.item_scene, mList) {
+        mAdapter = new BaseQuickAdapter<ItemScene, BaseViewHolder>(R.layout.item_scene, mList) {
             @Override
-            protected void convert(@NotNull BaseViewHolder holder, SceneItem item) {
+            protected void convert(@NotNull BaseViewHolder holder, ItemScene item) {
                 int pos = mList.indexOf(item);
                 pos = pos % mSceneBgs.length();
-                holder.setText(R.id.sceneName, item.getSceneName());
+                holder.setText(R.id.sceneName, item.getName());
                 holder.setGone(R.id.editMask, true);
                 holder.setImageResource(R.id.image, mSceneBgs.getResourceId(pos, 0));
             }
         };
+        mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                showConfirmDialog(getString(R.string.dialog_title), String.format(getString(R.string.do_you_want_del_scene),
+                        mList.get(position).getName()), getString(R.string.dialog_cancel), getString(R.string.delete), mList.get(position));
+                return true;
+            }
+        });
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                EEventScene scene = new EEventScene();
+                scene.setTarget("LocalSceneActivity");
+                scene.setGatewayId(mGatewayId);
+                scene.setScene(mList.get(position));
+                EventBus.getDefault().postSticky(scene);
+
+                Intent intent = new Intent(LocalSceneListActivity.this, LocalSceneActivity.class);
+                startActivity(intent);
+            }
+        });
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         mViewBinding.sceneRv.setLayoutManager(layoutManager);
         mViewBinding.sceneRv.setAdapter(mAdapter);
@@ -173,33 +272,105 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
         if (v.getId() == mViewBinding.includeToolbar.ivToolbarLeft.getId()) {
             finish();
         } else if (v.getId() == mViewBinding.createSceneTv.getId()) {
-            LocalSceneActivity.start(this, mGatewayId);
+            LocalSceneActivity.start(this, mGatewayId, mGatewayMac, SCENE_LIST_REQUEST_CODE);
         }
     }
 
-    private static class SceneItem {
-        private String sceneId;
-        private String sceneName;
-
-        public SceneItem(String sceneId, String sceneName) {
-            this.sceneId = sceneId;
-            this.sceneName = sceneName;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SCENE_LIST_REQUEST_CODE) {
+            if (resultCode == SCENE_LIST_RESULT_CODE) {
+                mSceneType = "0";
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+                mList.clear();
+                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+            }
         }
+    }
 
-        public String getSceneId() {
-            return sceneId;
-        }
+    private void showConfirmDialog(String title, String content, String cancel, String ok, ItemScene scene) {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
-        public void setSceneId(String sceneId) {
-            this.sceneId = sceneId;
-        }
+        TextView titleTV = (TextView) view.findViewById(R.id.title_tv);
+        TextView contentTV = (TextView) view.findViewById(R.id.content_tv);
+        TextView disagreeTV = (TextView) view.findViewById(R.id.disagree_btn);
+        TextView agreeTV = (TextView) view.findViewById(R.id.agree_btn);
 
-        public String getSceneName() {
-            return sceneName;
-        }
+        titleTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        disagreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        agreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        contentTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
 
-        public void setSceneName(String sceneName) {
-            this.sceneName = sceneName;
-        }
+        titleTV.setText(title);
+        contentTV.setText(content);
+        disagreeTV.setText(cancel);
+        agreeTV.setText(ok);
+
+        disagreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        agreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                RetrofitUtil.getInstance()
+                        .deleteScene("chengxunfei", Constant.DELETE_SCENE_VER, mGatewayMac, scene.getSceneId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<JSONObject>() {
+                            @Override
+                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                                int code = response.getInteger("code");
+                                String msg = response.getString("message");
+                                boolean result = response.getBoolean("result");
+                                if (code == 200) {
+                                    if (result) {
+                                        ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.scene_delete_sucess);
+                                        mList.remove(scene);
+                                        mAdapter.notifyDataSetChanged();
+                                    } else {
+                                        if (msg == null || msg.length() == 0) {
+                                            ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                                        } else
+                                            ToastUtils.showLongToast(LocalSceneListActivity.this, msg);
+                                    }
+                                } else {
+                                    if (msg == null || msg.length() == 0) {
+                                        ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                                    } else
+                                        ToastUtils.showLongToast(LocalSceneListActivity.this, msg);
+                                }
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        });
+
+        Window window = dialog.getWindow();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+
+        dialog.show();
+        window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shape_white_solid));
+        window.setLayout(width - 150, height / 5);
     }
 }

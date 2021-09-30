@@ -44,9 +44,25 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.LocalConditionDevsActivity"></activity>
+        <activity android:name=".view.LocalActionScenesActivity"></activity>
+        <activity
+            android:name=".view.LocalActionValueActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LocalActionTypeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LocalActionIdentifierActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LocalConditionDevsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LocalActionDevsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.LocalSceneActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.LocalSceneListActivity"
@@ -520,10 +536,10 @@
             android:name=".view.LocalTimeRangeSelectorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LocalIdentifierListActivity"
+            android:name=".view.LocalConditionIdentifierActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.LocalEditPropertyValueActivity"
+            android:name=".view.LocalConditionValueActivity"
             android:screenOrientation="portrait" />
 
         <service

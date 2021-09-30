@@ -746,4 +746,26 @@
     <string name="select_time_rule">选择时间规则</string>
     <string name="condition_setting_is_invalid_when_time_trigger_is_point_in_time">时间触发为时间点时，条件设置无效</string>
     <string name="select_condition_dev">选择条件设备</string>
+    <string name="pls_select_an_item">请先选择条目</string>
+    <string name="infrared_detection_status">红外检测状态</string>
+    <string name="gas_detection_status">燃气检测状态</string>
+    <string name="smoke_detection_status">烟雾检测状态</string>
+    <string name="water_detection_status">水浸检测状态</string>
+    <string name="door_detection_status">门磁状态</string>
+    <string name="open">打开</string>
+    <string name="close">关闭</string>
+    <string name="stop">暂停</string>
+    <string name="select_action_dev">选择动作设备</string>
+    <string name="select_response_content">选择响应内容</string>
+    <string name="property">属性</string>
+    <string name="work_mode">工作模式</string>
+    <string name="air_supply">送风</string>
+    <string name="refrigeration">制冷</string>
+    <string name="auto">自动</string>
+    <string name="MAC_does_not_exist">MAC不存在</string>
+    <string name="pls_add_timer_condition">请添加时间条件</string>
+    <string name="pls_add_condition">请添加条件</string>
+    <string name="pls_add_action">请添加动作</string>
+    <string name="do_you_want_del_scene">确定要删除“%1$s”？</string>
+    <string name="edit_scene">编辑场景</string>
 </resources>

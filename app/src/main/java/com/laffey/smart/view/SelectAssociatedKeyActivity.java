@@ -27,15 +27,11 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySelectAssociatedKeyBinding;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.ETSL;
-import com.laffey.smart.model.MacByIotIdRequest;
-import com.laffey.smart.model.MacByIotIdResponse;
-import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.QMUITipDialogUtil;
-import com.laffey.smart.utility.RetrofitUtil;
 import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,11 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class SelectAssociatedKeyActivity extends BaseActivity {
     private ActivitySelectAssociatedKeyBinding mViewBinding;

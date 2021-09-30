@@ -91,20 +91,14 @@ public class NewSceneActivity extends BaseActivity {
         mViewBinding = ActivityNewSceneBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
 
-        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
-        mViewBinding.addNewConditionIv.setTypeface(mIconfont);
-        mViewBinding.addNewActionIv.setTypeface(mIconfont);
-        mViewBinding.nameGo.setTypeface(mIconfont);
-        mViewBinding.typeGo.setTypeface(mIconfont);
-        mViewBinding.statusGo.setTypeface(mIconfont);
-
-        mSceneManager = new SceneManager(this);
         initView();
         init();
         initStatusBar();
     }
 
     private void init() {
+        mSceneManager = new SceneManager(this);
+
         mSceneId = getIntent().getStringExtra("scene_id");
         mCatalogId = getIntent().getStringExtra("catalog_id");
         mHandler = new CallbackHandler(this);
@@ -124,7 +118,6 @@ public class NewSceneActivity extends BaseActivity {
             mViewBinding.conditionLayout.setVisibility(View.VISIBLE);
             mViewBinding.actionLayout.setVisibility(View.VISIBLE);
         }
-        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     @Override
@@ -141,10 +134,17 @@ public class NewSceneActivity extends BaseActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onViewClicked);
     }
 
     private void initView() {
-        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mViewBinding.addNewConditionIv.setTypeface(mIconfont);
+        mViewBinding.addNewActionIv.setTypeface(mIconfont);
+        mViewBinding.nameGo.setTypeface(mIconfont);
+        mViewBinding.typeGo.setTypeface(mIconfont);
+        mViewBinding.statusGo.setTypeface(mIconfont);
 
         mTypeArray = getResources().getStringArray(R.array.scene_type);
         mStatusArray = getResources().getStringArray(R.array.scene_status);
@@ -921,7 +921,7 @@ public class NewSceneActivity extends BaseActivity {
                     case Constant.MSG_CALLBACK_QUERYSCENEDETAIL: {
                         QMUITipDialogUtil.dismiss();
                         JSONObject object = JSON.parseObject((String) msg.obj);
-                        ViseLog.d(new Gson().toJson(object));
+                        // ViseLog.d(new Gson().toJson(object));
                         mValid = object.getBoolean("valid");
                         mSceneName = object.getString("name");
                         mViewBinding.includeToolbar.tvToolbarTitle.setText(mSceneName);

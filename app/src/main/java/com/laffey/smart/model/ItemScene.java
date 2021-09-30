@@ -15,6 +15,9 @@ public class ItemScene {
     private List<Condition> conditions;
     private List<Action> actions;
 
+    public ItemScene() {
+    }
+
     public String getMac() {
         return mac;
     }
@@ -99,9 +102,12 @@ public class ItemScene {
         this.actions = actions;
     }
 
-    private static class Action {
+    public static class Action {
         private String Type;
         private ActionParameter Parameters;
+
+        public Action() {
+        }
 
         public String getType() {
             return Type;
@@ -125,12 +131,15 @@ public class ItemScene {
         }
     }
 
-    private static class ActionParameter {
+    public static class ActionParameter {
         private String DeviceId;
         private String EndpointId;
         private String CommandType;
         private JSONObject Command;
         private String SceneId;
+
+        public ActionParameter() {
+        }
 
         public String getDeviceId() {
             return DeviceId;
@@ -181,7 +190,7 @@ public class ItemScene {
         }
     }
 
-    private static class Condition {
+    public static class Condition {
         private String type;
         private ConditionParameter parameters;
 
@@ -201,13 +210,16 @@ public class ItemScene {
             this.parameters = parameters;
         }
 
+        public Condition() {
+        }
+
         public Condition(String type, ConditionParameter parameters) {
             this.type = type;
             this.parameters = parameters;
         }
     }
 
-    private static class ConditionParameter {
+    public static class ConditionParameter {
         private String DeviceId;
         private String EndpointId;
         private String Name;
@@ -272,6 +284,9 @@ public class ItemScene {
             ParameterName = parameterName;
         }
 
+        public ConditionParameter() {
+        }
+
         public ConditionParameter(String deviceId, String endpointId, String name, String compareType, String compareValue, String eventType, String parameterName) {
             DeviceId = deviceId;
             EndpointId = endpointId;
@@ -286,6 +301,9 @@ public class ItemScene {
     public static class Timer {
         private String type;// Timer：时间点，TimeRange：时间段
         private String cron;// 时间格式
+
+        public Timer() {
+        }
 
         public Timer(String type, String cron) {
             this.type = type;

@@ -17,13 +17,29 @@ import retrofit2.http.POST;
 
 public interface RetrofitService {
 
-    // 根据iotId查询mac
-    @POST(Constant.GET_MAC_BY_IOTID)
-    Observable<MacByIotIdResponse> getMacByIotId(@Header("REX_TOKEN") String token, @Body MacByIotIdRequest requst);
-
     // 查询本地场景列表
     @POST(Constant.QUERY_SCENE_LIST)
-    Observable<SceneListResponse> querySceneList(@Header("REX_TOKEN") String token, @Body RequestBody body);
+    Observable<JSONObject> querySceneList(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
+    // 根据IotId查询Mac
+    @POST(Constant.QUERY_MAC_BY_IOTID)
+    Observable<JSONObject> queryMacByIotId(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
+    // 获取数据转换规则
+    @POST(Constant.GET_DATA_CONVERSION_RULES)
+    Observable<JSONObject> getDataConversionRules(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
+    // 增加本地场景
+    @POST(Constant.ADD_SCENE)
+    Observable<JSONObject> addScene(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
+    // 删除场景
+    @POST(Constant.DELETE_SCENE)
+    Observable<JSONObject> deleteScene(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
+    // 根据Mac查询IotId
+    @POST(Constant.QUERY_IOT_ID_BY_MAC)
+    Observable<JSONObject> queryIotIdByMac(@Header("REX_TOKEN") String token, @Body RequestBody body);
 
     @FormUrlEncoded
     @POST("/query")

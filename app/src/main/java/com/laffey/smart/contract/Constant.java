@@ -338,6 +338,19 @@ public class Constant {
             + CTSL.PK_TWO_SCENE_SWITCH + " , " + CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , " + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ANY_TWO_SCENE_SWITCH
             + " , " + CTSL.PK_ANY_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH_YQSXB;
 
+    // 可作为本地场景条件的设备类型
+    public static final String CONDITION_DEVS_PK                    = CTSL.PK_ONE_SCENE_SWITCH + " , " + CTSL.PK_TWO_SCENE_SWITCH + " , "
+            + CTSL.PK_THREE_SCENE_SWITCH + " , " + CTSL.PK_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH + " , " + CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , "
+            + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2
+            + " , " + CTSL.PK_SIX_TWO_SCENE_SWITCH + " , " + CTSL.PK_OUTLET + " , " + CTSL.PK_AIRCOMDITION_TWO + " , " + CTSL.PK_AIRCOMDITION_FOUR + " , " + CTSL.PK_VRV_AC
+            + " , " + CTSL.PK_FLOORHEATING001 + " , " + CTSL.PK_FAU + " , " + CTSL.PK_LIGHT + " , " + CTSL.PK_ONE_WAY_DIMMABLE_LIGHT + " , " + CTSL.PK_PIRSENSOR
+            + " , " + CTSL.PK_GASSENSOR + " , " + CTSL.PK_TEMHUMSENSOR + " , " + CTSL.PK_SMOKESENSOR + " , " + CTSL.PK_WATERSENSOR + " , " + CTSL.PK_DOORSENSOR;
+    // 可作为本地场景动作的设备类型
+    public static final String ACTION_DEVS_PK                       = CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , "
+            + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2
+            + " , " + CTSL.PK_SIX_TWO_SCENE_SWITCH + " , " + CTSL.PK_OUTLET + " , " + CTSL.PK_AIRCOMDITION_TWO + " , " + CTSL.PK_AIRCOMDITION_FOUR + " , " + CTSL.PK_VRV_AC
+            + " , " + CTSL.PK_FLOORHEATING001 + " , " + CTSL.PK_FAU + " , " + CTSL.PK_LIGHT + " , " + CTSL.PK_ONE_WAY_DIMMABLE_LIGHT;
+
     public static final String JD_APP_ID                            = "apidemo";
     public static final String JD_DEV_ID                            = "test_device1";
     public static final String JD_URL                               = "http://demo.jdshtech.com/open/m.php";
@@ -346,12 +359,28 @@ public class Constant {
     public static final int REMOTE_CONTROL_AIR_CONDITIONER          = 7;// 空调
     public static final int REMOTE_CONTROL_FAN                      = 6;// 风扇
 
-    // 根据iotId查询mac
-    public static final String GET_MAC_BY_IOTID                     = "/app/device/getMacByIotId";
-    public static final String GET_MAC_BY_IOTID_VER                 = "1.0";
-
     // 查询本地场景列表
     public static final String QUERY_SCENE_LIST                     = "/app/scene/queryList";
     public static final String QUERY_SCENE_LIST_VER                 = "1.0";
+
+    // 根据IotId查询Mac
+    public static final String QUERY_MAC_BY_IOTID                   = "/app/device/queryMacByIotId";
+    public static final String QUERY_MAC_BY_IOTID_VER               = "1.0";
+
+    // 获取数据转换规则
+    public static final String GET_DATA_CONVERSION_RULES            = "/gw/product/getDataConversionRules";
+    public static final String GET_DATA_CONVERSION_RULES_VER        = "1.0";
+
+    // 增加本地场景
+    public static final String ADD_SCENE                            = "/app/scene/add";
+    public static final String ADD_SCENE_VER                        = "1.0";
+
+    // 删除场景
+    public static final String DELETE_SCENE                         = "/app/scene/delete";
+    public static final String DELETE_SCENE_VER                     = "1.0";
+
+    // 根据Mac查询IotId
+    public static final String QUERY_IOT_ID_BY_MAC                  = "/app/device/queryIotIdByMac";
+    public static final String QUERY_IOT_ID_BY_MAC_VER              = "1.0";
 }
 

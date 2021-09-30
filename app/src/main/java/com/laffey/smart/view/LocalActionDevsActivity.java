@@ -46,7 +46,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalConditionDevsActivity extends BaseActivity implements View.OnClickListener {
+public class LocalActionDevsActivity extends BaseActivity implements View.OnClickListener {
     private ActivityLocalConditionDevsBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
@@ -69,7 +69,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
     private List<EDevice.deviceEntry> mConditionDevs = new ArrayList<>();
 
     public static void start(Context context, String gatewayId) {
-        Intent intent = new Intent(context, LocalConditionDevsActivity.class);
+        Intent intent = new Intent(context, LocalActionDevsActivity.class);
         intent.putExtra(GATEWAY_ID, gatewayId);
         context.startActivity(intent);
     }
@@ -99,14 +99,14 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
                 holder.setText(R.id.dev_name_tv, item.nickName)
                         .setVisible(R.id.divider, mList.indexOf(item) != 0);
                 ImageView imageView = holder.getView(R.id.dev_iv);
-                Glide.with(LocalConditionDevsActivity.this).load(item.image).into(imageView);
+                Glide.with(LocalActionDevsActivity.this).load(item.image).into(imageView);
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry entry = mList.get(position);
-                LocalConditionIdentifierActivity.start(LocalConditionDevsActivity.this, entry.nickName, entry.iotId, entry.deviceName, entry.productKey);
+                LocalActionIdentifierActivity.start(LocalActionDevsActivity.this, entry.nickName, entry.iotId, entry.deviceName, entry.productKey);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -119,7 +119,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mList.clear();
                 mGatewayPageNo = 1;
-                new UserCenter(LocalConditionDevsActivity.this).getGatewaySubdeviceList(mGatewayId, mGatewayPageNo, PAGE_SIZE,
+                new UserCenter(LocalActionDevsActivity.this).getGatewaySubdeviceList(mGatewayId, mGatewayPageNo, PAGE_SIZE,
                         mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         });
@@ -137,22 +137,22 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
     }
 
     private static class MyHandler extends Handler {
-        private final WeakReference<LocalConditionDevsActivity> ref;
+        private final WeakReference<LocalActionDevsActivity> ref;
 
-        public MyHandler(LocalConditionDevsActivity activity) {
+        public MyHandler(LocalActionDevsActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            LocalConditionDevsActivity activity = ref.get();
+            LocalActionDevsActivity activity = ref.get();
             if (activity != null) {
                 if (msg.what == Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST) {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
-                            if (Constant.CONDITION_DEVS_PK.contains(e.productKey)) {
+                            if (Constant.ACTION_DEVS_PK.contains(e.productKey)) {
                                 EDevice.deviceEntry entry = new EDevice.deviceEntry();
                                 entry.iotId = e.iotId;
                                 entry.nickName = e.nickName;
@@ -241,7 +241,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             getWindow().setStatusBarColor(Color.WHITE);
         }
 
-        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.select_condition_dev);
+        mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.select_action_dev);
         mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this);
     }
 
