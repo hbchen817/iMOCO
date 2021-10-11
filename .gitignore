@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.iml
 .gradle
 /local.properties
@@ -13,4 +14,7 @@
 .externalNativeBuild
 .cxx
 /.idea/
-/.idea/
+/.idea/misc.xml
+/.idea/vcs.xml
+/app/release/
+/app/build/
