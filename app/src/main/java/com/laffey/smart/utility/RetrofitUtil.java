@@ -42,6 +42,19 @@ public class RetrofitUtil {
         return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
+    public Observable<JSONObject> queryMacByIotId(String token, String plantForm, String iotId) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.QUERY_MAC_BY_IOTID_VER);
+
+        JSONObject params = new JSONObject();
+        params.put("plantForm", plantForm);
+        params.put("iotId", iotId);
+
+        object.put("params", params);
+
+        return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
     // 查询本地场景列表
     public Observable<JSONObject> querySceneList(String token, String mac, String type) {
         JSONObject object = new JSONObject();
@@ -76,6 +89,14 @@ public class RetrofitUtil {
         object.put("params", params);
 
         return getRetrofitService().deleteScene(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 更新场景
+    public Observable<JSONObject> updateScene(String token, ItemScene scene) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.UPDATE_SCENE_VER);
+        object.put("params", scene);
+        return getRetrofitService().updateScene(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 根据Mac查询IotId

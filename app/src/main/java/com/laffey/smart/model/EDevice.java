@@ -21,6 +21,7 @@ public class EDevice {
         public String iotId;
         public String nickName;
         public String deviceName;
+        public String mac;
         public String productKey;
         public String roomId;
         public String roomName;
@@ -37,6 +38,7 @@ public class EDevice {
             this.iotId = "";
             this.nickName = "";
             this.deviceName = "";
+            this.mac = "";
             this.productKey = "";
             this.roomId = "";
             this.roomName = "";

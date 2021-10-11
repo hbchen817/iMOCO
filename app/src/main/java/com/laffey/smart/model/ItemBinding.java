@@ -1,67 +1,67 @@
 package com.laffey.smart.model;
 
 public class ItemBinding {
-    private String function;
-    private String srcAddr;
-    private String srcEndpointId;
-    private String dstAddrMode;
-    private String dstAddr;
-    private String dstEndpointId;
+    private String Function;
+    private String SrcAddr;
+    private String SrcEndpointId;
+    private String DstAddrMode;
+    private String DstAddr;
+    private String DstEndpointId;
 
     public ItemBinding(String function, String srcAddr, String srcEndpointId, String dstAddrMode, String dstAddr, String dstEndpointId) {
-        this.function = function;
-        this.srcAddr = srcAddr;
-        this.srcEndpointId = srcEndpointId;
-        this.dstAddrMode = dstAddrMode;
-        this.dstAddr = dstAddr;
-        this.dstEndpointId = dstEndpointId;
+        Function = function;
+        SrcAddr = srcAddr;
+        SrcEndpointId = srcEndpointId;
+        DstAddrMode = dstAddrMode;
+        DstAddr = dstAddr;
+        DstEndpointId = dstEndpointId;
     }
 
     public String getFunction() {
-        return function;
+        return Function;
     }
 
     public void setFunction(String function) {
-        this.function = function;
+        Function = function;
     }
 
     public String getSrcAddr() {
-        return srcAddr;
+        return SrcAddr;
     }
 
     public void setSrcAddr(String srcAddr) {
-        this.srcAddr = srcAddr;
+        SrcAddr = srcAddr;
     }
 
     public String getSrcEndpointId() {
-        return srcEndpointId;
+        return SrcEndpointId;
     }
 
     public void setSrcEndpointId(String srcEndpointId) {
-        this.srcEndpointId = srcEndpointId;
+        SrcEndpointId = srcEndpointId;
     }
 
     public String getDstAddrMode() {
-        return dstAddrMode;
+        return DstAddrMode;
     }
 
     public void setDstAddrMode(String dstAddrMode) {
-        this.dstAddrMode = dstAddrMode;
+        DstAddrMode = dstAddrMode;
     }
 
     public String getDstAddr() {
-        return dstAddr;
+        return DstAddr;
     }
 
     public void setDstAddr(String dstAddr) {
-        this.dstAddr = dstAddr;
+        DstAddr = dstAddr;
     }
 
     public String getDstEndpointId() {
-        return dstEndpointId;
+        return DstEndpointId;
     }
 
     public void setDstEndpointId(String dstEndpointId) {
-        this.dstEndpointId = dstEndpointId;
+        DstEndpointId = dstEndpointId;
     }
 }

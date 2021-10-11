@@ -621,6 +621,7 @@ public class LocalConditionValueActivity extends BaseActivity {
             return;
         }
         if ("Event".equals(mConditionType)) {
+            mECondition.getCondition().getParameters().setEndpointId(value.getValue());
             mECondition.getCondition().getParameters().setCompareValue(value.getValue());
         } else if ("State".equals(mConditionType)) {
             if (CTSL.PK_ONEWAYSWITCH.equals(mProductKey) ||

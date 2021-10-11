@@ -768,4 +768,5 @@
     <string name="pls_add_action">请添加动作</string>
     <string name="do_you_want_del_scene">确定要删除“%1$s”？</string>
     <string name="edit_scene">编辑场景</string>
+    <string name="too_much_del_before">绑定过多，请删除后再添加</string>
 </resources>

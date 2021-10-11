@@ -97,7 +97,7 @@ public class SelectAssociatedDevActivity extends BaseActivity {
         };
 
         EDevice.deviceEntry entry = DeviceBuffer.getDeviceInformation(mIotId);
-        mDevMac = entry.deviceName;
+        mDevMac = entry.mac;
 
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -184,11 +184,11 @@ public class SelectAssociatedDevActivity extends BaseActivity {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
-                            if (e.productKey.equals(CTSL.PK_ONEWAYSWITCH) ||
+                            if ((e.productKey.equals(CTSL.PK_ONEWAYSWITCH) ||
                                     e.productKey.equals(CTSL.PK_TWOWAYSWITCH) ||
                                     e.productKey.equals(CTSL.PK_THREE_KEY_SWITCH) ||
                                     e.productKey.equals(CTSL.PK_FOURWAYSWITCH_2) ||
-                                    e.productKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
+                                    e.productKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) && !activity.mIotId.equals(e.iotId)) {
                                 EDevice.deviceEntry entry = new EDevice.deviceEntry();
                                 entry.iotId = e.iotId;
                                 entry.nickName = e.nickName;

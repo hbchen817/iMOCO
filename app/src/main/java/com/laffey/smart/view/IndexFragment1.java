@@ -60,8 +60,10 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.Configure;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -82,6 +84,10 @@ import androidx.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author fyy
@@ -723,6 +729,7 @@ public class IndexFragment1 extends BaseFragment {
     // 同步设备列表数据
     private void syncDeviceListData() {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
+        ViseLog.d(GsonUtil.toJson(all));
         mDeviceList.clear();
         mShareDeviceList.clear();
         if (mAptDeviceGrid != null) mAptDeviceGrid.notifyDataSetChanged();
@@ -832,6 +839,45 @@ public class IndexFragment1 extends BaseFragment {
             }
         }
         deviceCount();
+        if (mDeviceList.size() > 0)
+            queryMac(0);
+    }
+
+    private void queryMac(int pos) {
+        RetrofitUtil.getInstance()
+                .queryMacByIotId("chengxunfei", "xxxxxx", mDeviceList.get(pos).iotId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject jsonObject) {
+                        // ViseLog.d("获取mac = " + GsonUtil.toJson(jsonObject));
+                        int code = jsonObject.getInteger("code");
+                        if (code == 200) {
+                            String mac = jsonObject.getString("mac");
+                            DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, mac);
+                        } else {
+                            DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, DeviceBuffer.getDeviceInformation(mDeviceList.get(pos).iotId).deviceName);
+                        }
+                        if (pos < mDeviceList.size() - 1)
+                            queryMac(pos + 1);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        queryMac(pos + 1);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     // 同步房间列表数据

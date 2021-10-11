@@ -15,6 +15,7 @@ public class EUser {
         public String productKey;
         public String productName;
         public String deviceName;
+        public String mac;
         public String nickName;
         public String image;
         public int status;
@@ -29,6 +30,7 @@ public class EUser {
             this.productKey = "";
             this.productName = "";
             this.deviceName = "";
+            this.mac = "";
             this.nickName = "";
             this.image = "";
             this.status = 0;

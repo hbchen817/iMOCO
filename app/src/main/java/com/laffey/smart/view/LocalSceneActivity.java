@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +41,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vise.log.ViseLog;
@@ -96,6 +98,13 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public static Intent getIntent(Activity activity, String gatewayId, String gatewayMac) {
+        Intent intent = new Intent(activity, LocalSceneActivity.class);
+        intent.putExtra(GATEWAY_ID, gatewayId);
+        intent.putExtra(GATEWAY_MAC, gatewayMac);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,9 +120,17 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
 
         initStatusBar();
         initTimerAdapter();
-        EventBus.getDefault().register(this);
+
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
         mGatewayMac = getIntent().getStringExtra(GATEWAY_MAC);
+
+        if (mGatewayId != null && mGatewayId.length() > 0)
+            SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, mGatewayId);
+        if (mGatewayMac != null && mGatewayMac.length() > 0)
+            SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_MAC, mGatewayMac);
+
+        EventBus.getDefault().register(this);
+
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         initView();
         initConditionAdapter();
@@ -836,6 +853,15 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        mGatewayId = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, "");
+        mGatewayMac = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_MAC, "");
+        // ViseLog.d("mGatewayMac = " + mGatewayMac);
+    }
+
+    @Override
     public void onClick(View v) {
         if (v.getId() == mViewBinding.includeToolbar.tvToolbarRight.getId()) {
             submitScene();
@@ -960,7 +986,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
 
     // 提交场景
     private void submitScene() {
-        ViseLog.d("mGatewayMac = " + mGatewayMac);
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
         if (mScene == null) mScene = new ItemScene();
         mSceneName = mViewBinding.nameTv.getText().toString();
 
@@ -1011,52 +1037,110 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                 actionList.add(eAction.getAction());
             }
             mScene.setActions(actionList);
-            RetrofitUtil.getInstance()
-                    .addScene("chengxunfei", Constant.ADD_SCENE_VER, mScene)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<JSONObject>() {
-                        @Override
-                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
-                        }
+            if (getString(R.string.create_new_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
+                RetrofitUtil.getInstance()
+                        .addScene("chengxunfei", Constant.ADD_SCENE_VER, mScene)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<JSONObject>() {
+                            @Override
+                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
-                        @Override
-                        public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                            QMUITipDialogUtil.dismiss();
-                            int code = response.getInteger("code");
-                            boolean result = response.getBoolean("result");
-                            String sceneId = response.getString("sceneId");
-                            String msg = response.getString("message");
-                            if (code == 200) {
-                                if (result) {
-                                    QMUITipDialogUtil.dismiss();
-                                    setResult(10001);
-                                    finish();
+                            }
+
+                            @Override
+                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                                ViseLog.d(GsonUtil.toJson(response));
+                                QMUITipDialogUtil.dismiss();
+                                int code = response.getInteger("code");
+                                boolean result = response.getBoolean("result");
+                                String sceneId = response.getString("sceneId");
+                                String msg = response.getString("message");
+                                if (code == 200) {
+                                    if (result) {
+                                        QMUITipDialogUtil.dismiss();
+                                        setResult(10001);
+                                        finish();
+                                    } else {
+                                        if (msg == null || msg.length() == 0) {
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                        } else
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                    }
                                 } else {
                                     if (msg == null || msg.length() == 0) {
                                         ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
                                     } else
                                         ToastUtils.showLongToast(LocalSceneActivity.this, msg);
                                 }
-                            } else {
-                                if (msg == null || msg.length() == 0) {
-                                    ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                                } else
-                                    ToastUtils.showLongToast(LocalSceneActivity.this, msg);
                             }
-                        }
 
-                        @Override
-                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                            ViseLog.e(e);
-                        }
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                ViseLog.e(e);
+                                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                            }
 
-                        @Override
-                        public void onComplete() {
+                            @Override
+                            public void onComplete() {
 
-                        }
-                    });
+                            }
+                        });
+            } else if (getString(R.string.edit_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
+                mScene.setSceneId(mSceneId);
+                mScene.setMac(mGatewayMac);
+                // ViseLog.d("更新场景消息：" + GsonUtil.toJson(mScene));
+
+                RetrofitUtil.getInstance()
+                        .updateScene("chengxunfei", mScene)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<JSONObject>() {
+                            @Override
+                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                                // ViseLog.d("更新场景返回: " + response);
+                                QMUITipDialogUtil.dismiss();
+                                boolean result = response.getBoolean("result");
+                                int code = response.getInteger("code");
+                                String sceneId = response.getString("sceneId");
+                                String msg = response.getString("message");
+                                if (code == 200) {
+                                    if (result) {
+                                        QMUITipDialogUtil.dismiss();
+                                        setResult(10001);
+                                        finish();
+                                    } else {
+                                        if (msg == null || msg.length() == 0) {
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                        } else
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                    }
+                                } else {
+                                    if (msg == null || msg.length() == 0) {
+                                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                    } else
+                                        ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                }
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                ViseLog.e(e);
+                                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
         }
     }
 
@@ -1182,11 +1266,22 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    private String mSceneId;
+
     // 编辑场景时，刷新界面
     private void initScene(EEventScene eEventScene) {
         mGatewayId = eEventScene.getGatewayId();
         mGatewayMac = eEventScene.getScene().getMac();
+
+        // ViseLog.d("mGatewayId = " + mGatewayId + " mGatewayMac = " + mGatewayMac);
+
+        if (mGatewayId != null && mGatewayId.length() > 0)
+            SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, mGatewayId);
+        if (mGatewayMac != null && mGatewayMac.length() > 0)
+            SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_MAC, mGatewayMac);
+
         ViseLog.d(GsonUtil.toJson(eEventScene));
+        mSceneId = eEventScene.getScene().getSceneId();
         ItemScene scene = eEventScene.getScene();
         mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.edit_scene);
         mViewBinding.nameTv.setText(scene.getName());
@@ -1241,17 +1336,23 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         for (ItemScene.Action action : scene.getActions()) {
             EAction eAction = new EAction();
             eAction.setAction(action);
-            if ("Scene".equals(action)) {
+            if ("Scene".equals(action.getType())) {
                 hasScene = true;
             }
             mActionList.add(eAction);
         }
-        ViseLog.d(GsonUtil.toJson(mActionList));
-        if (hasScene) {
-            querySceneList();
+        ViseLog.d("动作 ：" + GsonUtil.toJson(mActionList));
+        if (mConditionList.size() > 0) {
+            if (hasScene)
+                querySceneList();
+            else
+                queryConditionIotIdByMac("chengxunfei", 0);
+        } else {
+            if (hasScene)
+                querySceneList();
+            else
+                queryActionIotIdByMac("chengxunfei", 0);
         }
-
-        queryConditionIotIdByMac("chengxunfei", 0);
     }
 
     // 查询本地场景列表
@@ -1276,13 +1377,9 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                                 JSONObject item = sceneList.getJSONObject(i);
                                 mSceneInfo.put(item.getString("sceneId"), item.getString("name"));
                             }
-
-                            for (int i = 0; i < mActionList.size(); i++) {
-                                if ("Scene".equals(mActionList.get(i).getAction().getType())) {
-                                    // mActionList.get(i).set
-                                }
-                            }
-
+                            if (mConditionList.size() > 0)
+                                queryConditionIotIdByMac("chengxunfei", 0);
+                            else queryActionIotIdByMac("chengxunfei", 0);
                         } else {
                             ToastUtils.showLongToast(LocalSceneActivity.this, msg);
                         }
@@ -1317,6 +1414,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        ViseLog.d(GsonUtil.toJson(response));
                         /*int code = response.getInteger("code");
                         String msg = response.getString("message");
                         String iotId = response.getString("iotId");
@@ -1336,8 +1434,8 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                             } else ToastUtils.showLongToast(LocalSceneActivity.this, msg);
                         }*/
 
+                        // 条件
                         String iotId = DeviceBuffer.getDevByMac(mConditionList.get(pos).getCondition().getParameters().getDeviceId()).iotId;
-                        ViseLog.d("iotId = " + iotId);
                         mConditionList.get(pos).setIotId(iotId);
                         String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
                         mConditionList.get(pos).setKeyNickName(refreshConditionDesc(pk, mConditionList.get(pos)));
@@ -1347,6 +1445,8 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                             mConditionAdapter.notifyDataSetChanged();
                             mViewBinding.addConditionLayout.setVisibility(View.GONE);
                             mViewBinding.conditionRv.setVisibility(View.VISIBLE);
+
+                            queryActionIotIdByMac(token, 0);
                         }
                     }
 
@@ -1363,28 +1463,33 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                 });
     }
 
-    // 根据Mac查询响应设备IotId
+    // 根据Mac查询动作设备IotId
     private void queryActionIotIdByMac(String token, int pos) {
-        RetrofitUtil.getInstance()
-                .queryIotIdByMac(token, "1", mActionList.get(pos).getAction().getParameters().getDeviceId())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+        ItemScene.Action action = mActionList.get(pos).getAction();
+        if ("Command".equals(action.getType())) {
+            // 指令
+            String deviceId = action.getParameters().getDeviceId();
+            if (deviceId == null || deviceId.length() == 0) return;
+            RetrofitUtil.getInstance()
+                    .queryIotIdByMac(token, "1", deviceId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<JSONObject>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        @Override
+                        public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
                         /*int code = response.getInteger("code");
                         String msg = response.getString("message");
                         String iotId = response.getString("iotId");
                         if (code == 200) {
                             if (iotId != null && iotId.length() > 0) {
-                                mActionList.get(pos).setIotId(iotId);
+                                mConditionList.get(pos).setIotId(iotId);
                                 String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
-                                mActionList.get(pos).setKeyNickName(refreshConditionDesc(pk, mConditionList.get(pos)));
+                                mConditionList.get(pos).setKeyNickName(refreshConditionDesc(pk, mConditionList.get(pos)));
                             } else {
                                 if (msg == null || msg.length() == 0) {
                                     ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
@@ -1396,20 +1501,43 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                             } else ToastUtils.showLongToast(LocalSceneActivity.this, msg);
                         }*/
 
+                            // 动作
+                            String iotId = DeviceBuffer.getDevByMac(deviceId).iotId;
+                            // ViseLog.d("iotId = " + iotId);
+                            mActionList.get(pos).setIotId(iotId);
+                            String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
+                            mActionList.get(pos).setKeyNickName(refreshActionDesc(pk, mActionList.get(pos)));
+                            if (pos < mActionList.size() - 1) {
+                                queryActionIotIdByMac(token, pos + 1);
+                            } else {
+                                mActionAdapter.notifyDataSetChanged();
+                                mViewBinding.addActionLayout.setVisibility(View.GONE);
+                                mViewBinding.actionRv.setVisibility(View.VISIBLE);
+                            }
+                        }
 
-                    }
+                        @Override
+                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                            ViseLog.e(e);
+                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                        }
 
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                    }
+                        @Override
+                        public void onComplete() {
 
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                        }
+                    });
+        } else if ("Scene".equals(action.getType())) {
+            // 场景
+            mActionList.get(pos).setKeyNickName(mSceneInfo.get(action.getParameters().getSceneId()));
+            if (pos < mActionList.size() - 1) {
+                queryActionIotIdByMac(token, pos + 1);
+            } else {
+                mActionAdapter.notifyDataSetChanged();
+                mViewBinding.addActionLayout.setVisibility(View.GONE);
+                mViewBinding.actionRv.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     // 条件描述
@@ -1623,6 +1751,214 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         } else if (CTSL.PK_DOORSENSOR.equals(pk)) {
             // 门磁传感器
             desc.append(getString(R.string.door_detection_status));
+        }
+        return desc.toString();
+    }
+
+    // 动作描述
+    private String refreshActionDesc(String pk, EAction eAction) {
+        StringBuilder desc = new StringBuilder();
+        if (CTSL.TEST_PK_ONEWAYWINDOWCURTAINS.equals(pk)) {
+            // 一路窗帘
+            String keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.WC_CurtainConrtol);
+            if (keyName == null || keyName.length() == 0) {
+                keyName = getString(R.string.curtains_control);
+            }
+            desc.append(keyName);
+        } else if (CTSL.TEST_PK_TWOWAYWINDOWCURTAINS.equals(pk)) {
+            // 二路窗帘
+            String endId = eAction.getAction().getParameters().getEndpointId();
+            if ("1".equals(endId)) {
+                String keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWC_CurtainConrtol);
+                if (keyName == null || keyName.length() == 0) {
+                    keyName = getString(R.string.one_curtains);
+                }
+                desc.append(keyName);
+            } else if ("2".equals(endId)) {
+                String keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWC_InnerCurtainOperation);
+                if (keyName == null || keyName.length() == 0) {
+                    keyName = getString(R.string.two_curtains);
+                }
+                desc.append(keyName);
+            }
+        } else if (CTSL.PK_ONEWAYSWITCH.equals(pk)) {
+            // 一键面板
+            String keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.OWS_P_PowerSwitch_1);
+            if (keyName == null || keyName.length() == 0) {
+                keyName = getString(R.string.power_switch);
+            }
+            desc.append(keyName);
+        } else if (CTSL.PK_TWOWAYSWITCH.equals(pk)) {
+            // 二键面板
+            String endId = eAction.getAction().getParameters().getEndpointId();
+            String keyName = null;
+            if ("1".equals(endId)) {
+                keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWS_P_PowerSwitch_1);
+                if (keyName == null || keyName.length() == 0) {
+                    keyName = getString(R.string.one_way_powerswitch);
+                }
+            } else if ("2".equals(endId)) {
+                keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWS_P_PowerSwitch_2);
+                if (keyName == null || keyName.length() == 0) {
+                    keyName = getString(R.string.two_way_powerswitch);
+                }
+            }
+            desc.append(keyName);
+        } else if (CTSL.PK_THREE_KEY_SWITCH.equals(pk)) {
+            // 三键面板
+            String endId = eAction.getAction().getParameters().getEndpointId();
+            String keyName = null;
+            switch (endId) {
+                case "1": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWS_P3_PowerSwitch_1);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.one_way_powerswitch);
+                    }
+                    break;
+                }
+                case "2": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWS_P3_PowerSwitch_2);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.two_way_powerswitch);
+                    }
+                    break;
+                }
+                case "3": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.TWS_P3_PowerSwitch_3);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.three_way_powerswitch);
+                    }
+                    break;
+                }
+            }
+            desc.append(keyName);
+        } else if (CTSL.PK_FOURWAYSWITCH_2.equals(pk)) {
+            // 四键面板
+            String endId = eAction.getAction().getParameters().getEndpointId();
+            String keyName = null;
+            switch (endId) {
+                case "1": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.FWS_P_PowerSwitch_1);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.one_way_powerswitch);
+                    }
+                    break;
+                }
+                case "2": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.FWS_P_PowerSwitch_2);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.two_way_powerswitch);
+                    }
+                    break;
+                }
+                case "3": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.FWS_P_PowerSwitch_3);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.three_way_powerswitch);
+                    }
+                    break;
+                }
+                case "4": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.FWS_P_PowerSwitch_4);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.four_way_powerswitch);
+                    }
+                    break;
+                }
+            }
+            desc.append(keyName);
+        } else if (CTSL.PK_SIX_TWO_SCENE_SWITCH.equals(pk)) {
+            // 六键四开二场景开关
+            String endId = eAction.getAction().getParameters().getEndpointId();
+            String keyName = null;
+            switch (endId) {
+                case "1": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.powerswitch_1);
+                    }
+                    break;
+                }
+                case "2": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.powerswitch_2);
+                    }
+                    break;
+                }
+                case "3": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.powerswitch_3);
+                    }
+                    break;
+                }
+                case "4": {
+                    keyName = DeviceBuffer.getExtendedInfo(eAction.getIotId()).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4);
+                    if (keyName == null || keyName.length() == 0) {
+                        keyName = getString(R.string.powerswitch_4);
+                    }
+                    break;
+                }
+            }
+            desc.append(keyName);
+        } else if (CTSL.PK_OUTLET.equals(pk)) {
+            // 插座
+            desc.append(getString(R.string.power_switch));
+        } else if (CTSL.PK_AIRCOMDITION_TWO.equals(pk) ||
+                CTSL.PK_AIRCOMDITION_FOUR.equals(pk) ||
+                CTSL.PK_VRV_AC.equals(pk)) {
+            // 空调二管制、四管制、VRV温控器
+            String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+            String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+            String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch));
+                else desc.append(getString(R.string.work_mode));
+            } else if (fanMode != null && fanMode.length() > 0) {
+                desc.append(getString(R.string.fan_speed));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature));
+            }
+        } else if (CTSL.PK_FLOORHEATING001.equals(pk)) {
+            // 电地暖
+            String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+            String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+            if (workMode != null && workMode.length() > 0) {
+                desc.append(getString(R.string.power_switch));
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch));
+                else desc.append(getString(R.string.work_mode));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature));
+            }
+        } else if (CTSL.PK_FAU.equals(pk)) {
+            // 新风
+            String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+            String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+            if (fanMode != null && fanMode.length() > 0) {
+                if ("0".equals(fanMode) || "4".equals(fanMode))
+                    desc.append(getString(R.string.power_switch));
+                else desc.append(getString(R.string.fan_speed));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature));
+            }
+        } else if (CTSL.PK_LIGHT.equals(pk)) {
+            // 调光调色
+            String level = eAction.getAction().getParameters().getCommand().getString("Level");
+            if (level != null && level.length() > 0) {
+                desc.append(getString(R.string.lightness));
+            }
+        } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(pk)) {
+            // 单调光
+            String level = eAction.getAction().getParameters().getCommand().getString("Level");
+            String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+            if (level != null && level.length() > 0) {
+                desc.append(getString(R.string.lightness));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.color_temperature));
+            }
         }
         return desc.toString();
     }

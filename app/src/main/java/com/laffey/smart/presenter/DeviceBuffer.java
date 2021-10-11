@@ -62,6 +62,7 @@ public class DeviceBuffer {
                     deviceEntry.iotId = entry.iotId;
                     deviceEntry.nickName = entry.nickName;
                     deviceEntry.deviceName = entry.deviceName;
+                    deviceEntry.mac = entry.mac;
                     deviceEntry.productKey = entry.productKey;
                     deviceEntry.roomId = entry.roomId == null ? "" : entry.roomId;
                     deviceEntry.roomName = entry.roomName == null ? "" : entry.roomName;
@@ -100,6 +101,7 @@ public class DeviceBuffer {
                     deviceEntry.iotId = entry.iotId;
                     deviceEntry.nickName = entry.nickName;
                     deviceEntry.deviceName = entry.deviceName;
+                    deviceEntry.mac = entry.mac;
                     deviceEntry.productKey = entry.productKey;
                     deviceEntry.owned = entry.owned;
                     deviceEntry.bindTime = entry.bindTime;
@@ -136,10 +138,20 @@ public class DeviceBuffer {
         return list;
     }
 
-    // 通过mac地址获取设备信息
+    // 通过deviceName获取设备信息
+    public static EDevice.deviceEntry getDevByDeviceName(String deviceName) {
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if (deviceName.equals(entry.deviceName)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    // 通过mac获取设备信息
     public static EDevice.deviceEntry getDevByMac(String mac) {
         for (EDevice.deviceEntry entry : mBuffer.values()) {
-            if (mac.equals(entry.deviceName)) {
+            if (mac.equals(entry.mac)) {
                 return entry;
             }
         }
@@ -163,6 +175,21 @@ public class DeviceBuffer {
         if (mBuffer.containsKey(iotId)) {
             mBuffer.get(iotId).nickName = nickName;
         }
+    }
+
+    // 更新设备mac
+    public static void updateDeviceMac(String iotId, String mac) {
+        if (mBuffer.containsKey(iotId)) {
+            mBuffer.get(iotId).mac = mac;
+        }
+    }
+
+    // 获取设备mac
+    public static String getDeviceMac(String iotId) {
+        if (mBuffer.containsKey(iotId)) {
+            return mBuffer.get(iotId).mac;
+        }
+        return "";
     }
 
     // 获取设备缓存信息

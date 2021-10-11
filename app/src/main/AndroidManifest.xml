@@ -44,7 +44,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.LocalActionScenesActivity"></activity>
+        <activity
+            android:name=".view.LocalActionScenesActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.LocalActionValueActivity"
             android:screenOrientation="portrait" />

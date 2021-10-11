@@ -113,13 +113,16 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                         mSceneType = "0";
                         if (code == 200) {
                             mGatewayMac = mac;
-                            ViseLog.d("mGatewayMac = " + mGatewayMac);
-                            querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                            // ViseLog.d("mGatewayMac = " + mGatewayMac);
+                            querySceneList("chengxunfei", mGatewayMac, mSceneType);
                         } else {
-                            if (msg != null && msg.length() > 0)
+                            if (msg != null && msg.length() > 0) {
                                 ToastUtils.showLongToast(LocalSceneListActivity.this, msg);
-                            else
+                                mViewBinding.nodataTv.setText(msg);
+                            } else {
                                 ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                                mViewBinding.nodataTv.setText(R.string.pls_try_again_later);
+                            }
                         }
                     }
 
@@ -129,6 +132,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                         ViseLog.e(e);
                         mSceneType = "0";
                         ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);
+                        mViewBinding.nodataTv.setText(R.string.pls_try_again_later);
                     }
 
                     @Override
@@ -139,8 +143,8 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
     }
 
     // 查询本地场景列表
-    private void querySceneList(String token, String apiVer, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(token, apiVer, mac, type)
+    private void querySceneList(String token, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(token, mac, type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -162,7 +166,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                             }
                             if ("0".equals(mSceneType)) {
                                 mSceneType = "1";
-                                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                                querySceneList("chengxunfei", mGatewayMac, mSceneType);
                             } else if ("1".equals(mSceneType)) {
                                 QMUITipDialogUtil.dismiss();
                                 if (mList.size() == 0) {
@@ -213,7 +217,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mSceneType = "0";
                 mList.clear();
-                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                querySceneList("chengxunfei", mGatewayMac, mSceneType);
             }
         });
     }
@@ -247,7 +251,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                 EventBus.getDefault().postSticky(scene);
 
                 Intent intent = new Intent(LocalSceneListActivity.this, LocalSceneActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, SCENE_LIST_REQUEST_CODE);
             }
         });
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -284,7 +288,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                 mSceneType = "0";
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 mList.clear();
-                querySceneList("chengxunfei", Constant.QUERY_SCENE_LIST_VER, mGatewayMac, mSceneType);
+                querySceneList("chengxunfei", mGatewayMac, mSceneType);
             }
         }
     }

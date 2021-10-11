@@ -379,6 +379,10 @@ public class Constant {
     public static final String DELETE_SCENE                         = "/app/scene/delete";
     public static final String DELETE_SCENE_VER                     = "1.0";
 
+    // 修改场景
+    public static final String UPDATE_SCENE                         = "/app/scene/update";
+    public static final String UPDATE_SCENE_VER                     = "1.0";
+
     // 根据Mac查询IotId
     public static final String QUERY_IOT_ID_BY_MAC                  = "/app/device/queryIotIdByMac";
     public static final String QUERY_IOT_ID_BY_MAC_VER              = "1.0";

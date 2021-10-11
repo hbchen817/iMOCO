@@ -80,7 +80,7 @@ public class CTSL {
         t_int32,
         t_double,
         t_bool,
-        t_enum
+        t_enum,
     }
 
     // 定义公共属性常量
@@ -227,6 +227,24 @@ public class CTSL {
             put(SIX_SCENE_SWITCH_P_POWER_3, PTYPE.t_int32);
             put(SIX_SCENE_SWITCH_P_POWER_4, PTYPE.t_int32);
             put(SIX_SCENE_SWITCH_BackLight, PTYPE.t_bool);
+
+            put(FWS_P_LOCALCONFIG_1, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_2, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_3, PTYPE.t_enum);
+            put(FWS_P_LOCALCONFIG_4, PTYPE.t_enum);
+            put(FWS_P_ACTION_1, PTYPE.t_text);
+            put(FWS_P_ACTION_2, PTYPE.t_text);
+            put(FWS_P_ACTION_3, PTYPE.t_text);
+            put(FWS_P_ACTION_4, PTYPE.t_text);
+            put(FWS_P_BINDINGTABLE, PTYPE.t_text);
+            put(FWS_P_FUNCTION, PTYPE.t_text);
+            put(FWS_P_DSTADDRMODE, PTYPE.t_text);
+            put(FWS_P_DSTADDR, PTYPE.t_text);
+            put(FWS_P_RESPONSETYPE, PTYPE.t_text);
+            put(FWS_P_RESULT, PTYPE.t_text);
+            put(FWS_P_DSTENDPOINTID, PTYPE.t_text);
+            put(TOTAL_COUNT, PTYPE.t_text);
+            put(START_INDEX, PTYPE.t_text);
         }
     };
 
@@ -265,6 +283,8 @@ public class CTSL {
 
     public static final String FWS_P_RESPONSETYPE              = "ResponseType";
     public static final String FWS_P_RESULT                    = "Result";
+    public static final String TOTAL_COUNT                     = "TotalCount";
+    public static final String START_INDEX                     = "StartIndex";
 
     public static final String FWS_P_BackLightMode             = "BackLightMode";
     public static final Map<String, PTYPE> FWS_Properties      = new HashMap<String, PTYPE>() {
@@ -288,6 +308,8 @@ public class CTSL {
             put(FWS_P_RESPONSETYPE, PTYPE.t_text);
             put(FWS_P_RESULT, PTYPE.t_text);
             put(FWS_P_DSTENDPOINTID, PTYPE.t_text);
+            put(TOTAL_COUNT, PTYPE.t_text);
+            put(START_INDEX, PTYPE.t_text);
             put(FWS_P_BackLightMode, PTYPE.t_enum);
         }
     };

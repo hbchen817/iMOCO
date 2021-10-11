@@ -16,7 +16,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -36,6 +38,7 @@ import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.vise.log.ViseLog;
 
@@ -45,7 +48,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AssociatedBindListActivity extends BaseActivity {
     private ActivityAssociatedBindListBinding mViewBinding = null;
@@ -71,9 +76,12 @@ public class AssociatedBindListActivity extends BaseActivity {
 
     private MyHandler mHandler;
 
-    // {"Function":"0006","SrcAddr":"CCCCCCFFFE95097D","SrcEndpointId":"3","DstAddrMode":"3","DstAddr":"CCCCCCFFFE95097D","DstEndpointId":"1"}
-    private List<ItemBinding> mList = new ArrayList<>();
+    private final List<ItemBinding> mList = new ArrayList<>();
     private BaseQuickAdapter<ItemBinding, BaseViewHolder> mAdapter;
+    private final Map<String, String> mActionMap = new HashMap<>();
+    private final Map<String, String> mPropertyMap = new HashMap<>();
+    private final Map<String, String> mKeyNameMap = new HashMap<>();
+    private final JSONArray mBindingArray = new JSONArray();
 
     public static void start(Context context, String iotId, String productKey, String keyName, int key) {
         Intent intent = new Intent(context, AssociatedBindListActivity.class);
@@ -94,11 +102,30 @@ public class AssociatedBindListActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
+    private void initData() {
+        mActionMap.put("1", CTSL.FWS_P_ACTION_1);
+        mActionMap.put("2", CTSL.FWS_P_ACTION_2);
+        mActionMap.put("3", CTSL.FWS_P_ACTION_3);
+        mActionMap.put("4", CTSL.FWS_P_ACTION_4);
+
+        mPropertyMap.put("1", CTSL.FWS_P_PowerSwitch_1);
+        mPropertyMap.put("2", CTSL.FWS_P_PowerSwitch_2);
+        mPropertyMap.put("3", CTSL.FWS_P_PowerSwitch_3);
+        mPropertyMap.put("4", CTSL.FWS_P_PowerSwitch_4);
+
+        mKeyNameMap.put("1", getString(R.string.one_way_powerswitch));
+        mKeyNameMap.put("2", getString(R.string.two_way_powerswitch));
+        mKeyNameMap.put("3", getString(R.string.three_way_powerswitch));
+        mKeyNameMap.put("4", getString(R.string.four_way_powerswitch));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewBinding = ActivityAssociatedBindListBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
+
+        // ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
 
         mIotId = getIntent().getStringExtra(IOT_ID);
         mKeyName = getIntent().getStringExtra(KEY_NAME);
@@ -107,99 +134,39 @@ public class AssociatedBindListActivity extends BaseActivity {
         mHandler = new MyHandler(this);
 
         initStatusBar();
-
-        JSONObject two = new JSONObject();
-        JSONObject one = new JSONObject();
-        one.put("Action", "Q");
-        two.put("Content", one);
-
-        /*mSceneManager = new SceneManager(this);
-        RealtimeDataReceiver.addEventCallbackHandler("BindingInformationTableNotification", mHandler);*/
-        //mSceneManager.invokeService(mIotId, "Binding", two, QUERY_BIND_LIST_TAG, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        initData();
 
         mTSLHelper = new TSLHelper(this);
-        switch (mKeyValue) {
-            case 1: {
-                // mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_1}, new String[]{"Q"});
-                mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
-                break;
-            }
-            case 2: {
-                // mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_2}, new String[]{"Q"});
-                mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
-                break;
-            }
-            case 3: {
-                // mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_3}, new String[]{"Q"});
-                mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
-                break;
-            }
-            case 4: {
-                // mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_4}, new String[]{"Q"});
-                mTSLHelper.setProperty(mIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
-                break;
-            }
-        }
+        queryBindingTable();
 
         new SceneManager(this).getExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, GET_EXTEND_INFO, mCommitFailureHandler, mResponseErrorHandler, mHandler);
 
-        mList.add(new ItemBinding("0006", "CCCCCCFFFE95097D", "1", "3", "CCCCCCFFFE9509A9", "1"));
+        initAdapter();
+    }
+
+    private void initAdapter() {
         mAdapter = new BaseQuickAdapter<ItemBinding, BaseViewHolder>(R.layout.item_associated_bind, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, ItemBinding item) {
                 EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
                 ImageView imageView = holder.getView(R.id.dev_iv);
-                Glide.with(AssociatedBindListActivity.this).load(entry.image).into(imageView);
+                TextView delView = holder.getView(R.id.del_tv);
+                if (entry != null) {
+                    Glide.with(AssociatedBindListActivity.this).load(entry.image).into(imageView);
 
-                holder.setText(R.id.dev_name_tv, entry.nickName);
-                holder.getView(R.id.del_tv).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showDialg(mList.indexOf(item));
-                    }
-                });
-                JSONObject extend = DeviceBuffer.getExtendedInfo(entry.iotId);
-                if (extend != null) {
-                    switch (item.getDstEndpointId()) {
-                        case "1": {
-                            holder.setText(R.id.key_name_tv, extend.getString(CTSL.FWS_P_PowerSwitch_1));
-                            break;
+                    holder.setText(R.id.dev_name_tv, entry.nickName);
+                    holder.getView(R.id.del_tv).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showDialg(mList.indexOf(item));
                         }
-                        case "2": {
-                            holder.setText(R.id.key_name_tv, extend.getString(CTSL.FWS_P_PowerSwitch_2));
-                            break;
-                        }
-                        case "3": {
-                            holder.setText(R.id.key_name_tv, extend.getString(CTSL.FWS_P_PowerSwitch_3));
-                            break;
-                        }
-                        case "4": {
-                            holder.setText(R.id.key_name_tv, extend.getString(CTSL.FWS_P_PowerSwitch_4));
-                            break;
-                        }
-                    }
-                } else {
-                    switch (item.getDstEndpointId()) {
-                        case "1": {
-                            holder.setText(R.id.key_name_tv, R.string.one_way_powerswitch);
-                            break;
-                        }
-                        case "2": {
-                            holder.setText(R.id.key_name_tv, R.string.two_way_powerswitch);
-                            break;
-                        }
-                        case "3": {
-                            holder.setText(R.id.key_name_tv, R.string.three_way_powerswitch);
-                            break;
-                        }
-                        case "4": {
-                            holder.setText(R.id.key_name_tv, R.string.four_way_powerswitch);
-                            break;
-                        }
+                    });
+                    delView.setVisibility(View.GONE);
+                    JSONObject extend = DeviceBuffer.getExtendedInfo(entry.iotId);
+                    if (extend != null) {
+                        holder.setText(R.id.key_name_tv, extend.getString(mPropertyMap.get(item.getDstEndpointId())));
+                    } else {
+                        holder.setText(R.id.key_name_tv, mKeyNameMap.get(item.getDstEndpointId()));
                     }
                 }
             }
@@ -221,7 +188,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                 } else {
                     ItemBinding item = mList.get(position);
                     EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
-                    SelectAssociatedKeyActivity.start(AssociatedBindListActivity.this, entry.productKey, mIotId, DeviceBuffer.getDeviceInformation(mIotId).deviceName,
+                    SelectAssociatedKeyActivity.start(AssociatedBindListActivity.this, entry.productKey, mIotId, DeviceBuffer.getDeviceInformation(mIotId).mac,
                             entry.iotId, Integer.parseInt(item.getDstEndpointId()) - 1, mKeyValue, mProductKey,
                             Integer.parseInt(mList.get(position).getDstEndpointId()) - 1);
                 }
@@ -239,13 +206,7 @@ public class AssociatedBindListActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mViewBinding.bindingRv.setLayoutManager(layoutManager);
         mViewBinding.bindingRv.setAdapter(mAdapter);
-        if (mList.size() > 0) {
-            mViewBinding.gridDevNodataView.setVisibility(View.GONE);
-            mViewBinding.bindingRv.setVisibility(View.VISIBLE);
-        } else {
-            mViewBinding.gridDevNodataView.setVisibility(View.VISIBLE);
-            mViewBinding.bindingRv.setVisibility(View.GONE);
-        }
+        refreshNoDataView();
     }
 
     @Override
@@ -262,7 +223,19 @@ public class AssociatedBindListActivity extends BaseActivity {
         mResult = getIntent().getIntExtra(RESULT_KEY, -1);
         if (mResult == 0) {
             QMUITipDialogUtil.showSuccessDialog(this, R.string.submit_completed);
+            mList.clear();
+            mBindingArray.clear();
+            // 添加实时数据属性回调处理器
+            RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
+            queryBindingTable();
         }
+    }
+
+    // 查询绑定列表
+    private void queryBindingTable() {
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        mTSLHelper.setProperty(mIotId, mProductKey, new String[]{mActionMap.get(String.valueOf(mKeyValue)), CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
     }
 
     private void showDialg(int pos) {
@@ -281,6 +254,7 @@ public class AssociatedBindListActivity extends BaseActivity {
         alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
+                mBindingArray.clear();
                 delBinding(pos);
             }
         });
@@ -300,28 +274,9 @@ public class AssociatedBindListActivity extends BaseActivity {
         mFirstIotId = mIotId;
         mSecondIotId = mDelDev.iotId;
 
-        switch (mKeyValue) {
-            case 1: {
-                mTSLHelper.setProperty(mFirstIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"U", "0006", "3", mDelItem.getDstAddr(), mDelItem.getDstEndpointId()});
-                break;
-            }
-            case 2: {
-                mTSLHelper.setProperty(mFirstIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"U", "0006", "3", mDelItem.getDstAddr(), mDelItem.getDstEndpointId()});
-                break;
-            }
-            case 3: {
-                mTSLHelper.setProperty(mFirstIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"U", "0006", "3", mDelItem.getDstAddr(), mDelItem.getDstEndpointId()});
-                break;
-            }
-            case 4: {
-                mTSLHelper.setProperty(mFirstIotId, mProductKey, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                        new String[]{"U", "0006", "3", mDelItem.getDstAddr(), mDelItem.getDstEndpointId()});
-                break;
-            }
-        }
+        mTSLHelper.setProperty(mFirstIotId, mProductKey, new String[]{mActionMap.get(String.valueOf(mKeyValue)),
+                        CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                new String[]{"U", "0006", "3", mDelItem.getDstAddr(), mDelItem.getDstEndpointId()});
     }
 
     private static final int RESULT = 10000;
@@ -358,40 +313,64 @@ public class AssociatedBindListActivity extends BaseActivity {
                         if ("U".equals(propertyEntry.getPropertyValue("ResponseType")) &&
                                 "0".equals(propertyEntry.getPropertyValue("Result"))) {
                             if (activity.mFirstIotId.equals(propertyEntry.iotId)) {
-                                switch (Integer.parseInt(activity.mDelItem.getDstEndpointId())) {
-                                    case 1: {
-                                        activity.mTSLHelper.setProperty(activity.mDelDev.iotId, activity.mDelDev.productKey, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                                new String[]{"U", "0006", "3", activity.mDelItem.getSrcAddr(), activity.mDelItem.getSrcEndpointId()});
-                                        break;
-                                    }
-                                    case 2: {
-                                        activity.mTSLHelper.setProperty(activity.mDelDev.iotId, activity.mDelDev.productKey, new String[]{CTSL.FWS_P_ACTION_2, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                                new String[]{"U", "0006", "3", activity.mDelItem.getSrcAddr(), activity.mDelItem.getSrcEndpointId()});
-                                        break;
-                                    }
-                                    case 3: {
-                                        activity.mTSLHelper.setProperty(activity.mDelDev.iotId, activity.mDelDev.productKey, new String[]{CTSL.FWS_P_ACTION_3, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                                new String[]{"U", "0006", "3", activity.mDelItem.getSrcAddr(), activity.mDelItem.getSrcEndpointId()});
-                                        break;
-                                    }
-                                    case 4: {
-                                        activity.mTSLHelper.setProperty(activity.mDelDev.iotId, activity.mDelDev.productKey, new String[]{CTSL.FWS_P_ACTION_4, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
-                                                new String[]{"U", "0006", "3", activity.mDelItem.getSrcAddr(), activity.mDelItem.getSrcEndpointId()});
-                                        break;
-                                    }
-                                }
+                                activity.mTSLHelper.setProperty(activity.mDelDev.iotId, activity.mDelDev.productKey, new String[]{activity.mActionMap.get(activity.mDelItem.getDstEndpointId()), CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                                        new String[]{"U", "0006", "3", activity.mDelItem.getSrcAddr(), activity.mDelItem.getSrcEndpointId()});
                             } else if (activity.mSecondIotId.equals(propertyEntry.iotId)) {
-                                QMUITipDialogUtil.showSuccessDialog(activity, R.string.delete_the_success);
+                                activity.mList.clear();
+                                activity.queryBindingTable();
+                            }
+                        } else if (propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE) != null && propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE).length() > 0) {
+                            String bindingTable = propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE);
+                            String totalCount = propertyEntry.getPropertyValue(CTSL.TOTAL_COUNT);
+                            activity.mBindingArray.addAll(JSONArray.parseArray(bindingTable));
+                            ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
+                            if (Integer.parseInt(totalCount) == activity.mBindingArray.size()) {
+                                activity.refreshBindingTable(activity.mBindingArray);
                             }
                         }
                         break;
                     }
                     case RESULT: {
                         QMUITipDialogUtil.showSuccessDialog(activity, R.string.delete_the_success);
+                        int pos = activity.mList.indexOf(activity.mDelItem);
+                        activity.mList.remove(pos);
+                        activity.mAdapter.notifyDataSetChanged();
+                        activity.refreshNoDataView();
                         break;
                     }
                 }
             }
+        }
+    }
+
+    private void refreshBindingTable(JSONArray array) {
+        for (int i = 0; i < array.size(); i++) {
+            ItemBinding item = new Gson().fromJson(array.get(i).toString(), ItemBinding.class);
+            if (String.valueOf(mKeyValue).equals(item.getSrcEndpointId())) {
+                EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
+                if (entry != null)
+                    mList.add(item);
+                else {
+                    mFirstIotId = "";
+                    mSecondIotId = "";
+
+                    mTSLHelper.setProperty(mIotId, mProductKey, new String[]{mActionMap.get(item.getSrcEndpointId()), CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                            new String[]{"U", "0006", "3", item.getDstAddr(), item.getDstEndpointId()});
+                }
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+        refreshNoDataView();
+        QMUITipDialogUtil.dismiss();
+    }
+
+    private void refreshNoDataView() {
+        if (mList.size() > 0) {
+            mViewBinding.gridDevNodataView.setVisibility(View.GONE);
+            mViewBinding.bindingRv.setVisibility(View.VISIBLE);
+        } else {
+            mViewBinding.gridDevNodataView.setVisibility(View.VISIBLE);
+            mViewBinding.bindingRv.setVisibility(View.GONE);
         }
     }
 

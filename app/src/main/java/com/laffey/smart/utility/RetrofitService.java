@@ -37,6 +37,10 @@ public interface RetrofitService {
     @POST(Constant.DELETE_SCENE)
     Observable<JSONObject> deleteScene(@Header("REX_TOKEN") String token, @Body RequestBody body);
 
+    // 更新场景
+    @POST(Constant.UPDATE_SCENE)
+    Observable<JSONObject> updateScene(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
     // 根据Mac查询IotId
     @POST(Constant.QUERY_IOT_ID_BY_MAC)
     Observable<JSONObject> queryIotIdByMac(@Header("REX_TOKEN") String token, @Body RequestBody body);

@@ -50,6 +50,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     private static final String GATEWAY_ID = "gateway_id";
 
     private String mGatewayId;
+    private String mGatewayMac;
 
     private final List<ItemScene> mSceneList = new ArrayList<>();
     private BaseQuickAdapter<ItemScene, BaseViewHolder> mSceneAdapter;
@@ -146,7 +147,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                             if (mac == null || mac.length() == 0) {
                                 ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.MAC_does_not_exist);
                             }
-                            querySceneList(token, Constant.QUERY_SCENE_LIST_VER, mac, "1");
+                            mGatewayMac = mac;
+                            querySceneList(token, mac, "1");
                         } else if (code == 404) {
                             ToastUtils.showLongToast(LocalActionScenesActivity.this, msg);
                         } else {
@@ -168,8 +170,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     }
 
     // 查询本地场景列表
-    private void querySceneList(String token, String apiVer, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(token, apiVer, mac, type)
+    private void querySceneList(String token, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(token, mac, type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

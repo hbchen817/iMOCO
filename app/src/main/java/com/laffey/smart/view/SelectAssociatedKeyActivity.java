@@ -31,6 +31,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.vise.log.ViseLog;
 
@@ -123,7 +124,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         initStatusBar();
 
         EDevice.deviceEntry entry = DeviceBuffer.getDeviceInformation(mIotId);
-        mBMac = entry.deviceName;
+        mBMac = entry.mac;
 
         mAdapter = new BaseQuickAdapter<KeyItem, BaseViewHolder>(R.layout.item_identifier, mList) {
             @Override
@@ -403,7 +404,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
             }
         }
 
-        // ViseLog.d("mAMac == " + mAMac + " , mBMac = " + mBMac + " , mSelectPos = " + (mSelectPos + 1) + " , mSrcEndId = " + mSrcEndId);
+        ViseLog.d("mAMac == " + mAMac + " , mBMac = " + mBMac + " , mSelectPos = " + (mSelectPos + 1) + " , mSrcEndId = " + mSrcEndId);
         switch (mSrcEndId) {
             case 1: {
                 mTSLHelper.setProperty(mAIotId, mSrcPK, new String[]{CTSL.FWS_P_ACTION_1, CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
@@ -447,6 +448,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                     case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
                         // 处理属性通知回调
                         ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                        // ViseLog.d("绑定回调 = " + GsonUtil.toJson(propertyEntry));
                         if ("B".equals(propertyEntry.getPropertyValue("ResponseType"))) {
                             if ("0".equals(propertyEntry.getPropertyValue("Result"))) {
                                 if (activity.mFirstIotId.equals(propertyEntry.iotId)) {
@@ -488,7 +490,10 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                                     }).start();
                                 }
                             } else {
-                                QMUITipDialogUtil.showFailDialog(activity, R.string.bind_fail);
+                                if ("142".equals(propertyEntry.getPropertyValue("Result")))
+                                    QMUITipDialogUtil.showFailDialog(activity, R.string.too_much_del_before);
+                                else
+                                    QMUITipDialogUtil.showFailDialog(activity, R.string.bind_fail);
                             }
                         } else if ("U".equals(propertyEntry.getPropertyValue("ResponseType"))) {
                             ViseLog.d(new Gson().toJson(propertyEntry));

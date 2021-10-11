@@ -108,6 +108,7 @@ public class EHomeSpace {
     public static class deviceEntry {
         public String iotId;
         public String deviceName;
+        public String mac;
         public String homeId;
         public String homeName;
         public String roomId;
@@ -133,6 +134,7 @@ public class EHomeSpace {
         public deviceEntry() {
             this.iotId = "";
             this.deviceName = "";
+            this.mac = "";
             this.homeId = "";
             this.homeName = "";
             this.roomId = "";
