@@ -68,8 +68,8 @@ public class AptSceneList extends BaseAdapter {
     public void setData(List<EScene.sceneListItemEntry> sceneList) {
         // this.mSceneList = sceneList;
         if (sceneList != null) {
-            //this.mSceneList.clear();
-            //this.mSceneList.addAll(sceneList);
+            // this.mSceneList.clear();
+            // this.mSceneList.addAll(sceneList);
             mDeleteList.clear();
 
             for (int i = 0; i < sceneList.size(); i++) {
@@ -160,14 +160,14 @@ public class AptSceneList extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup arg2) {
         ViewHolder viewHolder = new ViewHolder();
-        LayoutInflater inflater = LayoutInflater.from(this.mContext);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(R.layout.list_scene, null, true);
         viewHolder.name = convertView.findViewById(R.id.sceneListLblName);
         viewHolder.type = convertView.findViewById(R.id.sceneListLblType);
         viewHolder.delete = convertView.findViewById(R.id.sceneListLblDelete);
         viewHolder.edit = convertView.findViewById(R.id.sceneListImgEdit);
         viewHolder.dividerBottom = convertView.findViewById(R.id.divider_bottom);
-        if (position == this.mSceneList.size() - 1)
+        if (position == mSceneList.size() - 1)
             viewHolder.dividerBottom.setVisibility(View.VISIBLE);
         else viewHolder.dividerBottom.setVisibility(View.GONE);
         viewHolder.delete.setTag(position);
@@ -179,9 +179,9 @@ public class AptSceneList extends BaseAdapter {
             viewHolder.type.setText("--");
             return convertView;
         }
-        viewHolder.name.setText(this.mSceneList.get(position).name);
+        viewHolder.name.setText(mSceneList.get(position).name);
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
-            viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_automatic) : this.mContext.getString(R.string.scenetype_manual));
+            viewHolder.type.setText(mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_automatic) : this.mContext.getString(R.string.scenetype_manual));
         else
             viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
         if (this.mDeleteList.get(position).isDeleted) {

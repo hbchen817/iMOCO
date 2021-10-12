@@ -794,7 +794,6 @@ public class IndexFragment1 extends BaseFragment {
         int online = 0;
         int total = mDeviceList == null ? 0 : mDeviceList.size();
         if (total > 0) {
-            //ViseLog.d(new Gson().toJson(mDeviceList));
             for (EDevice.deviceEntry device : mDeviceList) {
                 if (Constant.KEY_NICK_NAME_PK.contains(device.productKey) && mRefreshExtendedBuffer) {
                     mSceneManager.getExtendedProperty(device.iotId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, null,
@@ -874,6 +873,11 @@ public class IndexFragment1 extends BaseFragment {
             }
         }
 
+        if (mDeviceList.size() > 0)
+            queryMac(0);
+    }
+
+    private void refreshListView() {
         // 处理设备列表
         mAptDeviceList.setData(mDeviceList);
         mListDevice.setAdapter(mAptDeviceList);
@@ -922,15 +926,13 @@ public class IndexFragment1 extends BaseFragment {
             }
         }
         deviceCount();
-        if (mDeviceList.size() > 0)
-            queryMac(0);
     }
 
     private void queryMac(int pos) {
         RetrofitUtil.getInstance()
                 .queryMacByIotId("chengxunfei", "xxxxxx", mDeviceList.get(pos).iotId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
@@ -949,6 +951,9 @@ public class IndexFragment1 extends BaseFragment {
                         }
                         if (pos < mDeviceList.size() - 1)
                             queryMac(pos + 1);
+                        else {
+                            refreshListView();
+                        }
                     }
 
                     @Override
@@ -1087,7 +1092,6 @@ public class IndexFragment1 extends BaseFragment {
                             mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", homeDeviceList.pageNo + 1, DEV_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则同步刷新设备列表数据
-                            //syncDeviceListData();
                             mUserCenter.getDeviceList(1, DEV_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         }
                     }

@@ -122,7 +122,7 @@ public class SceneManager {
         list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scene_go_home_pattern));
         list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scene_leave_home_pattern));
         list.add(new EScene.sceneModelEntry(CScene.SMC_SLEEP_PATTERN, R.string.scenemodel_sleep_pattern, R.drawable.scene_sleep_pattern));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scene_setup_pattern));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_GETUP_PATTERN, R.string.scenemodel_getup_pattern, R.drawable.scene_setup_pattern));
         return list;
     }
 

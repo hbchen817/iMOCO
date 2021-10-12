@@ -45,6 +45,9 @@
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
         <activity
+            android:name=".view.LocalGatewayListActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.LocalActionScenesActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -151,6 +154,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.AddConditionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SceneModelActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.NewSceneActivity"

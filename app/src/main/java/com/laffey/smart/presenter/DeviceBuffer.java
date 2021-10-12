@@ -148,6 +148,17 @@ public class DeviceBuffer {
         return null;
     }
 
+    // 获取网关设备信息
+    public static List<EDevice.deviceEntry> getGatewayDevs() {
+        List<EDevice.deviceEntry> list = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if ("GATEWAY".equals(entry.nodeType)) {
+                list.add(entry);
+            }
+        }
+        return list;
+    }
+
     // 通过mac获取设备信息
     public static EDevice.deviceEntry getDevByMac(String mac) {
         for (EDevice.deviceEntry entry : mBuffer.values()) {
@@ -156,6 +167,17 @@ public class DeviceBuffer {
             }
         }
         return null;
+    }
+
+    // 通过ProductKey获取设备信息（非共享设备）
+    public static List<EDevice.deviceEntry> getDevByPK(String pk) {
+        List<EDevice.deviceEntry> list = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if (pk.equals(entry.productKey) && entry.owned == 1) {
+                list.add(entry);
+            }
+        }
+        return list;
     }
 
     // 更新设备房间

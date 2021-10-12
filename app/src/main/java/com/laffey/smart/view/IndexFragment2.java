@@ -86,6 +86,7 @@ public class IndexFragment2 extends BaseFragment {
     protected LinearLayout mSceneNodataView;
 
     private final int SCENE_PAGE_SIZE = 50;
+    private final int REQUEST_CODE = 1000;
 
     private SceneManager mSceneManager = null;
     private List<EScene.sceneModelEntry> mModelList = null;
@@ -239,8 +240,22 @@ public class IndexFragment2 extends BaseFragment {
             public void onClick(View v) {
                 //SystemParameter.getInstance().setIsRefreshSceneListData(true);
                 //PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
-                Intent intent = new Intent(mActivity, NewSceneActivity.class);
-                startActivity(intent);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    List<EDevice.deviceEntry> list = DeviceBuffer.getGatewayDevs();
+                    if (list.size() == 0) {
+                        ToastUtils.showLongToast(mActivity, R.string.add_gateway_dev_first);
+                    } else {
+                        if (list.size() == 1) {
+                            //LocalSceneListActivity.start(mActivity, list.get(0).iotId);
+                            LocalGatewayListActivity.start(mActivity);
+                        } else {
+
+                        }
+                    }
+                } else {
+                    Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -280,13 +295,23 @@ public class IndexFragment2 extends BaseFragment {
                     return;
                 }
 
-                Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
-                intent.putExtra("operateType", CScene.OPERATE_CREATE);
-                intent.putExtra("sceneModelCode", mModelList.get(position).code);
-                intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
-                intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
-                intent.putExtra("sceneNumber", mSceneList.size());
-                startActivity(intent);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    Intent intent = new Intent(mActivity, SceneModelActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_CREATE);
+                    intent.putExtra("sceneModelCode", mModelList.get(position).code);
+                    intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
+                    intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_CREATE);
+                    intent.putExtra("sceneModelCode", mModelList.get(position).code);
+                    intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
+                    intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -317,7 +342,6 @@ public class IndexFragment2 extends BaseFragment {
                                     mSceneManager.manageSceneService(dev.iotId, sceneId, "3", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 }
                                 RefreshData.refreshHomeSceneListData();
-                                querySceneList("chengxunfei", "", "0");
                             } else {
                                 if (msg == null || msg.length() == 0) {
                                     ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
@@ -348,7 +372,7 @@ public class IndexFragment2 extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000) {
+        if (requestCode == REQUEST_CODE) {
             switch (resultCode) {
                 case 100: {
                     // 删除场景
@@ -393,6 +417,10 @@ public class IndexFragment2 extends BaseFragment {
                     RefreshData.refreshHomeSceneListData();
                     break;
                 }
+                case 10001: {
+                    // 新增、编辑场景
+                    break;
+                }
             }
         }
     }
@@ -415,14 +443,12 @@ public class IndexFragment2 extends BaseFragment {
             mAptSceneList.hideDeleteButton();
 
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                ViseLog.d("场景详情 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
                 ItemScene itemScene = mItemSceneList.get(i);
                 EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(itemScene.getMac());
-                dev = DeviceBuffer.getDevByMac("CCCCCCFFFE9509A9");
+                dev = DeviceBuffer.getDevByMac("LUXE_TEST");
 
                 if (dev != null) {
-                    String gatewayId = dev.gatewayId;
-                    gatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
+                    String gatewayId = dev.iotId;
 
                     EEventScene scene = new EEventScene();
                     scene.setTarget("LocalSceneActivity");
@@ -431,7 +457,7 @@ public class IndexFragment2 extends BaseFragment {
                     EventBus.getDefault().postSticky(scene);
 
                     Intent intent = new Intent(mActivity, LocalSceneActivity.class);
-                    startActivityForResult(intent, 10000);
+                    startActivityForResult(intent, REQUEST_CODE);
                 } else {
                     ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
                 }
@@ -524,15 +550,16 @@ public class IndexFragment2 extends BaseFragment {
                             if ("0".equals(type)) {
                                 querySceneList("chengxunfei", "", "1");
                             } else {
-                                // ViseLog.d("场景列表 = " + GsonUtil.toJson(mSceneList));
+                                QMUITipDialogUtil.dismiss();
                                 mAptSceneList.setData(mSceneList);
-                                mAptSceneList.notifyDataSetChanged();
                                 mListMyRL.finishRefresh(true);
                                 if (mSceneList.size() > 0) {
                                     mListMyRL.setVisibility(View.VISIBLE);
+                                    mListMy.setVisibility(View.VISIBLE);
                                     mSceneNodataView.setVisibility(View.GONE);
                                 } else {
                                     mListMyRL.setVisibility(View.GONE);
+                                    mListMy.setVisibility(View.GONE);
                                     mSceneNodataView.setVisibility(View.VISIBLE);
                                 }
                             }
@@ -638,6 +665,7 @@ public class IndexFragment2 extends BaseFragment {
             });
         } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
             // 刷新主界面场景列表
+            QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
             mItemSceneList.clear();
             mSceneList.clear();
             querySceneList("chengxunfei", "", "0");

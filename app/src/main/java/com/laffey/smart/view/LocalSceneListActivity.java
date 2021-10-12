@@ -95,6 +95,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
 
     private void initData() {
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
+        ViseLog.d("LocalSceneListActivity mGatewayId = " + mGatewayId);
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         queryMacByIotId();
@@ -304,6 +305,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
         if (v.getId() == mViewBinding.includeToolbar.ivToolbarLeft.getId()) {
             finish();
         } else if (v.getId() == mViewBinding.createSceneTv.getId()) {
+            // ViseLog.d("跳转 mGatewayId = " + mGatewayId + " , mGatewayMac = " + mGatewayMac);
             LocalSceneActivity.start(this, mGatewayId, mGatewayMac, SCENE_LIST_REQUEST_CODE);
         }
     }

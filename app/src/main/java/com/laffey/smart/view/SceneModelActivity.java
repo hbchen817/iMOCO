@@ -1,9 +1,5 @@
 package com.laffey.smart.view;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -18,37 +14,45 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySceneMaintainBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EChoice;
+import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EProduct;
 import com.laffey.smart.model.EScene;
+import com.laffey.smart.model.EUser;
 import com.laffey.smart.presenter.AptSceneParameter;
 import com.laffey.smart.presenter.CloudDataParser;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.ProductHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
+import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creator: xieshaobing
  * creat time: 2020-06-06 15:29
  * Description: 场景维护
  */
-public class SceneMaintainActivity extends BaseActivity {
+public class SceneModelActivity extends BaseActivity {
     private ActivitySceneMaintainBinding mViewBinding;
+
+    private final int PAGE_SIZE = 10;
 
     private SceneManager mSceneManager;
     private String mSceneId;
@@ -58,6 +62,9 @@ public class SceneMaintainActivity extends BaseActivity {
     private int mSetTimeIndex = -1;
     private boolean mEnable = true;
     private long mClickTime = 0;
+
+    private final List<EDevice.deviceEntry> mGatewayDevList = new ArrayList<>();
+    private UserCenter mUserCenter;
 
     // 显示场景名称修改对话框
     private void showSceneNameDialogEdit() {
@@ -80,7 +87,7 @@ public class SceneMaintainActivity extends BaseActivity {
 
         View confirmView = view.findViewById(R.id.dialogEditLblConfirm);
         View cancelView = view.findViewById(R.id.dialogEditLblCancel);
-        confirmView.setOnClickListener(new View.OnClickListener() {
+        confirmView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 String nameStr = nameEt.getText().toString().trim();
@@ -90,7 +97,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 }
             }
         });
-        cancelView.setOnClickListener(new View.OnClickListener() {
+        cancelView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
@@ -141,7 +148,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 List<EChoice.itemEntry> items = new ArrayList<EChoice.itemEntry>();
                 items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_startusing), "1", mEnable));
                 items.add(new EChoice.itemEntry(getString(R.string.scene_maintain_stopusing), "0", !mEnable));
-                Intent intent = new Intent(SceneMaintainActivity.this, ChoiceActivity.class);
+                Intent intent = new Intent(SceneModelActivity.this, ChoiceActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("title", getString(R.string.scene_maintain_setenable));
                 bundle.putBoolean("isMultipleSelect", false);
@@ -169,7 +176,7 @@ public class SceneMaintainActivity extends BaseActivity {
                         mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
                         mViewBinding.sceneMaintainLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
                 baseInfoEntry.enable = mEnable;
-                QMUITipDialogUtil.showLoadingDialg(SceneMaintainActivity.this, R.string.is_uploading);
+                QMUITipDialogUtil.showLoadingDialg(SceneModelActivity.this, R.string.is_uploading);
                 if (mOperateType == CScene.OPERATE_CREATE) {
                     ViseLog.d(new Gson().toJson(mParameterList));
                     // 创建场景
@@ -234,7 +241,12 @@ public class SceneMaintainActivity extends BaseActivity {
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         // 获取支持配网产品列表
-        new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        // new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+
+        mUserCenter = new UserCenter(this);
+        mGatewayDevList.addAll(DeviceBuffer.getGatewayDevs());
+        mUserCenter.getGatewaySubdeviceList(mGatewayDevList.get(0).iotId, 1, PAGE_SIZE,
+                mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
         initStatusBar();
     }
@@ -251,6 +263,9 @@ public class SceneMaintainActivity extends BaseActivity {
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
         mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+        ViseLog.d("生成场景参数列表 = " + GsonUtil.toJson(mParameterList));
+        //refreshModelList();
+
         mAptSceneParameter = new AptSceneParameter(this);
         mAptSceneParameter.setData(mParameterList);
         mViewBinding.sceneMaintainLstParameter.setAdapter(mAptSceneParameter);
@@ -263,13 +278,24 @@ public class SceneMaintainActivity extends BaseActivity {
                 // 设置时间
                 if (mParameterList.get(position).type == CScene.SPT_CONDITION_TIME) {
                     mSetTimeIndex = position;
-                    Intent intent = new Intent(SceneMaintainActivity.this, SetTimeActivity.class);
+                    Intent intent = new Intent(SceneModelActivity.this, SetTimeActivity.class);
                     String cron = mParameterList.get(position).conditionTimeEntry.genCronString();
                     intent.putExtra("cron", cron);
                     startActivityForResult(intent, Constant.REQUESTCODE_CALLSETTIMEACTIVITY);
                 }
             }
         });
+    }
+
+    private void refreshModelList() {
+        switch (mSceneModelCode) {
+            case CScene.SMC_NIGHT_RISE_ON: {
+                // 起夜开灯
+                List<EDevice.deviceEntry> list = DeviceBuffer.getDevByPK(CTSL.PK_PIRSENSOR);
+                //if ()
+                break;
+            }
+        }
     }
 
     // 数据处理器
@@ -280,6 +306,7 @@ public class SceneMaintainActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String) msg.obj);
+                    ViseLog.d("处理获取支持配网产品列表数据 = " + GsonUtil.toJson(mConfigProductList));
 
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
@@ -314,7 +341,7 @@ public class SceneMaintainActivity extends BaseActivity {
                     String sceneId_create = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_create != null && sceneId_create.length() > 0) {
                         //ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_success), mLblName.getText().toString()), 2000);
-                        QMUITipDialogUtil.showSuccessDialog(SceneMaintainActivity.this,
+                        QMUITipDialogUtil.showSuccessDialog(SceneModelActivity.this,
                                 String.format(getString(R.string.scene_maintain_create_success), mViewBinding.sceneMaintainLblName.getText().toString()));
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -327,15 +354,15 @@ public class SceneMaintainActivity extends BaseActivity {
                         }, 1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mViewBinding.sceneMaintainLblName.getText().toString()));
+                        ToastUtils.showToastCentrally(SceneModelActivity.this, String.format(getString(R.string.scene_maintain_create_failed), mViewBinding.sceneMaintainLblName.getText().toString()));
                     }
                     break;
-                case Constant.MSG_CALLBACK_UPDATESCENE:
+                case Constant.MSG_CALLBACK_UPDATESCENE: {
                     // 处理修改场景结果
                     String sceneId_update = CloudDataParser.processCreateSceneResult((String) msg.obj);
                     if (sceneId_update != null && sceneId_update.length() > 0) {
                         //ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_success), mLblName.getText().toString()));
-                        QMUITipDialogUtil.showSuccessDialog(SceneMaintainActivity.this,
+                        QMUITipDialogUtil.showSuccessDialog(SceneModelActivity.this,
                                 String.format(getString(R.string.scene_maintain_edit_success), mViewBinding.sceneMaintainLblName.getText().toString()));
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -348,13 +375,39 @@ public class SceneMaintainActivity extends BaseActivity {
                         }, 1000);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        ToastUtils.showToastCentrally(SceneMaintainActivity.this, String.format(getString(R.string.scene_maintain_edit_failed),
+                        ToastUtils.showToastCentrally(SceneModelActivity.this, String.format(getString(R.string.scene_maintain_edit_failed),
                                 mViewBinding.sceneMaintainLblName.getText().toString()));
                     }
                     break;
+                }
+                case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST: {
+                    EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
+                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(list));
+                    if (list != null && list.data != null) {
+                        for (EUser.deviceEntry e : list.data) {
+                            EDevice.deviceEntry entry = new EDevice.deviceEntry();
+                            entry.iotId = e.iotId;
+                            entry.nickName = e.nickName;
+                            entry.productKey = e.productKey;
+                            entry.status = e.status;
+                            entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
+                            entry.image = e.image;
+                        }
+
+                        if (list.data.size() >= list.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            // mUserCenter.getGatewaySubdeviceList(activity.mGatewayId, list.pageNo + 1, activity.PAGE_SIZE, activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                        } else {
+                            // 数据获取完则加载显示
+
+                        }
+                    }
+                    break;
+                }
                 default:
                     break;
             }
+
 
             return false;
         }

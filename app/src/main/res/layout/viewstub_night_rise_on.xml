@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dp_10"
+    android:paddingRight="@dimen/dp_10">
+
+    <TextView
+        style="@style/NormalFontStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:gravity="center_vertical"
+        android:text="@string/scene_maintain_trigger"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorLine" />
+
+    <RelativeLayout
+        android:id="@+id/triggerListRelItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4dp">
+
+        <ImageView
+            android:id="@+id/triggerListImgIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/contentDescription_null" />
+
+        <TextView
+            android:id="@+id/triggerListLblName"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/triggerListImgIcon"
+            android:text="@string/devicelist_name" />
+
+        <TextView
+            android:id="@+id/triggerListLblState"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/triggerListLblName"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/triggerListImgIcon"
+            android:text="@string/devicelist_status" />
+
+        <CheckBox
+            android:id="@+id/triggerlistChkSelect"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/triggerlistLblNohas"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/scene_maintain_nohas"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+</LinearLayout>

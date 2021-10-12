@@ -771,4 +771,7 @@
     <string name="too_much_del_before">绑定过多，请删除后再添加</string>
     <string name="dev_does_not_exist">设备不存在</string>
     <string name="gateway_dev_does_not_exist">网关设备不存在</string>
+    <string name="add_gateway_dev_first">请先添加网关设备</string>
+    <string name="select_gateway_dev_first">请先选择网关</string>
+    <string name="moredevice_id_2">设备标识：</string>
 </resources>

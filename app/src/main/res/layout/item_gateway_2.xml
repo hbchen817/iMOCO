@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/dp_10"
+        android:contentDescription="@string/contentDescription_null"
+        android:src="@drawable/ble" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/icon"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ble_name" />
+
+        <TextView
+            android:id="@+id/mac"
+            style="@style/SmallFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/ble_address" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:background="@color/appbgcolor" />
+</RelativeLayout>

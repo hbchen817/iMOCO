@@ -35,6 +35,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -81,6 +82,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
         setContentView(mViewBinding.getRoot());
 
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
+        ViseLog.d("LocalConditionDevsActivity mGatewayId = " + mGatewayId);
         initStatusBar();
         initRecyclerView();
         initData();
@@ -132,6 +134,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
         mSceneManager = new SceneManager(this);
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        ViseLog.d("mGatewayId = " + mGatewayId + "\n" + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
@@ -149,6 +152,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             LocalConditionDevsActivity activity = ref.get();
             if (activity != null) {
                 if (msg.what == Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST) {
+                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(msg.obj));
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
