@@ -323,7 +323,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                             String bindingTable = propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE);
                             String totalCount = propertyEntry.getPropertyValue(CTSL.TOTAL_COUNT);
                             activity.mBindingArray.addAll(JSONArray.parseArray(bindingTable));
-                            ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
+                            // ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
                             if (Integer.parseInt(totalCount) == activity.mBindingArray.size()) {
                                 activity.refreshBindingTable(activity.mBindingArray);
                             }

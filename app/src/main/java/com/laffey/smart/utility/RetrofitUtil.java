@@ -61,7 +61,8 @@ public class RetrofitUtil {
         object.put("apiVer", Constant.QUERY_SCENE_LIST_VER);
 
         JSONObject params = new JSONObject();
-        params.put("mac", mac);
+        if (mac != null && mac.length() > 0)
+            params.put("mac", mac);
         params.put("type", type);
 
         object.put("params", params);
@@ -79,9 +80,9 @@ public class RetrofitUtil {
     }
 
     // 删除场景
-    public Observable<JSONObject> deleteScene(String token, String apiVer, String gatewayMac, String sceneId) {
+    public Observable<JSONObject> deleteScene(String token, String gatewayMac, String sceneId) {
         JSONObject object = new JSONObject();
-        object.put("apiVer", apiVer);
+        object.put("apiVer", Constant.DELETE_SCENE_VER);
 
         JSONObject params = new JSONObject();
         params.put("mac", gatewayMac);

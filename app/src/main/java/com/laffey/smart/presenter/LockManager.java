@@ -123,22 +123,6 @@ public class LockManager {
     }
 
     //远程开门
-    public static void remoteOpen(String iotId,
-                                  Handler commitFailureHandler,
-                                  Handler responseErrorHandler,
-                                  @NonNull Handler processDataHandler) {
-        //设置请求参数
-        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
-        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
-        requestParameterEntry.version = "1.0.5";
-        requestParameterEntry.addParameter("iotId", iotId);
-        requestParameterEntry.addParameter("identifier", "RemoteUnlock");
-        JSONObject jsonObject = new JSONObject();
-        requestParameterEntry.addParameter("args", jsonObject);
-        //提交
-        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
-    }
-
     public static void filterUnbindKey(String iotId,
                                        String keyID,
                                        int keyType,
@@ -160,6 +144,22 @@ public class LockManager {
         jsonArray.add(jsonObject);
         requestParameterEntry.addParameter("originalLockUsers", jsonArray);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_FILTER_UNBIND_KEY;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    public static void remoteOpen(String iotId,
+                                  Handler commitFailureHandler,
+                                  Handler responseErrorHandler,
+                                  @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "RemoteUnlock");
+        JSONObject jsonObject = new JSONObject();
+        requestParameterEntry.addParameter("args", jsonObject);
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

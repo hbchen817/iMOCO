@@ -15,6 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
@@ -22,14 +25,21 @@ import com.laffey.smart.demoTest.SceneCatalogIdCache;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
+import com.laffey.smart.model.EDevice;
+import com.laffey.smart.model.EEventScene;
 import com.laffey.smart.model.EScene;
+import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.AptSceneList;
 import com.laffey.smart.presenter.AptSceneModel;
 import com.laffey.smart.presenter.CloudDataParser;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -46,6 +56,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author fyy
@@ -79,6 +93,8 @@ public class IndexFragment2 extends BaseFragment {
     private AptSceneList mAptSceneList;
     private String mSceneType;
 
+    private final List<ItemScene> mItemSceneList = new ArrayList<>();
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -107,7 +123,7 @@ public class IndexFragment2 extends BaseFragment {
         super.onResume();
         // 刷新场景列表数据
         if (SystemParameter.getInstance().getIsRefreshSceneListData()) {
-            //this.startGetSceneList(CScene.TYPE_AUTOMATIC);
+            // this.startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
             RefreshData.refreshSceneListData();
         } else {
@@ -135,16 +151,27 @@ public class IndexFragment2 extends BaseFragment {
         mListMyRL.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                RefreshData.refreshHomeSceneListData();
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    mItemSceneList.clear();
+                    mSceneList.clear();
+                    querySceneList("chengxunfei", "", "0");
+                } else {
+                    RefreshData.refreshHomeSceneListData();
 
-                startGetSceneList(CScene.TYPE_AUTOMATIC);
-                SystemParameter.getInstance().setIsRefreshSceneListData(false);
+                    startGetSceneList(CScene.TYPE_AUTOMATIC);
+                    SystemParameter.getInstance().setIsRefreshSceneListData(false);
+                }
             }
         });
+        mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
+        mListMy.setOnItemClickListener(sceneListOnItemClickListener);
         initView();
         // 开始获取场景列表
-        startGetSceneList(CScene.TYPE_AUTOMATIC);
-
+        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            querySceneList("chengxunfei", "", "0");
+        } else {
+            startGetSceneList(CScene.TYPE_AUTOMATIC);
+        }
         return view;
     }
 
@@ -169,25 +196,37 @@ public class IndexFragment2 extends BaseFragment {
                 new AptSceneList.AptSceneListCallback() {
                     @Override
                     public void onDelItem(String sceneId) {
-                        if (mSceneList != null) {
-                            for (int i = 0; i < mSceneList.size(); i++) {
-                                EScene.sceneListItemEntry entry = mSceneList.get(i);
-                                if (entry.id.equals(sceneId)) {
-                                    mSceneList.remove(i);
-                                    mAptSceneList.notifyDataSetChanged();
+                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                            QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
+                            String gatewayMac = "";
+                            for (ItemScene scene : mItemSceneList) {
+                                if (sceneId.equals(scene.getSceneId())) {
+                                    gatewayMac = scene.getMac();
                                     break;
                                 }
                             }
-                            if (mSceneList.size() == 0) {
+                            deleteScene(gatewayMac, sceneId);
+                        } else {
+                            if (mSceneList != null) {
+                                for (int i = 0; i < mSceneList.size(); i++) {
+                                    EScene.sceneListItemEntry entry = mSceneList.get(i);
+                                    if (entry.id.equals(sceneId)) {
+                                        mSceneList.remove(i);
+                                        mAptSceneList.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+                                if (mSceneList.size() == 0) {
+                                    mSceneNodataView.setVisibility(View.VISIBLE);
+                                    mListMy.setVisibility(View.GONE);
+                                } else {
+                                    mSceneNodataView.setVisibility(View.GONE);
+                                    mListMy.setVisibility(View.VISIBLE);
+                                }
+                            } else {
                                 mSceneNodataView.setVisibility(View.VISIBLE);
                                 mListMy.setVisibility(View.GONE);
-                            } else {
-                                mSceneNodataView.setVisibility(View.GONE);
-                                mListMy.setVisibility(View.VISIBLE);
                             }
-                        } else {
-                            mSceneNodataView.setVisibility(View.VISIBLE);
-                            mListMy.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -250,6 +289,60 @@ public class IndexFragment2 extends BaseFragment {
                 startActivity(intent);
             }
         });
+    }
+
+    private void deleteScene(String gatewayMac, String sceneId) {
+        RetrofitUtil.getInstance()
+                .deleteScene("chengxunfei", gatewayMac, sceneId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        QMUITipDialogUtil.dismiss();
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        boolean result = response.getBoolean("result");
+                        if (code == 200) {
+                            if (result) {
+                                mItemSceneList.clear();
+                                mSceneList.clear();
+                                EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
+                                if (dev != null) {
+                                    mSceneManager.manageSceneService(dev.iotId, sceneId, "3", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                }
+                                RefreshData.refreshHomeSceneListData();
+                                querySceneList("chengxunfei", "", "0");
+                            } else {
+                                if (msg == null || msg.length() == 0) {
+                                    ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                                } else
+                                    ToastUtils.showLongToast(mActivity, msg);
+                            }
+                        } else {
+                            if (msg == null || msg.length() == 0) {
+                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(mActivity, msg);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(mActivity, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override
@@ -321,39 +414,62 @@ public class IndexFragment2 extends BaseFragment {
             // 将删除隐藏掉
             mAptSceneList.hideDeleteButton();
 
-            // 获取场景模板代码
-            int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
-            if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
-                // 非模板场景处理
-                //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
-                //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                ViseLog.d("场景详情 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+                ItemScene itemScene = mItemSceneList.get(i);
+                EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(itemScene.getMac());
+                dev = DeviceBuffer.getDevByMac("CCCCCCFFFE9509A9");
 
-                Intent intent = new Intent(mActivity, NewSceneActivity.class);
-                intent.putExtra("scene_id", mSceneList.get(i).id);
-                intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
-                startActivityForResult(intent, 1000);
-            } else {
-                // 模板场景处理
-                if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
-                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
-                    intent.putExtra("operateType", CScene.OPERATE_UPDATE);
-                    intent.putExtra("sceneId", mSceneList.get(i).id);
-                    intent.putExtra("name", mSceneList.get(i).name);
-                    intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
-                    intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
-                    intent.putExtra("sceneNumber", mSceneList.size());
-                    mActivity.startActivity(intent);
+                if (dev != null) {
+                    String gatewayId = dev.gatewayId;
+                    gatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
+
+                    EEventScene scene = new EEventScene();
+                    scene.setTarget("LocalSceneActivity");
+                    scene.setGatewayId(gatewayId);
+                    scene.setScene(mItemSceneList.get(i));
+                    EventBus.getDefault().postSticky(scene);
+
+                    Intent intent = new Intent(mActivity, LocalSceneActivity.class);
+                    startActivityForResult(intent, 10000);
                 } else {
-                    //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                    ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                }
+            } else {
+                // 获取场景模板代码
+                int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
+                if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
+                    // 非模板场景处理
+                    //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
                     //SystemParameter.getInstance().setIsRefreshSceneListData(true);
-                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
-                    intent.putExtra("operateType", CScene.OPERATE_UPDATE);
-                    intent.putExtra("sceneId", mSceneList.get(i).id);
-                    intent.putExtra("name", mSceneList.get(i).name);
-                    intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
-                    intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
-                    intent.putExtra("sceneNumber", mSceneList.size());
-                    mActivity.startActivity(intent);
+
+                    Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                    intent.putExtra("scene_id", mSceneList.get(i).id);
+                    intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
+                    startActivityForResult(intent, 1000);
+                } else {
+                    // 模板场景处理
+                    if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
+                        Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                        intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                        intent.putExtra("sceneId", mSceneList.get(i).id);
+                        intent.putExtra("name", mSceneList.get(i).name);
+                        intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                        intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                        intent.putExtra("sceneNumber", mSceneList.size());
+                        mActivity.startActivity(intent);
+                    } else {
+                        //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                        //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                        Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                        intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                        intent.putExtra("sceneId", mSceneList.get(i).id);
+                        intent.putExtra("name", mSceneList.get(i).name);
+                        intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                        intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                        intent.putExtra("sceneNumber", mSceneList.size());
+                        mActivity.startActivity(intent);
+                    }
                 }
             }
         }
@@ -370,6 +486,77 @@ public class IndexFragment2 extends BaseFragment {
             }
         }
         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+
+    // 查询本地场景列表
+    private void querySceneList(String token, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        JSONArray sceneList = response.getJSONArray("sceneList");
+                        if (code == 0 || code == 200) {
+                            if (sceneList != null) {
+                                for (int i = 0; i < sceneList.size(); i++) {
+                                    JSONObject sceneObj = sceneList.getJSONObject(i);
+                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+
+                                    mItemSceneList.add(scene);
+
+                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                    entry.id = scene.getSceneId();
+                                    entry.name = scene.getName();
+                                    entry.valid = !"0".equals(scene.getEnable());
+                                    entry.description = scene.getMac();
+                                    entry.catalogId = scene.getType();
+                                    mSceneList.add(entry);
+                                }
+                            }
+                            if ("0".equals(type)) {
+                                querySceneList("chengxunfei", "", "1");
+                            } else {
+                                // ViseLog.d("场景列表 = " + GsonUtil.toJson(mSceneList));
+                                mAptSceneList.setData(mSceneList);
+                                mAptSceneList.notifyDataSetChanged();
+                                mListMyRL.finishRefresh(true);
+                                if (mSceneList.size() > 0) {
+                                    mListMyRL.setVisibility(View.VISIBLE);
+                                    mSceneNodataView.setVisibility(View.GONE);
+                                } else {
+                                    mListMyRL.setVisibility(View.GONE);
+                                    mSceneNodataView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        } else {
+                            mListMyRL.finishRefresh(false);
+                            QMUITipDialogUtil.dismiss();
+                            if (msg != null && msg.length() > 0)
+                                ToastUtils.showLongToast(mActivity, msg);
+                            else
+                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     // API数据处理器
@@ -449,6 +636,11 @@ public class IndexFragment2 extends BaseFragment {
                     QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
                 }
             });
+        } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+            // 刷新主界面场景列表
+            mItemSceneList.clear();
+            mSceneList.clear();
+            querySceneList("chengxunfei", "", "0");
         }
     }
 }

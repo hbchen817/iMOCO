@@ -769,4 +769,6 @@
     <string name="do_you_want_del_scene">确定要删除“%1$s”？</string>
     <string name="edit_scene">编辑场景</string>
     <string name="too_much_del_before">绑定过多，请删除后再添加</string>
+    <string name="dev_does_not_exist">设备不存在</string>
+    <string name="gateway_dev_does_not_exist">网关设备不存在</string>
 </resources>

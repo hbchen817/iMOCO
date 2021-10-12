@@ -14,6 +14,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -30,6 +32,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalSceneListBinding;
 import com.laffey.smart.model.EEventScene;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
@@ -43,6 +46,7 @@ import com.vise.log.ViseLog;
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +55,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class LocalSceneListActivity extends AppCompatActivity implements View.OnClickListener {
+public class LocalSceneListActivity extends BaseActivity implements View.OnClickListener {
     private ActivityLocalSceneListBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
@@ -59,12 +63,15 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
     private final int SCENE_LIST_RESULT_CODE = 10001;
 
     private BaseQuickAdapter<ItemScene, BaseViewHolder> mAdapter;
-    private List<ItemScene> mList = new ArrayList<>();
+    private final List<ItemScene> mList = new ArrayList<>();
 
     private TypedArray mSceneBgs;
     private String mGatewayId;
     private String mSceneType = "0";
     private String mGatewayMac;
+
+    private MyHandler mHandler;
+    private SceneManager mSceneManager;
 
     public static void start(Context context, String gatewayId) {
         Intent intent = new Intent(context, LocalSceneListActivity.class);
@@ -142,6 +149,23 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                 });
     }
 
+    private static class MyHandler extends Handler {
+        private final WeakReference<LocalSceneListActivity> ref;
+
+        public MyHandler(LocalSceneListActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            LocalSceneListActivity activity = ref.get();
+            if (activity != null) {
+
+            }
+        }
+    }
+
     // 查询本地场景列表
     private void querySceneList(String token, String mac, String type) {
         RetrofitUtil.getInstance().querySceneList(token, mac, type)
@@ -158,11 +182,13 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
-                        if (code == 0) {
-                            for (int i = 0; i < sceneList.size(); i++) {
-                                JSONObject sceneObj = sceneList.getJSONObject(i);
-                                ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
-                                mList.add(scene);
+                        if (code == 0 || code == 200) {
+                            if (sceneList != null) {
+                                for (int i = 0; i < sceneList.size(); i++) {
+                                    JSONObject sceneObj = sceneList.getJSONObject(i);
+                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                    mList.add(scene);
+                                }
                             }
                             if ("0".equals(mSceneType)) {
                                 mSceneType = "1";
@@ -206,6 +232,8 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
     }
 
     private void initView() {
+        mSceneManager = new SceneManager(this);
+        mHandler = new MyHandler(this);
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         mViewBinding.createSceneTv.setTypeface(iconfont);
@@ -323,7 +351,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
             public void onClick(View v) {
                 dialog.dismiss();
                 RetrofitUtil.getInstance()
-                        .deleteScene("chengxunfei", Constant.DELETE_SCENE_VER, mGatewayMac, scene.getSceneId())
+                        .deleteScene("chengxunfei", mGatewayMac, scene.getSceneId())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<JSONObject>() {
@@ -340,6 +368,7 @@ public class LocalSceneListActivity extends AppCompatActivity implements View.On
                                 if (code == 200) {
                                     if (result) {
                                         ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.scene_delete_sucess);
+                                        mSceneManager.manageSceneService(mGatewayId, scene.getSceneId(), "3", mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                         mList.remove(scene);
                                         mAdapter.notifyDataSetChanged();
                                     } else {

@@ -24,10 +24,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.gary.hi.library.log.HiLog;
 import com.google.gson.Gson;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.Constant;
@@ -43,6 +45,7 @@ import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.AptDeviceGrid;
 import com.laffey.smart.presenter.AptDeviceList;
@@ -605,7 +608,22 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mSceneList != null && mSceneList.size() > 0) {
-                new SceneManager(mActivity).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    EScene.sceneListItemEntry scene = mSceneList.get(position);
+                    String gatewayMac = scene.description;
+                    EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
+
+                    ViseLog.d("网关mac = " + gatewayMac + "\n缓存 = " +
+                            GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+
+                    if (dev != null) {
+                        // mSceneManager.invokeLocalSceneService(dev.iotId, entry.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        mSceneManager.invokeLocalSceneService("SgQZHtfLJr3vYMAaIpfA000100", scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+                } else
+                    new SceneManager(mActivity).executeScene(mSceneList.get(position).id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         }
     };
@@ -624,8 +642,13 @@ public class IndexFragment1 extends BaseFragment {
         } else {
             mSceneList.clear();
         }
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
-                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            querySceneList("chengxunfei", "", "1");
+            // 数据获取完则开始获取设备列表数据
+            startGetDeviceList();
+        } else
+            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
+                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // 开始获取场景列表
@@ -635,8 +658,68 @@ public class IndexFragment1 extends BaseFragment {
         } else {
             mSceneList.clear();
         }
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
-                mCommitFailureHandler, mResponseErrorHandler, mGetSceneHandler);
+        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            querySceneList("chengxunfei", "", "1");
+            // 数据获取完则开始获取设备列表数据
+            // startGetDeviceList();
+        } else
+            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
+                    mCommitFailureHandler, mResponseErrorHandler, mGetSceneHandler);
+    }
+
+    // 查询本地场景列表
+    private void querySceneList(String token, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        // ViseLog.d("手动场景 = " + GsonUtil.toJson(response));
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        JSONArray sceneList = response.getJSONArray("sceneList");
+                        if (code == 0 || code == 200) {
+                            mSceneList.clear();
+                            if (sceneList != null) {
+                                for (int i = 0; i < sceneList.size(); i++) {
+                                    JSONObject sceneObj = sceneList.getJSONObject(i);
+                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                    entry.id = scene.getSceneId();
+                                    entry.name = scene.getName();
+                                    entry.valid = !"0".equals(scene.getEnable());
+                                    entry.description = scene.getMac();
+                                    mSceneList.add(entry);
+                                }
+                            }
+                            // 数据获取完则设置场景列表数据
+                            setSceneList(mSceneList);
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            if (msg != null && msg.length() > 0)
+                                ToastUtils.showLongToast(mActivity, msg);
+                            else
+                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private static class GetSceneHandler extends Handler {
@@ -729,7 +812,7 @@ public class IndexFragment1 extends BaseFragment {
     // 同步设备列表数据
     private void syncDeviceListData() {
         Map<String, EDevice.deviceEntry> all = DeviceBuffer.getAllDeviceInformation();
-        ViseLog.d(GsonUtil.toJson(all));
+        // ViseLog.d(GsonUtil.toJson(all));
         mDeviceList.clear();
         mShareDeviceList.clear();
         if (mAptDeviceGrid != null) mAptDeviceGrid.notifyDataSetChanged();

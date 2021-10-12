@@ -1904,4 +1904,43 @@ public class SceneManager {
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
+
+    // 管理本地场景
+    public static void manageSceneService(String iotId, String sceneid, String type,
+                                          Handler commitFailureHandler,
+                                          Handler responseErrorHandler,
+                                          @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "ManageSceneService");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("SceneId", sceneid);
+        jsonObject.put("Type", type);
+        requestParameterEntry.addParameter("args", jsonObject);
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 触发手动场景服务
+    public static void invokeLocalSceneService(String iotId, String sceneid,
+                                               Handler commitFailureHandler,
+                                               Handler responseErrorHandler,
+                                               @NonNull Handler processDataHandler) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "InvokeLocalSceneService");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("SceneId", sceneid);
+        requestParameterEntry.addParameter("args", jsonObject);
+
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
 }

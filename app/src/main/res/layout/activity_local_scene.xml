@@ -233,10 +233,10 @@
                         android:focusable="true"
                         android:onClick="onClick"
                         android:padding="10dp"
-                        android:visibility="invisible"
                         android:text="@string/icon_add_2"
                         android:textColor="@drawable/selector_theme_click"
-                        android:textSize="30sp" />
+                        android:textSize="30sp"
+                        android:visibility="invisible" />
                 </RelativeLayout>
 
                 <TextView
@@ -416,6 +416,24 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/del_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_10"
+                android:background="@drawable/shape_button_red"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/NormalWhiteFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="@dimen/dp_10"
+                    android:text="@string/delete"
+                    android:textSize="@dimen/sp_14" />
+            </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -19,10 +19,13 @@ import android.app.AlertDialog;
 
 import androidx.annotation.NonNull;
 
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EScene;
+import com.laffey.smart.utility.GsonUtil;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -177,7 +180,10 @@ public class AptSceneList extends BaseAdapter {
             return convertView;
         }
         viewHolder.name.setText(this.mSceneList.get(position).name);
-        viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
+        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+            viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_automatic) : this.mContext.getString(R.string.scenetype_manual));
+        else
+            viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
         if (this.mDeleteList.get(position).isDeleted) {
             viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,7 +205,9 @@ public class AptSceneList extends BaseAdapter {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
                             //new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
-                            new SceneManager(mContext).deleteScene(mSceneList.get(index).id, null, null, new Myhandler(mContext));
+                            if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                                new SceneManager(mContext).deleteScene(mSceneList.get(index).id, null, null, new Myhandler(mContext));
+                            }
                             mDeleteList.remove(position);
                             mCallback.onDelItem(mSceneList.get(index).id);
                         }

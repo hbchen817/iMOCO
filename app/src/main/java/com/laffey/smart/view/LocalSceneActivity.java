@@ -2,22 +2,23 @@ package com.laffey.smart.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,12 +33,14 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalSceneBinding;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAction;
-import com.laffey.smart.model.EActionScene;
 import com.laffey.smart.model.ECondition;
+import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EEventScene;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -51,6 +54,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +65,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class LocalSceneActivity extends AppCompatActivity implements View.OnClickListener {
+public class LocalSceneActivity extends BaseActivity implements View.OnClickListener {
     private ActivityLocalSceneBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
@@ -90,6 +94,8 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
 
     private final List<EAction> mActionList = new ArrayList<>();
     private BaseQuickAdapter<EAction, BaseViewHolder> mActionAdapter;
+    private SceneManager mSceneManager;
+    private MyHandler mHandler;
 
     public static void start(Activity activity, String gatewayId, String gatewayMac, int requestCode) {
         Intent intent = new Intent(activity, LocalSceneActivity.class);
@@ -142,6 +148,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
 
     private void initData() {
         // queryMacByIotId();
+        mSceneManager = new SceneManager(this);
     }
 
     private void queryMacByIotId() {
@@ -194,11 +201,19 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                 goIv.setTypeface(mIconfont);
                 icon.setText(R.string.icon_dev);
 
-                holder.setText(R.id.title, DeviceBuffer.getDeviceInformation(eCondition.getIotId()).nickName);
+                if (DeviceBuffer.getDeviceInformation(eCondition.getIotId()) != null) {
+                    holder.setText(R.id.title, DeviceBuffer.getDeviceInformation(eCondition.getIotId()).nickName);
 
-                StringBuilder desc = new StringBuilder();
-                desc.append(refreshConditionDesc(eCondition));
-                holder.setText(R.id.detail, desc.toString());
+                    StringBuilder desc = new StringBuilder();
+                    desc.append(refreshConditionDesc(eCondition));
+                    holder.setText(R.id.detail, desc.toString());
+                } else {
+                    holder.setText(R.id.title, getString(R.string.dev_does_not_exist));
+                    holder.setTextColor(R.id.title, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+
+                    holder.setText(R.id.detail, "--");
+                    holder.setTextColor(R.id.detail, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                }
 
                 holder.setVisible(R.id.divider, mConditionList.indexOf(eCondition) != 0);
             }
@@ -207,10 +222,14 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 ECondition eCondition = mConditionList.get(position);
-                eCondition.setTarget("LocalConditionValueActivity");
-                EventBus.getDefault().postSticky(eCondition);
-                Intent intent = new Intent(LocalSceneActivity.this, LocalConditionValueActivity.class);
-                startActivity(intent);
+                if (eCondition.getIotId() != null && eCondition.getIotId().length() > 0) {
+                    eCondition.setTarget("LocalConditionValueActivity");
+                    EventBus.getDefault().postSticky(eCondition);
+                    Intent intent = new Intent(LocalSceneActivity.this, LocalConditionValueActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.showLongToast(LocalSceneActivity.this, R.string.dev_does_not_exist);
+                }
             }
         });
         mConditionAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -238,9 +257,16 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                 String type = eAction.getAction().getType();
                 if ("Command".equals(type)) {
                     icon.setText(R.string.icon_dev);
-                    holder.setText(R.id.title, DeviceBuffer.getDeviceInformation(eAction.getIotId()).nickName);
+                    if (DeviceBuffer.getDeviceInformation(eAction.getIotId()) != null) {
+                        holder.setText(R.id.title, DeviceBuffer.getDeviceInformation(eAction.getIotId()).nickName);
 
-                    holder.setText(R.id.detail, refreshActionDesc(eAction));
+                        holder.setText(R.id.detail, refreshActionDesc(eAction));
+                    } else {
+                        holder.setText(R.id.title, getString(R.string.dev_does_not_exist));
+                        holder.setTextColor(R.id.title, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                        holder.setText(R.id.detail, "--");
+                        holder.setTextColor(R.id.detail, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                    }
                 } else if ("Scene".equals(type)) {
                     icon.setText(R.string.icon_scene);
                     holder.setText(R.id.title, eAction.getKeyNickName())
@@ -254,11 +280,15 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EAction eAction = mActionList.get(position);
                 if ("Command".equals(eAction.getAction().getType())) {
-                    eAction.setTarget("LocalActionValueActivity");
-                    EventBus.getDefault().postSticky(eAction);
+                    if (eAction.getIotId() != null && eAction.getIotId().length() > 0) {
+                        eAction.setTarget("LocalActionValueActivity");
+                        EventBus.getDefault().postSticky(eAction);
 
-                    Intent intent = new Intent(LocalSceneActivity.this, LocalActionValueActivity.class);
-                    startActivity(intent);
+                        Intent intent = new Intent(LocalSceneActivity.this, LocalActionValueActivity.class);
+                        startActivity(intent);
+                    } else {
+                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.dev_does_not_exist);
+                    }
                 } else if ("Scene".equals(eAction.getAction().getType())) {
                     eAction.setTarget("LocalActionScenesActivity");
                     EventBus.getDefault().postSticky(eAction);
@@ -813,6 +843,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initView() {
+        mHandler = new MyHandler(this);
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mViewBinding.nameGo.setTypeface(iconfont);
         mViewBinding.statusGo.setTypeface(iconfont);
@@ -835,6 +866,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         mViewBinding.statusGo.setOnClickListener(this);
         mViewBinding.timeEnableGo.setOnClickListener(this);
         mViewBinding.conditionEnableGo.setOnClickListener(this);
+        mViewBinding.delLayout.setOnClickListener(this);
     }
 
     // 嵌入式状态栏
@@ -981,7 +1013,119 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         } else if (v.getId() == mViewBinding.addActionTv.getId() ||
                 v.getId() == mViewBinding.addActionIv.getId()) {
             LocalActionTypeActivity.start(this, mGatewayId);
+        } else if (v.getId() == mViewBinding.delLayout.getId()) {
+            showConfirmDialog(getString(R.string.dialog_title), String.format(getString(R.string.do_you_want_del_scene),
+                    mViewBinding.nameTv.getText().toString()), getString(R.string.dialog_cancel), getString(R.string.delete), mSceneId);
         }
+    }
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<LocalSceneActivity> ref;
+
+        public MyHandler(LocalSceneActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            LocalSceneActivity activity = ref.get();
+            if (activity != null) {
+
+            }
+        }
+    }
+
+    private void showConfirmDialog(String title, String content, String cancel, String ok, String sceneId) {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+
+        TextView titleTV = (TextView) view.findViewById(R.id.title_tv);
+        TextView contentTV = (TextView) view.findViewById(R.id.content_tv);
+        TextView disagreeTV = (TextView) view.findViewById(R.id.disagree_btn);
+        TextView agreeTV = (TextView) view.findViewById(R.id.agree_btn);
+
+        titleTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        disagreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        agreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+        contentTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
+
+        titleTV.setText(title);
+        contentTV.setText(content);
+        disagreeTV.setText(cancel);
+        agreeTV.setText(ok);
+
+        disagreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        agreeTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                QMUITipDialogUtil.showLoadingDialg(LocalSceneActivity.this, R.string.is_submitted);
+                RetrofitUtil.getInstance()
+                        .deleteScene("chengxunfei", mGatewayMac, sceneId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<JSONObject>() {
+                            @Override
+                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                                int code = response.getInteger("code");
+                                String msg = response.getString("message");
+                                boolean result = response.getBoolean("result");
+                                if (code == 200) {
+                                    if (result) {
+                                        mSceneManager.manageSceneService(mGatewayId, mSceneId, "3", mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                                        QMUITipDialogUtil.dismiss();
+                                        if ("1".equals(mSceneType)) {
+                                            // 手动场景
+                                            RefreshData.refreshHomeSceneListData();
+                                        }
+                                        setResult(10001);
+                                        finish();
+                                    } else {
+                                        if (msg == null || msg.length() == 0) {
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                        } else
+                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                    }
+                                } else {
+                                    if (msg == null || msg.length() == 0) {
+                                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                    } else
+                                        ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                }
+                            }
+
+                            @Override
+                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                                QMUITipDialogUtil.dismiss();
+                                ToastUtils.showLongToast(LocalSceneActivity.this, e.getMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
+            }
+        });
+
+        Window window = dialog.getWindow();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+
+        dialog.show();
+        window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shape_white_solid));
+        window.setLayout(width - 150, height / 5);
     }
 
     // 提交场景
@@ -1030,7 +1174,12 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
             for (ECondition eCondition : mConditionList) {
                 conditionList.add(eCondition.getCondition());
             }
-            mScene.setConditions(conditionList);
+            mSceneType = "1";// 手动
+            if ("1".equals(mSceneType)) {
+                mScene.setConditions(new ArrayList<>());
+            } else {
+                mScene.setConditions(conditionList);
+            }
 
             List<ItemScene.Action> actionList = new ArrayList<>();
             for (EAction eAction : mActionList) {
@@ -1060,6 +1209,11 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                                 if (code == 200) {
                                     if (result) {
                                         QMUITipDialogUtil.dismiss();
+                                        mSceneManager.manageSceneService(mGatewayId, sceneId, "1", mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                                        if ("1".equals(mSceneType)) {
+                                            // 手动场景
+                                            RefreshData.refreshHomeSceneListData();
+                                        }
                                         setResult(10001);
                                         finish();
                                     } else {
@@ -1113,6 +1267,11 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                                 if (code == 200) {
                                     if (result) {
                                         QMUITipDialogUtil.dismiss();
+                                        mSceneManager.manageSceneService(mGatewayId, sceneId, "2", mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                                        if ("1".equals(mSceneType)) {
+                                            // 手动场景
+                                            RefreshData.refreshHomeSceneListData();
+                                        }
                                         setResult(10001);
                                         finish();
                                     } else {
@@ -1284,6 +1443,7 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
         mSceneId = eEventScene.getScene().getSceneId();
         ItemScene scene = eEventScene.getScene();
         mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.edit_scene);
+        mViewBinding.delLayout.setVisibility(View.VISIBLE);
         mViewBinding.nameTv.setText(scene.getName());
         if ("1".equals(scene.getEnable())) {
             // 启用
@@ -1435,10 +1595,13 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                         }*/
 
                         // 条件
-                        String iotId = DeviceBuffer.getDevByMac(mConditionList.get(pos).getCondition().getParameters().getDeviceId()).iotId;
-                        mConditionList.get(pos).setIotId(iotId);
-                        String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
-                        mConditionList.get(pos).setKeyNickName(refreshConditionDesc(pk, mConditionList.get(pos)));
+                        EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(mConditionList.get(pos).getCondition().getParameters().getDeviceId());
+                        if (entry != null) {
+                            String iotId = entry.iotId;
+                            mConditionList.get(pos).setIotId(iotId);
+                            String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
+                            mConditionList.get(pos).setKeyNickName(refreshConditionDesc(pk, mConditionList.get(pos)));
+                        }
                         if (pos < mConditionList.size() - 1) {
                             queryConditionIotIdByMac(token, pos + 1);
                         } else {
@@ -1502,11 +1665,13 @@ public class LocalSceneActivity extends AppCompatActivity implements View.OnClic
                         }*/
 
                             // 动作
-                            String iotId = DeviceBuffer.getDevByMac(deviceId).iotId;
-                            // ViseLog.d("iotId = " + iotId);
-                            mActionList.get(pos).setIotId(iotId);
-                            String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
-                            mActionList.get(pos).setKeyNickName(refreshActionDesc(pk, mActionList.get(pos)));
+                            EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(deviceId);
+                            if (entry != null) {
+                                String iotId = entry.iotId;
+                                mActionList.get(pos).setIotId(iotId);
+                                String pk = DeviceBuffer.getDeviceInformation(iotId).productKey;
+                                mActionList.get(pos).setKeyNickName(refreshActionDesc(pk, mActionList.get(pos)));
+                            }
                             if (pos < mActionList.size() - 1) {
                                 queryActionIotIdByMac(token, pos + 1);
                             } else {
