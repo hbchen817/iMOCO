@@ -46,6 +46,7 @@ import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.AptDeviceGrid;
 import com.laffey.smart.presenter.AptDeviceList;
@@ -515,6 +516,7 @@ public class IndexFragment1 extends BaseFragment {
 
     // 设置场景水平列表
     private void setSceneList(List<EScene.sceneListItemEntry> list) {
+        // ViseLog.d("设置场景水平列表 = " + GsonUtil.toJson(list));
         if (list == null || list.size() == 0) {
             mLblSceneTitle.setVisibility(View.GONE);
             mHscSceneList.setVisibility(View.GONE);
@@ -617,8 +619,8 @@ public class IndexFragment1 extends BaseFragment {
                             GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
 
                     if (dev != null) {
-                        // mSceneManager.invokeLocalSceneService(dev.iotId, entry.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                        mSceneManager.invokeLocalSceneService("SgQZHtfLJr3vYMAaIpfA000100", scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        mSceneManager.invokeLocalSceneService(dev.iotId, scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        //mSceneManager.invokeLocalSceneService("SgQZHtfLJr3vYMAaIpfA000100", scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     } else {
                         ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
                     }
@@ -689,12 +691,15 @@ public class IndexFragment1 extends BaseFragment {
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                    ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
+
+                                    DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+
                                     EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                    entry.id = scene.getSceneId();
-                                    entry.name = scene.getName();
-                                    entry.valid = !"0".equals(scene.getEnable());
-                                    entry.description = scene.getMac();
+                                    entry.id = scene.getSceneDetail().getSceneId();
+                                    entry.name = scene.getSceneDetail().getName();
+                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                    entry.description = scene.getGwMac();
                                     mSceneList.add(entry);
                                 }
                             }
@@ -929,6 +934,7 @@ public class IndexFragment1 extends BaseFragment {
     }
 
     private void queryMac(int pos) {
+        if (pos >= mDeviceList.size()) return;
         RetrofitUtil.getInstance()
                 .queryMacByIotId("chengxunfei", "xxxxxx", mDeviceList.get(pos).iotId)
                 .subscribeOn(Schedulers.io())

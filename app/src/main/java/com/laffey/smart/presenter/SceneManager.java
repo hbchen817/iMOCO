@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,15 +21,28 @@ import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.demoTest.ActionEntry;
 import com.laffey.smart.demoTest.CaConditionEntry;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EProduct;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.view.SwitchLocalSceneActivity;
 import com.vise.log.ViseLog;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -112,12 +126,12 @@ public class SceneManager {
         list.add(new EScene.sceneModelEntry(CScene.SMC_NIGHT_RISE_ON, R.string.scenemodel_night_rise_on, R.drawable.scene_night_rise_on));
         list.add(new EScene.sceneModelEntry(CScene.SMC_UNMANNED_OFF, R.string.scenemodel_unmanned_off, R.drawable.scene_unmanned_off));
         list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_ON, R.string.scenemodel_alarm_on, R.drawable.scene_alarm_on));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scene_remote_control_on));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_REMOTE_CONTROL_ON, R.string.scenemodel_remote_control_on, R.drawable.scene_remote_control_on));
         list.add(new EScene.sceneModelEntry(CScene.SMC_OPEN_DOOR_ON, R.string.scenemodel_open_door_on, R.drawable.scene_open_door_on));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scene_bell_play));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scene_alarm_play));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scene_pir_deploy_alarm));
-        list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scene_door_deploy_alarm));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_BELL_PLAY, R.string.scenemodel_bell_play, R.drawable.scene_bell_play));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_ALARM_PLAY, R.string.scenemodel_alarm_play, R.drawable.scene_alarm_play));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_PIR_DEPLOY_ALARM, R.string.scenemodel_pir_deploy_alarm, R.drawable.scene_pir_deploy_alarm));
+        // list.add(new EScene.sceneModelEntry(CScene.SMC_DOOR_DEPLOY_ALARM, R.string.scenemodel_door_deploy_alarm, R.drawable.scene_door_deploy_alarm));
         list.add(new EScene.sceneModelEntry(CScene.SMC_NONE, R.string.scenemodel_one_key, R.drawable.background_null));
         list.add(new EScene.sceneModelEntry(CScene.SMC_GO_HOME_PATTERN, R.string.scenemodel_go_home_pattern, R.drawable.scene_go_home_pattern));
         list.add(new EScene.sceneModelEntry(CScene.SMC_LEAVE_HOME_PATTERN, R.string.scenemodel_leave_home_pattern, R.drawable.scene_leave_home_pattern));
@@ -1312,7 +1326,7 @@ public class SceneManager {
 
         // 触发设备处理
         List<EScene.triggerEntry> triggerEntries = this.getTrigger(sceneModelCode, productList);
-        if (triggerEntries != null && triggerEntries.size() > 0) {
+        if (triggerEntries.size() > 0) {
             // 触发标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_TRIGGER_TITLE;
@@ -1331,7 +1345,7 @@ public class SceneManager {
         EScene.conditionTimeEntry conditionTimeEntry = this.getConditionTime(sceneModelCode);
         // 状态条件处理
         List<EScene.conditionStateEntry> conditionStateEntries = this.getConditionState(sceneModelCode, productList);
-        if (conditionTimeEntry != null || (conditionStateEntries != null && conditionStateEntries.size() > 0)) {
+        if (conditionTimeEntry != null || conditionStateEntries.size() > 0) {
             // 条件标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_CONDITION_TITLE;
@@ -1345,7 +1359,7 @@ public class SceneManager {
                 list.add(parameterTime);
             }
             // 状态条件处理
-            if (conditionStateEntries != null && conditionStateEntries.size() > 0) {
+            if (conditionStateEntries.size() > 0) {
                 // 响应设备处理
                 for (EScene.conditionStateEntry conditionStateEntry : conditionStateEntries) {
                     EScene.parameterEntry parameter = new EScene.parameterEntry();
@@ -1358,7 +1372,7 @@ public class SceneManager {
 
         // 响应设备处理
         List<EScene.responseEntry> responseEntries = this.getResponse(sceneModelCode, productList);
-        if (responseEntries != null && responseEntries.size() > 0) {
+        if (responseEntries.size() > 0) {
             // 响应标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_RESPONSE_TITLE;
@@ -1366,6 +1380,80 @@ public class SceneManager {
             // 一键场景处理
             if (sceneModelCode >= CScene.SMC_GO_HOME_PATTERN) {
                 parameterTitle.typeName = this.mContext.getString(R.string.scene_maintain_reponse_only_action);
+            }
+            list.add(parameterTitle);
+            // 响应设备处理
+            for (EScene.responseEntry responseEntry : responseEntries) {
+                EScene.parameterEntry parameter = new EScene.parameterEntry();
+                parameter.type = CScene.SPT_RESPONSE;
+                parameter.responseEntry = responseEntry;
+                list.add(parameter);
+            }
+        }
+
+        return list;
+    }
+
+    // 生成指定场景模板参数列表（单一网关下）
+    public List<EScene.parameterEntry> genSceneModelParameterList(int sceneModelCode, List<EProduct.configListEntry> productList, String gatewayId) {
+        List<EScene.parameterEntry> list = new ArrayList<EScene.parameterEntry>();
+
+        // 触发设备处理
+        List<EScene.triggerEntry> triggerEntries = getTrigger(sceneModelCode, productList, gatewayId);
+        if (triggerEntries.size() > 0) {
+            // 触发标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = CScene.SPT_TRIGGER_TITLE;
+            parameterTitle.typeName = mContext.getString(R.string.scene_maintain_trigger);
+            list.add(parameterTitle);
+            // 触发设备处理
+            for (EScene.triggerEntry triggerEntry : triggerEntries) {
+                EScene.parameterEntry parameter = new EScene.parameterEntry();
+                parameter.type = CScene.SPT_TRIGGER;
+                parameter.triggerEntry = triggerEntry;
+                list.add(parameter);
+            }
+        }
+
+        // 时间条件处理
+        EScene.conditionTimeEntry conditionTimeEntry = getConditionTime(sceneModelCode);
+        // 状态条件处理
+        List<EScene.conditionStateEntry> conditionStateEntries = getConditionState(sceneModelCode, productList, gatewayId);
+        if (conditionTimeEntry != null || conditionStateEntries.size() > 0) {
+            // 条件标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = CScene.SPT_CONDITION_TITLE;
+            parameterTitle.typeName = mContext.getString(R.string.scene_maintain_condition);
+            list.add(parameterTitle);
+            // 时间条件处理
+            if (conditionTimeEntry != null) {
+                EScene.parameterEntry parameterTime = new EScene.parameterEntry();
+                parameterTime.type = CScene.SPT_CONDITION_TIME;
+                parameterTime.conditionTimeEntry = conditionTimeEntry;
+                list.add(parameterTime);
+            }
+            // 状态条件处理
+            if (conditionStateEntries.size() > 0) {
+                // 响应设备处理
+                for (EScene.conditionStateEntry conditionStateEntry : conditionStateEntries) {
+                    EScene.parameterEntry parameter = new EScene.parameterEntry();
+                    parameter.type = CScene.SPT_CONDITION_STATE;
+                    parameter.conditionStateEntry = conditionStateEntry;
+                    list.add(parameter);
+                }
+            }
+        }
+
+        // 响应设备处理
+        List<EScene.responseEntry> responseEntries = getResponse(sceneModelCode, productList, gatewayId);
+        if (responseEntries.size() > 0) {
+            // 响应标题处理
+            EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
+            parameterTitle.type = CScene.SPT_RESPONSE_TITLE;
+            parameterTitle.typeName = mContext.getString(R.string.scene_maintain_reponse);
+            // 一键场景处理
+            if (sceneModelCode >= CScene.SMC_GO_HOME_PATTERN) {
+                parameterTitle.typeName = mContext.getString(R.string.scene_maintain_reponse_only_action);
             }
             list.add(parameterTitle);
             // 响应设备处理
@@ -1459,7 +1547,7 @@ public class SceneManager {
             case CScene.SMC_PIR_DEPLOY_ALARM:
                 // 获取PIR
                 Map<String, EDevice.deviceEntry> pir_has = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR);
-                if (pir_has == null || pir_has.size() == 0) {
+                if (pir_has.size() == 0) {
                     this.addTriggerProduct(CTSL.PK_PIRSENSOR, sceneModelCode, productList, list);
                 } else {
                     this.addTriggerDevice(CTSL.PK_PIRSENSOR, sceneModelCode, pir_has, list);
@@ -1529,6 +1617,85 @@ public class SceneManager {
         return list;
     }
 
+    // 获取指定场景模板的触发设备（单一网关）
+    private List<EScene.triggerEntry> getTrigger(int sceneModelCode, List<EProduct.configListEntry> productList, String gatewayId) {
+        List<EScene.triggerEntry> list = new ArrayList<EScene.triggerEntry>();
+        switch (sceneModelCode) {
+            // 起夜开灯、红外布防报警处理
+            case CScene.SMC_NIGHT_RISE_ON:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+                // 获取PIR
+                Map<String, EDevice.deviceEntry> pir_has = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR, gatewayId);
+                if (pir_has.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, sceneModelCode, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, sceneModelCode, pir_has, list);
+                }
+                break;
+            // 无人关灯处理
+            case CScene.SMC_UNMANNED_OFF:
+                // 获取PIR
+                Map<String, EDevice.deviceEntry> pir_nohas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_PIRSENSOR, gatewayId);
+                if (pir_nohas == null || pir_nohas.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_PIRSENSOR, CScene.SMC_UNMANNED_OFF, pir_nohas, list);
+                }
+                break;
+            // 报警开灯处理
+            case CScene.SMC_ALARM_ON:
+                // 获取烟感气传感器
+                Map<String, EDevice.deviceEntry> smoke = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_SMOKESENSOR, gatewayId);
+                if (smoke == null || smoke.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_SMOKESENSOR, CScene.SMC_ALARM_ON, smoke, list);
+                }
+                // 获取水浸气传感器
+                Map<String, EDevice.deviceEntry> water = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_WATERSENSOR, gatewayId);
+                if (water == null || water.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_WATERSENSOR, CScene.SMC_ALARM_ON, water, list);
+                }
+                // 获取燃气传感器
+                Map<String, EDevice.deviceEntry> gas = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GASSENSOR, gatewayId);
+                if (gas == null || gas.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_GASSENSOR, CScene.SMC_ALARM_ON, gas, list);
+                }
+                break;
+            // 遥控开灯、门铃播报、报警播报处理
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_BELL_PLAY:
+            case CScene.SMC_ALARM_PLAY:
+                // 获取遥控按钮
+                Map<String, EDevice.deviceEntry> button = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_REMOTECONTRILBUTTON, gatewayId);
+                if (button == null || button.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_REMOTECONTRILBUTTON, sceneModelCode, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_REMOTECONTRILBUTTON, sceneModelCode, button, list);
+                }
+                break;
+            // 开门亮灯、门磁布防报警处理
+            case CScene.SMC_OPEN_DOOR_ON:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 获取门磁
+                Map<String, EDevice.deviceEntry> door = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_DOORSENSOR, gatewayId);
+                if (door == null || door.size() == 0) {
+                    this.addTriggerProduct(CTSL.PK_DOORSENSOR, sceneModelCode, productList, list);
+                } else {
+                    this.addTriggerDevice(CTSL.PK_DOORSENSOR, sceneModelCode, door, list);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+
     // 获取指定场景模板的时间条件
     private EScene.conditionTimeEntry getConditionTime(int sceneModelCode) {
         switch (sceneModelCode) {
@@ -1560,6 +1727,28 @@ public class SceneManager {
                     this.addConditionStateProduct(CTSL.PK_GATEWAY, sceneModelCode, productList, list);
                 } else {
                     this.addConditionStateDevice(CTSL.PK_GATEWAY, sceneModelCode, gateway, list);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+
+    // 获取指定场景模板的状态条件（单一网关）
+    private List<EScene.conditionStateEntry> getConditionState(int sceneModelCode, List<EProduct.configListEntry> productList, String gatewayId) {
+        List<EScene.conditionStateEntry> list = new ArrayList<EScene.conditionStateEntry>();
+        switch (sceneModelCode) {
+            // 红外布防报警、门磁布防报警处理
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 获取网关
+                Map<String, EDevice.deviceEntry> gateway = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY);
+                if (gateway.size() == 0) {
+                    addConditionStateProduct(CTSL.PK_GATEWAY, sceneModelCode, productList, list);
+                } else {
+                    addConditionStateDevice(CTSL.PK_GATEWAY, sceneModelCode, gateway, list);
                 }
                 break;
             default:
@@ -1689,6 +1878,137 @@ public class SceneManager {
                     this.addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, productList, list);
                 } else {
                     this.addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, gateway_getup, list);
+                }
+                break;
+            default:
+                break;
+        }
+
+        return list;
+    }
+
+    // 获取指定场景模板的响应设备（单一网关）
+    private List<EScene.responseEntry> getResponse(int sceneModelCode, List<EProduct.configListEntry> productList, String gatewayId) {
+        List<EScene.responseEntry> list = new ArrayList<EScene.responseEntry>();
+        switch (sceneModelCode) {
+            // 起夜开灯、报警开灯、遥控开灯、开门亮灯场景处理
+            case CScene.SMC_NIGHT_RISE_ON:
+            case CScene.SMC_ALARM_ON:
+            case CScene.SMC_REMOTE_CONTROL_ON:
+            case CScene.SMC_OPEN_DOOR_ON:
+                // 1.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_on = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH, gatewayId);
+                if (oneSwitch_on.size() == 0) {
+                    addResponseProduct(CTSL.PK_ONEWAYSWITCH, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_ONEWAYSWITCH, sceneModelCode, oneSwitch_on, list);
+                }
+                // 2.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_on = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH, gatewayId);
+                if (twoSwitch_on.size() == 0) {
+                    addResponseProduct(CTSL.PK_TWOWAYSWITCH, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_TWOWAYSWITCH, sceneModelCode, twoSwitch_on, list);
+                }
+                break;
+            // 无人关灯场景处理
+            case CScene.SMC_UNMANNED_OFF:
+                // 1.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_off = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH, gatewayId);
+                if (oneSwitch_off.size() == 0) {
+                    addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_UNMANNED_OFF, oneSwitch_off, list);
+                }
+                // 2.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_off = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH, gatewayId);
+                if (twoSwitch_off.size() == 0) {
+                    addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_UNMANNED_OFF, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_UNMANNED_OFF, twoSwitch_off, list);
+                }
+                break;
+            // 门铃播报场景处理
+            case CScene.SMC_BELL_PLAY:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY, gatewayId);
+                if (gateway.size() == 0) {
+                    addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_BELL_PLAY, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_BELL_PLAY, gateway, list);
+                }
+                break;
+            // 报警播报、红外布防报警、门磁布防报警场景处理
+            case CScene.SMC_ALARM_PLAY:
+            case CScene.SMC_PIR_DEPLOY_ALARM:
+            case CScene.SMC_DOOR_DEPLOY_ALARM:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_alarm = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY, gatewayId);
+                if (gateway_alarm.size() == 0) {
+                    addResponseProduct(CTSL.PK_GATEWAY, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_GATEWAY, sceneModelCode, gateway_alarm, list);
+                }
+                break;
+            // 回家模式场景处理
+            case CScene.SMC_GO_HOME_PATTERN: {
+                // 1.获取网关
+                /*Map<String, EDevice.deviceEntry> gateway_gohome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY, gatewayId);
+                if (gateway_gohome.size() == 0) {
+                    addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_GO_HOME_PATTERN, gateway_gohome, list);
+                }*/
+                // 2.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_gohome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH, gatewayId);
+                if (oneSwitch_gohome.size() == 0) {
+                    addResponseProduct(CTSL.PK_ONEWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_ONEWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, oneSwitch_gohome, list);
+                }
+                // 3.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_gonhome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH, gatewayId);
+                if (twoSwitch_gonhome.size() == 0) {
+                    addResponseProduct(CTSL.PK_TWOWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_TWOWAYSWITCH, CScene.SMC_GO_HOME_PATTERN, twoSwitch_gonhome, list);
+                }
+                break;
+            }
+            // 离家模式、睡觉模式场景处理
+            case CScene.SMC_LEAVE_HOME_PATTERN:
+            case CScene.SMC_SLEEP_PATTERN: {
+                // 1.获取网关
+                /*Map<String, EDevice.deviceEntry> gateway_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY, gatewayId);
+                if (gateway_leavehome.size() == 0) {
+                    addResponseProduct(CTSL.PK_GATEWAY, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_GATEWAY, sceneModelCode, gateway_leavehome, list);
+                }*/
+                // 2.获取一键单火开关
+                Map<String, EDevice.deviceEntry> oneSwitch_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_ONEWAYSWITCH, gatewayId);
+                if (oneSwitch_leavehome.size() == 0) {
+                    addResponseProduct(CTSL.PK_ONEWAYSWITCH, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_ONEWAYSWITCH, sceneModelCode, oneSwitch_leavehome, list);
+                }
+                // 3.获取两键单火开关
+                Map<String, EDevice.deviceEntry> twoSwitch_leavehome = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_TWOWAYSWITCH, gatewayId);
+                if (twoSwitch_leavehome.size() == 0) {
+                    addResponseProduct(CTSL.PK_TWOWAYSWITCH, sceneModelCode, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_TWOWAYSWITCH, sceneModelCode, twoSwitch_leavehome, list);
+                }
+                break;
+            }
+            // 起床模式场景处理
+            case CScene.SMC_GETUP_PATTERN:
+                // 1.获取网关
+                Map<String, EDevice.deviceEntry> gateway_getup = DeviceBuffer.getSameTypeDeviceInformation(CTSL.PK_GATEWAY, gatewayId);
+                if (gateway_getup.size() == 0) {
+                    addResponseProduct(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, productList, list);
+                } else {
+                    addResponseDevice(CTSL.PK_GATEWAY, CScene.SMC_GETUP_PATTERN, gateway_getup, list);
                 }
                 break;
             default:
@@ -1906,7 +2226,7 @@ public class SceneManager {
     }
 
     // 管理本地场景
-    public static void manageSceneService(String iotId, String sceneid, String type,
+    public static void manageSceneService(String iotId, String sceneid, int type,
                                           Handler commitFailureHandler,
                                           Handler responseErrorHandler,
                                           @NonNull Handler processDataHandler) {
@@ -1942,5 +2262,144 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 查询本地场景列表
+    public void querySceneList(String token, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 增加本地场景
+    public void addScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .addScene("chengxunfei", scene)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 更新本地场景
+    public void updateScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .updateScene("chengxunfei", scene)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 根据子设备iotId查询网关iotId
+    public void getGWIotIdBySubIotId(String token, String subId, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .getGWIotIdBySubIotId("chengxunfei", subId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

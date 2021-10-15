@@ -8,6 +8,10 @@ package com.laffey.smart.contract;
 public class Constant {
     // 包名
     public static String PACKAGE_NAME = "com.laffey.smart";
+    // 平台 plantForm
+    public static String PLANT_FORM = "xxxxxx";
+    // 测试数据开关
+    public static boolean IS_TEST_DATA = true;
 
     // 测试环境APPKEY
     //public static final String APPKEY                               = "29162669";
@@ -288,6 +292,16 @@ public class Constant {
     public static final int MSG_PERMITJOIN_REMAIN_SECOND            = 407;
     public static final int MSG_PERMITJOIN_TIMEOUT                  = 410;
 
+    // 定义本地服务请求消息常量
+    public static final int MSG_QUEST_QUERY_SCENE_LIST              = 500;
+    public static final int MSG_QUEST_QUERY_SCENE_LIST_ERROR        = 501;
+    public static final int MSG_QUEST_ADD_SCENE                     = 502;
+    public static final int MSG_QUEST_ADD_SCENE_ERROR               = 503;
+    public static final int MSG_QUEST_UPDATE_SCENE                  = 504;
+    public static final int MSG_QUEST_UPDATE_SCENE_ERROR            = 505;
+    public static final int MSG_QUEST_GW_ID_BY_SUB_ID               = 506;
+    public static final int MSG_QUEST_GW_ID_BY_SUB_ID_ERROR         = 507;
+
     // 定义配网常量
     public static final String CONFIGNETWORK_AES_CBC_IV             = "3333333333333333";
     public static final String CONFIGNETWORK_AES_CBC_YZ             = "8888888888888888";
@@ -386,5 +400,9 @@ public class Constant {
     // 根据Mac查询IotId
     public static final String QUERY_IOT_ID_BY_MAC                  = "/app/device/queryIotIdByMac";
     public static final String QUERY_IOT_ID_BY_MAC_VER              = "1.0";
+
+    // 根据子设备iotId查询网关iotId
+    public static final String QUERY_GW_ID_BY_SUB_ID                = "/app/device/getGWIotIdBySubIotId";
+    public static final String QUERY_GW_ID_BY_SUB_ID_VER            = "1.0";
 }
 

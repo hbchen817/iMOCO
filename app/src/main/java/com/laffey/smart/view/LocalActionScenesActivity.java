@@ -19,12 +19,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalActionScenesBinding;
 import com.laffey.smart.model.EAction;
 import com.laffey.smart.model.EActionScene;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
@@ -122,7 +125,10 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
-        queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", "i1cU8RQDuaUsaNvw4ScgeND83D");
+        if (Constant.IS_TEST_DATA) {
+            mGatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
+        }
+        queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", mGatewayId);
     }
 
     // 根据IotId查询Mac
@@ -146,6 +152,9 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         if (code == 200) {
                             if (mac == null || mac.length() == 0) {
                                 ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.MAC_does_not_exist);
+                            }
+                            if (Constant.IS_TEST_DATA) {
+                                mac = "LUXE_TEST";
                             }
                             mGatewayMac = mac;
                             querySceneList(token, mac, "1");
@@ -185,12 +194,20 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
-                        if (code == 0) {
+                        if (code == 200) {
                             for (int i = 0; i < sceneList.size(); i++) {
                                 JSONObject item = sceneList.getJSONObject(i);
+                                ItemSceneInGateway sceneInGateway = new Gson().fromJson(item.toJSONString(), ItemSceneInGateway.class);
+                                if (sceneInGateway.getAppParams() != null) {
+                                    String key = sceneInGateway.getAppParams().getString("key");
+                                    if (key != null && key.length() > 0) {
+                                        continue;
+                                    }
+                                }
+
                                 ItemScene scene = new ItemScene();
-                                scene.setName(item.getString("name"));
-                                scene.setSceneId(item.getString("sceneId"));
+                                scene.setName(sceneInGateway.getSceneDetail().getName());
+                                scene.setSceneId(sceneInGateway.getSceneDetail().getSceneId());
                                 if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null) {
                                     if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {
                                         mSelectPos = i;
@@ -242,7 +259,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         if (v.getId() == mViewBinding.includeToolbar.ivToolbarLeft.getId()) {
             finish();
         } else if (v.getId() == mViewBinding.includeToolbar.tvToolbarRight.getId()) {
-            mEAction.setTarget("LocalSceneActivity");
+            String target = DeviceBuffer.getCacheInfo("LocalSceneTag");
+            mEAction.setTarget(target);
             ItemScene.Action action = new ItemScene.Action();
             action.setType("Scene");
 
@@ -254,8 +272,13 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
             mEAction.setAction(action);
 
             EventBus.getDefault().postSticky(mEAction);
-            Intent intent = new Intent(this, LocalSceneActivity.class);
-            startActivity(intent);
+            if ("LocalSceneActivity".equals(target)) {
+                Intent intent = new Intent(this, LocalSceneActivity.class);
+                startActivity(intent);
+            } else if ("SwitchLocalSceneActivity".equals(target)) {
+                Intent intent = new Intent(this, SwitchLocalSceneActivity.class);
+                startActivity(intent);
+            }
         }
     }
 

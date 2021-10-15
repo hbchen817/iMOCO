@@ -45,6 +45,10 @@ public interface RetrofitService {
     @POST(Constant.QUERY_IOT_ID_BY_MAC)
     Observable<JSONObject> queryIotIdByMac(@Header("REX_TOKEN") String token, @Body RequestBody body);
 
+    // 根据子设备iotId查询网关iotId
+    @POST(Constant.QUERY_GW_ID_BY_SUB_ID)
+    Observable<JSONObject> getGWIotIdBySubIotId(@Header("REX_TOKEN") String token, @Body RequestBody body);
+
     @FormUrlEncoded
     @POST("/query")
     Observable<JSONObject> test(@Field("type") String type, @Field("postid") String postid);

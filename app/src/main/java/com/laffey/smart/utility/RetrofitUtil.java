@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.vise.log.ViseLog;
 
 import io.reactivex.Observable;
@@ -71,11 +72,20 @@ public class RetrofitUtil {
     }
 
     // 增加本地场景
-    public Observable<JSONObject> addScene(String token, String apiVer, ItemScene scene) {
+    public Observable<JSONObject> addScene(String token, String apiVer, ItemSceneInGateway scene) {
         JSONObject object = new JSONObject();
         object.put("apiVer", apiVer);
         object.put("params", scene);
         ViseLog.d(GsonUtil.toJson(object));
+        return getRetrofitService().addScene(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 增加本地场景
+    public Observable<JSONObject> addScene(String token, ItemSceneInGateway scene) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.ADD_SCENE_VER);
+        object.put("params", scene);
+        // ViseLog.d(GsonUtil.toJson(object));
         return getRetrofitService().addScene(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
@@ -93,7 +103,7 @@ public class RetrofitUtil {
     }
 
     // 更新场景
-    public Observable<JSONObject> updateScene(String token, ItemScene scene) {
+    public Observable<JSONObject> updateScene(String token, ItemSceneInGateway scene) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.UPDATE_SCENE_VER);
         object.put("params", scene);
@@ -112,5 +122,16 @@ public class RetrofitUtil {
         obj.put("params", params);
 
         return getRetrofitService().queryIotIdByMac(token, ERetrofit.convertToBody(obj.toJSONString()));
+    }
+
+    // 根据子设备iotId查询网关iotId
+    public Observable<JSONObject> getGWIotIdBySubIotId(String token, String subId) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.ADD_SCENE_VER);
+        JSONObject params = new JSONObject();
+        params.put("plantForm", Constant.PLANT_FORM);
+        params.put("subIotId", subId);
+        object.put("params", params);
+        return getRetrofitService().getGWIotIdBySubIotId(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
@@ -29,6 +30,7 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EEventScene;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.AptSceneList;
 import com.laffey.smart.presenter.AptSceneModel;
 import com.laffey.smart.presenter.CloudDataParser;
@@ -94,7 +96,7 @@ public class IndexFragment2 extends BaseFragment {
     private AptSceneList mAptSceneList;
     private String mSceneType;
 
-    private final List<ItemScene> mItemSceneList = new ArrayList<>();
+    private final List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -200,9 +202,9 @@ public class IndexFragment2 extends BaseFragment {
                         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                             QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
                             String gatewayMac = "";
-                            for (ItemScene scene : mItemSceneList) {
-                                if (sceneId.equals(scene.getSceneId())) {
-                                    gatewayMac = scene.getMac();
+                            for (ItemSceneInGateway scene : mItemSceneList) {
+                                if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
+                                    gatewayMac = scene.getGwMac();
                                     break;
                                 }
                             }
@@ -246,10 +248,9 @@ public class IndexFragment2 extends BaseFragment {
                         ToastUtils.showLongToast(mActivity, R.string.add_gateway_dev_first);
                     } else {
                         if (list.size() == 1) {
-                            //LocalSceneListActivity.start(mActivity, list.get(0).iotId);
-                            LocalGatewayListActivity.start(mActivity);
+                            LocalSceneListActivity.start(mActivity, list.get(0).iotId);
                         } else {
-
+                            LocalGatewayListActivity.start(mActivity);
                         }
                     }
                 } else {
@@ -302,7 +303,7 @@ public class IndexFragment2 extends BaseFragment {
                     intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
                     intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
                     intent.putExtra("sceneNumber", mSceneList.size());
-                    startActivity(intent);
+                    startActivityForResult(intent, REQUEST_CODE);
                 } else {
                     Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
                     intent.putExtra("operateType", CScene.OPERATE_CREATE);
@@ -332,14 +333,21 @@ public class IndexFragment2 extends BaseFragment {
                         QMUITipDialogUtil.dismiss();
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
-                        boolean result = response.getBoolean("result");
                         if (code == 200) {
+                            boolean result = false;
+                            try {
+                                result = response.getBoolean("result");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             if (result) {
                                 mItemSceneList.clear();
                                 mSceneList.clear();
                                 EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
                                 if (dev != null) {
-                                    mSceneManager.manageSceneService(dev.iotId, sceneId, "3", mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                    DeviceBuffer.removeScene(sceneId);
+                                    mSceneManager.manageSceneService(dev.iotId, sceneId, 3,
+                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 }
                                 RefreshData.refreshHomeSceneListData();
                             } else {
@@ -419,6 +427,20 @@ public class IndexFragment2 extends BaseFragment {
                 }
                 case 10001: {
                     // 新增、编辑场景
+                    mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
+                    mLblSceneDL.setVisibility(View.INVISIBLE);
+                    mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
+                    mLblMyDL.setVisibility(View.VISIBLE);
+
+                    mListSceneModel.setVisibility(View.GONE);
+                    mListMy.setVisibility(View.VISIBLE);
+                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scenario_created_successfully);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            RefreshData.refreshHomeSceneListData();
+                        }
+                    }, 1000);
                     break;
                 }
             }
@@ -443,9 +465,9 @@ public class IndexFragment2 extends BaseFragment {
             mAptSceneList.hideDeleteButton();
 
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                ItemScene itemScene = mItemSceneList.get(i);
-                EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(itemScene.getMac());
-                dev = DeviceBuffer.getDevByMac("LUXE_TEST");
+                ItemScene itemScene = mItemSceneList.get(i).getSceneDetail();
+                EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(mItemSceneList.get(i).getGwMac());
+                // dev = DeviceBuffer.getDevByMac("LUXE_TEST");
 
                 if (dev != null) {
                     String gatewayId = dev.iotId;
@@ -453,7 +475,8 @@ public class IndexFragment2 extends BaseFragment {
                     EEventScene scene = new EEventScene();
                     scene.setTarget("LocalSceneActivity");
                     scene.setGatewayId(gatewayId);
-                    scene.setScene(mItemSceneList.get(i));
+                    scene.setScene(mItemSceneList.get(i).getSceneDetail());
+                    scene.setGatewayMac(mItemSceneList.get(i).getGwMac());
                     EventBus.getDefault().postSticky(scene);
 
                     Intent intent = new Intent(mActivity, LocalSceneActivity.class);
@@ -530,20 +553,22 @@ public class IndexFragment2 extends BaseFragment {
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
+                        ViseLog.d("场景列表 = " + GsonUtil.toJson(sceneList));
                         if (code == 0 || code == 200) {
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                    ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
+                                    DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
 
                                     mItemSceneList.add(scene);
 
                                     EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                    entry.id = scene.getSceneId();
-                                    entry.name = scene.getName();
-                                    entry.valid = !"0".equals(scene.getEnable());
-                                    entry.description = scene.getMac();
-                                    entry.catalogId = scene.getType();
+                                    entry.id = scene.getSceneDetail().getSceneId();
+                                    entry.name = scene.getSceneDetail().getName();
+                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                    entry.description = scene.getSceneDetail().getMac();
+                                    entry.catalogId = scene.getSceneDetail().getType();
                                     mSceneList.add(entry);
                                 }
                             }

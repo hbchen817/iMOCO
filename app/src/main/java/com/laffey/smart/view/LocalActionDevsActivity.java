@@ -35,6 +35,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -106,6 +107,7 @@ public class LocalActionDevsActivity extends BaseActivity implements View.OnClic
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry entry = mList.get(position);
+                ViseLog.d("entiry ==== " + GsonUtil.toJson(entry));
                 LocalActionIdentifierActivity.start(LocalActionDevsActivity.this, entry.nickName, entry.iotId, entry.deviceName, entry.productKey);
             }
         });
@@ -132,6 +134,9 @@ public class LocalActionDevsActivity extends BaseActivity implements View.OnClic
         mSceneManager = new SceneManager(this);
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        if (Constant.IS_TEST_DATA) {
+            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
+        }
         new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }

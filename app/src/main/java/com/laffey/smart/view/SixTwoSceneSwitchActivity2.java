@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,12 +27,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.google.gson.Gson;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
+import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
@@ -39,6 +45,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -53,6 +60,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.OnClickListener, View.OnLongClickListener {
 
@@ -122,6 +133,10 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     private Typeface mIconfont;
     private PopupWindow mAssociatedPopupWindow;
 
+    private final List<ItemScene> mSceneList = new ArrayList<>();
+    private String mGatewayId;
+    private String mGatewayMac;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -173,6 +188,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
+
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(mIconfont);
         mBackLightIc.setTypeface(mIconfont);
@@ -187,6 +203,15 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         initStatusBar();
         // 双控
         mAssociatedLayout.setOnClickListener(this);
+        getGatewayId(mIOTId);
+    }
+
+    // 获取面板所属网关iotId
+    private void getGatewayId(String iotId) {
+        if (Constant.IS_TEST_DATA) {
+            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
+        }
+        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID, Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }
 
     // 嵌入式状态栏
@@ -194,7 +219,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.appbgcolor2));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor2));
         }
     }
 
@@ -212,7 +237,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     }
 
     private static class MyResponseErrHandler extends Handler {
-        private WeakReference<SixTwoSceneSwitchActivity2> ref;
+        private final WeakReference<SixTwoSceneSwitchActivity2> ref;
 
         public MyResponseErrHandler(SixTwoSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
@@ -278,7 +303,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     private void getScenes() {
         mCurrentKey = CTSL.SIX_SCENE_SWITCH_KEY_CODE_1;
-        mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
+        /*mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET,
+                mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);*/
     }
 
     @Subscribe
@@ -313,18 +339,40 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
             }
         } else if (view.getId() == R.id.mSceneContentText2) {
-            if (mFirstManualSceneId != null) {
-                mPressedKey = "5";
-                mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            // 场景按键5
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (m5Scene == null) {
+                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                } else {
+                    String msg = String.format(getString(R.string.main_scene_execute_hint_2), m5Scene.getSceneDetail().getName());
+                    ToastUtils.showLongToast(this, msg);
+                    mSceneManager.invokeLocalSceneService(mGatewayId, m5Scene.getSceneDetail().getSceneId(), mCommitFailureHandler, mResponseErrorHandler, null);
+                }
             } else {
-                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                if (mFirstManualSceneId != null) {
+                    mPressedKey = "5";
+                    mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                } else {
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                }
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
-            if (mSecondManualSceneId != null) {
-                mPressedKey = "6";
-                mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+            // 场景按键6
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (m6Scene == null) {
+                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
+                } else {
+                    String msg = String.format(getString(R.string.main_scene_execute_hint_2), m6Scene.getSceneDetail().getName());
+                    ToastUtils.showLongToast(this, msg);
+                    mSceneManager.invokeLocalSceneService(mGatewayId, m6Scene.getSceneDetail().getSceneId(), mCommitFailureHandler, mResponseErrorHandler, null);
+                }
             } else {
-                SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
+                if (mSecondManualSceneId != null) {
+                    mPressedKey = "6";
+                    mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                } else {
+                    SwitchSceneListActivity.start(this, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2);
+                }
             }
         } else if (view.getId() == R.id.timer_layout) {
             // 定时
@@ -609,12 +657,25 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @Override
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.mSceneContentText2) {
-            if (mFirstManualSceneId != null) {
-                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                // SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
+                if (m5Scene != null)
+                    EditLocalSceneBindActivity.start(this, mKeyName5, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1,
+                            mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac, m5Scene.getSceneDetail().getSceneId());
+            } else {
+                if (mFirstManualSceneId != null) {
+                    EditSceneBindActivity.start(this, mKeyName5, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
+                }
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
-            if (mSecondManualSceneId != null) {
-                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (m6Scene != null)
+                    EditLocalSceneBindActivity.start(this, mKeyName6, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2,
+                            mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac, m6Scene.getSceneDetail().getSceneId());
+            } else {
+                if (mSecondManualSceneId != null) {
+                    EditSceneBindActivity.start(this, mKeyName6, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
+                }
             }
         }
         return true;
@@ -634,7 +695,37 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             SixTwoSceneSwitchActivity2 activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
-                case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
+                    // 根据子设备iotId查询网关iotId
+                    Throwable e = (Throwable) msg.obj;
+                    ViseLog.e(e);
+                    ToastUtils.showLongToast(activity, e.getMessage());
+                    break;
+                }
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID: {
+                    // 根据子设备iotId查询网关iotId
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    String gwId = response.getString("gwIotId");
+                    if (code == 200) {
+                        activity.mGatewayId = gwId;
+                        if (Constant.IS_TEST_DATA) {
+                            activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
+                        }
+                        activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
+                        activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac, "1",
+                                Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        if (message != null && message.length() > 0)
+                            ToastUtils.showLongToast(activity, message);
+                        else
+                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                    }
+                    break;
+                }
+                case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET: {
                     //处理获取拓展数据
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
@@ -664,11 +755,13 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                         }
                     }
                     break;
-                case Constant.MSG_CALLBACK_EXECUTESCENE:
+                }
+                case Constant.MSG_CALLBACK_EXECUTESCENE: {
                     String sceneId = (String) msg.obj;
                     ToastUtils.showShortToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint_2),
                             sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName));
                     break;
+                }
                 case TAG_GET_EXTENDED_PRO: {
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
                     activity.mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
@@ -693,8 +786,60 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
+                    // 查询本地场景列表
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    if (code == 0 || code == 200) {
+                        if (sceneList != null) {
+                            activity.querySceneName(sceneList);
+                        }
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        if (message != null && message.length() > 0)
+                            ToastUtils.showLongToast(activity, message);
+                        else
+                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
+                    // 查询本地场景列表错误
+                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                    break;
+                }
                 default:
                     break;
+            }
+        }
+    }
+
+    private ItemSceneInGateway m5Scene;
+    private ItemSceneInGateway m6Scene;
+
+    // 获取按键绑定场景的名称
+    private void querySceneName(JSONArray list) {
+        for (int i = 0; i < list.size(); i++) {
+            JSONObject object = list.getJSONObject(i);
+            ItemSceneInGateway scene = new Gson().fromJson(object.toJSONString(), ItemSceneInGateway.class);
+            ViseLog.d("sss = " + GsonUtil.toJson(scene));
+            DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+            if (scene.getAppParams() == null) continue;
+            String key = scene.getAppParams().getString("key");
+            if (key == null) continue;
+            switch (key) {
+                case "5": {
+                    mSceneContentText2.setText(scene.getSceneDetail().getName());
+                    m5Scene = scene;
+                    break;
+                }
+                case "6": {
+                    mSceneContentText5.setText(scene.getSceneDetail().getName());
+                    m6Scene = scene;
+                    break;
+                }
             }
         }
     }

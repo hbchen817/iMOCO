@@ -774,4 +774,5 @@
     <string name="add_gateway_dev_first">请先添加网关设备</string>
     <string name="select_gateway_dev_first">请先选择网关</string>
     <string name="moredevice_id_2">设备标识：</string>
+    <string name="gateway">网关</string>
 </resources>

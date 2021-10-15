@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
@@ -21,10 +22,52 @@ import java.util.Objects;
 public class DeviceBuffer {
     private static Map<String, EDevice.deviceEntry> mBuffer = new HashMap<String, EDevice.deviceEntry>();
     private static Map<String, JSONObject> mExtendedBuffer = new HashMap<String, JSONObject>();
+    private static Map<String, String> mCacheBuffer = new HashMap<>();
+    private static Map<String, ItemSceneInGateway> mSceneBuffer = new HashMap<>();
 
     // 初始化处理
     public static void initProcess() {
         mBuffer.clear();
+    }
+
+    public static void addCacheInfo(String key, String value) {
+        if (key != null && key.length() > 0) {
+            mCacheBuffer.put(key, value);
+        }
+    }
+
+    public static String getCacheInfo(String key) {
+        if (key != null && key.length() > 0 && mCacheBuffer.containsKey(key)) {
+            return mCacheBuffer.get(key);
+        } else
+            return null;
+    }
+
+    // 添加场景
+    public static void addScene(String sceneId, ItemSceneInGateway scene) {
+        if (sceneId != null && scene != null) {
+            mSceneBuffer.put(sceneId, scene);
+        }
+    }
+
+    // 删除场景
+    public static void removeScene(String sceneId) {
+        if (sceneId != null && mSceneBuffer.containsKey(sceneId)) {
+            mSceneBuffer.remove(sceneId);
+        }
+    }
+
+    // 获取所有场景
+    public static Map<String, ItemSceneInGateway> getAllScene() {
+        return mSceneBuffer;
+    }
+
+    // 获取场景
+    public static ItemSceneInGateway getScene(String sceneId) {
+        if (sceneId != null && mSceneBuffer.containsKey(sceneId)) {
+            return mSceneBuffer.get(sceneId);
+        }
+        return null;
     }
 
     // 添加扩展信息
@@ -138,6 +181,17 @@ public class DeviceBuffer {
         return list;
     }
 
+    // 获取同类设备信息（单一网关）
+    public static Map<String, EDevice.deviceEntry> getSameTypeDeviceInformation(String productKey, String gatewayId) {
+        Map<String, EDevice.deviceEntry> list = new HashMap<String, EDevice.deviceEntry>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if (entry.productKey.equalsIgnoreCase(productKey) && entry.gatewayId.equalsIgnoreCase(gatewayId)) {
+                list.put(entry.iotId, entry);
+            }
+        }
+        return list;
+    }
+
     // 通过deviceName获取设备信息
     public static EDevice.deviceEntry getDevByDeviceName(String deviceName) {
         for (EDevice.deviceEntry entry : mBuffer.values()) {
@@ -146,6 +200,13 @@ public class DeviceBuffer {
             }
         }
         return null;
+    }
+
+    // 设置每个设备所属的gatewayId
+    public static void setGatewayId(String iotId, String gatewayId) {
+        if (mBuffer.containsKey(iotId)) {
+            Objects.requireNonNull(mBuffer.get(iotId)).gatewayId = gatewayId;
+        }
     }
 
     // 获取网关设备信息

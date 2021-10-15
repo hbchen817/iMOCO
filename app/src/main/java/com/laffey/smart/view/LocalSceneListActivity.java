@@ -32,6 +32,8 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalSceneListBinding;
 import com.laffey.smart.model.EEventScene;
 import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
@@ -62,8 +64,8 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
     private final int SCENE_LIST_REQUEST_CODE = 10000;
     private final int SCENE_LIST_RESULT_CODE = 10001;
 
-    private BaseQuickAdapter<ItemScene, BaseViewHolder> mAdapter;
-    private final List<ItemScene> mList = new ArrayList<>();
+    private BaseQuickAdapter<ItemSceneInGateway, BaseViewHolder> mAdapter;
+    private final List<ItemSceneInGateway> mList = new ArrayList<>();
 
     private TypedArray mSceneBgs;
     private String mGatewayId;
@@ -95,7 +97,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
 
     private void initData() {
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
-        ViseLog.d("LocalSceneListActivity mGatewayId = " + mGatewayId);
+        // ViseLog.d("LocalSceneListActivity mGatewayId = " + mGatewayId);
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         queryMacByIotId();
@@ -103,7 +105,10 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
 
     // 根据IotId查询网关Mac
     private void queryMacByIotId() {
-        RetrofitUtil.getInstance().queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", "i1cU8RQDuaUsaNvw4ScgeND83D")
+        if (Constant.IS_TEST_DATA) {
+            mGatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
+        }
+        RetrofitUtil.getInstance().queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", mGatewayId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -120,6 +125,9 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                         String mac = response.getString("mac");
                         mSceneType = "0";
                         if (code == 200) {
+                            if (Constant.IS_TEST_DATA) {
+                                mac = "LUXE_TEST";
+                            }
                             mGatewayMac = mac;
                             // ViseLog.d("mGatewayMac = " + mGatewayMac);
                             querySceneList("chengxunfei", mGatewayMac, mSceneType);
@@ -187,7 +195,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    ItemScene scene = JSONObject.toJavaObject(sceneObj, ItemScene.class);
+                                    ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
                                     mList.add(scene);
                                 }
                             }
@@ -252,12 +260,12 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
     }
 
     private void initAdapter() {
-        mAdapter = new BaseQuickAdapter<ItemScene, BaseViewHolder>(R.layout.item_scene, mList) {
+        mAdapter = new BaseQuickAdapter<ItemSceneInGateway, BaseViewHolder>(R.layout.item_scene, mList) {
             @Override
-            protected void convert(@NotNull BaseViewHolder holder, ItemScene item) {
+            protected void convert(@NotNull BaseViewHolder holder, ItemSceneInGateway item) {
                 int pos = mList.indexOf(item);
                 pos = pos % mSceneBgs.length();
-                holder.setText(R.id.sceneName, item.getName());
+                holder.setText(R.id.sceneName, item.getSceneDetail().getName());
                 holder.setGone(R.id.editMask, true);
                 holder.setImageResource(R.id.image, mSceneBgs.getResourceId(pos, 0));
             }
@@ -266,7 +274,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
             @Override
             public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
                 showConfirmDialog(getString(R.string.dialog_title), String.format(getString(R.string.do_you_want_del_scene),
-                        mList.get(position).getName()), getString(R.string.dialog_cancel), getString(R.string.delete), mList.get(position));
+                        mList.get(position).getSceneDetail().getName()), getString(R.string.dialog_cancel), getString(R.string.delete), mList.get(position));
                 return true;
             }
         });
@@ -276,7 +284,8 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                 EEventScene scene = new EEventScene();
                 scene.setTarget("LocalSceneActivity");
                 scene.setGatewayId(mGatewayId);
-                scene.setScene(mList.get(position));
+                scene.setScene(mList.get(position).getSceneDetail());
+                scene.setGatewayMac(mList.get(position).getGwMac());
                 EventBus.getDefault().postSticky(scene);
 
                 Intent intent = new Intent(LocalSceneListActivity.this, LocalSceneActivity.class);
@@ -323,7 +332,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
         }
     }
 
-    private void showConfirmDialog(String title, String content, String cancel, String ok, ItemScene scene) {
+    private void showConfirmDialog(String title, String content, String cancel, String ok, ItemSceneInGateway scene) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
@@ -353,7 +362,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
             public void onClick(View v) {
                 dialog.dismiss();
                 RetrofitUtil.getInstance()
-                        .deleteScene("chengxunfei", mGatewayMac, scene.getSceneId())
+                        .deleteScene("chengxunfei", mGatewayMac, scene.getSceneDetail().getSceneId())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<JSONObject>() {
@@ -369,10 +378,11 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                                 boolean result = response.getBoolean("result");
                                 if (code == 200) {
                                     if (result) {
+                                        DeviceBuffer.removeScene(scene.getSceneDetail().getSceneId());
                                         ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.scene_delete_sucess);
-                                        mSceneManager.manageSceneService(mGatewayId, scene.getSceneId(), "3", mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                         mList.remove(scene);
                                         mAdapter.notifyDataSetChanged();
+                                        mSceneManager.manageSceneService(mGatewayId, scene.getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                     } else {
                                         if (msg == null || msg.length() == 0) {
                                             ToastUtils.showLongToast(LocalSceneListActivity.this, R.string.pls_try_again_later);

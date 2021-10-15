@@ -43,6 +43,24 @@ public class ProductHelper {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 获取支持配网产品列表
+    public void getConfigureList(int tag, Handler commitFailureHandler,
+                                 Handler responseErrorHandler,
+                                 Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETCONFIGPROCDUCTLIST;
+        requestParameterEntry.version = "1.1.3";
+        requestParameterEntry.callbackMessageType = tag;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     // 获取配网引导信息
     public void getGuidanceInformation(String productKey, Handler commitFailureHandler,
                                        Handler responseErrorHandler,

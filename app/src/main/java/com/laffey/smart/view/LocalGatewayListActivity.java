@@ -77,8 +77,8 @@ public class LocalGatewayListActivity extends AppCompatActivity implements View.
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry dev = mList.get(position);
-                // LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, dev.mac, SCENE_LIST_REQUEST_CODE);
-                LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, "00-68-EB-C5-66-23", SCENE_LIST_REQUEST_CODE);
+                LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, dev.mac, SCENE_LIST_REQUEST_CODE);
+                // LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, "00-68-EB-C5-66-23", SCENE_LIST_REQUEST_CODE);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

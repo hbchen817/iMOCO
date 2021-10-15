@@ -123,11 +123,62 @@
         android:layout_marginRight="10dp"
         android:background="@color/colorLine" />
 
-    <ViewStub
-        android:id="@+id/night_rise_on_vs"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/NormalFontStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:text="@string/gateway" />
+
+        <TextView
+            android:id="@+id/gateway_tv"
+            style="@style/NormalFontStyle"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@+id/gateway_iv"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right" />
+
+        <ImageView
+            android:id="@+id/gateway_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/contentDescription_null"
+            android:src="@drawable/go" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/colorLine" />
+
+    <ListView
+        android:id="@+id/sceneMaintainLstParameter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout="@layout/viewstub_night_rise_on" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
+        android:divider="@color/background_list_item_divier"
+        android:dividerHeight="0.5dp"
+        android:horizontalSpacing="1dip" />
 
     <RelativeLayout
         android:id="@+id/sceneMaintainRlOperate"

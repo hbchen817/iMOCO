@@ -47,6 +47,28 @@ public class UserCenter {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 获取用户绑定网关绑定子设备列表
+    public void getGatewaySubdeviceList(String gatewayIOTId, int pageNo, int pageSize,int tag,
+                                        Handler commitFailureHandler,
+                                        Handler responseErrorHandler,
+                                        Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETGATEWAYSUBDEVICELIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", gatewayIOTId);
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
+        requestParameterEntry.callbackMessageType = tag;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
     // 获取用户绑定的设备列表
     public void getDeviceList(int pageNo, int pageSize,
                               Handler commitFailureHandler,

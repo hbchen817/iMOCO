@@ -118,6 +118,7 @@
                     android:background="@color/appbgcolor" />
 
                 <RelativeLayout
+                    android:id="@+id/time_enable_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -157,11 +158,13 @@
                 </RelativeLayout>
 
                 <TextView
+                    android:id="@+id/time_enable_divider"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/dp_1"
                     android:background="@color/appbgcolor" />
 
                 <RelativeLayout
+                    android:id="@+id/condition_enable_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

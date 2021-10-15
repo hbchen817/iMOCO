@@ -420,14 +420,21 @@ public class LocalActionValueActivity extends BaseActivity {
                 mCommand.put("Temperature", mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex()));
             }
         }
+        String target = DeviceBuffer.getCacheInfo("LocalSceneTag");
         mIsRun = false;
-        mEAction.setTarget("LocalSceneActivity");
+        mEAction.setTarget(target);
         mEAction.getAction().getParameters().setCommand(mCommand);
         ViseLog.d(GsonUtil.toJson(mEAction));
         EventBus.getDefault().postSticky(mEAction);
+        ViseLog.d("target = " + target);
 
-        Intent intent = new Intent(this, LocalSceneActivity.class);
-        startActivity(intent);
+        if ("LocalSceneActivity".equals(target)) {
+            Intent intent = new Intent(this, LocalSceneActivity.class);
+            startActivity(intent);
+        } else if ("SwitchLocalSceneActivity".equals(target)) {
+            Intent intent = new Intent(this, SwitchLocalSceneActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void initRecyclerView() {

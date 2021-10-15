@@ -1,11 +1,5 @@
 package com.laffey.smart.view;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,6 +16,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -66,11 +66,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class LocalSceneActivity extends BaseActivity implements View.OnClickListener {
+public class SwitchLocalSceneActivity extends BaseActivity implements View.OnClickListener {
     private ActivityLocalSceneBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
     private static final String GATEWAY_MAC = "gateway_mac";
+    private static final String SWITCH_CODE = "switch_code";
+    private static final String IOT_ID = "iot_id";
+    private static final String DEV_MAC = "dev_mac";
 
     private static final int TIMER_INTENT_TAG = 10000;
     private static final int TIMER_RANGE_INTENT_TAG = 10001;
@@ -83,6 +86,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private String mSceneTimer = "1";// 时间条件，0：无时间条件，1：有时间条件
     private String mSceneMode = "Any";//all any
     private ItemScene mScene;
+    private String mKeyCode;// 键值
+    private String mIotId;
+    private String mDevMac;
 
     private Typeface mIconfont;
     private Map<String, String> mSymbols = new HashMap<>();
@@ -98,15 +104,18 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private SceneManager mSceneManager;
     private MyHandler mHandler;
 
-    public static void start(Activity activity, String gatewayId, String gatewayMac, int requestCode) {
-        Intent intent = new Intent(activity, LocalSceneActivity.class);
+    public static void start(Activity activity, String gatewayId, String gatewayMac, String iotId, String devMac, String keyCode, int requestCode) {
+        Intent intent = new Intent(activity, SwitchLocalSceneActivity.class);
         intent.putExtra(GATEWAY_ID, gatewayId);
         intent.putExtra(GATEWAY_MAC, gatewayMac);
+        intent.putExtra(SWITCH_CODE, keyCode);
+        intent.putExtra(IOT_ID, iotId);
+        intent.putExtra(DEV_MAC, devMac);
         activity.startActivityForResult(intent, requestCode);
     }
 
     public static Intent getIntent(Activity activity, String gatewayId, String gatewayMac) {
-        Intent intent = new Intent(activity, LocalSceneActivity.class);
+        Intent intent = new Intent(activity, SwitchLocalSceneActivity.class);
         intent.putExtra(GATEWAY_ID, gatewayId);
         intent.putExtra(GATEWAY_MAC, gatewayMac);
         return intent;
@@ -130,6 +139,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
         mGatewayMac = getIntent().getStringExtra(GATEWAY_MAC);
+        mKeyCode = getIntent().getStringExtra(SWITCH_CODE);
+        mIotId = getIntent().getStringExtra(IOT_ID);
+        mDevMac = getIntent().getStringExtra(DEV_MAC);
 
         if (mGatewayId != null && mGatewayId.length() > 0)
             SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, mGatewayId);
@@ -149,7 +161,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private void initData() {
         // queryMacByIotId();
         mSceneManager = new SceneManager(this);
-        DeviceBuffer.addCacheInfo("LocalSceneTag", "LocalSceneActivity");
+        DeviceBuffer.addCacheInfo("LocalSceneTag", "SwitchLocalSceneActivity");
     }
 
     private void queryMacByIotId() {
@@ -173,9 +185,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                             mGatewayMac = mac;
                         } else {
                             if (msg != null && msg.length() > 0)
-                                ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                ToastUtils.showLongToast(SwitchLocalSceneActivity.this, msg);
                             else
-                                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.pls_try_again_later);
                         }
                     }
 
@@ -183,7 +195,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         QMUITipDialogUtil.dismiss();
                         ViseLog.e(e);
-                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.pls_try_again_later);
                     }
 
                     @Override
@@ -211,10 +223,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     holder.setText(R.id.detail, desc.toString());
                 } else {
                     holder.setText(R.id.title, getString(R.string.dev_does_not_exist));
-                    holder.setTextColor(R.id.title, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                    holder.setTextColor(R.id.title, ContextCompat.getColor(SwitchLocalSceneActivity.this, R.color.red));
 
                     holder.setText(R.id.detail, "--");
-                    holder.setTextColor(R.id.detail, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                    holder.setTextColor(R.id.detail, ContextCompat.getColor(SwitchLocalSceneActivity.this, R.color.red));
                 }
 
                 holder.setVisible(R.id.divider, mConditionList.indexOf(eCondition) != 0);
@@ -227,10 +239,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 if (eCondition.getIotId() != null && eCondition.getIotId().length() > 0) {
                     eCondition.setTarget("LocalConditionValueActivity");
                     EventBus.getDefault().postSticky(eCondition);
-                    Intent intent = new Intent(LocalSceneActivity.this, LocalConditionValueActivity.class);
+                    Intent intent = new Intent(SwitchLocalSceneActivity.this, LocalConditionValueActivity.class);
                     startActivity(intent);
                 } else {
-                    ToastUtils.showLongToast(LocalSceneActivity.this, R.string.dev_does_not_exist);
+                    ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.dev_does_not_exist);
                 }
             }
         });
@@ -259,7 +271,6 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 String type = eAction.getAction().getType();
                 if ("Command".equals(type)) {
                     icon.setText(R.string.icon_dev);
-                    ViseLog.d("单个场景 = " + GsonUtil.toJson(eAction));
                     EDevice.deviceEntry dev = DeviceBuffer.getDeviceInformation(eAction.getIotId());
                     if (dev != null) {
                         holder.setText(R.id.title, dev.nickName);
@@ -267,9 +278,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         holder.setText(R.id.detail, refreshActionDesc(eAction));
                     } else {
                         holder.setText(R.id.title, getString(R.string.dev_does_not_exist));
-                        holder.setTextColor(R.id.title, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                        holder.setTextColor(R.id.title, ContextCompat.getColor(SwitchLocalSceneActivity.this, R.color.red));
                         holder.setText(R.id.detail, "--");
-                        holder.setTextColor(R.id.detail, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                        holder.setTextColor(R.id.detail, ContextCompat.getColor(SwitchLocalSceneActivity.this, R.color.red));
                     }
                 } else if ("Scene".equals(type)) {
                     icon.setText(R.string.icon_scene);
@@ -288,16 +299,16 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         eAction.setTarget("LocalActionValueActivity");
                         EventBus.getDefault().postSticky(eAction);
 
-                        Intent intent = new Intent(LocalSceneActivity.this, LocalActionValueActivity.class);
+                        Intent intent = new Intent(SwitchLocalSceneActivity.this, LocalActionValueActivity.class);
                         startActivity(intent);
                     } else {
-                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.dev_does_not_exist);
+                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.dev_does_not_exist);
                     }
                 } else if ("Scene".equals(eAction.getAction().getType())) {
                     eAction.setTarget("LocalActionScenesActivity");
                     EventBus.getDefault().postSticky(eAction);
 
-                    Intent intent = new Intent(LocalSceneActivity.this, LocalActionScenesActivity.class);
+                    Intent intent = new Intent(SwitchLocalSceneActivity.this, LocalActionScenesActivity.class);
                     startActivity(intent);
                 }
             }
@@ -679,10 +690,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 if ("Timer".equals(mTimerList.get(position).getType())) {
                     // 时间点
-                    LocalTimeSelectorActivity.startForResult(LocalSceneActivity.this, mTimerList.get(position).getCron(), TIMER_INTENT_TAG);
+                    LocalTimeSelectorActivity.startForResult(SwitchLocalSceneActivity.this, mTimerList.get(position).getCron(), TIMER_INTENT_TAG);
                 } else if ("TimeRange".equals(mTimerList.get(position).getType())) {
                     // 时间段
-                    LocalTimeRangeSelectorActivity.startForResult(LocalSceneActivity.this, mTimerList.get(position).getCron(), TIMER_RANGE_INTENT_TAG);
+                    LocalTimeRangeSelectorActivity.startForResult(SwitchLocalSceneActivity.this, mTimerList.get(position).getCron(), TIMER_RANGE_INTENT_TAG);
                 }
             }
         });
@@ -704,7 +715,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private final int DEL_ACTION_TAG = 10003;
 
     private void showDelDialog(int msgId, int pos, int tag) {
-        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(LocalSceneActivity.this).create();
+        AlertDialog alert = new AlertDialog.Builder(SwitchLocalSceneActivity.this).create();
         alert.setIcon(R.drawable.dialog_quest);
         alert.setTitle(R.string.dialog_title);
         alert.setMessage(getResources().getString(msgId));
@@ -871,6 +882,12 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         mViewBinding.timeEnableGo.setOnClickListener(this);
         mViewBinding.conditionEnableGo.setOnClickListener(this);
         mViewBinding.delLayout.setOnClickListener(this);
+
+        mViewBinding.timeEnableLayout.setVisibility(View.GONE);
+        mViewBinding.timeEnableDivider.setVisibility(View.GONE);
+        mViewBinding.conditionEnableLayout.setVisibility(View.GONE);
+        mViewBinding.addTimeConditionLayout.setVisibility(View.GONE);
+        mViewBinding.sceneModeLayout.setVisibility(View.GONE);
     }
 
     // 嵌入式状态栏
@@ -895,7 +912,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         mGatewayId = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, "");
         mGatewayMac = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_MAC, "");
         // ViseLog.d("mGatewayMac = " + mGatewayMac);
-        DeviceBuffer.addCacheInfo("LocalSceneTag", "LocalSceneActivity");
+        DeviceBuffer.addCacheInfo("LocalSceneTag", "SwitchLocalSceneActivity");
     }
 
     @Override
@@ -948,7 +965,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         } else if (v.getId() == mViewBinding.conditionEnableTv.getId() ||
                 v.getId() == mViewBinding.conditionEnableGo.getId()) {
             if (mTimerList.size() > 0 && "Timer".equals(mTimerList.get(0).getType()) && getString(R.string.there_are).equals(mViewBinding.timeEnableTv.getText().toString())) {
-                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.condition_setting_is_invalid_when_time_trigger_is_point_in_time);
+                ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.condition_setting_is_invalid_when_time_trigger_is_point_in_time);
                 return;
             }
             QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
@@ -980,13 +997,13 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     switch (position) {
                         case 0: {
                             // 时间点
-                            Intent intent = new Intent(LocalSceneActivity.this, LocalTimeSelectorActivity.class);
+                            Intent intent = new Intent(SwitchLocalSceneActivity.this, LocalTimeSelectorActivity.class);
                             startActivityForResult(intent, TIMER_INTENT_TAG);
                             break;
                         }
                         case 1: {
                             // 时间段
-                            Intent intent = new Intent(LocalSceneActivity.this, LocalTimeRangeSelectorActivity.class);
+                            Intent intent = new Intent(SwitchLocalSceneActivity.this, LocalTimeRangeSelectorActivity.class);
                             startActivityForResult(intent, TIMER_RANGE_INTENT_TAG);
                             break;
                         }
@@ -1025,18 +1042,94 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     }
 
     private static class MyHandler extends Handler {
-        private final WeakReference<LocalSceneActivity> ref;
+        private final WeakReference<SwitchLocalSceneActivity> ref;
 
-        public MyHandler(LocalSceneActivity activity) {
+        public MyHandler(SwitchLocalSceneActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            LocalSceneActivity activity = ref.get();
+            SwitchLocalSceneActivity activity = ref.get();
             if (activity != null) {
-
+                switch (msg.what) {
+                    case Constant.MSG_QUEST_UPDATE_SCENE: {
+                        // 更新本地场景
+                        JSONObject response = (JSONObject) msg.obj;
+                        QMUITipDialogUtil.dismiss();
+                        boolean result = response.getBoolean("result");
+                        int code = response.getInteger("code");
+                        String sceneId = response.getString("sceneId");
+                        String message = response.getString("message");
+                        if (code == 200) {
+                            if (result) {
+                                QMUITipDialogUtil.dismiss();
+                                activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 2,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                RefreshData.refreshHomeSceneListData();
+                                activity.setResult(10001);
+                                activity.finish();
+                            } else {
+                                if (message == null || message.length() == 0) {
+                                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                                } else
+                                    ToastUtils.showLongToast(activity, message);
+                            }
+                        } else {
+                            if (message == null || message.length() == 0) {
+                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(activity, message);
+                        }
+                        break;
+                    }
+                    case Constant.MSG_QUEST_UPDATE_SCENE_ERROR: {
+                        // 更新本地场景失败
+                        Throwable e = (Throwable) msg.obj;
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        break;
+                    }
+                    case Constant.MSG_QUEST_ADD_SCENE: {
+                        // 新增本地场景
+                        JSONObject response = (JSONObject) msg.obj;
+                        ViseLog.d(GsonUtil.toJson(response));
+                        QMUITipDialogUtil.dismiss();
+                        int code = response.getInteger("code");
+                        boolean result = response.getBoolean("result");
+                        String sceneId = response.getString("sceneId");
+                        String message = response.getString("message");
+                        if (code == 200) {
+                            if (result) {
+                                QMUITipDialogUtil.dismiss();
+                                activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 1,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                RefreshData.refreshHomeSceneListData();
+                                activity.setResult(10001);
+                                activity.finish();
+                            } else {
+                                if (message == null || message.length() == 0) {
+                                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                                } else
+                                    ToastUtils.showLongToast(activity, message);
+                            }
+                        } else {
+                            if (message == null || message.length() == 0) {
+                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(activity, message);
+                        }
+                        break;
+                    }
+                    case Constant.MSG_QUEST_ADD_SCENE_ERROR: {
+                        // 新增本地场景失败
+                        Throwable e = (Throwable) msg.obj;
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -1070,7 +1163,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                QMUITipDialogUtil.showLoadingDialg(LocalSceneActivity.this, R.string.is_submitted);
+                QMUITipDialogUtil.showLoadingDialg(SwitchLocalSceneActivity.this, R.string.is_submitted);
                 RetrofitUtil.getInstance()
                         .deleteScene("chengxunfei", mGatewayMac, sceneId)
                         .subscribeOn(Schedulers.io())
@@ -1088,7 +1181,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                 boolean result = response.getBoolean("result");
                                 if (code == 200) {
                                     if (result) {
-                                        DeviceBuffer.removeScene(mSceneId);
+                                        DeviceBuffer.removeScene(sceneId);
                                         mSceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                         QMUITipDialogUtil.dismiss();
                                         RefreshData.refreshHomeSceneListData();
@@ -1096,22 +1189,22 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                         finish();
                                     } else {
                                         if (msg == null || msg.length() == 0) {
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                            ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.pls_try_again_later);
                                         } else
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                            ToastUtils.showLongToast(SwitchLocalSceneActivity.this, msg);
                                     }
                                 } else {
                                     if (msg == null || msg.length() == 0) {
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.pls_try_again_later);
                                     } else
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, msg);
                                 }
                             }
 
                             @Override
                             public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                                 QMUITipDialogUtil.dismiss();
-                                ToastUtils.showLongToast(LocalSceneActivity.this, e.getMessage());
+                                ToastUtils.showLongToast(SwitchLocalSceneActivity.this, e.getMessage());
                             }
 
                             @Override
@@ -1141,52 +1234,23 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         } else if (getString(R.string.scene_maintain_stopusing).equals(mViewBinding.statusTv.getText().toString())) {
             mSceneEnable = "0";// 禁用
         }
-        if (getString(R.string.there_are).equals(mViewBinding.timeEnableTv.getText().toString())) {
-            mSceneTimer = "1";// 有时间条件
-        } else if (getString(R.string.nothing).equals(mViewBinding.timeEnableTv.getText().toString())) {
-            mSceneTimer = "0";// 无时间条件
-        }
-
-        if (getString(R.string.nothing).equals(mViewBinding.conditionEnableTv.getText().toString()) &&
-                getString(R.string.nothing).equals(mViewBinding.timeEnableTv.getText().toString())) {
-            // 无条件，无时间条件
-            mSceneType = "1";// 手动
-        } else if (getString(R.string.nothing).equals(mViewBinding.conditionEnableTv.getText().toString()) &&
-                mTimerList.size() > 0 && "TimeRange".equals(mTimerList.get(0).getType())) {
-            // 无条件，有时间段条件
-            mSceneType = "1";// 手动
-        } else {
-            mSceneType = "0";// 自动
-        }
+        mSceneTimer = "0";// 无时间条件
+        mSceneType = "1";// 手动
 
         if (mSceneName == null || mSceneName.length() == 0) {
             ToastUtils.showLongToast(this, R.string.pls_enter_a_scene_name);
-        } else if ("1".equals(mSceneTimer) && mTimerList.size() == 0) {
-            ToastUtils.showLongToast(this, R.string.pls_add_timer_condition);
-        } else if ("0".equals(mSceneType) && mConditionList.size() == 0 && "0".equals(mSceneTimer)) {
-            ToastUtils.showLongToast(this, R.string.pls_add_condition);
         } else if (mActionList.size() == 0) {
             ToastUtils.showLongToast(this, R.string.pls_add_action);
         } else {
-            // mScene.setMac(mGatewayMac);
+            mScene.setMac(mGatewayMac);
             mScene.setName(mSceneName);
             mScene.setType(mSceneType);// 场景类型
             mScene.setEnable(mSceneEnable);
-            // 时间条件，0：无时间条件，1：有时间条件
-            if ("1".equals(mSceneTimer)) {
-                mScene.setTime(mTimerList.get(0));
-            } else mScene.setTime(new ItemScene.Timer());
+            // 无时间条件
+            mScene.setTime(new ItemScene.Timer());
             mScene.setConditionMode(mSceneMode);
 
-            List<ItemScene.Condition> conditionList = new ArrayList<>();
-            for (ECondition eCondition : mConditionList) {
-                conditionList.add(eCondition.getCondition());
-            }
-            if ("1".equals(mSceneType)) {
-                mScene.setConditions(new ArrayList<>());
-            } else {
-                mScene.setConditions(conditionList);
-            }
+            mScene.setConditions(new ArrayList<>());
 
             List<ItemScene.Action> actionList = new ArrayList<>();
             for (EAction eAction : mActionList) {
@@ -1195,120 +1259,26 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             mScene.setActions(actionList);
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
             if (getString(R.string.create_new_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
+                JSONObject appParams = new JSONObject();
+                appParams.put("type", "e");// 场景开关
+                appParams.put("switchIotId", mIotId);// 场景开关iotId
+
                 ItemSceneInGateway scene = new ItemSceneInGateway();
                 scene.setGwMac(mGatewayMac);
+                scene.setAppParams(appParams);
                 scene.setSceneDetail(mScene);
-                ViseLog.d("新建场景 = " + GsonUtil.toJson(scene));
 
-                RetrofitUtil.getInstance()
-                        .addScene("chengxunfei", Constant.ADD_SCENE_VER, scene)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<JSONObject>() {
-                            @Override
-                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                                // ViseLog.d("结果 = " + GsonUtil.toJson(response));
-                                QMUITipDialogUtil.dismiss();
-                                int code = response.getInteger("code");
-                                boolean result = response.getBoolean("result");
-                                String sceneId = response.getString("sceneId");
-                                String msg = response.getString("message");
-                                if (code == 200) {
-                                    if (result) {
-                                        QMUITipDialogUtil.dismiss();
-                                        mSceneManager.manageSceneService(mGatewayId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                                        RefreshData.refreshHomeSceneListData();
-                                        setResult(10001);
-                                        finish();
-                                    } else {
-                                        if (msg == null || msg.length() == 0) {
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                                        } else
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
-                                    }
-                                } else {
-                                    if (msg == null || msg.length() == 0) {
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                                    } else
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, msg);
-                                }
-                            }
-
-                            @Override
-                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                ViseLog.e(e);
-                                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        });
+                // ViseLog.d("新建场景 = " + GsonUtil.toJson(scene));
+                mSceneManager.addScene("chengxunfei", scene, Constant.MSG_QUEST_ADD_SCENE, Constant.MSG_QUEST_ADD_SCENE_ERROR, mHandler);
             } else if (getString(R.string.edit_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
                 ItemSceneInGateway scene = new ItemSceneInGateway();
                 scene.setGwMac(mGatewayMac);
+                scene.setAppParams(mAppParams);
                 mScene.setSceneId(mSceneId);
-
                 scene.setSceneDetail(mScene);
 
-                // ViseLog.d("更新场景消息：" + GsonUtil.toJson(scene));
-
-                RetrofitUtil.getInstance()
-                        .updateScene("chengxunfei", scene)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<JSONObject>() {
-                            @Override
-                            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                                ViseLog.d("更新场景返回: " + response);
-                                QMUITipDialogUtil.dismiss();
-                                int code = response.getInteger("code");
-                                String sceneId = response.getString("sceneId");
-                                String msg = response.getString("message");
-                                if (code == 200) {
-                                    boolean result = response.getBoolean("result");
-                                    if (result) {
-                                        QMUITipDialogUtil.dismiss();
-                                        mSceneManager.manageSceneService(mGatewayId, sceneId, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                                        RefreshData.refreshHomeSceneListData();
-                                        setResult(10001);
-                                        finish();
-                                    } else {
-                                        if (msg == null || msg.length() == 0) {
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                                        } else
-                                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
-                                    }
-                                } else {
-                                    if (msg == null || msg.length() == 0) {
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                                    } else
-                                        ToastUtils.showLongToast(LocalSceneActivity.this, msg);
-                                }
-                            }
-
-                            @Override
-                            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                                ViseLog.e(e);
-                                ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                            }
-
-                            @Override
-                            public void onComplete() {
-
-                            }
-                        });
+                ViseLog.d("更新场景消息：" + GsonUtil.toJson(scene));
+                mSceneManager.updateScene("chengxunfei", scene, Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mHandler);
             }
         }
     }
@@ -1409,7 +1379,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         if (obj instanceof ECondition) {
             ECondition eCondition = (ECondition) obj;
             ViseLog.d(GsonUtil.toJson(eCondition));
-            if ("LocalSceneActivity".equals(eCondition.getTarget())) {
+            if ("SwitchLocalSceneActivity".equals(eCondition.getTarget())) {
                 mConditionList.remove(eCondition);
                 mConditionList.add(eCondition);
                 mConditionAdapter.notifyDataSetChanged();
@@ -1418,7 +1388,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             }
         } else if (obj instanceof EAction) {
             EAction eAction = (EAction) obj;
-            if ("LocalSceneActivity".equals(eAction.getTarget())) {
+            if ("SwitchLocalSceneActivity".equals(eAction.getTarget())) {
                 ViseLog.d(GsonUtil.toJson(eAction));
                 mActionList.remove(eAction);
                 mActionList.add(eAction);
@@ -1428,7 +1398,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             }
         } else if (obj instanceof EEventScene) {
             EEventScene eEventScene = (EEventScene) obj;
-            if ("LocalSceneActivity".equals(eEventScene.getTarget())) {
+            if ("SwitchLocalSceneActivity".equals(eEventScene.getTarget())) {
                 initScene(eEventScene);
             }
             EventBus.getDefault().removeStickyEvent(obj);
@@ -1436,11 +1406,13 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     }
 
     private String mSceneId;
+    private JSONObject mAppParams;
 
     // 编辑场景时，刷新界面
     private void initScene(EEventScene eEventScene) {
         mGatewayId = eEventScene.getGatewayId();
         mGatewayMac = eEventScene.getGatewayMac();
+        mAppParams = eEventScene.getAppParams();
 
         if (mGatewayId != null && mGatewayId.length() > 0)
             SpUtils.putStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, mGatewayId);
@@ -1548,14 +1520,14 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                 queryConditionIotIdByMac("chengxunfei", 0);
                             else queryActionIotIdByMac("chengxunfei", 0);
                         } else {
-                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
+                            ToastUtils.showLongToast(SwitchLocalSceneActivity.this, msg);
                         }
                     }
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         ViseLog.e(e);
-                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
+                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.pls_try_again_later);
                     }
 
                     @Override
@@ -1590,12 +1562,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
     // 根据Mac查询动作设备IotId
     private void queryActionIotIdByMac(String token, int pos) {
-        ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         ItemScene.Action action = mActionList.get(pos).getAction();
         if ("Command".equals(action.getType())) {
             // 指令
             String deviceId = action.getParameters().getDeviceId();
-            ViseLog.d("指令 = " + deviceId);
             if (deviceId == null || deviceId.length() == 0) return;
             // 动作
             EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(deviceId);

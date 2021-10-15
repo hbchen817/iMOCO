@@ -133,6 +133,9 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
         mUserCenter = new UserCenter(this);
         mSceneManager = new SceneManager(this);
 
+        if (Constant.IS_TEST_DATA) {
+            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
+        }
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         ViseLog.d("mGatewayId = " + mGatewayId + "\n" + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,

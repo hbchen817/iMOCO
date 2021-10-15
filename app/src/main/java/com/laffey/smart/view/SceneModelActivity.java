@@ -16,18 +16,24 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
+import com.laffey.smart.adapter.LocalSceneAdapter;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySceneMaintainBinding;
+import com.laffey.smart.databinding.ActivitySceneModelBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EChoice;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EProduct;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.AptSceneParameter;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -37,12 +43,21 @@ import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vise.log.ViseLog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Creator: xieshaobing
@@ -50,7 +65,7 @@ import java.util.List;
  * Description: 场景维护
  */
 public class SceneModelActivity extends BaseActivity {
-    private ActivitySceneMaintainBinding mViewBinding;
+    private ActivitySceneModelBinding mViewBinding;
 
     private final int PAGE_SIZE = 10;
 
@@ -58,13 +73,14 @@ public class SceneModelActivity extends BaseActivity {
     private String mSceneId;
     private int mOperateType, mSceneModelCode, mSceneNumber;
     private List<EScene.parameterEntry> mParameterList;
-    private AptSceneParameter mAptSceneParameter;
+    private LocalSceneAdapter mSceneAdapter;
     private int mSetTimeIndex = -1;
     private boolean mEnable = true;
     private long mClickTime = 0;
 
     private final List<EDevice.deviceEntry> mGatewayDevList = new ArrayList<>();
     private UserCenter mUserCenter;
+    private EDevice.deviceEntry mGatewayEntry;
 
     // 显示场景名称修改对话框
     private void showSceneNameDialogEdit() {
@@ -77,7 +93,7 @@ public class SceneModelActivity extends BaseActivity {
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
         nameEt.setText(mViewBinding.sceneMaintainLblName.getText().toString());
         final android.app.Dialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -108,7 +124,7 @@ public class SceneModelActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewBinding = ActivitySceneMaintainBinding.inflate(getLayoutInflater());
+        mViewBinding = ActivitySceneModelBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
 
         mSceneManager = new SceneManager(this);
@@ -163,71 +179,7 @@ public class SceneModelActivity extends BaseActivity {
         mViewBinding.sceneMaintainRlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (System.currentTimeMillis() - mClickTime < 3000) {
-                    mClickTime = System.currentTimeMillis();
-                    return;
-                }
-                // 检查参数
-                if (!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)) {
-                    return;
-                }
-
-                EScene.sceneBaseInfoEntry baseInfoEntry = new EScene.sceneBaseInfoEntry(SystemParameter.getInstance().getHomeId(),
-                        mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC,
-                        mViewBinding.sceneMaintainLblName.getText().toString(), mSceneManager.getSceneModelName(mSceneModelCode));
-                baseInfoEntry.enable = mEnable;
-                QMUITipDialogUtil.showLoadingDialg(SceneModelActivity.this, R.string.is_uploading);
-                if (mOperateType == CScene.OPERATE_CREATE) {
-                    ViseLog.d(new Gson().toJson(mParameterList));
-                    // 创建场景
-                    switch (mSceneModelCode) {
-                        case 1:// 起夜开灯
-                        case 5:// 开门亮灯
-                        case 6:// 门铃播报
-                        case 7:// 报警播报
-                        case 8:// 红外布防报警
-                        case 9:// 门磁布防报警
-                        case 10:// 回家模式
-                        case 11:// 离家模式
-                        case 12:// 睡觉模式
-                        case 13:// 起床模式
-                        case 2: {// 无人关灯
-                            mSceneManager.createCAModel(baseInfoEntry, mParameterList, "all", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                            break;
-                        }
-                        case 3:// 报警开灯
-                        case 4: {// 遥控开灯
-                            mSceneManager.createCAModel(baseInfoEntry, mParameterList, "any", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                            break;
-                        }
-                    }
-                    //mSceneManager.create(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                } else {
-                    // 修改场景
-                    baseInfoEntry.sceneId = mSceneId;
-                    //mSceneManager.update(baseInfoEntry, mParameterList, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                    switch (mSceneModelCode) {
-                        case 1:// 起夜开灯
-                        case 5:// 开门亮灯
-                        case 6:// 门铃播报
-                        case 7:// 报警播报
-                        case 8:// 红外布防报警
-                        case 9:// 门磁布防报警
-                        case 10:// 回家模式
-                        case 11:// 离家模式
-                        case 12:// 睡觉模式
-                        case 13:// 起床模式
-                        case 2: {// 无人关灯
-                            mSceneManager.updateCAModel(baseInfoEntry, mParameterList, "all", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                            break;
-                        }
-                        case 3:// 报警开灯
-                        case 4: {// 遥控开灯
-                            mSceneManager.updateCAModel(baseInfoEntry, mParameterList, "any", mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                            break;
-                        }
-                    }
-                }
+                createScene();
             }
         });
 
@@ -245,10 +197,266 @@ public class SceneModelActivity extends BaseActivity {
 
         mUserCenter = new UserCenter(this);
         mGatewayDevList.addAll(DeviceBuffer.getGatewayDevs());
-        mUserCenter.getGatewaySubdeviceList(mGatewayDevList.get(0).iotId, 1, PAGE_SIZE,
+        mGatewayEntry = mGatewayDevList.get(0);
+        if (mGatewayDevList.size() == 1) {
+            mViewBinding.gatewayIv.setVisibility(View.GONE);
+        } else mViewBinding.gatewayIv.setVisibility(View.VISIBLE);
+        mViewBinding.gatewayTv.setText(mGatewayEntry.nickName);
+        mViewBinding.gatewayTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mGatewayDevList.size() > 1) {
+                    QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(SceneModelActivity.this);
+                    for (EDevice.deviceEntry entry : mGatewayDevList) {
+                        builder.addItem(entry.nickName);
+                    }
+                    builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                        @Override
+                        public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                            EDevice.deviceEntry entry = mGatewayDevList.get(position);
+                            mViewBinding.gatewayTv.setText(entry.nickName);
+                            mGatewayEntry = mGatewayDevList.get(position);
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.build().show();
+                }
+            }
+        });
+        mUserCenter.getGatewaySubdeviceList(mGatewayEntry.iotId, 1, PAGE_SIZE, Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST,
                 mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
         initStatusBar();
+    }
+
+    // 创建场景
+    private void createScene() {
+        if (System.currentTimeMillis() - mClickTime < 3000) {
+            mClickTime = System.currentTimeMillis();
+            return;
+        }
+        ViseLog.d(GsonUtil.toJson(mParameterList));
+        ViseLog.d(GsonUtil.toJson(createItemScene(mParameterList, mSceneModelCode)));
+        // 检查参数
+        if (!mSceneManager.checkParameter(mSceneNumber, mSceneModelCode, mParameterList)) {
+            return;
+        }
+        ItemSceneInGateway scene = new ItemSceneInGateway();
+        scene.setGwMac(mGatewayEntry.mac);
+        scene.setSceneDetail(createItemScene(mParameterList, mSceneModelCode));
+
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
+        RetrofitUtil.getInstance().addScene("chengxunfei", scene)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        QMUITipDialogUtil.dismiss();
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        boolean result = response.getBoolean("result");
+                        String sceneId = response.getString("sceneId");
+                        if (code == 200) {
+                            if (result) {
+                                mSceneManager.manageSceneService(mGatewayEntry.iotId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                                setResult(10001);
+                                finish();
+                            } else {
+                                if (msg == null || msg.length() == 0) {
+                                    ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                                } else
+                                    ToastUtils.showLongToast(mActivity, msg);
+                            }
+                        } else {
+                            if (msg == null || msg.length() == 0) {
+                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(mActivity, msg);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 将信息整理生成ItemScene对象
+    private ItemScene createItemScene(List<EScene.parameterEntry> list, int modelCode) {
+        ItemScene scene = new ItemScene();
+        switch (modelCode) {
+            case 1:// 起夜开灯
+            case 2:// 无人关灯
+            case 3:// 报警开灯
+            case 4:// 遥控开灯
+            case 5:// 开门亮灯
+                scene.setType("0");// 自动场景
+                break;
+            case 10:// 回家模式
+            case 11:// 离家模式
+            case 12:// 睡觉模式
+                scene.setType("1");// 手动场景
+                break;
+        }
+        scene.setName(mViewBinding.sceneMaintainLblName.getText().toString());
+        scene.setMac(mGatewayEntry.mac);
+        scene.setEnable(mEnable ? "1" : "0");
+        scene.setConditionMode("Any");
+        List<ItemScene.Condition> conditionList = new ArrayList<>();
+        ItemScene.Timer timer = new ItemScene.Timer();
+        List<ItemScene.Action> actionList = new ArrayList<>();
+        for (EScene.parameterEntry parameter : list) {
+            if (parameter.type == CScene.SPT_TRIGGER && parameter.triggerEntry != null && parameter.triggerEntry.isSelected) {
+                ItemScene.Condition condition = new ItemScene.Condition();
+                condition.setType("State");
+                ItemScene.ConditionParameter conditionParameter = new ItemScene.ConditionParameter();
+                switch (parameter.triggerEntry.productKey) {
+                    case CTSL.PK_GASSENSOR:// 燃气感应器
+                    case CTSL.PK_WATERSENSOR:// 水浸传感器
+                    case CTSL.PK_SMOKESENSOR:// 烟雾传感器
+                    case CTSL.PK_PIRSENSOR: {
+                        // 人体红外感应器
+                        conditionParameter.setCompareType("==");
+                        conditionParameter.setCompareValue(parameter.triggerEntry.state.rawValue);
+                        conditionParameter.setDeviceId(DeviceBuffer.getDeviceMac(parameter.triggerEntry.iotId));
+                        conditionParameter.setEndpointId("1");
+                        conditionParameter.setName("Alarm");
+                        break;
+                    }
+                }
+                condition.setParameters(conditionParameter);
+                conditionList.add(condition);
+            } else if (parameter.type == CScene.SPT_CONDITION_TIME && parameter.conditionTimeEntry != null && parameter.conditionTimeEntry.isSelected) {
+                timer.setType("TimeRange");
+                StringBuilder cron = new StringBuilder();
+                cron.append(parameter.conditionTimeEntry.beginMinute);
+                cron.append("-");
+                cron.append(parameter.conditionTimeEntry.endMinute);
+
+                cron.append(" ");
+                cron.append(parameter.conditionTimeEntry.beginHour);
+                cron.append("-");
+                cron.append(parameter.conditionTimeEntry.endHour);
+
+                cron.append(" * * ");
+
+                List<Integer> repeats = parameter.conditionTimeEntry.repeat;
+                for (int i = 0; i < repeats.size(); i++) {
+                    switch (repeats.get(i)) {
+                        case 1: {
+                            cron.append("MON");
+                            break;
+                        }
+                        case 2: {
+                            cron.append("TUE");
+                            break;
+                        }
+                        case 3: {
+                            cron.append("WED");
+                            break;
+                        }
+                        case 4: {
+                            cron.append("THU");
+                            break;
+                        }
+                        case 5: {
+                            cron.append("FRI");
+                            break;
+                        }
+                        case 6: {
+                            cron.append("SAT");
+                            break;
+                        }
+                        case 7: {
+                            cron.append("SUN");
+                            break;
+                        }
+                    }
+                    if (i < repeats.size() - 1) {
+                        cron.append(",");
+                    }
+                }
+                timer.setCron(cron.toString());
+            } else if (parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && !parameter.responseEntry.isSelected) {
+                // 响应
+                ItemScene.Action action = new ItemScene.Action();
+                action.setType("Command");
+                switch (parameter.responseEntry.productKey) {
+                    case CTSL.PK_ONEWAYSWITCH: {
+                        // 一键面板
+                        ItemScene.ActionParameter actionParameter = new ItemScene.ActionParameter();
+                        actionParameter.setEndpointId("1");
+                        actionParameter.setDeviceId(DeviceBuffer.getDeviceMac(parameter.responseEntry.iotId/*"5ucMXkpNYvGNudGYX4mK000000"*/));
+                        actionParameter.setCommandType("0106");
+
+                        JSONObject command = new JSONObject();
+                        command.put("State", parameter.responseEntry.state.rawValue);
+                        actionParameter.setCommand(command);
+                        action.setParameters(actionParameter);
+                        break;
+                    }
+                    case CTSL.PK_TWOWAYSWITCH: {
+                        // 二键面板
+                        String endId = "1";
+                        if ("PowerSwitch_1".equals(parameter.responseEntry.state.rawName)) {
+                            endId = "1";
+                        } else if ("PowerSwitch_2".equals(parameter.responseEntry.state.rawName)) {
+                            endId = "2";
+                        }
+
+                        ItemScene.ActionParameter actionParameter = new ItemScene.ActionParameter();
+                        actionParameter.setEndpointId(endId);
+                        actionParameter.setDeviceId(DeviceBuffer.getDeviceMac(parameter.responseEntry.iotId/*"qH55k2VLd6dGShi6RZSf000000"*/));
+                        actionParameter.setCommandType("0106");
+
+                        JSONObject command = new JSONObject();
+                        command.put("State", parameter.responseEntry.state.rawValue);
+                        actionParameter.setCommand(command);
+                        action.setParameters(actionParameter);
+                        break;
+                    }
+                    case CTSL.PK_THREE_KEY_SWITCH: {
+                        // 三键面板
+                        String endId = "1";
+                        if ("PowerSwitch_1".equals(parameter.responseEntry.state.rawName)) {
+                            endId = "1";
+                        } else if ("PowerSwitch_2".equals(parameter.responseEntry.state.rawName)) {
+                            endId = "2";
+                        } else if ("PowerSwitch_3".equals(parameter.responseEntry.state.rawName)) {
+                            endId = "3";
+                        }
+
+                        ItemScene.ActionParameter actionParameter = new ItemScene.ActionParameter();
+                        actionParameter.setEndpointId(endId);
+                        actionParameter.setDeviceId(DeviceBuffer.getDeviceMac(parameter.responseEntry.iotId));
+                        actionParameter.setCommandType("0106");
+
+                        JSONObject command = new JSONObject();
+                        command.put("State", parameter.responseEntry.state.rawValue);
+                        actionParameter.setCommand(command);
+                        action.setParameters(actionParameter);
+                        break;
+                    }
+                }
+                actionList.add(action);
+            }
+        }
+        scene.setConditions(conditionList);
+        scene.setActions(actionList);
+        scene.setTime(timer);
+        return scene;
     }
 
     // 嵌入式状态栏
@@ -262,13 +470,17 @@ public class SceneModelActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
-        mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
-        ViseLog.d("生成场景参数列表 = " + GsonUtil.toJson(mParameterList));
-        //refreshModelList();
+        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+        } else {
+            mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList, mGatewayEntry.iotId);
+            ViseLog.d("生成场景参数列表 = " + GsonUtil.toJson(mParameterList));
+            refreshModelList();
+        }
 
-        mAptSceneParameter = new AptSceneParameter(this);
-        mAptSceneParameter.setData(mParameterList);
-        mViewBinding.sceneMaintainLstParameter.setAdapter(mAptSceneParameter);
+        mSceneAdapter = new LocalSceneAdapter(this);
+        mSceneAdapter.setData(mParameterList);
+        mViewBinding.sceneMaintainLstParameter.setAdapter(mSceneAdapter);
 
         // 列表点击事件处理
         mViewBinding.sceneMaintainLstParameter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -333,7 +545,7 @@ public class SceneModelActivity extends BaseActivity {
                     }
                     // 初始化场景参数
                     mSceneManager.initSceneParameterList(mParameterList, detailEntry);
-                    mAptSceneParameter.notifyDataSetChanged();
+                    mSceneAdapter.notifyDataSetChanged();
                     QMUITipDialogUtil.dismiss();
                     break;
                 case Constant.MSG_CALLBACK_CREATESCENE:
@@ -382,24 +594,20 @@ public class SceneModelActivity extends BaseActivity {
                 }
                 case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST: {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
-                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(list));
+                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(list) + "\n网关 = " + GsonUtil.toJson(mGatewayEntry));
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
-                            EDevice.deviceEntry entry = new EDevice.deviceEntry();
-                            entry.iotId = e.iotId;
-                            entry.nickName = e.nickName;
-                            entry.productKey = e.productKey;
-                            entry.status = e.status;
-                            entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
-                            entry.image = e.image;
+                            DeviceBuffer.setGatewayId(e.iotId, mGatewayEntry.iotId);
                         }
 
                         if (list.data.size() >= list.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            // mUserCenter.getGatewaySubdeviceList(activity.mGatewayId, list.pageNo + 1, activity.PAGE_SIZE, activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                            mUserCenter.getGatewaySubdeviceList(mGatewayEntry.iotId, list.pageNo + 1, PAGE_SIZE,
+                                    mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         } else {
-                            // 数据获取完则加载显示
-
+                            // 数据获取完后
+                            ViseLog.d(GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+                            new ProductHelper(SceneModelActivity.this).getConfigureList(Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         }
                     }
                     break;
@@ -446,7 +654,7 @@ public class SceneModelActivity extends BaseActivity {
             if (mSetTimeIndex >= 0) {
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry = conditionTime;
                 mParameterList.get(mSetTimeIndex).conditionTimeEntry.isSelected = true;
-                mAptSceneParameter.notifyDataSetChanged();
+                mSceneAdapter.notifyDataSetChanged();
             }
         }
     }

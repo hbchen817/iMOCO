@@ -150,7 +150,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command = new JSONObject();
             command.put("Operate", "");
-            EAction eAction = initStateEAction(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            EAction eAction = initStateEAction(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "010D", command);
             mList.add(eAction);
         } else if (CTSL.TEST_PK_TWOWAYWINDOWCURTAINS.equals(mProductKey)) {
@@ -167,9 +167,9 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             command1.put("Operate", "");
             JSONObject command2 = new JSONObject();
             command2.put("Operate", "");
-            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "010D", command1));
-            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "2", "010D", command2));
         } else if (CTSL.PK_ONEWAYSWITCH.equals(mProductKey)) {
             // 一键面板
@@ -179,7 +179,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command = new JSONObject();
             command.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "1", "0106", command));
+            mList.add(initStateEAction(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac, "1", "0106", command));
         } else if (CTSL.PK_TWOWAYSWITCH.equals(mProductKey)) {
             // 二键面板
             String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_1);
@@ -188,7 +188,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command1 = new JSONObject();
             command1.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "1", "0106", command1));
+            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac, "1", "0106", command1));
 
             String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_2);
             if (keyName2 == null || keyName2.length() == 0) {
@@ -196,7 +196,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command2 = new JSONObject();
             command2.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "2", "0106", command2));
+            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac, "2", "0106", command2));
         } else if (CTSL.PK_THREE_KEY_SWITCH.equals(mProductKey)) {
             // 三键面板
             String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_1);
@@ -205,7 +205,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command1 = new JSONObject();
             command1.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "1", "0106", command1));
+            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac, "1", "0106", command1));
 
             String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_2);
             if (keyName2 == null || keyName2.length() == 0) {
@@ -213,7 +213,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command2 = new JSONObject();
             command2.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "2", "0106", command2));
+            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac, "2", "0106", command2));
 
             String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_3);
             if (keyName3 == null || keyName3.length() == 0) {
@@ -221,7 +221,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command3 = new JSONObject();
             command3.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "3", "0106", command3));
+            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac, "3", "0106", command3));
         } else if (CTSL.PK_FOURWAYSWITCH_2.equals(mProductKey)) {
             // 四键面板
             String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_1);
@@ -230,7 +230,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command1 = new JSONObject();
             command1.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "1", "0106", command1));
+            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac, "1", "0106", command1));
 
             String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_2);
             if (keyName2 == null || keyName2.length() == 0) {
@@ -238,7 +238,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command2 = new JSONObject();
             command2.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "2", "0106", command2));
+            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac, "2", "0106", command2));
 
             String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_3);
             if (keyName3 == null || keyName3.length() == 0) {
@@ -246,7 +246,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command3 = new JSONObject();
             command3.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "3", "0106", command3));
+            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac, "3", "0106", command3));
 
             String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_4);
             if (keyName4 == null || keyName4.length() == 0) {
@@ -254,7 +254,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command4 = new JSONObject();
             command4.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "4", "0106", command4));
+            mList.add(initStateEAction(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac, "4", "0106", command4));
         } else if (CTSL.PK_SIX_TWO_SCENE_SWITCH.equals(mProductKey)) {
             // 六键四开二场景开关
             String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1);
@@ -263,7 +263,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command1 = new JSONObject();
             command1.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "1", "0106", command1));
+            mList.add(initStateEAction(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac, "1", "0106", command1));
 
             String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2);
             if (keyName2 == null || keyName2.length() == 0) {
@@ -271,7 +271,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command2 = new JSONObject();
             command2.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "2", "0106", command2));
+            mList.add(initStateEAction(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac, "2", "0106", command2));
 
             String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3);
             if (keyName3 == null || keyName3.length() == 0) {
@@ -279,7 +279,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command3 = new JSONObject();
             command3.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "3", "0106", command3));
+            mList.add(initStateEAction(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac, "3", "0106", command3));
 
             String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4);
             if (keyName4 == null || keyName4.length() == 0) {
@@ -287,12 +287,12 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             }
             JSONObject command4 = new JSONObject();
             command4.put("State", "");
-            mList.add(initStateEAction(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).deviceName, "4", "0106", command4));
+            mList.add(initStateEAction(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac, "4", "0106", command4));
         } else if (CTSL.PK_OUTLET.equals(mProductKey)) {
             // 插座
             JSONObject command = new JSONObject();
             command.put("State", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "0106", command));
         } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey) ||
                 CTSL.PK_AIRCOMDITION_FOUR.equals(mProductKey) ||
@@ -301,67 +301,67 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             // 电源开关
             JSONObject command1 = new JSONObject();
             command1.put("WorkMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "01EF", command1));
             // 工作模式
             JSONObject command2 = new JSONObject();
             command2.put("WorkMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.work_mode), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.work_mode), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "01EF", command2));
             // 风速
             JSONObject command3 = new JSONObject();
             command3.put("FanMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.fan_speed), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.fan_speed), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "011E", command3));
 
             // 目标温度
             JSONObject command4 = new JSONObject();
             command4.put("Temperature", "");
             command4.put("Type", "1");
-            mList.add(initStateEAction(mDevIot, getString(R.string.target_temperature), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.target_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "011C", command4));
         } else if (CTSL.PK_FLOORHEATING001.equals(mProductKey)) {
             // 电地暖
             // 电源开关
             JSONObject command1 = new JSONObject();
             command1.put("WorkMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "01EF", command1));
             // 目标温度
             JSONObject command2 = new JSONObject();
             command2.put("Temperature", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.target_temperature), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.target_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "011C", command2));
         } else if (CTSL.PK_FAU.equals(mProductKey)) {
             // 新风
             // 电源开关
             JSONObject command1 = new JSONObject();
             command1.put("FanMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "01EF", command1));
             // 风速
             JSONObject command2 = new JSONObject();
             command2.put("FanMode", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.fan_speed), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.fan_speed), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "011E", command2));
         } else if (CTSL.PK_LIGHT.equals(mProductKey)) {
             // 调光调色
             // 亮度
             JSONObject command1 = new JSONObject();
             command1.put("Level", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.lightness), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.lightness), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "0107", command1));
             // 色温
             JSONObject command2 = new JSONObject();
             command2.put("Temperature", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.color_temperature), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.color_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "0108", command2));
         } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(mProductKey)) {
             // 单调光
             // 亮度
             JSONObject command1 = new JSONObject();
             command1.put("Level", "");
-            mList.add(initStateEAction(mDevIot, getString(R.string.lightness), DeviceBuffer.getDeviceInformation(mDevIot).deviceName,
+            mList.add(initStateEAction(mDevIot, getString(R.string.lightness), DeviceBuffer.getDeviceInformation(mDevIot).mac,
                     "1", "0107", command1));
         }
         mAdapter.notifyDataSetChanged();
