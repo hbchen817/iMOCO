@@ -136,6 +136,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     private final List<ItemScene> mSceneList = new ArrayList<>();
     private String mGatewayId;
     private String mGatewayMac;
+    private ItemSceneInGateway m5Scene;
+    private ItemSceneInGateway m6Scene;
 
     // 更新状态
     @Override
@@ -211,7 +213,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         if (Constant.IS_TEST_DATA) {
             iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
         }
-        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID, Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
+        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+                Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }
 
     // 嵌入式状态栏
@@ -792,6 +795,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     int code = response.getInteger("code");
                     String message = response.getString("message");
                     JSONArray sceneList = response.getJSONArray("sceneList");
+                    ViseLog.d("");
                     if (code == 0 || code == 200) {
                         if (sceneList != null) {
                             activity.querySceneName(sceneList);
@@ -816,14 +820,11 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         }
     }
 
-    private ItemSceneInGateway m5Scene;
-    private ItemSceneInGateway m6Scene;
-
     // 获取按键绑定场景的名称
     private void querySceneName(JSONArray list) {
         for (int i = 0; i < list.size(); i++) {
             JSONObject object = list.getJSONObject(i);
-            ItemSceneInGateway scene = new Gson().fromJson(object.toJSONString(), ItemSceneInGateway.class);
+            ItemSceneInGateway scene = JSONObject.parseObject(object.toJSONString(), ItemSceneInGateway.class);
             ViseLog.d("sss = " + GsonUtil.toJson(scene));
             DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
             if (scene.getAppParams() == null) continue;

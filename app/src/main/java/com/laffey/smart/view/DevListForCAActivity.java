@@ -147,7 +147,7 @@ public class DevListForCAActivity extends BaseActivity {
             if (msg.what == Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA) {// 获取支持TCA的设备列表
                 JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                 ViseLog.d(new Gson().toJson(jsonObject));
-                ResponseDevListForCA responseEntry = new Gson().fromJson(new Gson().toJson(jsonObject), ResponseDevListForCA.class);
+                ResponseDevListForCA responseEntry = JSONObject.parseObject(new Gson().toJson(jsonObject), ResponseDevListForCA.class);
                 activity.mList.addAll(responseEntry.getData());
                 if (responseEntry.getData().size() >= PAGE_SIZE) {
                     activity.mPageNo++;

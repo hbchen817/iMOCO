@@ -197,7 +197,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         if (code == 200) {
                             for (int i = 0; i < sceneList.size(); i++) {
                                 JSONObject item = sceneList.getJSONObject(i);
-                                ItemSceneInGateway sceneInGateway = new Gson().fromJson(item.toJSONString(), ItemSceneInGateway.class);
+                                ItemSceneInGateway sceneInGateway = JSONObject.parseObject(item.toJSONString(), ItemSceneInGateway.class);
                                 if (sceneInGateway.getAppParams() != null) {
                                     String key = sceneInGateway.getAppParams().getString("key");
                                     if (key != null && key.length() > 0) {

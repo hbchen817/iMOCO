@@ -345,7 +345,7 @@ public class AssociatedBindListActivity extends BaseActivity {
 
     private void refreshBindingTable(JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
-            ItemBinding item = new Gson().fromJson(array.get(i).toString(), ItemBinding.class);
+            ItemBinding item = JSONObject.parseObject(array.get(i).toString(), ItemBinding.class);
             if (String.valueOf(mKeyValue).equals(item.getSrcEndpointId())) {
                 EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
                 if (entry != null)

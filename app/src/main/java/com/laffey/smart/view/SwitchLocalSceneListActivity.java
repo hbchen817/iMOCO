@@ -190,7 +190,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                             if (mSceneType == 0) {
                                 String sceneId = response.getString("sceneId");
                                 // 自动场景提交成功后，再提交手动场景
-                                ItemSceneInGateway tmp = new Gson().fromJson(GsonUtil.toJson(mBindScene), ItemSceneInGateway.class);
+                                ItemSceneInGateway tmp = JSONObject.parseObject(GsonUtil.toJson(mBindScene), ItemSceneInGateway.class);
                                 tmp.getAppParams().put("cId", sceneId);
                                 tmp.getSceneDetail().setConditions(new ArrayList<>());
                                 tmp.getSceneDetail().setType("1");
@@ -435,7 +435,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
         mBindScene.getSceneDetail().setConditions(list);
 
         // ViseLog.d("绑定场景 = " + GsonUtil.toJson(mBindScene));
-        ItemSceneInGateway tmp = new Gson().fromJson(GsonUtil.toJson(mBindScene), ItemSceneInGateway.class);
+        ItemSceneInGateway tmp = JSONObject.parseObject(GsonUtil.toJson(mBindScene), ItemSceneInGateway.class);
         tmp.setAppParams(new JSONObject());
         tmp.getSceneDetail().setType("0");
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);

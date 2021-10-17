@@ -166,7 +166,7 @@ public class SceneActionActivity extends BaseActivity {
                 for (int i = 0; i < array.size(); i++) {
                     JSONObject object = array.getJSONObject(i);
                     if (!object.getString("description").contains("mode == CA,")) {
-                        SceneActionItem item = new Gson().fromJson(array.get(i).toString(), SceneActionItem.class);
+                        SceneActionItem item = JSONObject.parseObject(array.get(i).toString(), SceneActionItem.class);
                         ActionEntry.Trigger trigger = new ActionEntry.Trigger();
                         trigger.setSceneId(item.getId());
                         item.setTrigger(trigger);

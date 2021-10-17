@@ -61,8 +61,8 @@ public class EditLocalSceneBindActivity extends BaseActivity {
         mGwMac = getIntent().getStringExtra("gwMac");
         mSceneId = getIntent().getStringExtra("sceneId");
 
-        // ViseLog.d("编辑 = " + GsonUtil.toJson(DeviceBuffer.getScene(mSceneId)));
-        ViseLog.d("编辑 = " + GsonUtil.toJson(DeviceBuffer.getAllScene()) + "\nmSceneId = " + mSceneId);
+        ViseLog.d("编辑 = " + GsonUtil.toJson(DeviceBuffer.getScene(mSceneId)));
+        // ViseLog.d("编辑 = " + GsonUtil.toJson(DeviceBuffer.getAllScene()) + "\nmSceneId = " + mSceneId);
 
         initView();
 

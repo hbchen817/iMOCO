@@ -150,7 +150,7 @@ public class IdentifierListActivity extends BaseActivity {
                 JSONArray a = o.getJSONArray("data");
                 for (int i = 0; i < a.size(); i++) {
                     JSONObject o1 = a.getJSONObject(i);
-                    IdentifierItemForCA item = new Gson().fromJson(o1.toJSONString(), IdentifierItemForCA.class);
+                    IdentifierItemForCA item = JSONObject.parseObject(o1.toJSONString(), IdentifierItemForCA.class);
 
                     if (item.getType() == 1) {
                         // 属性
