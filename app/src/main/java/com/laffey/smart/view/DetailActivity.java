@@ -104,7 +104,6 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_six_two_scene_2);
-                //else setContentView(R.layout.activity_six_two_scene);
                 break;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
                 setContentView(R.layout.activity_u_six_scene_2);

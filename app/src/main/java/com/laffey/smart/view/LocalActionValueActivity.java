@@ -426,7 +426,6 @@ public class LocalActionValueActivity extends BaseActivity {
         mEAction.getAction().getParameters().setCommand(mCommand);
         ViseLog.d(GsonUtil.toJson(mEAction));
         EventBus.getDefault().postSticky(mEAction);
-        ViseLog.d("target = " + target);
 
         if ("LocalSceneActivity".equals(target)) {
             Intent intent = new Intent(this, LocalSceneActivity.class);

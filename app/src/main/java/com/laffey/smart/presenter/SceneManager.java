@@ -2402,4 +2402,109 @@ public class SceneManager {
                     }
                 });
     }
+
+    // 根据设备iotId获取设备mac
+    public void queryMacByIotId(String token, String iotId, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .queryMacByIotId(token, iotId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 删除本地场景
+    public void deleteScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .deleteScene(token, scene.getGwMac(), scene.getSceneDetail().getSceneId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 删除本地场景
+    public void deleteScene(String token, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance()
+                .deleteScene(token, gwMac, sceneId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        Message msg = resulthandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
 }

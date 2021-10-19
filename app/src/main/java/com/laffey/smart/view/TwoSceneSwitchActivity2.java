@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,6 +72,9 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
     @BindView(R.id.two_go_ic)
     TextView mTwoGoIC;
 
+    private final int EDIT_LOCAL_SCENE = 10001;
+    private final int BIND_SCENE_REQUEST_CODE = 10000;
+
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
     private String[] mManualIDs = new String[2];
@@ -140,8 +144,6 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         } else if (CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(mProductKey)) {
             mBackLightLayout.setVisibility(View.GONE);
         }
-
-        getGatewayId(mIOTId);
     }
 
     // 获取面板所属网关iotId
@@ -246,7 +248,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m1Scene == null) {
                     SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1);
+                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
@@ -269,7 +271,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m2Scene == null) {
                     SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2);
+                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
@@ -455,7 +457,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     EditLocalSceneBindActivity.start(this, mKeyName1, mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId());
+                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
             } else if (mManualIDs[0] != null) {
                 EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1,
                         mSceneContentText1.getText().toString());
@@ -466,7 +468,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     EditLocalSceneBindActivity.start(this, mKeyName2, mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
-                            m2Scene.getSceneDetail().getSceneId());
+                            m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
             } else if (mManualIDs[1] != null) {
                 EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2,
                         mSceneContentText2.getText().toString());
@@ -608,7 +610,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                 default:
                     break;
             }
-            if (msg.what == activity.TAG_GET_EXTENDED_PRO){
+            if (msg.what == activity.TAG_GET_EXTENDED_PRO) {
                 // 获取按键昵称
                 JSONObject object = JSONObject.parseObject((String) msg.obj);
                 DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
@@ -661,18 +663,38 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             if (scene.getAppParams() == null) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
-            switch (key) {
-                case "1": {
-                    mSceneContentText1.setText(scene.getSceneDetail().getName());
-                    m1Scene = scene;
-                    break;
-                }
-                case "2": {
-                    mSceneContentText2.setText(scene.getSceneDetail().getName());
-                    m2Scene = scene;
-                    break;
-                }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_1)) {
+                mSceneContentText1.setText(scene.getSceneDetail().getName());
+                m1Scene = scene;
             }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_2)) {
+                mSceneContentText2.setText(scene.getSceneDetail().getName());
+                m2Scene = scene;
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getGatewayId(mIOTId);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_LOCAL_SCENE) {
+            if (resultCode == 2) {
+                ToastUtils.showLongToast(this, R.string.unbind_scene_success);
+                mSceneContentText1.setText(R.string.no_bind_scene);
+                mSceneContentText2.setText(R.string.no_bind_scene);
+
+                m1Scene = null;
+                m2Scene = null;
+            }
+        } else if (requestCode == BIND_SCENE_REQUEST_CODE) {
+            if (resultCode == 2)
+                ToastUtils.showLongToast(this, R.string.bind_scene_success);
         }
     }
 }

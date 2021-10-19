@@ -695,6 +695,12 @@ public class IndexFragment1 extends BaseFragment {
 
                                     DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
 
+                                    JSONObject appParams = scene.getAppParams();
+                                    if (appParams != null) {
+                                        String switchIotId = appParams.getString("switchIotId");
+                                        if (switchIotId != null && switchIotId.length() > 0) continue;
+                                    }
+
                                     EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
                                     entry.id = scene.getSceneDetail().getSceneId();
                                     entry.name = scene.getSceneDetail().getName();

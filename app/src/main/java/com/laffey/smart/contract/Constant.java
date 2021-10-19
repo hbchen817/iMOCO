@@ -301,6 +301,10 @@ public class Constant {
     public static final int MSG_QUEST_UPDATE_SCENE_ERROR            = 505;
     public static final int MSG_QUEST_GW_ID_BY_SUB_ID               = 506;
     public static final int MSG_QUEST_GW_ID_BY_SUB_ID_ERROR         = 507;
+    public static final int MSG_QUEST_DELETE_SCENE                  = 508;
+    public static final int MSG_QUEST_DELETE_SCENE_ERROR            = 509;
+    public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID           = 510;
+    public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID_ERROR     = 511;
 
     // 定义配网常量
     public static final String CONFIGNETWORK_AES_CBC_IV             = "3333333333333333";

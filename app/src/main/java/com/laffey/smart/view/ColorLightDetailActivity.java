@@ -72,6 +72,8 @@ public class ColorLightDetailActivity extends DetailActivity {
     TextView mTimerIC;
     @BindView(R.id.timer_tv)
     TextView mTimerTV;
+    @BindView(R.id.color_temp_ic)
+    TextView mColorTempIc;
     @BindView(R.id.lightnessProgressBar)
     SeekBar mLightnessProgressBar;
     @BindView(R.id.recycle_view)
@@ -109,10 +111,10 @@ public class ColorLightDetailActivity extends DetailActivity {
             mState = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_POWER));
             if (mState == 0) {
                 // 关闭
-                int blue42 = getResources().getColor(R.color.blue4_2);
+                int blue42 = getResources().getColor(R.color.appcolor2);
                 mLightnessText.setTextColor(blue42);
                 mKText.setTextColor(blue42);
-                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress_2));
+                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress_for_appcolor_2));
                 mLightnessProgressBar.setEnabled(false);
                 mSwitchIC.setTextColor(blue42);
                 mSwitchTV.setTextColor(blue42);
@@ -123,10 +125,10 @@ public class ColorLightDetailActivity extends DetailActivity {
                 mColorTemperatureText.setTextColor(blue42);
             } else {
                 // 打开
-                int blue4 = getResources().getColor(R.color.blue4);
+                int blue4 = getResources().getColor(R.color.appcolor);
                 mLightnessText.setTextColor(blue4);
                 mKText.setTextColor(blue4);
-                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress));
+                mLightnessProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.color_light_progress_for_appcolor));
                 mLightnessProgressBar.setEnabled(true);
                 mSwitchIC.setTextColor(blue4);
                 mSwitchTV.setTextColor(blue4);
@@ -149,6 +151,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         mSwitchIC.setTypeface(iconfont);
         mSceneIC.setTypeface(iconfont);
         mTimerIC.setTypeface(iconfont);
+        mColorTempIc.setTypeface(iconfont);
 
         EventBus.getDefault().register(this);
         mTSLHelper = new TSLHelper(this);

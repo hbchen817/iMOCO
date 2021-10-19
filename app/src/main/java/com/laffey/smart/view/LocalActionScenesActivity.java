@@ -195,27 +195,29 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
                         if (code == 200) {
-                            for (int i = 0; i < sceneList.size(); i++) {
-                                JSONObject item = sceneList.getJSONObject(i);
-                                ItemSceneInGateway sceneInGateway = JSONObject.parseObject(item.toJSONString(), ItemSceneInGateway.class);
-                                if (sceneInGateway.getAppParams() != null) {
-                                    String key = sceneInGateway.getAppParams().getString("key");
-                                    if (key != null && key.length() > 0) {
-                                        continue;
+                            if (sceneList != null) {
+                                for (int i = 0; i < sceneList.size(); i++) {
+                                    JSONObject item = sceneList.getJSONObject(i);
+                                    ItemSceneInGateway sceneInGateway = JSONObject.parseObject(item.toJSONString(), ItemSceneInGateway.class);
+                                    if (sceneInGateway.getAppParams() != null) {
+                                        String key = sceneInGateway.getAppParams().getString("key");
+                                        if (key != null && key.length() > 0) {
+                                            continue;
+                                        }
                                     }
-                                }
 
-                                ItemScene scene = new ItemScene();
-                                scene.setName(sceneInGateway.getSceneDetail().getName());
-                                scene.setSceneId(sceneInGateway.getSceneDetail().getSceneId());
-                                if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null) {
-                                    if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {
-                                        mSelectPos = i;
+                                    ItemScene scene = new ItemScene();
+                                    scene.setName(sceneInGateway.getSceneDetail().getName());
+                                    scene.setSceneId(sceneInGateway.getSceneDetail().getSceneId());
+                                    if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null) {
+                                        if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {
+                                            mSelectPos = i;
+                                        }
                                     }
+                                    mSceneList.add(scene);
                                 }
-                                mSceneList.add(scene);
                             }
-                            if (mSceneList.size() == 0) {
+                            if (sceneList != null || mSceneList.size() == 0) {
                                 mViewBinding.nodataView.setVisibility(View.VISIBLE);
                                 mViewBinding.sceneRl.setVisibility(View.GONE);
                             } else {

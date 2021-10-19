@@ -57,6 +57,17 @@ public class DeviceBuffer {
         }
     }
 
+    // 根据关联场景id获取场景信息
+    public static ItemSceneInGateway getSceneByCid(String cId, String keyCode) {
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (scene.getAppParams() != null && cId.equals(scene.getAppParams().getString("cId"))) {
+                if (scene.getAppParams() != null && keyCode.equals(scene.getAppParams().getString("key")))
+                    return scene;
+            }
+        }
+        return null;
+    }
+
     // 获取所有场景
     public static Map<String, ItemSceneInGateway> getAllScene() {
         return mSceneBuffer;
@@ -68,6 +79,17 @@ public class DeviceBuffer {
             return mSceneBuffer.get(sceneId);
         }
         return null;
+    }
+
+    // 获取自动或手动场景 0：自动  1：手动
+    public static List<ItemSceneInGateway> getScenesByType(String type) {
+        List<ItemSceneInGateway> list = new ArrayList<>();
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (scene.getSceneDetail().getType().equals(type)) {
+                list.add(scene);
+            }
+        }
+        return list;
     }
 
     // 添加扩展信息

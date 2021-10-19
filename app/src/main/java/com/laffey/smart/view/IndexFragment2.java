@@ -95,6 +95,7 @@ public class IndexFragment2 extends BaseFragment {
     private List<EScene.sceneListItemEntry> mSceneList = new ArrayList<>();
     private AptSceneList mAptSceneList;
     private String mSceneType;
+    private String mLocalSceneType;
 
     private final List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
 
@@ -157,7 +158,9 @@ public class IndexFragment2 extends BaseFragment {
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                     mItemSceneList.clear();
                     mSceneList.clear();
-                    querySceneList("chengxunfei", "", "0");
+                    mLocalSceneType = "0";
+                    mSceneManager.querySceneList("chengxunfei", "", mLocalSceneType,
+                            Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                 } else {
                     RefreshData.refreshHomeSceneListData();
 
@@ -171,7 +174,8 @@ public class IndexFragment2 extends BaseFragment {
         initView();
         // 开始获取场景列表
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList("chengxunfei", "", "0");
+            mLocalSceneType = "0";
+            mSceneManager.querySceneList("chengxunfei", "", "0", Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
         } else {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
         }
@@ -537,85 +541,75 @@ public class IndexFragment2 extends BaseFragment {
         mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
-    // 查询本地场景列表
-    private void querySceneList(String token, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(token, mac, type)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        int code = response.getInteger("code");
-                        String msg = response.getString("message");
-                        JSONArray sceneList = response.getJSONArray("sceneList");
-                        ViseLog.d("场景列表 = " + GsonUtil.toJson(sceneList));
-                        if (code == 0 || code == 200) {
-                            if (sceneList != null) {
-                                for (int i = 0; i < sceneList.size(); i++) {
-                                    JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
-                                    DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
-
-                                    mItemSceneList.add(scene);
-
-                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                    entry.id = scene.getSceneDetail().getSceneId();
-                                    entry.name = scene.getSceneDetail().getName();
-                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
-                                    entry.description = scene.getSceneDetail().getMac();
-                                    entry.catalogId = scene.getSceneDetail().getType();
-                                    mSceneList.add(entry);
-                                }
-                            }
-                            if ("0".equals(type)) {
-                                querySceneList("chengxunfei", "", "1");
-                            } else {
-                                QMUITipDialogUtil.dismiss();
-                                mAptSceneList.setData(mSceneList);
-                                mListMyRL.finishRefresh(true);
-                                if (mSceneList.size() > 0) {
-                                    mListMyRL.setVisibility(View.VISIBLE);
-                                    mListMy.setVisibility(View.VISIBLE);
-                                    mSceneNodataView.setVisibility(View.GONE);
-                                } else {
-                                    mListMyRL.setVisibility(View.GONE);
-                                    mListMy.setVisibility(View.GONE);
-                                    mSceneNodataView.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        } else {
-                            mListMyRL.finishRefresh(false);
-                            QMUITipDialogUtil.dismiss();
-                            if (msg != null && msg.length() > 0)
-                                ToastUtils.showLongToast(mActivity, msg);
-                            else
-                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     // API数据处理器
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
+                    // 获取本地场景列表失败
+                    Throwable e = (Throwable) msg.obj;
+                    ToastUtils.showLongToast(mActivity, e.getMessage());
+                    break;
+                }
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
+                    // 获取本地场景列表
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    // ViseLog.d("场景列表 = " + GsonUtil.toJson(sceneList));
+                    if (code == 0 || code == 200) {
+                        if (sceneList != null) {
+                            for (int i = 0; i < sceneList.size(); i++) {
+                                JSONObject sceneObj = sceneList.getJSONObject(i);
+                                ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
+                                DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+
+                                JSONObject appParams = scene.getAppParams();
+                                if (appParams != null) {
+                                    String switchIotId = appParams.getString("switchIotId");
+                                    if (switchIotId != null && switchIotId.length() > 0) continue;
+                                }
+
+                                mItemSceneList.add(scene);
+                                EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                entry.id = scene.getSceneDetail().getSceneId();
+                                entry.name = scene.getSceneDetail().getName();
+                                entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                entry.description = scene.getSceneDetail().getMac();
+                                entry.catalogId = scene.getSceneDetail().getType();
+                                mSceneList.add(entry);
+                            }
+                        }
+                        if ("0".equals(mLocalSceneType)) {
+                            mLocalSceneType = "1";
+                            mSceneManager.querySceneList("chengxunfei", "", mLocalSceneType,
+                                    Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            mAptSceneList.setData(mSceneList);
+                            mListMyRL.finishRefresh(true);
+                            if (mSceneList.size() > 0) {
+                                mListMyRL.setVisibility(View.VISIBLE);
+                                mListMy.setVisibility(View.VISIBLE);
+                                mSceneNodataView.setVisibility(View.GONE);
+                            } else {
+                                mListMyRL.setVisibility(View.GONE);
+                                mListMy.setVisibility(View.GONE);
+                                mSceneNodataView.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } else {
+                        mListMyRL.finishRefresh(false);
+                        QMUITipDialogUtil.dismiss();
+                        if (message != null && message.length() > 0)
+                            ToastUtils.showLongToast(mActivity, message);
+                        else
+                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+                    break;
+                }
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
@@ -693,7 +687,9 @@ public class IndexFragment2 extends BaseFragment {
             QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
             mItemSceneList.clear();
             mSceneList.clear();
-            querySceneList("chengxunfei", "", "0");
+            mLocalSceneType = "0";
+            mSceneManager.querySceneList("chengxunfei", "", mLocalSceneType,
+                    Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
         }
     }
 }

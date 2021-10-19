@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,6 +77,9 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     @BindView(R.id.three_go_ic)
     TextView mThreeGoIC;
 
+    private final int EDIT_LOCAL_SCENE = 10001;
+    private final int BIND_SCENE_REQUEST_CODE = 10000;
+
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
     private String[] mManualIDs = new String[3];
@@ -142,7 +146,11 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
 
         initStatusBar();
         initKeyNickName();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         getGatewayId(mIOTId);
     }
 
@@ -251,7 +259,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m1Scene == null) {
                     SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1);
+                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
@@ -275,7 +283,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m2Scene == null) {
                     SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2);
+                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m2Scene.getSceneDetail().getName());
@@ -299,7 +307,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m3Scene == null) {
                     SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_3);
+                            CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m3Scene.getSceneDetail().getName());
@@ -507,7 +515,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     EditLocalSceneBindActivity.start(this, mKeyName1, mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId());
+                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
             } else {
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1,
@@ -520,7 +528,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     EditLocalSceneBindActivity.start(this, mKeyName2, mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
-                            m2Scene.getSceneDetail().getSceneId());
+                            m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
             } else {
                 if (mManualIDs[1] != null) {
                     EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2,
@@ -533,7 +541,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     EditLocalSceneBindActivity.start(this, mKeyName3, mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_3,
                             mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
-                            m3Scene.getSceneDetail().getSceneId());
+                            m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
             } else {
                 if (mManualIDs[2] != null) {
                     EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3,
@@ -751,23 +759,38 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
             if (scene.getAppParams() == null) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
-            switch (key) {
-                case CTSL.SCENE_SWITCH_KEY_CODE_1: {
-                    mSceneContentText1.setText(scene.getSceneDetail().getName());
-                    m1Scene = scene;
-                    break;
-                }
-                case CTSL.SCENE_SWITCH_KEY_CODE_2: {
-                    mSceneContentText2.setText(scene.getSceneDetail().getName());
-                    m2Scene = scene;
-                    break;
-                }
-                case CTSL.SCENE_SWITCH_KEY_CODE_3: {
-                    mSceneContentText3.setText(scene.getSceneDetail().getName());
-                    m3Scene = scene;
-                    break;
-                }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_1)) {
+                mSceneContentText1.setText(scene.getSceneDetail().getName());
+                m1Scene = scene;
             }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_2)) {
+                mSceneContentText2.setText(scene.getSceneDetail().getName());
+                m2Scene = scene;
+            }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_3)) {
+                mSceneContentText3.setText(scene.getSceneDetail().getName());
+                m3Scene = scene;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_LOCAL_SCENE) {
+            if (resultCode == 2) {
+                ToastUtils.showLongToast(this, R.string.unbind_scene_success);
+                mSceneContentText1.setText(R.string.no_bind_scene);
+                mSceneContentText2.setText(R.string.no_bind_scene);
+                mSceneContentText3.setText(R.string.no_bind_scene);
+
+                m1Scene = null;
+                m2Scene = null;
+                m3Scene = null;
+            }
+        } else if (requestCode == BIND_SCENE_REQUEST_CODE) {
+            if (resultCode == 2)
+                ToastUtils.showLongToast(this, R.string.bind_scene_success);
         }
     }
 }

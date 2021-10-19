@@ -775,4 +775,7 @@
     <string name="select_gateway_dev_first">请先选择网关</string>
     <string name="moredevice_id_2">设备标识：</string>
     <string name="gateway">网关</string>
+    <string name="unbind_scene_success">场景解绑成功</string>
+    <string name="bind_scene_success">场景绑定成功</string>
+    <string name="is_binding_scene">正在绑定场景</string>
 </resources>
