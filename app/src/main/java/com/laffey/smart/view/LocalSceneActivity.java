@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -62,6 +61,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -85,6 +85,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private String mSceneTimer = "1";// 时间条件，0：无时间条件，1：有时间条件
     private String mSceneMode = "Any";//all any
     private ItemScene mScene;
+    private String mSceneId;
 
     private Typeface mIconfont;
     private Map<String, String> mSymbols = new HashMap<>();
@@ -99,6 +100,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     private BaseQuickAdapter<EAction, BaseViewHolder> mActionAdapter;
     private SceneManager mSceneManager;
     private MyHandler mHandler;
+
+    private ECondition mTmpECondition = null;
+    private EAction mTmpEAction = null;
 
     public static void start(Activity activity, String gatewayId, String gatewayMac, int requestCode) {
         Intent intent = new Intent(activity, LocalSceneActivity.class);
@@ -147,6 +151,8 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         // QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         initData();
         RealtimeDataReceiver.addEventCallbackHandler("LocalSceneCallback", mHandler);
+
+        // ViseLog.d("场景缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllScene()));
     }
 
     private void initData() {
@@ -187,6 +193,8 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 ECondition eCondition = mConditionList.get(position);
                 if (eCondition.getIotId() != null && eCondition.getIotId().length() > 0) {
+                    mTmpECondition = JSONObject.parseObject(GsonUtil.toJson(eCondition), ECondition.class);
+
                     eCondition.setTarget("LocalConditionValueActivity");
                     EventBus.getDefault().postSticky(eCondition);
                     Intent intent = new Intent(LocalSceneActivity.this, LocalConditionValueActivity.class);
@@ -247,6 +255,8 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 EAction eAction = mActionList.get(position);
                 if ("Command".equals(eAction.getAction().getType())) {
                     if (eAction.getIotId() != null && eAction.getIotId().length() > 0) {
+                        mTmpEAction = JSONObject.parseObject(GsonUtil.toJson(eAction), EAction.class);
+
                         eAction.setTarget("LocalActionValueActivity");
                         EventBus.getDefault().postSticky(eAction);
 
@@ -256,11 +266,12 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         ToastUtils.showLongToast(LocalSceneActivity.this, R.string.dev_does_not_exist);
                     }
                 } else if ("Scene".equals(eAction.getAction().getType())) {
+                    mTmpEAction = JSONObject.parseObject(GsonUtil.toJson(eAction), EAction.class);
+
                     eAction.setTarget("LocalActionScenesActivity");
                     EventBus.getDefault().postSticky(eAction);
 
-                    Intent intent = new Intent(LocalSceneActivity.this, LocalActionScenesActivity.class);
-                    startActivity(intent);
+                    LocalActionScenesActivity.start(LocalSceneActivity.this, mGatewayId, null, mSceneId, "LocalSceneActivity");
                 }
             }
         });
@@ -287,14 +298,19 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 CTSL.PK_FOURWAYSWITCH_2.equals(pk) ||
                 CTSL.PK_SIX_TWO_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_ONE_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_TWO_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_THREE_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_FOUR_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_SIX_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_OUTLET.equals(pk)) {
             if ("State".equals(eCondition.getCondition().getType())) {
                 desc.append(eCondition.getKeyNickName() + "：");
-                ViseLog.d(desc.toString());
+                // ViseLog.d(desc.toString());
                 if ("1".equals(eCondition.getCondition().getParameters().getCompareValue())) {
                     desc.append(getString(R.string.oneswitch_state_on));
                 } else if ("0".equals(eCondition.getCondition().getParameters().getCompareValue())) {
@@ -305,7 +321,8 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 if ("1".equals(eCondition.getCondition().getParameters().getCompareValue())) {
                     String keyNickName = DeviceBuffer.getExtendedInfo(eCondition.getIotId()).getString(CTSL.SCENE_SWITCH_KEY_CODE_1);
                     if (keyNickName == null || keyNickName.length() == 0) {
-                        if (CTSL.PK_ONE_SCENE_SWITCH.equals(pk))
+                        if (CTSL.PK_ONE_SCENE_SWITCH.equals(pk) ||
+                                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(pk))
                             keyNickName = getString(R.string.key_0);
                         else keyNickName = getString(R.string.key_1);
                     }
@@ -346,7 +363,11 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 CTSL.PK_AIRCOMDITION_FOUR.equals(pk) ||
                 CTSL.PK_VRV_AC.equals(pk) ||
                 CTSL.PK_FLOORHEATING001.equals(pk) ||
-                CTSL.PK_FAU.equals(pk)) {
+                CTSL.PK_FAU.equals(pk) ||
+                CTSL.PK_MULTI_THREE_IN_ONE.equals(pk) ||
+                CTSL.PK_MULTI_AC_AND_FH.equals(pk) ||
+                CTSL.PK_MULTI_AC_AND_FA.equals(pk) ||
+                CTSL.PK_MULTI_FH_AND_FA.equals(pk)) {
             if ("State".equals(eCondition.getCondition().getType())) {
                 if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
                     desc.append(eCondition.getKeyNickName() + "：");
@@ -365,6 +386,13 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     if ("0".equals(eCondition.getCondition().getParameters().getCompareValue())) {
                         desc.append(getString(R.string.oneswitch_state_off));
                     } else if ("4".equals(eCondition.getCondition().getParameters().getCompareValue())) {
+                        desc.append(getString(R.string.oneswitch_state_on));
+                    }
+                } else if ("AutoWorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                    desc.append(eCondition.getKeyNickName() + "：");
+                    if ("0".equals(eCondition.getCondition().getParameters().getCompareValue())) {
+                        desc.append(getString(R.string.oneswitch_state_off));
+                    } else if ("10".equals(eCondition.getCondition().getParameters().getCompareValue())) {
                         desc.append(getString(R.string.oneswitch_state_on));
                     }
                 }
@@ -496,6 +524,11 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     desc.append(getString(R.string.close));
                     break;
                 }
+                case "2": {
+                    // 反转
+                    desc.append(getString(R.string.reverse));
+                    break;
+                }
             }
         } else if (CTSL.PK_OUTLET.equals(pk)) {
             desc.append(eAction.getKeyNickName() + "：");
@@ -514,7 +547,13 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             }
         } else if (CTSL.PK_AIRCOMDITION_TWO.equals(pk) ||
                 CTSL.PK_AIRCOMDITION_FOUR.equals(pk) ||
-                CTSL.PK_VRV_AC.equals(pk)) {
+                CTSL.PK_VRV_AC.equals(pk) ||
+                CTSL.PK_MULTI_THREE_IN_ONE.equals(pk) ||
+                CTSL.PK_MULTI_AC_AND_FH.equals(pk) ||
+                CTSL.PK_MULTI_AC_AND_FA.equals(pk) ||
+                CTSL.PK_MULTI_FH_AND_FA.equals(pk) ||
+                CTSL.PK_FLOORHEATING001.equals(pk) ||
+                CTSL.PK_FAU.equals(pk)) {
             desc.append(eAction.getKeyNickName() + "：");
             JSONObject command = eAction.getAction().getParameters().getCommand();
             if (command.containsKey("WorkMode")) {
@@ -536,6 +575,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             } else if (command.containsKey("FanMode")) {
                 String value = command.getString("FanMode");
                 switch (value) {
+                    case "0": {
+                        desc.append(getString(R.string.close));
+                        break;
+                    }
                     case "1": {
                         desc.append(getString(R.string.fan_speed_low));
                         break;
@@ -552,54 +595,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         desc.append(getString(R.string.auto));
                         break;
                     }
-                }
-            }
-        } else if (CTSL.PK_FLOORHEATING001.equals(pk)) {
-            desc.append(eAction.getKeyNickName() + "：");
-            JSONObject command = eAction.getAction().getParameters().getCommand();
-            if (command.containsKey("WorkMode")) {
-                String value = command.getString("WorkMode");
-                switch (value) {
-                    case "0": {
-                        desc.append(getString(R.string.close));
-                        break;
-                    }
                     case "10": {
                         desc.append(getString(R.string.open));
                         break;
                     }
-                }
-            } else if (command.containsKey("Temperature")) {
-                String value = command.getString("Temperature");
-                desc.append(value).append(getString(R.string.centigrade));
-            }
-        } else if (CTSL.PK_FAU.equals(pk)) {
-            desc.append(eAction.getKeyNickName() + "：");
-            String value = eAction.getAction().getParameters().getCommand().getString("FanMode");
-            switch (value) {
-                case "0": {
-                    desc.append(getString(R.string.close));
-                    break;
-                }
-                case "4": {
-                    desc.append(getString(R.string.open));
-                    break;
-                }
-                case "1": {
-                    desc.append(getString(R.string.fan_speed_low));
-                    break;
-                }
-                case "2": {
-                    desc.append(getString(R.string.fan_speed_mid));
-                    break;
-                }
-                case "3": {
-                    desc.append(getString(R.string.fan_speed_high));
-                    break;
-                }
-                case "5": {
-                    desc.append(getString(R.string.auto));
-                    break;
                 }
             }
         } else if (CTSL.PK_LIGHT.equals(pk) || CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(pk)) {
@@ -979,7 +978,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             LocalConditionDevsActivity.start(this, mGatewayId);
         } else if (v.getId() == mViewBinding.addActionTv.getId() ||
                 v.getId() == mViewBinding.addActionIv.getId()) {
-            LocalActionTypeActivity.start(this, mGatewayId);
+            LocalActionTypeActivity.start(this, mGatewayId, null, "LocalSceneActivity");
         } else if (v.getId() == mViewBinding.delLayout.getId()) {
             showConfirmDialog(getString(R.string.dialog_title), String.format(getString(R.string.do_you_want_del_scene),
                     mViewBinding.nameTv.getText().toString()), getString(R.string.dialog_cancel), getString(R.string.delete), mSceneId);
@@ -1031,7 +1030,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                 DeviceBuffer.removeScene(activity.mSceneId);
                                 QMUITipDialogUtil.dismiss();
                                 RefreshData.refreshHomeSceneListData();
-                                activity.setResult(10001);
+                                activity.setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
                                 activity.finish();
                             } else {
                                 if (message == null || message.length() == 0) {
@@ -1196,9 +1195,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                 if (code == 200) {
                                     if (result) {
                                         QMUITipDialogUtil.dismiss();
-                                        mSceneManager.manageSceneService(mGatewayId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                                        if (!Constant.IS_TEST_DATA)
+                                            mSceneManager.manageSceneService(mGatewayId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                         RefreshData.refreshHomeSceneListData();
-                                        setResult(10001);
+                                        setResult(Constant.ADD_LOCAL_SCENE);
                                         finish();
                                     } else {
                                         if (msg == null || msg.length() == 0) {
@@ -1229,10 +1229,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 ItemSceneInGateway scene = new ItemSceneInGateway();
                 scene.setGwMac(mGatewayMac);
                 mScene.setSceneId(mSceneId);
-
                 scene.setSceneDetail(mScene);
-
-                // ViseLog.d("更新场景消息：" + GsonUtil.toJson(scene));
 
                 RetrofitUtil.getInstance()
                         .updateScene("chengxunfei", scene)
@@ -1246,7 +1243,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
                             @Override
                             public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                                ViseLog.d("更新场景返回: " + response);
+                                // ViseLog.d("更新场景返回: " + response);
                                 QMUITipDialogUtil.dismiss();
                                 int code = response.getInteger("code");
                                 String sceneId = response.getString("sceneId");
@@ -1255,9 +1252,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                     boolean result = response.getBoolean("result");
                                     if (result) {
                                         QMUITipDialogUtil.dismiss();
-                                        mSceneManager.manageSceneService(mGatewayId, sceneId, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                                        if (!Constant.IS_TEST_DATA)
+                                            mSceneManager.manageSceneService(mGatewayId, sceneId, 2, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                                         RefreshData.refreshHomeSceneListData();
-                                        setResult(10001);
+                                        setResult(Constant.RESULT_CODE_UPDATE_SCENE);
                                         finish();
                                     } else {
                                         if (msg == null || msg.length() == 0) {
@@ -1338,7 +1336,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         final EditText nameEt = (EditText) view.findViewById(R.id.dialogEditTxtEditItem);
 
         String name = mViewBinding.nameTv.getText().toString();
-        if (name != null && name.length() > 0) {
+        if (name.length() > 0) {
             nameEt.setText(name);
             nameEt.setSelection(name.length());
         } else {
@@ -1384,34 +1382,174 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
     public void update(Object obj) {
         if (obj instanceof ECondition) {
             ECondition eCondition = (ECondition) obj;
-            ViseLog.d(GsonUtil.toJson(eCondition));
             if ("LocalSceneActivity".equals(eCondition.getTarget())) {
-                mConditionList.remove(eCondition);
-                mConditionList.add(eCondition);
+
+                List<ECondition> afterList = new ArrayList<>();
+                afterList.addAll(mConditionList);
+                afterList.remove(eCondition);
+
+                boolean isContains = compareCondition(eCondition.getCondition(), afterList);
+                if (isContains) {
+                    ToastUtils.showLongToast(this, R.string.conditions_duplicate_pls_select_again);
+                    mConditionList.set(mConditionList.indexOf(eCondition), mTmpECondition);
+                    mConditionAdapter.notifyDataSetChanged();
+                    return;
+                }
+                // 比较条件与动作是否相同
+                List<ECondition> eConditionList = new ArrayList<>();
+                eConditionList.add(eCondition);
+                boolean isSame = compareConditionAndAction(eConditionList, mActionList);
+                if (isSame) {
+                    ToastUtils.showLongToast(this, R.string.condition_can_not_be_action_at_same_time);
+                    mConditionList.set(mConditionList.indexOf(eCondition), mTmpECondition);
+                    mConditionAdapter.notifyDataSetChanged();
+                    return;
+                }
+                if (mConditionList.contains(eCondition)) {
+                    mConditionList.set(mConditionList.indexOf(eCondition), eCondition);
+                } else {
+                    mConditionList.add(eCondition);
+                }
                 mConditionAdapter.notifyDataSetChanged();
                 mViewBinding.addConditionLayout.setVisibility(View.GONE);
                 mViewBinding.conditionRv.setVisibility(View.VISIBLE);
+                EventBus.getDefault().removeStickyEvent(obj);
             }
         } else if (obj instanceof EAction) {
             EAction eAction = (EAction) obj;
             if ("LocalSceneActivity".equals(eAction.getTarget())) {
-                ViseLog.d(GsonUtil.toJson(eAction));
-                mActionList.remove(eAction);
-                mActionList.add(eAction);
+                List<EAction> preList = new ArrayList<>();
+                preList.add(eAction);
+
+                List<EAction> afterList = new ArrayList<>();
+                afterList.addAll(mActionList);
+                afterList.remove(eAction);
+
+                boolean isContains = compareAction(preList, afterList);
+                if (isContains) {
+                    ToastUtils.showLongToast(this, R.string.actions_duplicate_pls_select_again);
+                    mActionList.set(mActionList.indexOf(eAction), mTmpEAction);
+                    mActionAdapter.notifyDataSetChanged();
+                    return;
+                }
+                List<EAction> eActionList = new ArrayList<>();
+                eActionList.add(eAction);
+                boolean isSame = compareConditionAndAction(mConditionList, eActionList);// 比较条件与动作是否相同
+                if (isSame) {
+                    ToastUtils.showLongToast(this, R.string.action_can_not_be_condition_at_same_time);
+                    mActionList.set(mActionList.indexOf(eAction), mTmpEAction);
+                    mActionAdapter.notifyDataSetChanged();
+                    return;
+                }
+
+                if (!mActionList.contains(eAction)) {
+                    mActionList.add(eAction);
+                } else {
+                    mActionList.set(mActionList.indexOf(eAction), eAction);
+                }
                 mActionAdapter.notifyDataSetChanged();
                 mViewBinding.addActionLayout.setVisibility(View.GONE);
                 mViewBinding.actionRv.setVisibility(View.VISIBLE);
+                EventBus.getDefault().removeStickyEvent(obj);
             }
         } else if (obj instanceof EEventScene) {
-            EEventScene eEventScene = (EEventScene) obj;
+            EEventScene eEventScene = JSONObject.parseObject(GsonUtil.toJson(obj), EEventScene.class);
             if ("LocalSceneActivity".equals(eEventScene.getTarget())) {
                 initScene(eEventScene);
+                EventBus.getDefault().removeStickyEvent(obj);
             }
-            EventBus.getDefault().removeStickyEvent(obj);
         }
     }
 
-    private String mSceneId;
+    // 比较条件是否相同 true: 相同  false: 不同
+    private boolean compareCondition(ItemScene.Condition preCondition, List<ECondition> eConditionList) {
+        boolean isContains = false;
+        for (ECondition eCondition : eConditionList) {
+            ItemScene.Condition afterCondition = eCondition.getCondition();
+            String preConditionS = GsonUtil.toJson(preCondition);
+            String afterConditionS = GsonUtil.toJson(afterCondition);
+            if (preConditionS.equals(afterConditionS)) {
+                return true;
+            }
+        }
+        return isContains;
+    }
+
+    // 比较动作是否相同 true: 相同  false: 不同
+    private boolean compareAction(List<EAction> preList, List<EAction> afterList) {
+        boolean isContains = false;
+
+        List<ItemScene.Action> preActionList = queryAllActions(preList);
+        List<ItemScene.Action> afterActionList = queryAllActions(afterList);
+        for (ItemScene.Action preAction : preActionList) {
+            for (ItemScene.Action afterAction : afterActionList) {
+                String preActionS = GsonUtil.toJson(preAction);
+                String afterActionS = GsonUtil.toJson(afterAction);
+                if (preActionS == null && afterActionS == null)
+                    return true;
+                assert preActionS != null;
+                if (preActionS.equals(afterActionS)) {
+                    return true;
+                }
+            }
+        }
+        return isContains;
+    }
+
+    // 比较场景条件与动作是否相同 true: 相同  false: 不同
+    private boolean compareConditionAndAction(List<ECondition> eConditionList, List<EAction> eActionList) {
+        for (ECondition eCondition : eConditionList) {
+            ItemScene.Condition condition = eCondition.getCondition();
+            String devId = condition.getParameters().getDeviceId();
+            String endpointId = condition.getParameters().getEndpointId();
+            String name = condition.getParameters().getName();
+            String compareValue = condition.getParameters().getCompareValue();
+
+            List<ItemScene.Action> actionList = queryAllActions(eActionList);
+            for (ItemScene.Action action : actionList) {
+                ItemScene.ActionParameter actionParameter = action.getParameters();
+                if (devId.equals(actionParameter.getDeviceId())
+                        && endpointId.equals(actionParameter.getEndpointId())
+                        && actionParameter.getCommand() != null
+                        && compareValue.equals(actionParameter.getCommand().getString(name))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // 获取手动场景下所有设备动作
+    private List<ItemScene.Action> queryAcionsInScene(String sceneId) {
+        List<ItemScene.Action> list = new ArrayList<>();
+        ItemSceneInGateway scene = DeviceBuffer.getScene(sceneId);
+        if (scene != null) {
+            List<ItemScene.Action> actionList = scene.getSceneDetail().getActions();
+            for (ItemScene.Action action : actionList) {
+                if ("Command".equals(action.getType())) {
+                    list.add(action);
+                } else if ("Scene".equals(action.getType())) {
+                    String actionSceneId = action.getParameters().getSceneId();
+                    list.addAll(queryAcionsInScene(actionSceneId));
+                }
+            }
+        }
+        return list;
+    }
+
+    // 获取所有场景动作
+    private List<ItemScene.Action> queryAllActions(List<EAction> list) {
+        List<ItemScene.Action> actionList = new ArrayList<>();
+        for (EAction eAction : list) {
+            ItemScene.Action action = eAction.getAction();
+            if ("Command".equals(action.getType())) {
+                actionList.add(action);
+            } else if ("Scene".equals(action.getType())) {
+                actionList.addAll(queryAcionsInScene(action.getParameters().getSceneId()));
+            }
+        }
+        return actionList;
+    }
 
     // 编辑场景时，刷新界面
     private void initScene(EEventScene eEventScene) {
@@ -1500,45 +1638,15 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
     // 查询本地场景列表
     private void querySceneList() {
-        RetrofitUtil.getInstance().querySceneList("chengxunfei", mGatewayMac, "1")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        int code = response.getInteger("code");
-                        String msg = response.getString("message");
-                        JSONArray sceneList = response.getJSONArray("sceneList");
-                        if (code == 0) {
-                            mSceneInfo.clear();
-                            for (int i = 0; i < sceneList.size(); i++) {
-                                JSONObject item = sceneList.getJSONObject(i);
-                                mSceneInfo.put(item.getString("sceneId"), item.getString("name"));
-                            }
-                            if (mConditionList.size() > 0)
-                                queryConditionIotIdByMac("chengxunfei", 0);
-                            else queryActionIotIdByMac("chengxunfei", 0);
-                        } else {
-                            ToastUtils.showLongToast(LocalSceneActivity.this, msg);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(LocalSceneActivity.this, R.string.pls_try_again_later);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        List<ItemSceneInGateway> list = DeviceBuffer.getAllScene(mGatewayMac);
+        mSceneInfo.clear();
+        for (int i = 0; i < list.size(); i++) {
+            ItemSceneInGateway scene = list.get(i);
+            mSceneInfo.put(scene.getSceneDetail().getSceneId(), scene.getSceneDetail().getName());
+        }
+        if (mConditionList.size() > 0)
+            queryConditionIotIdByMac("chengxunfei", 0);
+        else queryActionIotIdByMac("chengxunfei", 0);
     }
 
     private Map<String, String> mSceneInfo = new HashMap<>();
@@ -1566,7 +1674,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
     // 根据Mac查询动作设备IotId
     private void queryActionIotIdByMac(String token, int pos) {
-        ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+        // ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         ItemScene.Action action = mActionList.get(pos).getAction();
         if ("Command".equals(action.getType())) {
             // 指令
@@ -1601,14 +1709,19 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    // 条件描述
+    // 获取条件描述前缀
     private String refreshConditionDesc(String pk, ECondition eCondition) {
         StringBuilder desc = new StringBuilder();
         if (CTSL.PK_ONE_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_TWO_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_THREE_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(pk) ||
                 CTSL.PK_FOUR_SCENE_SWITCH.equals(pk) ||
-                CTSL.PK_SIX_SCENE_SWITCH.equals(pk)) {
+                CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SIX_SCENE_SWITCH.equals(pk) ||
+                CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(pk)) {
             desc.append(getString(R.string.trigger_buttons_2));
         } else if (CTSL.TEST_PK_ONEWAYWINDOWCURTAINS.equals(pk)) {
             // 一路窗帘
@@ -1764,7 +1877,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         } else if (CTSL.PK_AIRCOMDITION_TWO.equals(pk) ||
                 CTSL.PK_AIRCOMDITION_FOUR.equals(pk) ||
                 CTSL.PK_VRV_AC.equals(pk)) {
-            // 空调二管制、四管制、VRV温控器
+            // 空调二管制、四管制、VRV温控器、三合一温控器
             if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
                 desc.append(getString(R.string.power_switch));
             } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
@@ -1812,11 +1925,116 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         } else if (CTSL.PK_DOORSENSOR.equals(pk)) {
             // 门磁传感器
             desc.append(getString(R.string.door_detection_status));
+        } else if (CTSL.PK_MULTI_THREE_IN_ONE.equals(pk)) {
+            // 三合一温控器
+            refreshMulti3To1ConditionDesc(desc, eCondition);
+        } else if (CTSL.PK_MULTI_AC_AND_FH.equals(pk)) {
+            // 空调+地暖二合一温控器
+            refreshMultiACAndFHConditionDesc(desc, eCondition);
+        } else if (CTSL.PK_MULTI_AC_AND_FA.equals(pk)) {
+            // 空调+新风二合一温控器
+            refreshMultiACAndFAConditionDesc(desc, eCondition);
+        } else if (CTSL.PK_MULTI_FH_AND_FA.equals(pk)) {
+            // 地暖+新风二合一温控器
+            refreshMultiFHAndFAConditionDesc(desc, eCondition);
         }
         return desc.toString();
     }
 
-    // 动作描述
+    // 获取地暖+新风二合一温控器条件描述前缀
+    private void refreshMultiFHAndFAConditionDesc(StringBuilder desc, ECondition eCondition) {
+        String endpointId = eCondition.getCondition().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 地暖
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_floorheat));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_floorheat));
+            } else if ("AutoWorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.heating_status_floorheat));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 新风
+            if ("FanMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_freshair));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_freshair));
+            }
+        }
+    }
+
+    // 获取空调+新风二合一温控器条件描述前缀
+    private void refreshMultiACAndFAConditionDesc(StringBuilder desc, ECondition eCondition) {
+        String endpointId = eCondition.getCondition().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_airconditioner));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 新风
+            if ("FanMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_freshair));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_freshair));
+            }
+        }
+    }
+
+    // 获取空调+地暖二合一温控器条件描述前缀
+    private void refreshMultiACAndFHConditionDesc(StringBuilder desc, ECondition eCondition) {
+        String endpointId = eCondition.getCondition().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_airconditioner));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 地暖
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_floorheat));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_floorheat));
+            } else if ("AutoWorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.heating_status_floorheat));
+            }
+        }
+    }
+
+    // 获取三合一温控器条件描述前缀
+    private void refreshMulti3To1ConditionDesc(StringBuilder desc, ECondition eCondition) {
+        String endpointId = eCondition.getCondition().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_airconditioner));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 地暖
+            if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_floorheat));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_floorheat));
+            } else if ("AutoWorkMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.heating_status_floorheat));
+            }
+        } else if ("3".equals(endpointId)) {
+            // 新风
+            if ("FanMode".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.power_switch_freshair));
+            } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {
+                desc.append(getString(R.string.current_temperature_freshair));
+            }
+        }
+    }
+
+    // 获取动作描述前缀
     private String refreshActionDesc(String pk, EAction eAction) {
         StringBuilder desc = new StringBuilder();
         if (CTSL.TEST_PK_ONEWAYWINDOWCURTAINS.equals(pk)) {
@@ -2020,7 +2238,136 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             } else if (temperature != null && temperature.length() > 0) {
                 desc.append(getString(R.string.color_temperature));
             }
+        } else if (CTSL.PK_MULTI_THREE_IN_ONE.equals(pk)) {
+            // 三合一温控器
+            refreshMulti3To1ActionDesc(desc, eAction);
+        } else if (CTSL.PK_MULTI_AC_AND_FH.equals(pk)) {
+            // 空调+地暖二合一温控器
+            refreshMultiACAndFHActionDesc(desc, eAction);
+        } else if (CTSL.PK_MULTI_AC_AND_FA.equals(pk)) {
+            // 空调+新风二合一温控器
+            refreshMultiACAndFAActionDesc(desc, eAction);
+        } else if (CTSL.PK_MULTI_FH_AND_FA.equals(pk)) {
+            // 地暖+新风二合一温控器
+            refreshMultiFHAndFAActionDesc(desc, eAction);
         }
         return desc.toString();
+    }
+
+    // 地暖+新风二合一温控器
+    private void refreshMultiFHAndFAActionDesc(StringBuilder desc, EAction eAction) {
+        String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+        String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+        String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+        String endpointId = eAction.getAction().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 地暖
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_floorheat));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_floorheat));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 新风
+            if (fanMode != null && fanMode.length() > 0) {
+                if ("0".equals(fanMode) || "4".equals(fanMode)) {
+                    desc.append(getString(R.string.power_switch_freshair));
+                } else
+                    desc.append(getString(R.string.fan_speed_freshair));
+            }
+        }
+    }
+
+    // 空调+新风二合一温控器
+    private void refreshMultiACAndFAActionDesc(StringBuilder desc, EAction eAction) {
+        String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+        String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+        String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+        String endpointId = eAction.getAction().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_airconditioner));
+                else desc.append(getString(R.string.work_mode_airconditioner));
+            } else if (fanMode != null && fanMode.length() > 0) {
+                desc.append(getString(R.string.fan_speed_airconditioner));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 新风
+            if (fanMode != null && fanMode.length() > 0) {
+                if ("0".equals(fanMode) || "4".equals(fanMode)) {
+                    desc.append(getString(R.string.power_switch_freshair));
+                } else
+                    desc.append(getString(R.string.fan_speed_freshair));
+            }
+        }
+    }
+
+    // 空调+地暖二合一温控器
+    private void refreshMultiACAndFHActionDesc(StringBuilder desc, EAction eAction) {
+        String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+        String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+        String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+        String endpointId = eAction.getAction().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_airconditioner));
+                else desc.append(getString(R.string.work_mode_airconditioner));
+            } else if (fanMode != null && fanMode.length() > 0) {
+                desc.append(getString(R.string.fan_speed_airconditioner));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 地暖
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_floorheat));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_floorheat));
+            }
+        }
+    }
+
+    // 三合一温控器
+    private void refreshMulti3To1ActionDesc(StringBuilder desc, EAction eAction) {
+        String workMode = eAction.getAction().getParameters().getCommand().getString("WorkMode");
+        String fanMode = eAction.getAction().getParameters().getCommand().getString("FanMode");
+        String temperature = eAction.getAction().getParameters().getCommand().getString("Temperature");
+        String endpointId = eAction.getAction().getParameters().getEndpointId();
+        if ("1".equals(endpointId)) {
+            // 空调
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_airconditioner));
+                else desc.append(getString(R.string.work_mode_airconditioner));
+            } else if (fanMode != null && fanMode.length() > 0) {
+                desc.append(getString(R.string.fan_speed_airconditioner));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_airconditioner));
+            }
+        } else if ("2".equals(endpointId)) {
+            // 地暖
+            if (workMode != null && workMode.length() > 0) {
+                if ("0".equals(workMode) || "10".equals(workMode))
+                    desc.append(getString(R.string.power_switch_floorheat));
+            } else if (temperature != null && temperature.length() > 0) {
+                desc.append(getString(R.string.target_temperature_floorheat));
+            }
+        } else if ("3".equals(endpointId)) {
+            // 新风
+            if (fanMode != null && fanMode.length() > 0) {
+                if ("0".equals(fanMode) || "4".equals(fanMode)) {
+                    desc.append(getString(R.string.power_switch_freshair));
+                } else
+                    desc.append(getString(R.string.fan_speed_freshair));
+            }
+        }
     }
 }

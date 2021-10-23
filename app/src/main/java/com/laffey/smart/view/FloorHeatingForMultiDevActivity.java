@@ -68,15 +68,16 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
         }
 
         // 开关
-        if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2).length() > 0) {
-            String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating) != null && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating).length() > 0) {
+            String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating);
             mPowerSwitch = Integer.parseInt(powerSwitch);
             refreshViewState(mPowerSwitch);
         }
 
         // 目标温度
-        if (propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_2) != null && propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_2).length() > 0) {
-            String targetTem = propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_2);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating).length() > 0) {
+            String targetTem = propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating);
             mTargetTem = Integer.parseInt(targetTem);
             mTemValue.setText(String.valueOf(mTargetTem));
             mTemValue2TV.setText(String.valueOf(mTargetTem));
@@ -86,8 +87,9 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
         }
 
         // 当前温度
-        if (propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1).length() > 0) {
-            String currentTem = propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating).length() > 0) {
+            String currentTem = propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating);
             mTemValue1TV.setText(currentTem);
         }
 
@@ -138,7 +140,8 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_TargetTemperature_3}, new String[]{"" + (16 + seekBar.getProgress())});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_FloorHeating},
+                        new String[]{"" + (16 + seekBar.getProgress())});
             }
         });
         mTemValue.setText("--");
@@ -165,10 +168,10 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
             // 开关
             if (mPowerSwitch == 1) {
                 // 关闭
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FloorHeating}, new String[]{"" + CTSL.STATUS_OFF});
             } else {
                 // 打开
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FloorHeating}, new String[]{"" + CTSL.STATUS_ON});
             }
         } else if (viewId == R.id.timing_layout) {
             // 定时

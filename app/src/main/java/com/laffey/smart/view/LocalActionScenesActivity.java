@@ -51,9 +51,13 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     private ActivityLocalActionScenesBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
+    private static final String SCENE_ID = "scene_id";
+    private static final String ACTIVITY_TAG = "activity_tag";
+    private static final String IOT_ID = "iot_id";
 
     private String mGatewayId;
     private String mGatewayMac;
+    private String mIotId;
 
     private final List<ItemScene> mSceneList = new ArrayList<>();
     private BaseQuickAdapter<ItemScene, BaseViewHolder> mSceneAdapter;
@@ -62,10 +66,15 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     private EAction mEAction;
 
     private int mSelectPos = -1;
+    private String mSceneId = null;
+    private String mActivityTag = null;
 
-    public static void start(Context context, String gatewayId) {
+    public static void start(Context context, String gatewayId, String iotId, String sceneId, String activityTag) {
         Intent intent = new Intent(context, LocalActionScenesActivity.class);
+        intent.putExtra(SCENE_ID, sceneId);
         intent.putExtra(GATEWAY_ID, gatewayId);
+        intent.putExtra(IOT_ID, iotId);
+        intent.putExtra(ACTIVITY_TAG, activityTag);
         context.startActivity(intent);
     }
 
@@ -75,6 +84,9 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         mViewBinding = ActivityLocalActionScenesBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
 
+        mSceneId = getIntent().getStringExtra(SCENE_ID);
+        mActivityTag = getIntent().getStringExtra(ACTIVITY_TAG);
+        mIotId = getIntent().getStringExtra(IOT_ID);
         mEAction = new EAction();
         EventBus.getDefault().register(this);
         initStatusBar();
@@ -148,7 +160,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         int code = response.getInteger("code");
                         String mac = response.getString("mac");
                         String msg = response.getString("message");
-                        ViseLog.d(response.toJSONString());
+                        // ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
                         if (code == 200) {
                             if (mac == null || mac.length() == 0) {
                                 ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.MAC_does_not_exist);
@@ -194,35 +206,53 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
+                        // ViseLog.d("场景动作 = " + GsonUtil.toJson(sceneList));
                         if (code == 200) {
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject item = sceneList.getJSONObject(i);
                                     ItemSceneInGateway sceneInGateway = JSONObject.parseObject(item.toJSONString(), ItemSceneInGateway.class);
-                                    if (sceneInGateway.getAppParams() != null) {
-                                        String key = sceneInGateway.getAppParams().getString("key");
-                                        if (key != null && key.length() > 0) {
+
+                                    JSONObject appParams = sceneInGateway.getAppParams();
+                                    String switchIotId = null;
+                                    if (appParams != null) {
+                                        switchIotId = appParams.getString("switchIotId");
+                                    }
+                                    if (!"SwitchLocalSceneActivity".equals(mActivityTag)) {
+                                        if (switchIotId != null && switchIotId.length() > 0) {
+                                            continue;
+                                        }
+                                    } else {
+                                        if ((switchIotId != null && !switchIotId.equals(mIotId)) ||
+                                                (switchIotId == null || switchIotId.length() == 0)) {
                                             continue;
                                         }
                                     }
-
+                                    // ViseLog.d("sceneInGateway = "+GsonUtil.toJson(sceneInGateway));
                                     ItemScene scene = new ItemScene();
                                     scene.setName(sceneInGateway.getSceneDetail().getName());
                                     scene.setSceneId(sceneInGateway.getSceneDetail().getSceneId());
-                                    if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null) {
-                                        if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {
-                                            mSelectPos = i;
-                                        }
+                                    if (mSceneId == null || !mSceneId.equals(scene.getSceneId())) {
+                                        mSceneList.add(scene);
                                     }
-                                    mSceneList.add(scene);
                                 }
                             }
-                            if (sceneList != null || mSceneList.size() == 0) {
+                            if (mSceneList == null || mSceneList.size() == 0) {
                                 mViewBinding.nodataView.setVisibility(View.VISIBLE);
                                 mViewBinding.sceneRl.setVisibility(View.GONE);
                             } else {
                                 mViewBinding.nodataView.setVisibility(View.GONE);
                                 mViewBinding.sceneRl.setVisibility(View.VISIBLE);
+                            }
+                            ViseLog.d("mEAction = " + GsonUtil.toJson(mEAction) +
+                                    "\nmSceneList = " + GsonUtil.toJson(mSceneList));
+                            if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null && mSceneList != null) {
+                                for (ItemScene scene : mSceneList) {
+                                    if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {
+                                        mSelectPos = mSceneList.indexOf(scene);
+                                        break;
+                                    }
+                                }
                             }
                             mSceneAdapter.notifyDataSetChanged();
                         } else {
@@ -287,8 +317,9 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void update(Object obj) {
         if (obj instanceof EAction) {
-            mEAction = (EAction) obj;
-            if ("LocalActionScenesActivity".equals(mEAction.getTarget())) {
+            String target = ((EAction) obj).getTarget();
+            if ("LocalActionScenesActivity".equals(target)) {
+                mEAction = (EAction) obj;
                 ViseLog.d(GsonUtil.toJson(mEAction));
             }
         }

@@ -145,8 +145,13 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         initView();
         initKeyNickName();
         // getScenes();
-
         initStatusBar();
+
+        if (CTSL.PK_FOUR_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.VISIBLE);
+        } else if (CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

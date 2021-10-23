@@ -146,6 +146,12 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
 
         initStatusBar();
         initKeyNickName();
+
+        if (CTSL.PK_THREE_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.VISIBLE);
+        } else if (CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

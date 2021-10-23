@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
@@ -29,14 +30,20 @@ import com.laffey.smart.event.EEvent;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.ItemColorLightScene;
+import com.laffey.smart.model.ItemScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.model.Visitable;
 import com.laffey.smart.presenter.CloudDataParser;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.viewholder.CommonAdapter;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -86,6 +93,10 @@ public class ColorLightDetailActivity extends DetailActivity {
     private int mState;
     private TSLHelper mTSLHelper;
     private SceneManager mSceneManager;
+    private String mGatewayId;
+    private String mGatewayMac;
+
+    private List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
 
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -160,7 +171,8 @@ public class ColorLightDetailActivity extends DetailActivity {
         mTitleText.setTextColor(getResources().getColor(R.color.all_3));
         initView();
         initStatusBar();
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // 嵌入式状态栏
@@ -168,7 +180,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(Color.WHITE);
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.appbgcolor));
         }
     }
 
@@ -221,7 +233,18 @@ public class ColorLightDetailActivity extends DetailActivity {
                     return;
                 }
                 int index = (int) view.getTag();
-                mSceneManager.executeScene(((ItemColorLightScene) mList.get(index)).getId(), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    mSceneManager.executeScene(((ItemColorLightScene) mList.get(index)).getId(),
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                } else {
+                    ItemColorLightScene colorLightScene = (ItemColorLightScene) mList.get(index);
+                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                            colorLightScene.getSceneName());
+                    ToastUtils.showLongToast(ColorLightDetailActivity.this, msg);
+                    SceneManager.invokeLocalSceneService(mGatewayId,
+                            colorLightScene.getId(), mCommitFailureHandler,
+                            mResponseErrorHandler, null);
+                }
             }
         });
     }
@@ -231,6 +254,70 @@ public class ColorLightDetailActivity extends DetailActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
+                    // 查询网关下本地场景列表
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    if (code == 0 || code == 200) {
+                        if (sceneList != null) {
+                            // ViseLog.d(GsonUtil.toJson(sceneList));
+                            mItemSceneList.clear();
+                            mList.clear();
+                            for (int i = 0; i < sceneList.size(); i++) {
+                                ItemSceneInGateway scene = JSONObject.parseObject(sceneList.get(i).toString(), ItemSceneInGateway.class);
+                                JSONObject appParams = scene.getAppParams();
+                                if (appParams == null) continue;
+                                String switchIotId = appParams.getString("switchIotId");
+                                if (mIOTId.equals(switchIotId)) {
+                                    mItemSceneList.add(scene);
+                                    mList.add(createColorLightScene(scene));
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
+                            // ViseLog.d("场景列表 = " + GsonUtil.toJson(mItemSceneList));
+                        }
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        if (message != null && message.length() > 0)
+                            ToastUtils.showLongToast(ColorLightDetailActivity.this, message);
+                        else
+                            ToastUtils.showLongToast(ColorLightDetailActivity.this, R.string.pls_try_again_later);
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID: {
+                    // 根据子设备iotId查询网关iotId
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    String gwId = response.getString("gwIotId");
+                    if (code == 200) {
+                        mGatewayId = gwId;
+                        if (Constant.IS_TEST_DATA) {
+                            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
+                        }
+                        mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
+                        mSceneManager.querySceneList("chengxunfei", mGatewayMac, "1",
+                                Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        if (message != null && message.length() > 0)
+                            ToastUtils.showLongToast(ColorLightDetailActivity.this, message);
+                        else
+                            ToastUtils.showLongToast(ColorLightDetailActivity.this, R.string.pls_try_again_later);
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR:
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
+                    // 根据子设备iotId查询网关iotId失败
+                    QMUITipDialogUtil.dismiss();
+                    Throwable e = (Throwable) msg.obj;
+                    ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage());
+                    break;
+                }
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
                     for (int i = 0; i < mList.size(); i++) {
@@ -262,6 +349,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                 case Constant.MSG_CALLBACK_QUERYSCENEDETAIL:
                     // 处理获取场景详情
                     JSONObject result = JSON.parseObject((String) msg.obj);
+                    // ViseLog.d("场景详情 = " + GsonUtil.toJson(result));
                     String id = result.getString("id");
                     for (int i = 0; i < mList.size(); i++) {
                         ItemColorLightScene scene = (ItemColorLightScene) mList.get(i);
@@ -288,6 +376,24 @@ public class ColorLightDetailActivity extends DetailActivity {
         }
     });
 
+    // 获取调光调色面板场景
+    private ItemColorLightScene createColorLightScene(ItemSceneInGateway scene) {
+        ItemColorLightScene lightScene = new ItemColorLightScene(scene.getSceneDetail().getSceneId(), scene.getSceneDetail().getName());
+        List<ItemScene.Action> actionList = scene.getSceneDetail().getActions();
+        for (ItemScene.Action action : actionList) {
+            JSONObject command = action.getParameters().getCommand();
+            String level = command.getString(CTSL.PK_LIGHT_BRIGHTNESS_PARAM);
+            String temperature = command.getString(CTSL.PK_LIGHT_COLOR_TEMP_PARAM);
+            if (level != null && level.length() > 0) {
+                lightScene.setLightness(Integer.parseInt(level));
+            }
+            if (temperature != null && temperature.length() > 0) {
+                lightScene.setK(Integer.parseInt(temperature));
+            }
+        }
+        return lightScene;
+    }
+
     @OnClick({R.id.timer_view, R.id.scene_view, R.id.switch_view, R.id.temperatureLayout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -296,8 +402,12 @@ public class ColorLightDetailActivity extends DetailActivity {
                     PluginHelper.cloudTimer(ColorLightDetailActivity.this, mIOTId, CTSL.PK_LIGHT);
                 break;
             case R.id.scene_view:
-                if (mState == CTSL.STATUS_ON)
-                    LightSceneListActivity.start(mActivity, mIOTId, "ColorLightDetailActivity");
+                if (mState == CTSL.STATUS_ON) {
+                    if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                        LightLocalSceneListActivity.start(mActivity, mIOTId, mGatewayId, mGatewayMac, "ColorLightDetailActivity");
+                    } else
+                        LightSceneListActivity.start(mActivity, mIOTId, "ColorLightDetailActivity");
+                }
                 break;
             case R.id.switch_view:
                 if (mState == CTSL.STATUS_ON) {
@@ -323,5 +433,21 @@ public class ColorLightDetailActivity extends DetailActivity {
             mColorTemperatureText.setText(String.valueOf(mColorTemperature));
             mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.LIGHT_P_COLOR_TEMPERATURE}, new String[]{"" + temperature});
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+            getGatewayId(mIOTId);
+    }
+
+    // 获取面板所属网关iotId
+    private void getGatewayId(String iotId) {
+        if (Constant.IS_TEST_DATA) {
+            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
+        }
+        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+                Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
     }
 }

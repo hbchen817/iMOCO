@@ -823,7 +823,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     // 获取按键绑定场景的名称
     private void querySceneName(JSONArray list) {
-        ViseLog.d(GsonUtil.toJson(list));
+        // ViseLog.d(GsonUtil.toJson(list));
         for (int i = 0; i < list.size(); i++) {
             JSONObject object = list.getJSONObject(i);
             ItemSceneInGateway scene = JSONObject.parseObject(object.toJSONString(), ItemSceneInGateway.class);

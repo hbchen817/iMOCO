@@ -164,6 +164,12 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         // getScenes();
 
         initStatusBar();
+
+        if (CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.VISIBLE);
+        } else if (CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -8,6 +8,9 @@ public class ItemBinding {
     private String DstAddr;
     private String DstEndpointId;
 
+    public ItemBinding() {
+    }
+
     public ItemBinding(String function, String srcAddr, String srcEndpointId, String dstAddrMode, String dstAddr, String dstEndpointId) {
         Function = function;
         SrcAddr = srcAddr;

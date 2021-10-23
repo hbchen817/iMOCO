@@ -137,6 +137,8 @@ public class AssociatedBindListActivity extends BaseActivity {
         initData();
 
         mTSLHelper = new TSLHelper(this);
+        // 添加实时数据属性回调处理器
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
         queryBindingTable();
 
         new SceneManager(this).getExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, GET_EXTEND_INFO, mCommitFailureHandler, mResponseErrorHandler, mHandler);
@@ -212,8 +214,7 @@ public class AssociatedBindListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 添加实时数据属性回调处理器
-        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
+
     }
 
     @Override
@@ -309,6 +310,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                     case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
                         // 处理属性通知回调
                         ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                        // ViseLog.d("双控 = " + GsonUtil.toJson(propertyEntry));
                         if (propertyEntry == null) break;
                         if ("U".equals(propertyEntry.getPropertyValue("ResponseType")) &&
                                 "0".equals(propertyEntry.getPropertyValue("Result"))) {
@@ -323,7 +325,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                             String bindingTable = propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE);
                             String totalCount = propertyEntry.getPropertyValue(CTSL.TOTAL_COUNT);
                             activity.mBindingArray.addAll(JSONArray.parseArray(bindingTable));
-                            // ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
+                            ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
                             if (Integer.parseInt(totalCount) == activity.mBindingArray.size()) {
                                 activity.refreshBindingTable(activity.mBindingArray);
                             }
@@ -345,7 +347,8 @@ public class AssociatedBindListActivity extends BaseActivity {
 
     private void refreshBindingTable(JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
-            ItemBinding item = JSONObject.parseObject(array.get(i).toString(), ItemBinding.class);
+            ViseLog.d("双控 = " + GsonUtil.toJson(array.get(i)));
+            ItemBinding item = JSONObject.parseObject(GsonUtil.toJson(array.get(i)), ItemBinding.class);
             if (String.valueOf(mKeyValue).equals(item.getSrcEndpointId())) {
                 EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
                 if (entry != null)

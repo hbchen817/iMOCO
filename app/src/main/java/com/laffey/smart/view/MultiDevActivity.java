@@ -10,13 +10,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.TSLHelper;
-import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,11 +54,10 @@ public class MultiDevActivity extends DetailActivity {
             return false;
         }
 
-        ViseLog.d(new Gson().toJson(propertyEntry));
-
         // 空调开关
-        if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1).length() > 0) {
-            String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner).length() > 0) {
+            String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner);
             mACPowerSwitch = Integer.parseInt(powerSwitch);
             if (mACPowerSwitch == 0) {
                 mACSwitchTV.setTextColor(getResources().getColor(R.color.white3));
@@ -70,8 +67,9 @@ public class MultiDevActivity extends DetailActivity {
         }
 
         // 地暖开关
-        if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2).length() > 0) {
-            String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_2);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating).length() > 0) {
+            String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating);
             mFHPowerSwitch = Integer.parseInt(powerSwitch);
             if (mFHPowerSwitch == 0) {
                 mFHSwitchTV.setTextColor(getResources().getColor(R.color.white3));
@@ -81,8 +79,8 @@ public class MultiDevActivity extends DetailActivity {
         }
 
         // 新风开关
-        if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3).length() > 0) {
-            String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir) != null && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir).length() > 0) {
+            String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir);
             mNAPowerSwitch = Integer.parseInt(powerSwitch);
             if (mNAPowerSwitch == 0) {
                 mNASwitchTV.setTextColor(getResources().getColor(R.color.white3));
@@ -140,7 +138,7 @@ public class MultiDevActivity extends DetailActivity {
             startActivity(intent);
         } else if (resId == R.id.new_air_layout) {
             // 新风
-            Intent intent = new Intent(mActivity, NewAirForMultiDevActivity.class);
+            Intent intent = new Intent(mActivity, FreshAirForMultiDevActivity.class);
             intent.putExtra("iotId", mIOTId);
             intent.putExtra("productKey", CTSL.PK_MULTI_THREE_IN_ONE);
             intent.putExtra("name", "新风");
@@ -158,28 +156,28 @@ public class MultiDevActivity extends DetailActivity {
             // 空调开关
             if (mACPowerSwitch == 0) {
                 // 打开
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_AirConditioner}, new String[]{"" + CTSL.STATUS_ON});
             } else {
                 // 关闭
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_AirConditioner}, new String[]{"" + CTSL.STATUS_OFF});
             }
         } else if (resId == R.id.new_air_switch) {
             // 新风开关
             if (mNAPowerSwitch == 0) {
                 // 打开
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FreshAir}, new String[]{"" + CTSL.STATUS_ON});
             } else {
                 // 关闭
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FreshAir}, new String[]{"" + CTSL.STATUS_OFF});
             }
         } else if (resId == R.id.floor_heating_switch) {
-            // 新风开关
+            // 地暖开关
             if (mFHPowerSwitch == 0) {
                 // 打开
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FloorHeating}, new String[]{"" + CTSL.STATUS_ON});
             } else {
                 // 关闭
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FloorHeating}, new String[]{"" + CTSL.STATUS_OFF});
             }
         }
     }

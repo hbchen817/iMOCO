@@ -7,21 +7,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
@@ -40,9 +47,14 @@ import com.laffey.smart.utility.ResponseMessageUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -50,7 +62,9 @@ import butterknife.ButterKnife;
  * creat time: 2020-04-21 17:14
  * Description: 一键开关详细界面
  */
-public class DetailOneSwitchActivity2 extends DetailActivity {
+public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickListener {
+    private static final int TAG_GET_EXTENDED_PRO = 10000;
+
     private int mState = 0;
     private int mBackLightState = 1;
     private ImageView mImgOperate;
@@ -61,10 +75,15 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
     private TSLHelper mTSLHelper;
     private RelativeLayout mBackLightLayout;
     private RelativeLayout mBackLightRoot;
+    private RelativeLayout mAssociatedLayout;
+    private LinearLayout mRootLayout;
 
     private SceneManager mSceneManager;
     private MyHandler mhandler;
     private String mKeyName;
+
+    private Typeface mIconfont;
+    private PopupWindow mAssociatedPopupWindow;
 
     // 更新状态
     @Override
@@ -114,58 +133,36 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
         mTSLHelper = new TSLHelper(this);
 
         // 设备操作事件处理
-        OnClickListener operateOnClickListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
         mImgOperate = (ImageView) findViewById(R.id.detailOneSwitchImgOperate);
-        mImgOperate.setOnClickListener(operateOnClickListener);
+        mImgOperate.setOnClickListener(this);
 
         mStateName = (TextView) findViewById(R.id.detailOneSwitchLblStateName);
-        mStateName.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit();
-            }
-        });
+        mStateName.setOnClickListener(this);
 
         mStateValue = (TextView) findViewById(R.id.detailOneSwitchLblStateValue);
+        mRootLayout = (LinearLayout) findViewById(R.id.detailOneSwitchLl);
 
         TextView timerIc = (TextView) findViewById(R.id.timer_ic_tv);
         mBacklightTV = (TextView) findViewById(R.id.back_light_txt);
         mBacklightIc = (TextView) findViewById(R.id.back_light_tv);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
-        timerIc.setTypeface(iconfont);
-        mBacklightIc.setTypeface(iconfont);
+        TextView associatedTv = (TextView) findViewById(R.id.associated_tv);
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        timerIc.setTypeface(mIconfont);
+        mBacklightIc.setTypeface(mIconfont);
+        associatedTv.setTypeface(mIconfont);
 
         // 云端定时处理
         RelativeLayout timer = (RelativeLayout) findViewById(R.id.detailOneSwitchRLTimer);
-        timer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PluginHelper.cloudTimer(DetailOneSwitchActivity2.this, mIOTId, mProductKey);
-            }
-        });
+        timer.setOnClickListener(this);
 
         initStatusBar();
 
         mBackLightLayout = (RelativeLayout) findViewById(R.id.back_light_layout);
-        mBackLightLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBackLightState == 0)
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
-                else
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
-            }
-        });
+        mBackLightLayout.setOnClickListener(this);
         mBackLightRoot = (RelativeLayout) findViewById(R.id.back_light_root);
+
+        mAssociatedLayout = (RelativeLayout) findViewById(R.id.associated_layout);
+        mAssociatedLayout.setOnClickListener(this);
 
         mhandler = new MyHandler(this);
         mSceneManager = new SceneManager(this);
@@ -184,11 +181,100 @@ public class DetailOneSwitchActivity2 extends DetailActivity {
         }
     }
 
-    private static final int TAG_GET_EXTENDED_PRO = 10000;
-
     private void initKeyNickName() {
         MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mhandler);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mAssociatedLayout.getId()) {
+            // 双控
+            showAssociatedPopupWindow();
+        } else if (v.getId() == mStateName.getId()) {
+            // 按键昵称
+            showKeyNameDialogEdit();
+        } else if (v.getId() == mImgOperate.getId()) {
+            // 按键触发
+            if (mState == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (v.getId() == R.id.detailOneSwitchRLTimer) {
+            // 定时
+            PluginHelper.cloudTimer(this, mIOTId, mProductKey);
+        } else if (v.getId() == mBackLightLayout.getId()){
+            // 背光灯
+            if (mBackLightState == 0)
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
+            else
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.OWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
+        }
+    }
+
+    private void showAssociatedPopupWindow() {
+        View contentView = LayoutInflater.from(this).inflate(R.layout.dialog_associated_switch, null);
+
+        RecyclerView recyclerView = contentView.findViewById(R.id.associated_rv);
+        List<String> list = new ArrayList<>();
+        list.add(mStateName.getText().toString());
+        BaseQuickAdapter<String, BaseViewHolder> adapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_key, list) {
+            @Override
+            protected void convert(@NotNull BaseViewHolder holder, String s) {
+                int pos = list.indexOf(s);
+                holder.setText(R.id.key_tv, s);
+                TextView nameTV = holder.getView(R.id.key_tv);
+                nameTV.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (pos) {
+                            case 0: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 1: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 2: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 3: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                        }
+                        AssociatedBindListActivity.start(DetailOneSwitchActivity2.this, mIOTId, mProductKey, s, pos + 1);
+                    }
+                });
+                TextView goTv = holder.getView(R.id.go_tv);
+                goTv.setTypeface(mIconfont);
+            }
+        };
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        setBackgroundAlpha(0.4f);
+        mAssociatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        mAssociatedPopupWindow.setTouchable(true);
+        mAssociatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                setBackgroundAlpha(1.0f);
+            }
+        });
+        mAssociatedPopupWindow.setAnimationStyle(R.style.pop_anim);
+        mAssociatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
+    }
+
+    private void setBackgroundAlpha(float f) {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = f;
+        getWindow().setAttributes(lp);
     }
 
     private static class MyResponseErrHandler extends Handler {

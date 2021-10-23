@@ -540,7 +540,7 @@
             android:name=".view.FloorHeatingForMultiDevActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.NewAirForMultiDevActivity"
+            android:name=".view.FreshAirForMultiDevActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.LightDetailActivity"
@@ -568,6 +568,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.EditLocalSceneBindActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LightLocalSceneListActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LightLocalSceneActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
 

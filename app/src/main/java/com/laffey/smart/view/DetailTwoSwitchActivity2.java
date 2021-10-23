@@ -6,19 +6,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
@@ -36,7 +43,11 @@ import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -47,7 +58,7 @@ import butterknife.ButterKnife;
  * creat time: 2020-04-21 17:14
  * Description: 两键开关详细界面
  */
-public class DetailTwoSwitchActivity2 extends DetailActivity {
+public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickListener {
     @BindView(R.id.detailTwoSwitchImgOperate1)
     protected ImageView mImgOperate1;
     @BindView(R.id.detailTwoSwitchImgOperate2)
@@ -67,10 +78,16 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
     protected TextView mBackLightIc;
     @BindView(R.id.back_light_tv)
     protected TextView mBackLightTV;
+    @BindView(R.id.associated_tv)
+    protected TextView mAssociatedTv;
     @BindView(R.id.back_light_layout)
     protected RelativeLayout mBackLightLayout;
     @BindView(R.id.back_light_root)
     protected RelativeLayout mBackLightRoot;
+    @BindView(R.id.associated_layout)
+    protected RelativeLayout mAssociatedLayout;
+    @BindView(R.id.detailTwoSwitchLl)
+    protected LinearLayout mRootLayout;
 
     private static final int TAG_GET_EXTENDED_PRO = 10000;
 
@@ -81,6 +98,9 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
     private int mState1 = 0;
     private int mState2 = 0;
     private int mBackLightState = 1;
+
+    private Typeface mIconfont;
+    private PopupWindow mAssociatedPopupWindow;
 
     // 更新状态
     @Override
@@ -187,9 +207,10 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
 
         initStatusBar();
 
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
-        mTimerIcTV.setTypeface(iconfont);
-        mBackLightIc.setTypeface(iconfont);
+        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        mTimerIcTV.setTypeface(mIconfont);
+        mBackLightIc.setTypeface(mIconfont);
+        mAssociatedTv.setTypeface(mIconfont);
 
         mBackLightLayout.setOnClickListener(new OnClickListener() {
             @Override
@@ -204,6 +225,8 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
 
         initKeyNickName();
         mBackLightRoot.setVisibility(View.VISIBLE);
+
+        mAssociatedLayout.setOnClickListener(this);
     }
 
     private JSONObject mResultObj;
@@ -294,6 +317,80 @@ public class DetailTwoSwitchActivity2 extends DetailActivity {
         MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO,
                 null, errHandler, mHandler);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mAssociatedLayout.getId()) {
+            // 双控
+            showAssociatedPopupWindow();
+        }
+    }
+
+    // 双控弹窗
+    private void showAssociatedPopupWindow() {
+        View contentView = LayoutInflater.from(this).inflate(R.layout.dialog_associated_switch, null);
+
+        RecyclerView recyclerView = contentView.findViewById(R.id.associated_rv);
+        List<String> list = new ArrayList<>();
+        list.add(mStateName1.getText().toString());
+        list.add(mStateName2.getText().toString());
+        BaseQuickAdapter<String, BaseViewHolder> adapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_key, list) {
+            @Override
+            protected void convert(@NotNull BaseViewHolder holder, String s) {
+                int pos = list.indexOf(s);
+                holder.setText(R.id.key_tv, s);
+                TextView nameTV = holder.getView(R.id.key_tv);
+                nameTV.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (pos) {
+                            case 0: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 1: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 2: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                            case 3: {
+                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
+                                break;
+                            }
+                        }
+                        AssociatedBindListActivity.start(DetailTwoSwitchActivity2.this, mIOTId, mProductKey, s, pos + 1);
+                    }
+                });
+                TextView goTv = holder.getView(R.id.go_tv);
+                goTv.setTypeface(mIconfont);
+            }
+        };
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        setBackgroundAlpha(0.4f);
+        mAssociatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        mAssociatedPopupWindow.setTouchable(true);
+        mAssociatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                setBackgroundAlpha(1.0f);
+            }
+        });
+        mAssociatedPopupWindow.setAnimationStyle(R.style.pop_anim);
+        mAssociatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
+    }
+
+    private void setBackgroundAlpha(float f) {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = f;
+        getWindow().setAttributes(lp);
     }
 
     private static class MyResponseErrHandler extends Handler {

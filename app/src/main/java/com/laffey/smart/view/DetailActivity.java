@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -96,6 +94,7 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                 setContentView(R.layout.activity_color_light);
                 break;
+            case CTSL.PK_SYT_ONE_SCENE_SWITCH:
             case CTSL.PK_ONE_SCENE_SWITCH:
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_one_key_scene_2);
@@ -112,15 +111,18 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_six_scene_3);
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                 setContentView(R.layout.activity_six_scene_2);
                 break;
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
+            case CTSL.PK_SYT_TWO_SCENE_SWITCH:
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_two_key_scene_2);
                 //else setContentView(R.layout.activity_two_key_scene);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
+            case CTSL.PK_SYT_THREE_SCENE_SWITCH:
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_three_key_scene_2);
                 //else setContentView(R.layout.activity_three_key_scene);
@@ -129,6 +131,7 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_four_key_scene_3);
                 break;
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_four_key_scene_2);
                 //else setContentView(R.layout.activity_four_key_scene);
@@ -143,19 +146,19 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_multi_dev_for_three);
                 break;
             }
-            case "空调+地暖": {
+            case CTSL.PK_MULTI_AC_AND_FH: {
                 // 空调+地暖
                 setContentView(R.layout.activity_multi_dev_for_ac_and_fh);
                 break;
             }
-            case "空调+新风": {
+            case CTSL.PK_MULTI_AC_AND_FA: {
                 // 空调+新风
-                setContentView(R.layout.activity_multi_dev_for_ac_and_na);
+                setContentView(R.layout.activity_multi_dev_for_ac_and_af);
                 break;
             }
-            case "地暖+新风": {
+            case CTSL.PK_MULTI_FH_AND_FA: {
                 // 地暖+新风
-                setContentView(R.layout.activity_multi_dev_for_fh_and_na);
+                setContentView(R.layout.activity_multi_dev_for_fh_and_af);
                 break;
             }
             default:

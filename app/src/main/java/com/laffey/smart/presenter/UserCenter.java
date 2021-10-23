@@ -48,7 +48,7 @@ public class UserCenter {
     }
 
     // 获取用户绑定网关绑定子设备列表
-    public void getGatewaySubdeviceList(String gatewayIOTId, int pageNo, int pageSize,int tag,
+    public void getGatewaySubdeviceList(String gatewayIOTId, int pageNo, int pageSize, int tag,
                                         Handler commitFailureHandler,
                                         Handler responseErrorHandler,
                                         Handler processDataHandler) {
@@ -168,6 +168,27 @@ public class UserCenter {
         requestParameterEntry.addParameter("productKey", productKey);
         requestParameterEntry.addParameter("deviceName", deviceName);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UNBINDEVICE;
+        //提交
+        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 解绑子设备
+    public void unbindSubDevice(String productKey, String deviceName, int tag,
+                                Handler commitFailureHandler,
+                                Handler responseErrorHandler,
+                                Handler processDataHandler) {
+        if (processDataHandler == null) {
+            Logger.e("The processDataHandler is not null!");
+            return;
+        }
+
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = "/awss/subdevice/unbind";
+        requestParameterEntry.version = "1.0.7";
+        requestParameterEntry.addParameter("productKey", productKey);
+        requestParameterEntry.addParameter("deviceName", deviceName);
+        requestParameterEntry.callbackMessageType = tag;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }

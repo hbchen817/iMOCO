@@ -135,218 +135,416 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
 
     private void initData() {
         mSceneManager = new SceneManager(this);
-        //mHandler = new CallbackHandler(this);
-        //QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        //mSceneManager.queryIdentifierListForCA(mDevIot, 0, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-
-        //getDataConversionRules("chengxunfei", mProductKey);
         if (CTSL.PK_ONE_SCENE_SWITCH.equals(mProductKey) ||
                 CTSL.PK_TWO_SCENE_SWITCH.equals(mProductKey) ||
                 CTSL.PK_THREE_SCENE_SWITCH.equals(mProductKey) ||
                 CTSL.PK_FOUR_SCENE_SWITCH.equals(mProductKey) ||
-                CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey)) {
+                CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(mProductKey)) {
             // 场景开关
-            ECondition eCondition = initEventECondition(mDevIot, getString(R.string.trigger_buttons_2), DeviceBuffer.getDeviceInformation(mDevIot).mac, "17",
-                    "03A1", "KeyValue", "==");
-
-            mList.add(eCondition);
+            initSceneSwitchData();
         } else if (CTSL.TEST_PK_ONEWAYWINDOWCURTAINS.equals(mProductKey)) {
             // 一路窗帘
-            String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.WC_CurtainConrtol);
-            if (keyName == null || keyName.length() == 0) {
-                keyName = getString(R.string.curtains_control);
-            }
-            ECondition eCondition = initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "CurtainState", "==");
-            mList.add(eCondition);
+            initOneWayWindowCurtainsData();
         } else if (CTSL.TEST_PK_TWOWAYWINDOWCURTAINS.equals(mProductKey)) {
             // 二路窗帘
-            String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWC_CurtainConrtol);
-            if (keyName1 == null || keyName1.length() == 0) {
-                keyName1 = getString(R.string.one_curtains);
-            }
-            String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWC_InnerCurtainOperation);
-            if (keyName2 == null || keyName2.length() == 0) {
-                keyName2 = getString(R.string.two_curtains);
-            }
-            mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "CurtainState", "=="));
-            mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "2", "CurtainState", "=="));
+            initTwoWayWindowCurtainsData();
         } else if (CTSL.PK_ONEWAYSWITCH.equals(mProductKey)) {
             // 一键面板
-            String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.OWS_P_PowerSwitch_1);
-            if (keyName == null || keyName.length() == 0) {
-                keyName = getString(R.string.power_switch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
+            initOneWaySwitchData();
         } else if (CTSL.PK_TWOWAYSWITCH.equals(mProductKey)) {
             // 二键面板
-            String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_1);
-            if (keyName1 == null || keyName1.length() == 0) {
-                keyName1 = getString(R.string.one_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
-
-            String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_2);
-            if (keyName2 == null || keyName2.length() == 0) {
-                keyName2 = getString(R.string.two_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "2", "State", "=="));
+            initTwoWaySwitchData();
         } else if (CTSL.PK_THREE_KEY_SWITCH.equals(mProductKey)) {
             // 三键面板
-            String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_1);
-            if (keyName1 == null || keyName1.length() == 0) {
-                keyName1 = getString(R.string.one_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
-
-            String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_2);
-            if (keyName2 == null || keyName2.length() == 0) {
-                keyName2 = getString(R.string.two_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "2", "State", "=="));
-
-            String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_3);
-            if (keyName3 == null || keyName3.length() == 0) {
-                keyName3 = getString(R.string.three_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "3", "State", "=="));
+            initThreeKeySwitchData();
         } else if (CTSL.PK_FOURWAYSWITCH_2.equals(mProductKey)) {
             // 四键面板
-            String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_1);
-            if (keyName1 == null || keyName1.length() == 0) {
-                keyName1 = getString(R.string.one_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
-
-            String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_2);
-            if (keyName2 == null || keyName2.length() == 0) {
-                keyName2 = getString(R.string.two_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "2", "State", "=="));
-
-            String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_3);
-            if (keyName3 == null || keyName3.length() == 0) {
-                keyName3 = getString(R.string.three_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "3", "State", "=="));
-
-            String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_4);
-            if (keyName4 == null || keyName4.length() == 0) {
-                keyName4 = getString(R.string.four_way_powerswitch);
-            }
-            mList.add(initStateECondition(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "4", "State", "=="));
+            initFourWaySwitch2Data();
         } else if (CTSL.PK_SIX_TWO_SCENE_SWITCH.equals(mProductKey)) {
             // 六键四开二场景开关
-            String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1);
-            if (keyName1 == null || keyName1.length() == 0) {
-                keyName1 = getString(R.string.powerswitch_1);
-            }
-            mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
-
-            String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2);
-            if (keyName2 == null || keyName2.length() == 0) {
-                keyName2 = getString(R.string.powerswitch_2);
-            }
-            mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "2", "State", "=="));
-
-            String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3);
-            if (keyName3 == null || keyName3.length() == 0) {
-                keyName3 = getString(R.string.powerswitch_3);
-            }
-            mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "3", "State", "=="));
-
-            String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4);
-            if (keyName4 == null || keyName4.length() == 0) {
-                keyName4 = getString(R.string.powerswitch_4);
-            }
-            mList.add(initStateECondition(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "4", "State", "=="));
-
-            mList.add(initEventECondition(mDevIot, getString(R.string.trigger_buttons_2), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "17", "03A1", "KeyValue", "=="));
+            initSixTwoSceneSwitchData();
         } else if (CTSL.PK_OUTLET.equals(mProductKey)) {
             // 插座
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
+            initOutLetData();
         } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey) ||
                 CTSL.PK_AIRCOMDITION_FOUR.equals(mProductKey) ||
                 CTSL.PK_VRV_AC.equals(mProductKey)) {
             // 空调二管制、四管制、VRV温控器
-            // 电源开关
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "WorkMode", "=="));
-            // 当前温度
-            mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Temperature", "=="));
+            initAirConditionerData();
         } else if (CTSL.PK_FLOORHEATING001.equals(mProductKey)) {
             // 电地暖
-            // 电源开关
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "WorkMode", "=="));
-            // 当前温度
-            mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Temperature", "=="));
+            initFloorHeating001Data();
         } else if (CTSL.PK_FAU.equals(mProductKey)) {
             // 新风
-            // 电源开关
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "FanMode", "=="));
-            // 当前温度
-            mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Temperature", "=="));
+            initFauData();
         } else if (CTSL.PK_LIGHT.equals(mProductKey)) {
             // 调光调色
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
+            initLightData();
         } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(mProductKey)) {
             // 单调光
-            mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "State", "=="));
+            initOneWayDimmableLightData();
         } else if (CTSL.PK_PIRSENSOR.equals(mProductKey)) {
-            // 人体红外感应器
-            mList.add(initStateECondition(mDevIot, getString(R.string.infrared_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Alarm", "=="));
+            // 人体红外感应器 PK_PIRSENSOR
+            initPirSensorData();
         } else if (CTSL.PK_GASSENSOR.equals(mProductKey)) {
             // 燃气感应器
-            mList.add(initStateECondition(mDevIot, getString(R.string.gas_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Alarm", "=="));
+            initGasSensorData();
         } else if (CTSL.PK_TEMHUMSENSOR.equals(mProductKey)) {
             // 温湿度传感器
-            // 温度
-            mList.add(initStateECondition(mDevIot, getString(R.string.detailsensor_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Temperature", "=="));
-            // 湿度
-            mList.add(initStateECondition(mDevIot, getString(R.string.detailsensor_humidity), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Humidity", "=="));
+            initTemhumSensorData();
         } else if (CTSL.PK_SMOKESENSOR.equals(mProductKey)) {
             // 烟雾传感器
-            mList.add(initStateECondition(mDevIot, getString(R.string.smoke_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Alarm", "=="));
+            initSmokeSensorData();
         } else if (CTSL.PK_WATERSENSOR.equals(mProductKey)) {
             // 水浸传感器
-            mList.add(initStateECondition(mDevIot, getString(R.string.water_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Alarm", "=="));
+            initWaterSensorData();
         } else if (CTSL.PK_DOORSENSOR.equals(mProductKey)) {
             // 门磁传感器
-            mList.add(initStateECondition(mDevIot, getString(R.string.door_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "Alarm", "=="));
+            initDoorSensorData();
+        } else if (CTSL.PK_MULTI_THREE_IN_ONE.equals(mProductKey)) {
+            // 三合一温控器
+            initMulti3To1Data();
+        } else if (CTSL.PK_MULTI_AC_AND_FH.equals(mProductKey)) {
+            // 空调+地暖二合一温控器
+            initMultiACAndFHData();
+        } else if (CTSL.PK_MULTI_AC_AND_FA.equals(mProductKey)) {
+            // 空调+新风二合一温控器
+            initMultiACAndFAData();
+        } else if (CTSL.PK_MULTI_FH_AND_FA.equals(mProductKey)) {
+            // 地暖+新风二合一温控器
+            initMultiFHAndFAData();
         }
         mAdapter.notifyDataSetChanged();
+    }
+
+    // 场景开关
+    private void initSceneSwitchData() {
+        ECondition eCondition = initEventECondition(mDevIot, getString(R.string.trigger_buttons_2), DeviceBuffer.getDeviceInformation(mDevIot).mac, "17",
+                "03A1", "KeyValue", "==");
+
+        mList.add(eCondition);
+    }
+
+    // 一路窗帘
+    private void initOneWayWindowCurtainsData() {
+        String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.WC_CurtainConrtol);
+        if (keyName == null || keyName.length() == 0) {
+            keyName = getString(R.string.curtains_control);
+        }
+        ECondition eCondition = initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "CurtainState", "==");
+        mList.add(eCondition);
+    }
+
+    // 二路窗帘
+    private void initTwoWayWindowCurtainsData() {
+        String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWC_CurtainConrtol);
+        if (keyName1 == null || keyName1.length() == 0) {
+            keyName1 = getString(R.string.one_curtains);
+        }
+        String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWC_InnerCurtainOperation);
+        if (keyName2 == null || keyName2.length() == 0) {
+            keyName2 = getString(R.string.two_curtains);
+        }
+        mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "CurtainState", "=="));
+        mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "CurtainState", "=="));
+    }
+
+    // 一键面板
+    private void initOneWaySwitchData() {
+        String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.OWS_P_PowerSwitch_1);
+        if (keyName == null || keyName.length() == 0) {
+            keyName = getString(R.string.power_switch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+    }
+
+    // 二键面板
+    private void initTwoWaySwitchData() {
+        String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_1);
+        if (keyName1 == null || keyName1.length() == 0) {
+            keyName1 = getString(R.string.one_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+
+        String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P_PowerSwitch_2);
+        if (keyName2 == null || keyName2.length() == 0) {
+            keyName2 = getString(R.string.two_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "State", "=="));
+    }
+
+    // 三键面板
+    private void initThreeKeySwitchData() {
+        String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_1);
+        if (keyName1 == null || keyName1.length() == 0) {
+            keyName1 = getString(R.string.one_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+
+        String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_2);
+        if (keyName2 == null || keyName2.length() == 0) {
+            keyName2 = getString(R.string.two_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "State", "=="));
+
+        String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.TWS_P3_PowerSwitch_3);
+        if (keyName3 == null || keyName3.length() == 0) {
+            keyName3 = getString(R.string.three_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "3", "State", "=="));
+    }
+
+    // 四键面板
+    private void initFourWaySwitch2Data() {
+        String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_1);
+        if (keyName1 == null || keyName1.length() == 0) {
+            keyName1 = getString(R.string.one_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+
+        String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_2);
+        if (keyName2 == null || keyName2.length() == 0) {
+            keyName2 = getString(R.string.two_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "State", "=="));
+
+        String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_3);
+        if (keyName3 == null || keyName3.length() == 0) {
+            keyName3 = getString(R.string.three_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "3", "State", "=="));
+
+        String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.FWS_P_PowerSwitch_4);
+        if (keyName4 == null || keyName4.length() == 0) {
+            keyName4 = getString(R.string.four_way_powerswitch);
+        }
+        mList.add(initStateECondition(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "4", "State", "=="));
+    }
+
+    // 六键四开二场景开关
+    private void initSixTwoSceneSwitchData() {
+        String keyName1 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1);
+        if (keyName1 == null || keyName1.length() == 0) {
+            keyName1 = getString(R.string.powerswitch_1);
+        }
+        mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+
+        String keyName2 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2);
+        if (keyName2 == null || keyName2.length() == 0) {
+            keyName2 = getString(R.string.powerswitch_2);
+        }
+        mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "State", "=="));
+
+        String keyName3 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3);
+        if (keyName3 == null || keyName3.length() == 0) {
+            keyName3 = getString(R.string.powerswitch_3);
+        }
+        mList.add(initStateECondition(mDevIot, keyName3, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "3", "State", "=="));
+
+        String keyName4 = DeviceBuffer.getExtendedInfo(mDevIot).getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4);
+        if (keyName4 == null || keyName4.length() == 0) {
+            keyName4 = getString(R.string.powerswitch_4);
+        }
+        mList.add(initStateECondition(mDevIot, keyName4, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "4", "State", "=="));
+
+        mList.add(initEventECondition(mDevIot, getString(R.string.trigger_buttons_2), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "17", "03A1", "KeyValue", "=="));
+    }
+
+    // 插座
+    private void initOutLetData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+    }
+
+    // 空调二管制、四管制、VRV温控器
+    private void initAirConditionerData() {
+        // 电源开关
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 当前温度
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+    }
+
+    // 电地暖
+    private void initFloorHeating001Data() {
+        // 电源开关
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 当前温度
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+    }
+
+    // 新风
+    private void initFauData() {
+        // 电源开关
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "FanMode", "=="));
+        // 当前温度
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+    }
+
+    // 调光调色
+    private void initLightData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+    }
+
+    // 单调光
+    private void initOneWayDimmableLightData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "State", "=="));
+    }
+
+    // 人体红外感应器
+    private void initPirSensorData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.infrared_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Alarm", "=="));
+    }
+
+    // 燃气感应器
+    private void initGasSensorData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.gas_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Alarm", "=="));
+    }
+
+    // 温湿度传感器
+    private void initTemhumSensorData() {
+        // 温度
+        mList.add(initStateECondition(mDevIot, getString(R.string.detailsensor_temperature), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+        // 湿度
+        mList.add(initStateECondition(mDevIot, getString(R.string.detailsensor_humidity), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Humidity", "=="));
+    }
+
+    // 烟雾传感器
+    private void initSmokeSensorData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.smoke_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Alarm", "=="));
+    }
+
+    // 水浸传感器
+    private void initWaterSensorData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.water_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Alarm", "=="));
+    }
+
+    // 门磁传感器
+    private void initDoorSensorData() {
+        mList.add(initStateECondition(mDevIot, getString(R.string.door_detection_status), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Alarm", "=="));
+    }
+
+    // 地暖+新风二合一温控器
+    private void initMultiFHAndFAData() {
+        // 电源开关 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 电源开关 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "FanMode", "=="));
+
+        // 当前温度 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+        // 当前温度 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "Temperature", "=="));
+
+        // 加热状态 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.heating_status_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "AutoWorkMode", "=="));
+    }
+
+    // 空调+新风二合一温控器
+    private void initMultiACAndFAData() {
+        // 电源开关 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 电源开关 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "FanMode", "=="));
+
+        // 当前温度 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+        // 当前温度 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "Temperature", "=="));
+    }
+
+    // 三合一温控器
+    private void initMulti3To1Data() {
+        // 电源开关 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 电源开关 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "WorkMode", "=="));
+        // 电源开关 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "3", "FanMode", "=="));
+
+        // 当前温度 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+        // 当前温度 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "Temperature", "=="));
+        // 当前温度 - 新风
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "3", "Temperature", "=="));
+
+        // 加热状态 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.heating_status_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "AutoWorkMode", "=="));
+    }
+
+    // 空调+地暖二合一温控器
+    private void initMultiACAndFHData() {
+        // 电源开关 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "WorkMode", "=="));
+        // 电源开关 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "WorkMode", "=="));
+
+        // 当前温度 - 空调
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "1", "Temperature", "=="));
+        // 当前温度 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.current_temperature_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "Temperature", "=="));
+
+        // 加热状态 - 地暖
+        mList.add(initStateECondition(mDevIot, getString(R.string.heating_status_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                "2", "AutoWorkMode", "=="));
     }
 
     private ECondition initEventECondition(String iotId, String keyNickName, String devName, String endId, String eventType, String paramName, String compareType) {

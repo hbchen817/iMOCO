@@ -645,7 +645,7 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList("chengxunfei", "", "1");
+            querySceneList("chengxunfei", "", "0");
             // 数据获取完则开始获取设备列表数据
             startGetDeviceList();
         } else
@@ -661,7 +661,7 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList("chengxunfei", "", "1");
+            querySceneList("chengxunfei", "", "0");
             // 数据获取完则开始获取设备列表数据
             // startGetDeviceList();
         } else
@@ -695,22 +695,29 @@ public class IndexFragment1 extends BaseFragment {
 
                                     DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
 
-                                    JSONObject appParams = scene.getAppParams();
-                                    if (appParams != null) {
-                                        String switchIotId = appParams.getString("switchIotId");
-                                        if (switchIotId != null && switchIotId.length() > 0) continue;
-                                    }
+                                    if ("1".equals(type)) {
+                                        JSONObject appParams = scene.getAppParams();
+                                        if (appParams != null) {
+                                            String switchIotId = appParams.getString("switchIotId");
+                                            if (switchIotId != null && switchIotId.length() > 0)
+                                                continue;
+                                        }
 
-                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                    entry.id = scene.getSceneDetail().getSceneId();
-                                    entry.name = scene.getSceneDetail().getName();
-                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
-                                    entry.description = scene.getGwMac();
-                                    mSceneList.add(entry);
+                                        EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                        entry.id = scene.getSceneDetail().getSceneId();
+                                        entry.name = scene.getSceneDetail().getName();
+                                        entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                        entry.description = scene.getGwMac();
+                                        mSceneList.add(entry);
+                                    }
                                 }
                             }
-                            // 数据获取完则设置场景列表数据
-                            setSceneList(mSceneList);
+                            if ("1".equals(type)) {
+                                // 数据获取完则设置场景列表数据
+                                setSceneList(mSceneList);
+                            } else if ("0".equals(type)) {
+                                querySceneList("chengxunfei", "", "1");
+                            }
                         } else {
                             QMUITipDialogUtil.dismiss();
                             if (msg != null && msg.length() > 0)
@@ -957,9 +964,11 @@ public class IndexFragment1 extends BaseFragment {
                         int code = jsonObject.getInteger("code");
                         if (code == 200) {
                             String mac = jsonObject.getString("mac");
-                            DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, mac);
+                            if (pos < mDeviceList.size())
+                                DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, mac);
                         } else {
-                            DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, DeviceBuffer.getDeviceInformation(mDeviceList.get(pos).iotId).deviceName);
+                            if (pos < mDeviceList.size())
+                                DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, DeviceBuffer.getDeviceInformation(mDeviceList.get(pos).iotId).deviceName);
                         }
                         if (pos < mDeviceList.size() - 1)
                             queryMac(pos + 1);

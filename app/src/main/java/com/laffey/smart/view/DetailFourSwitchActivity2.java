@@ -102,6 +102,9 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     private String mKeyName3;
     private String mKeyName4;
 
+    private PopupWindow mAssociatedPopupWindow;
+    private Typeface mIconface;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -305,9 +308,6 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
         initKeyNickName();
         mBackLightRoot.setVisibility(View.VISIBLE);
     }
-
-    private PopupWindow mAssociatedPopupWindow;
-    private Typeface mIconface;
 
     private void showAssociatedPopupWindow() {
         View contentView = LayoutInflater.from(this).inflate(R.layout.dialog_associated_switch, null);

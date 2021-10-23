@@ -306,6 +306,12 @@ public class Constant {
     public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID           = 510;
     public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID_ERROR     = 511;
 
+    // intent resultCode
+    public static final int ADD_LOCAL_SCENE                         = 10001;
+    public static final int ADD_LOCAL_SCENE_FOR_SCENE_MODEL         = 10002;
+    public static final int DEL_SCENE_IN_LOCALSCENEACTIVITY         = 10003;
+    public static final int RESULT_CODE_UPDATE_SCENE                = 10004;
+
     // 定义配网常量
     public static final String CONFIGNETWORK_AES_CBC_IV             = "3333333333333333";
     public static final String CONFIGNETWORK_AES_CBC_YZ             = "8888888888888888";
@@ -354,7 +360,8 @@ public class Constant {
             + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , "
             + CTSL.PK_FOUR_SCENE_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2 + " , " + CTSL.PK_ONE_SCENE_SWITCH + " , " + CTSL.PK_THREE_SCENE_SWITCH + " , "
             + CTSL.PK_TWO_SCENE_SWITCH + " , " + CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , " + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ANY_TWO_SCENE_SWITCH
-            + " , " + CTSL.PK_ANY_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH_YQSXB;
+            + " , " + CTSL.PK_ANY_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SIX_SCENE_SWITCH_YQSXB + " , " + CTSL.PK_SYT_ONE_SCENE_SWITCH + " , "
+            + CTSL.PK_SYT_TWO_SCENE_SWITCH + " , " + CTSL.PK_SYT_THREE_SCENE_SWITCH + " , " + CTSL.PK_SYT_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SYT_SIX_SCENE_SWITCH;
 
     // 可作为本地场景条件的设备类型
     public static final String CONDITION_DEVS_PK                    = CTSL.PK_ONE_SCENE_SWITCH + " , " + CTSL.PK_TWO_SCENE_SWITCH + " , "
@@ -362,12 +369,15 @@ public class Constant {
             + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2
             + " , " + CTSL.PK_SIX_TWO_SCENE_SWITCH + " , " + CTSL.PK_OUTLET + " , " + CTSL.PK_AIRCOMDITION_TWO + " , " + CTSL.PK_AIRCOMDITION_FOUR + " , " + CTSL.PK_VRV_AC
             + " , " + CTSL.PK_FLOORHEATING001 + " , " + CTSL.PK_FAU + " , " + CTSL.PK_LIGHT + " , " + CTSL.PK_ONE_WAY_DIMMABLE_LIGHT + " , " + CTSL.PK_PIRSENSOR
-            + " , " + CTSL.PK_GASSENSOR + " , " + CTSL.PK_TEMHUMSENSOR + " , " + CTSL.PK_SMOKESENSOR + " , " + CTSL.PK_WATERSENSOR + " , " + CTSL.PK_DOORSENSOR;
+            + " , " + CTSL.PK_GASSENSOR + " , " + CTSL.PK_TEMHUMSENSOR + " , " + CTSL.PK_SMOKESENSOR + " , " + CTSL.PK_WATERSENSOR + " , " + CTSL.PK_DOORSENSOR
+            + " , " + CTSL.PK_MULTI_THREE_IN_ONE + " , " + CTSL.PK_MULTI_AC_AND_FH + " , " + CTSL.PK_MULTI_AC_AND_FA + " , " + CTSL.PK_MULTI_FH_AND_FA + " , " + CTSL.PK_SYT_ONE_SCENE_SWITCH
+            + " , " + CTSL.PK_SYT_TWO_SCENE_SWITCH + " , " + CTSL.PK_SYT_THREE_SCENE_SWITCH + " , " + CTSL.PK_SYT_FOUR_SCENE_SWITCH + " , " + CTSL.PK_SYT_SIX_SCENE_SWITCH;
     // 可作为本地场景动作的设备类型
     public static final String ACTION_DEVS_PK                       = CTSL.TEST_PK_ONEWAYWINDOWCURTAINS + " , "
             + CTSL.TEST_PK_TWOWAYWINDOWCURTAINS + " , " + CTSL.PK_ONEWAYSWITCH + " , " + CTSL.PK_TWOWAYSWITCH + " , " + CTSL.PK_THREE_KEY_SWITCH + " , " + CTSL.PK_FOURWAYSWITCH_2
             + " , " + CTSL.PK_SIX_TWO_SCENE_SWITCH + " , " + CTSL.PK_OUTLET + " , " + CTSL.PK_AIRCOMDITION_TWO + " , " + CTSL.PK_AIRCOMDITION_FOUR + " , " + CTSL.PK_VRV_AC
-            + " , " + CTSL.PK_FLOORHEATING001 + " , " + CTSL.PK_FAU + " , " + CTSL.PK_LIGHT + " , " + CTSL.PK_ONE_WAY_DIMMABLE_LIGHT;
+            + " , " + CTSL.PK_FLOORHEATING001 + " , " + CTSL.PK_FAU + " , " + CTSL.PK_LIGHT + " , " + CTSL.PK_ONE_WAY_DIMMABLE_LIGHT
+            + " , " + CTSL.PK_MULTI_THREE_IN_ONE + " , " + CTSL.PK_MULTI_AC_AND_FH + " , " + CTSL.PK_MULTI_AC_AND_FA + " , " + CTSL.PK_MULTI_FH_AND_FA;
 
     public static final String JD_APP_ID                            = "apidemo";
     public static final String JD_DEV_ID                            = "test_device1";

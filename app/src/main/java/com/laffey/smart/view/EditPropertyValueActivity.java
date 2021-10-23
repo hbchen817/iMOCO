@@ -427,7 +427,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                         } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
                                             activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
                                             activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
-                                        } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
+                                        } else
+                                            activity.mViewBinding.unitTv.setVisibility(View.GONE);
                                     }
                                     break;
                                 }
@@ -471,6 +472,7 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value6.setValue("6");
                                             activity.mList.add(value6);
                                         } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(event.getProductKey())
+                                                || CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(event.getProductKey())
                                                 || CTSL.PK_U_SIX_SCENE_SWITCH.equals(event.getProductKey())
                                                 || CTSL.PK_SIX_SCENE_SWITCH_YQSXB.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
@@ -521,6 +523,7 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value6.setValue("6");
                                             activity.mList.add(value6);
                                         } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(event.getProductKey()) ||
                                                 CTSL.PK_ANY_FOUR_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
@@ -553,7 +556,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value4.setKey(object != null ? object.getString("4") : activity.getString(R.string.key_4));
                                             value4.setValue("4");
                                             activity.mList.add(value4);
-                                        } else if (CTSL.PK_ONE_SCENE_SWITCH.equals(event.getProductKey())) {
+                                        } else if (CTSL.PK_ONE_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -561,7 +565,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value1.setKey(object != null ? object.getString("1") : activity.getString(R.string.key_1));
                                             value1.setValue("1");
                                             activity.mList.add(value1);
-                                        } else if (CTSL.PK_THREE_SCENE_SWITCH.equals(event.getProductKey())) {
+                                        } else if (CTSL.PK_THREE_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -586,7 +591,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value3.setValue("3");
                                             activity.mList.add(value3);
                                         } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(event.getProductKey()) ||
-                                                CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
+                                                CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(event.getProductKey()) ||
+                                                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(event.getProductKey())) {
                                             PropertyValue value1 = new PropertyValue();
                                             if (event.getCompareValue() != null && (int) event.getCompareValue() == 1) {
                                                 value1.setChecked(true);
@@ -676,7 +682,8 @@ public class EditPropertyValueActivity extends BaseActivity {
                                         } else if (activity.mEventValue.getUnitName() != null && activity.mEventValue.getUnitName().length() > 0) {
                                             activity.mViewBinding.unitTv.setVisibility(View.VISIBLE);
                                             activity.mViewBinding.unitTv.setText(activity.mEventValue.getUnitName());
-                                        } else activity.mViewBinding.unitTv.setVisibility(View.GONE);
+                                        } else
+                                            activity.mViewBinding.unitTv.setVisibility(View.GONE);
                                     } else if ("enum".equals(dataType.getString("type"))) {
                                         activity.mList.clear();
                                         activity.mViewBinding.valueRv.setVisibility(View.VISIBLE);

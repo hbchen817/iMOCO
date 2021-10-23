@@ -36,6 +36,7 @@ import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -52,6 +53,8 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -64,7 +67,7 @@ import org.greenrobot.eventbus.Subscribe;
  * creat time: 2020-04-21 17:14
  * Description: 网关更多界面
  */
-public class MoreGatewayActivity extends BaseActivity {
+public class MoreGatewayActivity extends BaseActivity implements OnClickListener {
     private ActivityMoreGatewayBinding mViewBinding;
     protected String mIOTId = "";
     protected String mProductKey = "";
@@ -84,6 +87,8 @@ public class MoreGatewayActivity extends BaseActivity {
     private HashMap<String, String> mDeviceMap = new HashMap<>();
     private SceneManager mSceneManager;
     private String mSceneType;
+
+    private List<ItemSceneInGateway> mSceneList = new ArrayList<>();
 
     // 更新状态
     @SuppressLint("SetTextI18n")
@@ -137,6 +142,74 @@ public class MoreGatewayActivity extends BaseActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_QUEST_DELETE_SCENE: {
+                    // 删除本地场景
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    if (code == 200) {
+                        boolean result = response.getBoolean("result");
+                        if (result) {
+                            String sceneId = response.getString("sceneId");
+                            DeviceBuffer.removeScene(sceneId);
+                            for (ItemSceneInGateway scene : mSceneList) {
+                                if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
+                                    mSceneList.remove(scene);
+                                    break;
+                                }
+                            }
+                            if (mSceneList.size() > 0) {
+                                if (Constant.IS_TEST_DATA) {
+                                    mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                            Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+                                } else {
+                                    SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                }
+                            } else {
+                                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                                if (deviceEntry != null) {
+                                    // 设备解除绑定
+                                    mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                } else {
+                                    ToastUtils.showShortToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
+                                }
+                            }
+                        } else {
+                            if (message == null || message.length() == 0) {
+                                ToastUtils.showLongToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(MoreGatewayActivity.this, message);
+                        }
+                    } else {
+                        if (message == null || message.length() == 0) {
+                            ToastUtils.showLongToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
+                        } else
+                            ToastUtils.showLongToast(MoreGatewayActivity.this, message);
+                    }
+                    break;
+                }
+                case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                    // 删除设备相关场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("ManageSceneNotification".equals(identifier)) {
+                        String type = value.getString("Type");
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        if ("0".equals(status)) {
+                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
+                            if ("3".equals(type)) {
+                                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+                            }
+                        } else {
+                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
                 case Constant.MSG_CALLBACK_GETTSLPROPERTY:
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
@@ -195,17 +268,20 @@ public class MoreGatewayActivity extends BaseActivity {
                             switch (e.productKey) {
                                 case CTSL.PK_LIGHT:
                                 case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
+                                case CTSL.PK_SYT_ONE_SCENE_SWITCH:
                                 case CTSL.PK_ONE_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
                                 case CTSL.PK_ANY_TWO_SCENE_SWITCH:
                                 case CTSL.PK_TWO_SCENE_SWITCH:
+                                case CTSL.PK_SYT_TWO_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
                                 case CTSL.PK_THREE_SCENE_SWITCH:
+                                case CTSL.PK_SYT_THREE_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
@@ -213,6 +289,7 @@ public class MoreGatewayActivity extends BaseActivity {
                                     break;
                                 case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
                                 case CTSL.PK_FOUR_SCENE_SWITCH:
+                                case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
@@ -222,6 +299,7 @@ public class MoreGatewayActivity extends BaseActivity {
                                 case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
                                 case CTSL.PK_U_SIX_SCENE_SWITCH:
                                 case CTSL.PK_SIX_SCENE_SWITCH:
+                                case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
@@ -490,12 +568,7 @@ public class MoreGatewayActivity extends BaseActivity {
         }
 
         // 回退处理
-        mViewBinding.toolbarLayout.includeTitleImgBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mViewBinding.toolbarLayout.includeTitleImgBack.setOnClickListener(this);
 
         mViewBinding.toolbarLayout.includeTitleLblTitle.setText(mName);
 
@@ -506,18 +579,8 @@ public class MoreGatewayActivity extends BaseActivity {
             mBindTime = deviceEntry.bindTime;
         } else {
             ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-            mViewBinding.moreLblUnbind.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToastUtils.showShortToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
-                }
-            });
-            mViewBinding.moreImgUnbind.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToastUtils.showShortToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
-                }
-            });
+            mViewBinding.moreLblUnbind.setOnClickListener(this);
+            mViewBinding.moreImgUnbind.setOnClickListener(this);
             return;
         }
 
@@ -527,122 +590,31 @@ public class MoreGatewayActivity extends BaseActivity {
         if (mOwned == 0) {
             mViewBinding.upgradeView.setVisibility(View.GONE);
         }
-        mViewBinding.upgradeView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (hasNewerVersion) {
-                    Intent intent1 = new Intent(mActivity, UpgradeFirmwareActivity.class);
-                    intent1.putExtra("iotId", mIOTId);
-                    intent1.putExtra("productKey", mProductKey);
-                    intent1.putExtra("currentVersion", currentVersion);
-                    intent1.putExtra("theNewVersion", theNewVersion);
-                    startActivity(intent1);
-                } else {
-                    ToastUtils.showToastCentrally(mActivity, getString(R.string.current_version_is_new));
-                }
-            }
-        });
+        mViewBinding.upgradeView.setOnClickListener(this);
 
         mViewBinding.includeWheelPicker.oneItemWheelPickerRLPicker.setVisibility(View.GONE);
         mViewBinding.moreGatewayLblRoom.setText(mRoomName);
         mViewBinding.moreGatewayLblBindTime.setText(this.mBindTime);
 
-        // 报警铃音设置事件处理
-        OnClickListener setAlarmBellIdListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setWheelPicker(1, mViewBinding.moreGatewayLblAlarmBellIdValue.getText().toString());
-            }
-        };
-        mViewBinding.moreGatewayImgAlarmBellId.setOnClickListener(setAlarmBellIdListener);
-
-        // 门铃音量设置事件处理
-        OnClickListener setBellVolumeListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String volume = mViewBinding.moreGatewayLblBellVolumeValue.getText().toString().substring(0, mViewBinding.moreGatewayLblBellVolumeValue.getText().toString().length() - 1);
-                setWheelPicker(2, volume);
-            }
-        };
-        mViewBinding.moreGatewayImgBellVolume.setOnClickListener(setBellVolumeListener);
-
-        // 门铃音乐设置事件处理
-        OnClickListener setBellMusicIdListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setWheelPicker(3, mViewBinding.moreGatewayLblBellMusicIdValue.getText().toString());
-            }
-        };
-        mViewBinding.moreGatewayImgBellMusicId.setOnClickListener(setBellMusicIdListener);
-
-        // 报警音量设置事件处理
-        OnClickListener setAlarmVolumeListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String volume = mViewBinding.moreGatewayLblAlarmVolumeValue.getText().toString().substring(0, mViewBinding.moreGatewayLblAlarmVolumeValue.getText().toString().length() - 1);
-                setWheelPicker(4, volume);
-            }
-        };
-        mViewBinding.moreGatewayImgAlarmVolume.setOnClickListener(setAlarmVolumeListener);
+        mViewBinding.moreGatewayImgAlarmBellId.setOnClickListener(mSetAlarmBellIdListener);
+        mViewBinding.moreGatewayImgBellVolume.setOnClickListener(mSetBellVolumeListener);
+        mViewBinding.moreGatewayImgBellMusicId.setOnClickListener(mSetBellMusicIdListener);
+        mViewBinding.moreGatewayImgAlarmVolume.setOnClickListener(mSetAlarmVolumeListener);
 
         // 修改设备名称事件处理
         mViewBinding.moreGatewayLblName.setText(mName);
-        mViewBinding.moreGatewayImgName.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeviceNameDialogEdit();
-            }
-        });
+        mViewBinding.moreGatewayImgName.setOnClickListener(this);
 
-        // 选择所属房间处理
-        OnClickListener selectRoomListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setWheelPicker(5, mViewBinding.moreGatewayLblRoom.getText().toString());
-            }
-        };
-        mViewBinding.moreGatewayImgRoom.setOnClickListener(selectRoomListener);
+        mViewBinding.moreGatewayImgRoom.setOnClickListener(mSelectRoomListener);
         List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
         if (list == null || list.size() == 0) {
             mViewBinding.recordLayout.setVisibility(View.GONE);
         }
-        // 消息记录处理
-        OnClickListener messageRecordListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MoreGatewayActivity.this, MessageRecordActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
-            }
-        };
-        mViewBinding.moreGatewayImgMsg.setOnClickListener(messageRecordListener);
 
-        // 解除绑定处理
-        OnClickListener unBindListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MoreGatewayActivity.this);
-                builder.setIcon(R.drawable.dialog_quest);
-                builder.setTitle(R.string.dialog_title);
-                builder.setMessage(R.string.dialog_unbind);
-                builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // 设备解除绑定
-                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    }
-                });
-                builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                });
-                builder.create().show();
-            }
-        };
-        mViewBinding.moreLblUnbind.setOnClickListener(unBindListener);
-        mViewBinding.moreImgUnbind.setOnClickListener(unBindListener);
+        mViewBinding.moreGatewayImgMsg.setOnClickListener(mMessageRecordListener);
+
+        mViewBinding.moreLblUnbind.setOnClickListener(mUnBindListener);
+        mViewBinding.moreImgUnbind.setOnClickListener(mUnBindListener);
 
         // 获取设备基本信息
         new TSLHelper(this).getBaseInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -665,6 +637,94 @@ public class MoreGatewayActivity extends BaseActivity {
         }
     }
 
+    // 解除绑定处理
+    private final OnClickListener mUnBindListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MoreGatewayActivity.this);
+            builder.setIcon(R.drawable.dialog_quest);
+            builder.setTitle(R.string.dialog_title);
+            builder.setMessage(R.string.dialog_unbind);
+            builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    deleteScene();
+                }
+            });
+            builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
+            builder.create().show();
+        }
+    };
+
+    // 消息记录处理
+    private final OnClickListener mMessageRecordListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MoreGatewayActivity.this, MessageRecordActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", mProductKey);
+            startActivity(intent);
+        }
+    };
+
+    // 门铃音量设置事件处理
+    private final OnClickListener mSetBellVolumeListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String volume = mViewBinding.moreGatewayLblBellVolumeValue.getText().toString().substring(0, mViewBinding.moreGatewayLblBellVolumeValue.getText().toString().length() - 1);
+            setWheelPicker(2, volume);
+        }
+    };
+
+    // 门铃音乐设置事件处理
+    private final OnClickListener mSetBellMusicIdListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setWheelPicker(3, mViewBinding.moreGatewayLblBellMusicIdValue.getText().toString());
+        }
+    };
+
+    // 报警音量设置事件处理
+    private final OnClickListener mSetAlarmVolumeListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String volume = mViewBinding.moreGatewayLblAlarmVolumeValue.getText().toString().substring(0, mViewBinding.moreGatewayLblAlarmVolumeValue.getText().toString().length() - 1);
+            setWheelPicker(4, volume);
+        }
+    };
+
+    // 报警铃音设置事件处理
+    private final OnClickListener mSetAlarmBellIdListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setWheelPicker(1, mViewBinding.moreGatewayLblAlarmBellIdValue.getText().toString());
+        }
+    };
+
+    // 选择所属房间处理
+    private final OnClickListener mSelectRoomListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setWheelPicker(5, mViewBinding.moreGatewayLblRoom.getText().toString());
+        }
+    };
+
+    private void deleteScene() {
+        mSceneList.clear();
+        mSceneList.addAll(DeviceBuffer.getAllScene(DeviceBuffer.getDeviceMac(mIOTId)));
+        if (Constant.IS_TEST_DATA) {
+            mSceneManager.deleteScene("chengxunfei", DeviceBuffer.getDeviceMac(mIOTId), mSceneList.get(0).getSceneDetail().getSceneId(),
+                    Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+        } else {
+            SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        }
+    }
+
     // 嵌入式状态栏
     private void initStatusBar() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -680,5 +740,29 @@ public class MoreGatewayActivity extends BaseActivity {
         RealtimeDataReceiver.deleteCallbackHandler("MoreGatewayProperty");
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mViewBinding.toolbarLayout.includeTitleImgBack.getId()) {
+            finish();
+        } else if (v.getId() == mViewBinding.moreLblUnbind.getId()) {
+            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+        } else if (v.getId() == mViewBinding.moreGatewayImgName.getId()) {
+            showDeviceNameDialogEdit();
+        } else if (v.getId() == mViewBinding.moreImgUnbind.getId()) {
+            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+        } else if (v.getId() == mViewBinding.upgradeView.getId()) {
+            if (hasNewerVersion) {
+                Intent intent1 = new Intent(mActivity, UpgradeFirmwareActivity.class);
+                intent1.putExtra("iotId", mIOTId);
+                intent1.putExtra("productKey", mProductKey);
+                intent1.putExtra("currentVersion", currentVersion);
+                intent1.putExtra("theNewVersion", theNewVersion);
+                startActivity(intent1);
+            } else {
+                ToastUtils.showToastCentrally(mActivity, getString(R.string.current_version_is_new));
+            }
+        }
     }
 }

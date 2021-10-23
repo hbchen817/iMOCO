@@ -141,7 +141,8 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
 
         if (CTSL.PK_TWO_SCENE_SWITCH.equals(mProductKey)) {
             mBackLightLayout.setVisibility(View.VISIBLE);
-        } else if (CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(mProductKey)) {
+        } else if (CTSL.PK_ANY_TWO_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(mProductKey)) {
             mBackLightLayout.setVisibility(View.GONE);
         }
     }

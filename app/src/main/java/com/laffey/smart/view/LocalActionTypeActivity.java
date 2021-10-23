@@ -19,12 +19,18 @@ public class LocalActionTypeActivity extends AppCompatActivity implements View.O
     private ActivityLocalActionTypeBinding mViewBinding;
 
     private static final String GATEWAY_ID = "gateway_id";
+    private static final String ACTIVITY_TAG = "activity_tag";
+    private static final String IOT_ID = "iot_id";
 
     private String mGatewayId;
+    private String mIotId;
+    private String mActivityTag;
 
-    public static void start(Context context, String gatewayId) {
+    public static void start(Context context, String gatewayId, String iotId, String activityTag) {
         Intent intent = new Intent(context, LocalActionTypeActivity.class);
         intent.putExtra(GATEWAY_ID, gatewayId);
+        intent.putExtra(ACTIVITY_TAG, activityTag);
+        intent.putExtra(IOT_ID, iotId);
         context.startActivity(intent);
     }
 
@@ -52,6 +58,8 @@ public class LocalActionTypeActivity extends AppCompatActivity implements View.O
 
     private void initData() {
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
+        mActivityTag = getIntent().getStringExtra(ACTIVITY_TAG);
+        mIotId = getIntent().getStringExtra(IOT_ID);
     }
 
     // 嵌入式状态栏
@@ -72,7 +80,7 @@ public class LocalActionTypeActivity extends AppCompatActivity implements View.O
         } else if (v.getId() == mViewBinding.propertyLayout.getId()) {
             LocalActionDevsActivity.start(this, mGatewayId);
         } else if (v.getId() == mViewBinding.sceneLayout.getId()) {
-            LocalActionScenesActivity.start(this, mGatewayId);
+            LocalActionScenesActivity.start(this, mGatewayId, mIotId, null, mActivityTag);
         }
     }
 }

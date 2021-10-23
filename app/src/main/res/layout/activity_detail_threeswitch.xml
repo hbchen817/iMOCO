@@ -192,6 +192,40 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:id="@+id/associated_layout"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_white_solid">
+
+                <TextView
+                    android:id="@+id/associated_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/icon_associated"
+                    android:textColor="@color/blue2"
+                    android:textSize="@dimen/sp_25" />
+
+                <TextView
+                    style="@style/StateFontStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/associated_switch"
+                    android:textColor="@color/blue2" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/back_light_root"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

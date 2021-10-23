@@ -264,8 +264,9 @@ public class SceneModelActivity extends BaseActivity {
                         String sceneId = response.getString("sceneId");
                         if (code == 200) {
                             if (result) {
-                                mSceneManager.manageSceneService(mGatewayEntry.iotId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                                setResult(10001);
+                                if (!Constant.IS_TEST_DATA)
+                                    mSceneManager.manageSceneService(mGatewayEntry.iotId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                                setResult(Constant.ADD_LOCAL_SCENE_FOR_SCENE_MODEL);
                                 finish();
                             } else {
                                 if (msg == null || msg.length() == 0) {

@@ -82,7 +82,6 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
         setContentView(mViewBinding.getRoot());
 
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
-        ViseLog.d("LocalConditionDevsActivity mGatewayId = " + mGatewayId);
         initStatusBar();
         initRecyclerView();
         initData();
@@ -137,7 +136,6 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
         }
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        ViseLog.d("mGatewayId = " + mGatewayId + "\n" + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }

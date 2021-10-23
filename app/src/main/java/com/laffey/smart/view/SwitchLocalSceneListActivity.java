@@ -702,7 +702,17 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SCENE_LIST_REQUEST_CODE) {
-            if (resultCode == 10001) {
+            if (resultCode == Constant.ADD_LOCAL_SCENE) {
+                // 新增场景
+                ToastUtils.showLongToast(this, R.string.scenario_created_successfully);
+                getList();
+            } else if (resultCode == Constant.RESULT_CODE_UPDATE_SCENE) {
+                // 编辑场景
+                ToastUtils.showLongToast(this, R.string.scene_updated_successfully);
+                getList();
+            } else if (resultCode == Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY) {
+                // 删除场景
+                ToastUtils.showLongToast(this, R.string.scene_delete_successfully);
                 getList();
             }
         }

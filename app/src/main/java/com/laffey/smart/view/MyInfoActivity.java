@@ -6,8 +6,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
 import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
@@ -16,17 +14,13 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.laffey.smart.R;
 import com.laffey.smart.databinding.ActivityMyinfoBinding;
 import com.laffey.smart.event.RefreshMyinfo;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.sdk.Account;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
-import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MyInfoActivity extends BaseActivity implements View.OnClickListener {
     private ActivityMyinfoBinding mViewBinding;
@@ -41,6 +35,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 public void onLogoutSuccess() {
                     ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_success));
+                    DeviceBuffer.initSceneBuffer();
                     Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);

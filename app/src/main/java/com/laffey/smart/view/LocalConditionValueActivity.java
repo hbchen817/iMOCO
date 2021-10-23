@@ -24,6 +24,7 @@ import com.laffey.smart.databinding.ActivityEditPropertyValueBinding;
 import com.laffey.smart.model.ECondition;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.ToastUtils;
@@ -111,7 +112,8 @@ public class LocalConditionValueActivity extends BaseActivity {
         mSceneManager = new SceneManager(this);
 
         //requestMacByIot("chengxunfei", mDevIotId);
-        if (CTSL.PK_ONE_SCENE_SWITCH.equals(mProductKey)) {
+        if (CTSL.PK_ONE_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(mProductKey)) {
             // 一键场景开关
             mViewBinding.valueRv.setVisibility(View.VISIBLE);
             String keyNickName = DeviceBuffer.getExtendedInfo(mDevIotId).getString(CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -125,7 +127,8 @@ public class LocalConditionValueActivity extends BaseActivity {
                 p.setChecked(true);
             } else
                 mList.add(new PropertyValue(keyNickName, "1"));
-        } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(mProductKey)) {
+        } else if (CTSL.PK_TWO_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_TWO_SCENE_SWITCH.equals(mProductKey)) {
             // 二键场景开关
             mViewBinding.valueRv.setVisibility(View.VISIBLE);
             String value = mECondition.getCondition().getParameters().getCompareValue();
@@ -149,7 +152,8 @@ public class LocalConditionValueActivity extends BaseActivity {
                 mList.add(p1);
                 mList.add(p2);
             }
-        } else if (CTSL.PK_THREE_SCENE_SWITCH.equals(mProductKey)) {
+        } else if (CTSL.PK_THREE_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_THREE_SCENE_SWITCH.equals(mProductKey)) {
             // 三键场景开关
             mViewBinding.valueRv.setVisibility(View.VISIBLE);
             String keyNickName1 = DeviceBuffer.getExtendedInfo(mDevIotId).getString(CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -179,7 +183,8 @@ public class LocalConditionValueActivity extends BaseActivity {
             mList.add(p1);
             mList.add(p2);
             mList.add(p3);
-        } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(mProductKey)) {
+        } else if (CTSL.PK_FOUR_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_FOUR_SCENE_SWITCH.equals(mProductKey)) {
             // 四键场景开关
             mViewBinding.valueRv.setVisibility(View.VISIBLE);
             String keyNickName1 = DeviceBuffer.getExtendedInfo(mDevIotId).getString(CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -220,7 +225,8 @@ public class LocalConditionValueActivity extends BaseActivity {
             mList.add(p2);
             mList.add(p3);
             mList.add(p4);
-        } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey)) {
+        } else if (CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey) ||
+                CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(mProductKey)) {
             // 六键场景开关
             mViewBinding.valueRv.setVisibility(View.VISIBLE);
             String keyNickName1 = DeviceBuffer.getExtendedInfo(mDevIotId).getString(CTSL.SCENE_SWITCH_KEY_CODE_1);
@@ -605,6 +611,410 @@ public class LocalConditionValueActivity extends BaseActivity {
             }
             mList.add(p1);
             mList.add(p2);
+        } else if (CTSL.PK_MULTI_THREE_IN_ONE.equals(mProductKey)) {
+            // 三合一温控器
+            initMulti3To1Value();
+        } else if (CTSL.PK_MULTI_AC_AND_FH.equals(mProductKey)) {
+            // 空调+地暖二合一温控器
+            initMultiACAndFHValue();
+        } else if (CTSL.PK_MULTI_AC_AND_FA.equals(mProductKey)) {
+            // 空调+新风二合一温控器
+            initMultiACAndFAValue();
+        } else if (CTSL.PK_MULTI_FH_AND_FA.equals(mProductKey)) {
+            // 地暖+新风二合一温控器
+            initMultiFHAndFAValue();
+        }
+    }
+
+    // 地暖+新风二合一温控器
+    private void initMultiFHAndFAValue() {
+        if ("1".equals(mEndId)) {
+            // 地暖
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 地暖
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            } else if ("AutoWorkMode".equals(mKeyName)) {
+                // 加热状态 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            }
+        } else if ("2".equals(mEndId)) {
+            // 新风
+            if ("FanMode".equals(mKeyName)) {
+                // 电源开关 - 新风
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "4");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("4".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 新风
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        }
+    }
+
+    // 空调+新风二合一温控器
+    private void initMultiACAndFAValue() {
+        if ("1".equals(mEndId)) {
+            // 空调
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 空调
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 空调
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        } else if ("2".equals(mEndId)) {
+            // 新风
+            if ("FanMode".equals(mKeyName)) {
+                // 电源开关 - 新风
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "4");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("4".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 新风
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        }
+    }
+
+    // 三合一温控器
+    private void initMulti3To1Value() {
+        if ("1".equals(mEndId)) {
+            // 空调
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 空调
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 目标温度 - 空调
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        } else if ("2".equals(mEndId)) {
+            // 地暖
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 地暖
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            } else if ("AutoWorkMode".equals(mKeyName)) {
+                // 加热状态 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            }
+        } else if ("3".equals(mEndId)) {
+            // 新风
+            if ("FanMode".equals(mKeyName)) {
+                // 电源开关 - 新风
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "4");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("4".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 新风
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        }
+    }
+
+    // 空调+地暖二合一温控器
+    private void initMultiACAndFHValue() {
+        if ("1".equals(mEndId)) {
+            // 空调
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 空调
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 空调
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            }
+        } else if ("2".equals(mEndId)) {
+            // 地暖
+            if ("WorkMode".equals(mKeyName)) {
+                // 电源开关 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            } else if ("Temperature".equals(mKeyName)) {
+                // 当前温度 - 地暖
+                mViewBinding.eventLayout.setVisibility(View.VISIBLE);// 滚动选择
+                mEventValueList.clear();
+                // mCompareTypes = new String[]{"<", "<=", "==", ">=", ">", "!="};
+                for (int i = MIN_TEMP; i <= MAX_TEMP; i++) {
+                    mEventValueList.add(String.valueOf(i));
+                }
+                String symbol = mECondition.getCondition().getParameters().getCompareType();
+                for (int i = 0; i < mCompareTypes.length; i++) {
+                    if (symbol.equals(mCompareTypes[i])) {
+                        mViewBinding.compareTypeWv.setCurrentIndex(i);
+                        break;
+                    }
+                }
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                if (value == null || value.length() == 0) {
+                    value = 9 + MIN_TEMP + "";
+                }
+                mViewBinding.compareValueWv.setEntries(mEventValueList);
+                mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
+            } else if ("AutoWorkMode".equals(mKeyName)) {
+                // 加热状态 - 地暖
+                mViewBinding.valueRv.setVisibility(View.VISIBLE);
+                String value = mECondition.getCondition().getParameters().getCompareValue();
+                PropertyValue p1 = new PropertyValue(getString(R.string.close), "0");
+                PropertyValue p2 = new PropertyValue(getString(R.string.open), "10");
+                if ("0".equals(value)) {
+                    p1.setChecked(true);
+                } else if ("10".equals(value)) {
+                    p2.setChecked(true);
+                }
+                mList.add(p1);
+                mList.add(p2);
+            }
         }
     }
 
@@ -651,10 +1061,24 @@ public class LocalConditionValueActivity extends BaseActivity {
                     mECondition.getCondition().getParameters().setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
                     mECondition.getCondition().getParameters().setCompareValue(mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex()));
                 }
+            } else if (CTSL.PK_MULTI_THREE_IN_ONE.equals(mProductKey) ||
+                    CTSL.PK_MULTI_AC_AND_FH.equals(mProductKey) ||
+                    CTSL.PK_MULTI_AC_AND_FA.equals(mProductKey) ||
+                    CTSL.PK_MULTI_FH_AND_FA.equals(mProductKey)) {
+                // 三合一温控器、空调+地暖二合一温控器
+                if ("WorkMode".equals(mKeyName) || "FanMode".equals(mKeyName) || "AutoWorkMode".equals(mKeyName)) {
+                    // 开关、加热状态
+                    mECondition.getCondition().getParameters().setCompareValue(value.getValue());
+                } else if ("Temperature".equals(mKeyName)) {
+                    // 当前温度、当前湿度
+                    mECondition.getCondition().getParameters().setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
+                    mECondition.getCondition().getParameters().setCompareValue(mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex()));
+                }
             }
         }
         mIsRun = false;
         mECondition.setTarget("LocalSceneActivity");
+        // ViseLog.d("结果 = " + GsonUtil.toJson(mECondition));
         EventBus.getDefault().postSticky(mECondition);
 
         Intent intent = new Intent(this, LocalSceneActivity.class);

@@ -136,6 +136,12 @@ public class OneKeySceneDetailActivity2 extends DetailActivity {
 
         initStatusBar();
         initKeyNickName();
+
+        if (CTSL.PK_ONE_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.VISIBLE);
+        } else if (CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(mProductKey)) {
+            mBackLightLayout.setVisibility(View.GONE);
+        }
     }
 
     // 获取面板所属网关iotId

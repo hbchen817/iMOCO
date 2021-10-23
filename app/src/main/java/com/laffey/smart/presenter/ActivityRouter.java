@@ -107,9 +107,11 @@ public class ActivityRouter {
             case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                 intent = new Intent(context, LightDetailActivity.class);
                 break;
-            case CTSL.PK_ONE_SCENE_SWITCH:
+            case CTSL.PK_SYT_ONE_SCENE_SWITCH:
+            case CTSL.PK_ONE_SCENE_SWITCH: {
                 intent = new Intent(context, OneKeySceneDetailActivity2.class);
                 break;
+            }
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                 intent = new Intent(context, SixTwoSceneSwitchActivity2.class);
                 break;
@@ -118,17 +120,21 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
             case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                 intent = new Intent(context, SixSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
+            case CTSL.PK_SYT_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
                 intent = new Intent(context, TwoSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
+            case CTSL.PK_SYT_THREE_SCENE_SWITCH:
                 intent = new Intent(context, ThreeSceneSwitchActivity2.class);
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                 intent = new Intent(context, FourSceneSwitchActivity2.class);
                 break;
             case CTSL.TEST_PK_FULL_SCREEN_SWITCH: {

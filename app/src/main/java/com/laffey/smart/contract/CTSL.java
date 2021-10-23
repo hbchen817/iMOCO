@@ -72,7 +72,15 @@ public class CTSL {
     public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
 
     public static final String TEST_PK_FULL_SCREEN_SWITCH   = "a1EnbCHcEHj";// 全面屏开关
-    public static final String PK_MULTI_THREE_IN_ONE        = "a1FSqDW2oMb";// 三合一设备
+    public static final String PK_MULTI_THREE_IN_ONE        = "a1HgkrQN3QH";// 三合一设备 a1FSqDW2oMb
+    public static final String PK_MULTI_AC_AND_FH           = "a1VMREvnLBo";// 二合一设备（空调+地暖） a13Jtj64Qw8
+    public static final String PK_MULTI_AC_AND_FA           = "a1RrcMQxHeu";// 二合一设备（空调+新风） a1uoYw7k9JY
+    public static final String PK_MULTI_FH_AND_FA           = "a1Srgbtm3vO";// 二合一设备（空调+地暖） a1ROVRWwzQu
+    public static final String PK_SYT_ONE_SCENE_SWITCH      = "a12xbYPkc8L";// 大一开随意贴场景开关
+    public static final String PK_SYT_TWO_SCENE_SWITCH      = "a18mQdo6uiV";// 大二开随意贴场景开关
+    public static final String PK_SYT_THREE_SCENE_SWITCH    = "a1iE33TE4Jh";// 大三开随意贴场景开关
+    public static final String PK_SYT_FOUR_SCENE_SWITCH     = "a1hYWbhA7Uz";// 二开四随意贴场景开关
+    public static final String PK_SYT_SIX_SCENE_SWITCH      = "a1vF8jUXxu0";// 三开六随意贴场景开关
 
     // 定义属性类型
     public static enum PTYPE {
@@ -211,6 +219,15 @@ public class CTSL {
             put(LIGHT_P_COLOR_TEMPERATURE, PTYPE.t_int32);
         }
     };
+    // 调光调色面板-亮度设置参数 PK_LIGHT
+    public static final String PK_LIGHT_BRIGHTNESS_ENDPOINTID   = "1";
+    public static final String PK_LIGHT_BRIGHTNESS_COMMAND_TYPE = "0107";
+    public static final String PK_LIGHT_BRIGHTNESS_PARAM        = "Level";
+
+    // 调光调色面板-色温设置参数 PK_LIGHT
+    public static final String PK_LIGHT_COLOR_TEMP_ENDPOINTID   = "1";
+    public static final String PK_LIGHT_COLOR_TEMP_COMMAND_TYPE = "0108";
+    public static final String PK_LIGHT_COLOR_TEMP_PARAM        = "Temperature";
 
     //定义六键四开二场景属性常量
     public static final String SIX_SCENE_SWITCH_P_POWER_1              = "PowerSwitch_1";
@@ -467,6 +484,32 @@ public class CTSL {
         }
     };
 
+    // 三合一 PK_MULTI_THREE_IN_ONE
+    public static final String M3I1_PowerSwitch_AirConditioner        = "PowerSwitch_AirConditioner";
+    public static final String M3I1_CurrentTemperature_AirConditioner = "CurrentTemp_AirConditioner";
+    public static final String M3I1_TargetTemperature_AirConditioner  = "TargetTemp_AirConditioner";
+    public static final String M3I1_WindSpeed_AirConditioner          = "WindSpeed_AirConditioner";
+    public static final String M3I1_WorkMode_AirConditioner           = "WorkMode_AirConditioner";
+    public static final String M3I1_PowerSwitch_FloorHeating          = "PowerSwitch_FloorHeating";
+    public static final String M3I1_TargetTemperature_FloorHeating    = "TargetTemp_FloorHeating";
+    public static final String M3I1_CurrentTemperature_FloorHeating   = "CurrentTemp_FloorHeating";
+    public static final String M3I1_WindSpeed_FreshAir                = "WindSpeed_FreshAir";
+    public static final String M3I1_PowerSwitch_FreshAir              = "PowerSwitch_FreshAir";
+    public static final Map<String, PTYPE> M3I1_Properties           = new HashMap<String, PTYPE>() {
+        {
+            put(M3I1_PowerSwitch_AirConditioner, PTYPE.t_bool);
+            put(M3I1_CurrentTemperature_AirConditioner, PTYPE.t_int32);
+            put(M3I1_TargetTemperature_AirConditioner, PTYPE.t_int32);
+            put(M3I1_WindSpeed_AirConditioner, PTYPE.t_enum);
+            put(M3I1_WorkMode_AirConditioner, PTYPE.t_enum);
+            put(M3I1_PowerSwitch_FloorHeating, PTYPE.t_bool);
+            put(M3I1_TargetTemperature_FloorHeating, PTYPE.t_int32);
+            put(M3I1_CurrentTemperature_FloorHeating, PTYPE.t_int32);
+            put(M3I1_WindSpeed_FreshAir, PTYPE.t_enum);
+            put(M3I1_PowerSwitch_FreshAir, PTYPE.t_enum);
+        }
+    };
+
     // 定义水浸传感器属性常量
     public static final String WS_P_WaterSensorState                 = "WaterSensorState";
     public static final Map<String, PTYPE> WS_Properties             = new HashMap<String, PTYPE>() {
@@ -544,13 +587,21 @@ public class CTSL {
             put(TEST_PK_ONEWAYWINDOWCURTAINS, WC_Properties);
             put(TEST_PK_TWOWAYWINDOWCURTAINS, TWC_Properties);
             put(PK_SIX_SCENE_SWITCH, PSS_Properties);
+            put(PK_SYT_SIX_SCENE_SWITCH, PSS_Properties);
             put(PK_OUTLET, PK_OUTLET_Properties);
             put(PK_FOUR_SCENE_SWITCH, PFS_Properties);
+            put(PK_SYT_FOUR_SCENE_SWITCH, PFS_Properties);
             put(PK_ONE_SCENE_SWITCH, POS_Properties);
+            put(PK_SYT_ONE_SCENE_SWITCH, POS_Properties);
             put(PK_THREE_SCENE_SWITCH, PTS_Properties);
+            put(PK_SYT_THREE_SCENE_SWITCH, PTS_Properties);
             put(PK_TWO_SCENE_SWITCH, P2S_Properties);
+            put(PK_SYT_TWO_SCENE_SWITCH, P2S_Properties);
             put(TEST_PK_FULL_SCREEN_SWITCH, FSS_Properties);
-            put(PK_MULTI_THREE_IN_ONE, FSS_Properties);
+            put(PK_MULTI_THREE_IN_ONE, M3I1_Properties);
+            put(PK_MULTI_AC_AND_FH, M3I1_Properties);
+            put(PK_MULTI_AC_AND_FA, M3I1_Properties);
+            put(PK_MULTI_FH_AND_FA, M3I1_Properties);
         }
     };
 

@@ -4,12 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/topic_color1"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <View
         android:id="@+id/fake_statusbar_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/statusbar_view_height" />
+        android:layout_height="@dimen/statusbar_view_height"
+        android:visibility="gone"/>
 
     <include layout="@layout/include_detail" />
 

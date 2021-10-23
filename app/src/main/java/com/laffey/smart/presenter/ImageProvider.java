@@ -101,11 +101,13 @@ public class ImageProvider {
             case CTSL.PK_RGB_COLOR_LIGHT:// RGB彩色灯
                 return R.drawable.icon_color_light;
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                 return R.drawable.icon_four_scene_switch;
             case CTSL.PK_FOURWAYSWITCH_2:
                 if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_four_way_switch;
                 else return R.drawable.icon_four_switch_white;
+            case CTSL.PK_SYT_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
                 return R.drawable.icon_two_scene_switch;
             case CTSL.PK_FOURWAYSWITCH:// 四键开关
@@ -114,6 +116,7 @@ public class ImageProvider {
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH: {// 四键随意贴
                 return R.drawable.icon_four_switch_white;
             }
+            case CTSL.PK_SYT_ONE_SCENE_SWITCH:
             case CTSL.PK_ONE_SCENE_SWITCH:
                 return R.drawable.icon_one_scene_switch;
             case CTSL.PK_AIRCOMDITION_TWO:
@@ -125,8 +128,10 @@ public class ImageProvider {
                 return R.drawable.icon_outlet;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
             case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                 return R.drawable.icon_six_scene_switch;
-            case CTSL.PK_THREE_SCENE_SWITCH: {
+            case CTSL.PK_THREE_SCENE_SWITCH:
+            case CTSL.PK_SYT_THREE_SCENE_SWITCH: {
                 return R.drawable.icon_three_scene_switch;
             }
             case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS:

@@ -15,9 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
@@ -38,14 +38,12 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
-import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +96,7 @@ public class IndexFragment2 extends BaseFragment {
     private String mLocalSceneType;
 
     private final List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
+    private ItemSceneInGateway mDelItemScene;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -209,10 +208,17 @@ public class IndexFragment2 extends BaseFragment {
                             for (ItemSceneInGateway scene : mItemSceneList) {
                                 if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
                                     gatewayMac = scene.getGwMac();
+                                    mDelItemScene = scene;
                                     break;
                                 }
                             }
-                            deleteScene(gatewayMac, sceneId);
+                            if (Constant.IS_TEST_DATA) {
+                                deleteScene(gatewayMac, sceneId);
+                            } else {
+                                String gwId = DeviceBuffer.getDevByMac(gatewayMac).iotId;
+                                mSceneManager.manageSceneService(gwId, sceneId, 3,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
                         } else {
                             if (mSceneList != null) {
                                 for (int i = 0; i < mSceneList.size(); i++) {
@@ -350,8 +356,6 @@ public class IndexFragment2 extends BaseFragment {
                                 EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
                                 if (dev != null) {
                                     DeviceBuffer.removeScene(sceneId);
-                                    mSceneManager.manageSceneService(dev.iotId, sceneId, 3,
-                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 }
                                 RefreshData.refreshHomeSceneListData();
                             } else {
@@ -429,8 +433,8 @@ public class IndexFragment2 extends BaseFragment {
                     RefreshData.refreshHomeSceneListData();
                     break;
                 }
-                case 10001: {
-                    // 新增、编辑场景
+                case Constant.ADD_LOCAL_SCENE_FOR_SCENE_MODEL: {
+                    // 新增场景
                     mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
                     mLblSceneDL.setVisibility(View.INVISIBLE);
                     mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
@@ -438,13 +442,18 @@ public class IndexFragment2 extends BaseFragment {
 
                     mListSceneModel.setVisibility(View.GONE);
                     mListMy.setVisibility(View.VISIBLE);
-                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scenario_created_successfully);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            RefreshData.refreshHomeSceneListData();
-                        }
-                    }, 1000);
+                    ToastUtils.showLongToast(mActivity, R.string.scenario_created_successfully);
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY: {
+                    // 删除场景
+                    ToastUtils.showLongToast(mActivity, R.string.scene_delete_successfully);
+                    break;
+                }
+                case Constant.RESULT_CODE_UPDATE_SCENE: {
+                    // 编辑场景
+                    ToastUtils.showLongToast(mActivity, R.string.scene_updated_successfully);
                     break;
                 }
             }
@@ -546,6 +555,26 @@ public class IndexFragment2 extends BaseFragment {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                    // 删除网关下的场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("ManageSceneNotification".equals(identifier)) {
+                        String type = value.getString("Type");
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        if ("0".equals(status)) {
+                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
+                            if ("3".equals(type)) {
+                                deleteScene(mDelItemScene.getGwMac(), mDelItemScene.getSceneDetail().getSceneId());
+                            }
+                        } else {
+                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
                 case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
                     // 获取本地场景列表失败
                     Throwable e = (Throwable) msg.obj;
@@ -684,7 +713,6 @@ public class IndexFragment2 extends BaseFragment {
             });
         } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
             // 刷新主界面场景列表
-            QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
             mItemSceneList.clear();
             mSceneList.clear();
             mLocalSceneType = "0";

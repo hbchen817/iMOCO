@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
@@ -29,6 +31,7 @@ import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.databinding.ActivityMoreSubdeviceBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EScene;
+import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.HomeSpaceManager;
@@ -41,6 +44,8 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -62,11 +67,81 @@ public class MoreSubdeviceActivity extends BaseActivity {
     private SceneManager mSceneManager;
     private String mSceneType;
 
+    private final List<ItemSceneInGateway> mSceneList = new ArrayList<>();
+
     // API数据处理器
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_QUEST_DELETE_SCENE: {
+                    // 删除本地场景
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    String message = response.getString("message");
+                    if (code == 200) {
+                        boolean result = response.getBoolean("result");
+                        if (result) {
+                            String sceneId = response.getString("sceneId");
+                            DeviceBuffer.removeScene(sceneId);
+                            for (ItemSceneInGateway scene : mSceneList) {
+                                if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
+                                    mSceneList.remove(scene);
+                                    break;
+                                }
+                            }
+                            if (mSceneList.size() > 0) {
+                                if (Constant.IS_TEST_DATA) {
+                                    mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                            Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+                                } else {
+                                    SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                }
+                            } else {
+                                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                                if (deviceEntry != null) {
+                                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
+                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                } else {
+                                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                                }
+                            }
+                        } else {
+                            if (message == null || message.length() == 0) {
+                                ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                            } else
+                                ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
+                        }
+                    } else {
+                        if (message == null || message.length() == 0) {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                        } else
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
+                    }
+                    break;
+                }
+                case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                    // 删除设备相关场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("ManageSceneNotification".equals(identifier)) {
+                        String type = value.getString("Type");
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        if ("0".equals(status)) {
+                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
+                            if ("3".equals(type)) {
+                                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+                            }
+                        } else {
+                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL: {
                     ViseLog.d((String) msg.obj);
                     break;
@@ -97,11 +172,12 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     mViewBinding.moreSubdeviceLblVersion.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
+                    QMUITipDialogUtil.dismiss();
                     // 处理设备解除绑定回调(用于Detail界面直接退出)
                     setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
-                    //SpUtils.removeKey(MoreSubdeviceActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
+                    SystemParameter.getInstance().setIsRefreshDeviceData(true);
                     Dialog.confirm(MoreSubdeviceActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
@@ -387,37 +463,28 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
 
     private void unbindDevice() {
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
         DeviceBuffer.removeExtendedInfo(mIOTId);
         mSceneManager.delExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, null, null, null);
-        switch (mProductKey) {
-            case CTSL.PK_LIGHT:
-            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
-            case CTSL.PK_ONE_SCENE_SWITCH:
-            case CTSL.PK_TWO_SCENE_SWITCH:
-            case CTSL.PK_THREE_SCENE_SWITCH:
-            case CTSL.PK_FOUR_SCENE_SWITCH:
-            case CTSL.PK_SIX_SCENE_SWITCH:
-            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
-            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
-            case CTSL.PK_U_SIX_SCENE_SWITCH:
-            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
-            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                mSceneType = CScene.TYPE_AUTOMATIC;
-                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50, mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
-                break;
-            default:
-                //mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-
-                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
-                if (deviceEntry != null) {
-                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                } else {
-                    ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-                }
-                break;
+        mSceneList.clear();
+        mSceneList.addAll(DeviceBuffer.getScenesBySwitchIotId(mIOTId));
+        if (mSceneList.size() > 0) {
+            if (Constant.IS_TEST_DATA) {
+                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+            } else {
+                SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
+        } else {
+            EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+            if (deviceEntry != null) {
+                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            } else {
+                ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+            }
         }
     }
-
 
     // 嵌入式状态栏
     private void initStatusBar() {

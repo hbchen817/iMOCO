@@ -92,20 +92,24 @@ public class PermitJoinActivity extends BaseActivity {
                 mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
             case CTSL.PK_ONE_SCENE_SWITCH:
+            case CTSL.PK_SYT_ONE_SCENE_SWITCH:
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
+            case CTSL.PK_SYT_TWO_SCENE_SWITCH:
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
+            case CTSL.PK_SYT_THREE_SCENE_SWITCH:
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
             case CTSL.PK_FOUR_SCENE_SWITCH:
+            case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
@@ -114,6 +118,7 @@ public class PermitJoinActivity extends BaseActivity {
             case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
             case CTSL.PK_U_SIX_SCENE_SWITCH:
             case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);

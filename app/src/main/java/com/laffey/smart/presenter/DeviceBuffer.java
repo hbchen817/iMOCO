@@ -30,6 +30,10 @@ public class DeviceBuffer {
         mBuffer.clear();
     }
 
+    public static void initSceneBuffer() {
+        mSceneBuffer.clear();
+    }
+
     public static void addCacheInfo(String key, String value) {
         if (key != null && key.length() > 0) {
             mCacheBuffer.put(key, value);
@@ -68,9 +72,37 @@ public class DeviceBuffer {
         return null;
     }
 
+    // 根据设备id获取场景列表
+    public static List<ItemSceneInGateway> getScenesBySwitchIotId(String switchIotId) {
+        List<ItemSceneInGateway> list = new ArrayList<>();
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (scene.getAppParams() != null && switchIotId.equals(scene.getAppParams().getString("switchIotId"))) {
+                list.add(scene);
+            }
+        }
+        return list;
+    }
+
     // 获取所有场景
     public static Map<String, ItemSceneInGateway> getAllScene() {
         return mSceneBuffer;
+    }
+
+    // 获取指定网关下手动场景列表（非场景绑定）
+    public static List<ItemSceneInGateway> getAllScene(String gwMac) {
+        List<ItemSceneInGateway> list = new ArrayList<>();
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (gwMac.equals(scene.getGwMac())) {
+                JSONObject appParams = scene.getAppParams();
+                String switchIotId = null;
+                if (appParams != null) {
+                    switchIotId = appParams.getString("switchIotId");
+                }
+                if (switchIotId != null && switchIotId.length() > 0) continue;
+                list.add(scene);
+            }
+        }
+        return list;
     }
 
     // 获取场景
@@ -106,7 +138,7 @@ public class DeviceBuffer {
                 return mExtendedBuffer.get(iotId);
             }
         }
-        return null;
+        return new JSONObject();
     }
 
     // 删除扩展信息

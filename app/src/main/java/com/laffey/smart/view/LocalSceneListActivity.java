@@ -2,7 +2,6 @@ package com.laffey.smart.view;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -33,16 +32,11 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalSceneListBinding;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EEventScene;
-import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
-import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
-import com.laffey.smart.model.ERetrofit;
-import com.laffey.smart.utility.RetrofitUtil;
-import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -54,11 +48,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class LocalSceneListActivity extends BaseActivity implements View.OnClickListener {
     private ActivityLocalSceneListBinding mViewBinding;
@@ -200,7 +189,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
                                     ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
-
+                                    DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
                                     JSONObject appParams = scene.getAppParams();
                                     if (appParams != null) {
                                         String switchIotId = appParams.getString("switchIotId");
@@ -254,7 +243,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                                 mac = "LUXE_TEST";
                             }
                             activity.mGatewayMac = mac;
-                            // ViseLog.d("mGatewayMac = " + mGatewayMac);
+                            // ViseLog.d("mGatewayMac = " + activity.mGatewayMac);
                             // activity.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType);
                             activity.mSceneType = "0";
                             activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType, Constant.MSG_QUEST_QUERY_SCENE_LIST,
@@ -373,9 +362,24 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SCENE_LIST_REQUEST_CODE) {
-            if (resultCode == SCENE_LIST_RESULT_CODE) {
+            if (resultCode == Constant.ADD_LOCAL_SCENE) {
+                // 新增场景
                 mSceneType = "0";
-                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+                ToastUtils.showLongToast(this, R.string.scenario_created_successfully);
+                mList.clear();
+                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                        Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
+            } else if (resultCode == Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY) {
+                // 删除场景
+                ToastUtils.showLongToast(mActivity, R.string.scene_delete_successfully);
+                mSceneType = "0";
+                mList.clear();
+                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                        Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
+            } else if (resultCode == Constant.RESULT_CODE_UPDATE_SCENE) {
+                // 编辑场景
+                mSceneType = "0";
+                ToastUtils.showLongToast(this, R.string.scene_updated_successfully);
                 mList.clear();
                 mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
                         Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);

@@ -12,6 +12,7 @@ import com.laffey.smart.databinding.ActivityAirConditionerForFullScreenBinding;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
 import com.vise.log.ViseLog;
 
 public class AirConditionerForMultiDevActivity extends DetailActivity {
@@ -33,28 +34,32 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
             return false;
         }
         // 室温
-        if (propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1).length() > 0) {
-            String currentTem = propertyEntry.getPropertyValue(CTSL.FSS_CurrentTemperature_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner).length() > 0) {
+            String currentTem = propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner);
             mViewBinding.currentTemTv.setText(currentTem);
         }
         // 目标温度
-        if (propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_1).length() > 0) {
-            String targetTem = propertyEntry.getPropertyValue(CTSL.FSS_TargetTemperature_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner).length() > 0) {
+            String targetTem = propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner);
             mTargetTem = Integer.parseInt(targetTem);
             mViewBinding.targetTemShowTv.setText(targetTem);
             mViewBinding.targetTemTv.setText(targetTem);
         }
 
         // 开关
-        if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1).length() > 0) {
-            String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner).length() > 0) {
+            String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner);
             int power = Integer.parseInt(powerSwitch);
             refreshViewState(power);
         }
 
         // 风速
-        if (propertyEntry.getPropertyValue(CTSL.FSS_WindSpeed_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_WindSpeed_1).length() > 0) {
-            String windSpeed = propertyEntry.getPropertyValue(CTSL.FSS_WindSpeed_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner).length() > 0) {
+            String windSpeed = propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner);
             mFanMode = Integer.parseInt(windSpeed);
             switch (mFanMode) {
                 case 5: {
@@ -86,8 +91,9 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
         }
 
         // 工作模式
-        if (propertyEntry.getPropertyValue(CTSL.FSS_WorkMode_1) != null && propertyEntry.getPropertyValue(CTSL.FSS_WorkMode_1).length() > 0) {
-            String workMode = propertyEntry.getPropertyValue(CTSL.FSS_WorkMode_1);
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner).length() > 0) {
+            String workMode = propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner);
             mWorkMode = Integer.parseInt(workMode);
             switch (mWorkMode) {
                 case 3: {
@@ -190,10 +196,10 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
             // 开关
             if (mViewBinding.switchIc.getCurrentTextColor() == getResources().getColor(R.color.index_imgcolor)) {
                 // 关闭
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_AirConditioner}, new String[]{"" + CTSL.STATUS_OFF});
             } else {
                 // 打开
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_AirConditioner}, new String[]{"" + CTSL.STATUS_ON});
             }
         } else if (id == R.id.sub_tv) {
             // 减
@@ -201,7 +207,7 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
                 if (mTargetTem > 16) {
                     mTargetTem--;
                 }
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_TargetTemperature_1}, new String[]{"" + mTargetTem});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_AirConditioner}, new String[]{"" + mTargetTem});
             }
         } else if (id == R.id.add_tv) {
             // 加
@@ -209,7 +215,7 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
                 if (mTargetTem < 32) {
                     mTargetTem++;
                 }
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_TargetTemperature_1}, new String[]{"" + mTargetTem});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_AirConditioner}, new String[]{"" + mTargetTem});
             }
         } else if (id == R.id.workmode_layout) {
             // 模式
@@ -221,7 +227,7 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
                 } else if (mWorkMode == 7) {
                     mWorkMode = 3;
                 }
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WorkMode_1}, new String[]{"" + mWorkMode});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WorkMode_AirConditioner}, new String[]{"" + mWorkMode});
             }
         } else if (id == R.id.fanmode_layout) {
             // 风速
@@ -229,22 +235,22 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
                 switch (mFanMode) {
                     case 5: {
                         // 自动
-                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_1}, new String[]{"1"});
+                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_AirConditioner}, new String[]{"1"});
                         break;
                     }
                     case 1: {
                         // 低风
-                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_1}, new String[]{"2"});
+                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_AirConditioner}, new String[]{"2"});
                         break;
                     }
                     case 2: {
                         // 中风
-                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_1}, new String[]{"3"});
+                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_AirConditioner}, new String[]{"3"});
                         break;
                     }
                     case 3: {
                         // 高风
-                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FSS_WindSpeed_1}, new String[]{"5"});
+                        mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_AirConditioner}, new String[]{"5"});
                         break;
                     }
                 }

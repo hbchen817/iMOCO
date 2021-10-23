@@ -1028,7 +1028,8 @@ public class NewSceneActivity extends BaseActivity {
                                             item.setDesc(getString(R.string.trigger_buttons) + keyName);
                                         } else {
                                             if ("1".equals(key)) {
-                                                if (CTSL.PK_ONE_SCENE_SWITCH.equals(key))
+                                                if (CTSL.PK_ONE_SCENE_SWITCH.equals(productKey) ||
+                                                        CTSL.PK_SYT_ONE_SCENE_SWITCH.equals(productKey))
                                                     item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_0));
                                                 else
                                                     item.setDesc(getString(R.string.trigger_buttons) + getString(R.string.key_1));
