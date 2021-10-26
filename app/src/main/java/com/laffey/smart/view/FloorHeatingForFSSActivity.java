@@ -18,6 +18,8 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
+import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,7 +69,7 @@ public class FloorHeatingForFSSActivity extends DetailActivity {
             return false;
         }
 
-        // 开关
+       // 开关
         if (propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3) != null && propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3).length() > 0) {
             String powerSwitch = propertyEntry.getPropertyValue(CTSL.FSS_PowerSwitch_3);
             mPowerSwitch = Integer.parseInt(powerSwitch);

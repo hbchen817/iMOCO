@@ -493,6 +493,8 @@ public class CTSL {
     public static final String M3I1_PowerSwitch_FloorHeating          = "PowerSwitch_FloorHeating";
     public static final String M3I1_TargetTemperature_FloorHeating    = "TargetTemp_FloorHeating";
     public static final String M3I1_CurrentTemperature_FloorHeating   = "CurrentTemp_FloorHeating";
+    public static final String M3I1_AutoWorkMode_FloorHeating         = "AutoWorkMode_FloorHeating";
+    public static final String M3I1_CurrentTemp_FreshAir         = "CurrentTemp_FreshAir";
     public static final String M3I1_WindSpeed_FreshAir                = "WindSpeed_FreshAir";
     public static final String M3I1_PowerSwitch_FreshAir              = "PowerSwitch_FreshAir";
     public static final Map<String, PTYPE> M3I1_Properties           = new HashMap<String, PTYPE>() {
@@ -507,6 +509,8 @@ public class CTSL {
             put(M3I1_CurrentTemperature_FloorHeating, PTYPE.t_int32);
             put(M3I1_WindSpeed_FreshAir, PTYPE.t_enum);
             put(M3I1_PowerSwitch_FreshAir, PTYPE.t_enum);
+            put(M3I1_AutoWorkMode_FloorHeating, PTYPE.t_enum);
+            put(M3I1_CurrentTemp_FreshAir, PTYPE.t_int32);
         }
     };
 

@@ -13,6 +13,7 @@ import com.laffey.smart.databinding.ActivityNewAirForFullScreenBinding;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
 import com.vise.log.ViseLog;
 
 public class FreshAirForMultiDevActivity extends DetailActivity {

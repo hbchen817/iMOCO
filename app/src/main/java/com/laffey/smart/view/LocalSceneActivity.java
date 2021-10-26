@@ -242,9 +242,16 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         holder.setTextColor(R.id.detail, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
                     }
                 } else if ("Scene".equals(type)) {
+                    String keyNickName = eAction.getKeyNickName();
                     icon.setText(R.string.icon_scene);
-                    holder.setText(R.id.title, eAction.getKeyNickName())
-                            .setText(R.id.detail, getString(R.string.rb_tab_two_desc));
+                    if (keyNickName != null && keyNickName.length() > 0) {
+                        holder.setText(R.id.title, eAction.getKeyNickName())
+                                .setText(R.id.detail, getString(R.string.rb_tab_two_desc));
+                    } else {
+                        holder.setText(R.id.title, getString(R.string.scene_does_not_exist))
+                                .setText(R.id.detail, getString(R.string.rb_tab_two_desc));
+                        holder.setTextColor(R.id.title, ContextCompat.getColor(LocalSceneActivity.this, R.color.red));
+                    }
                 }
                 holder.setVisible(R.id.divider, mActionList.indexOf(eAction) != 0);
             }
@@ -595,7 +602,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         desc.append(getString(R.string.auto));
                         break;
                     }
-                    case "10": {
+                    case "4": {
                         desc.append(getString(R.string.open));
                         break;
                     }
@@ -1877,7 +1884,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         } else if (CTSL.PK_AIRCOMDITION_TWO.equals(pk) ||
                 CTSL.PK_AIRCOMDITION_FOUR.equals(pk) ||
                 CTSL.PK_VRV_AC.equals(pk)) {
-            // 空调二管制、四管制、VRV温控器、三合一温控器
+            // 空调二管制、四管制、VRV温控器
             if ("WorkMode".equals(eCondition.getCondition().getParameters().getName())) {
                 desc.append(getString(R.string.power_switch));
             } else if ("Temperature".equals(eCondition.getCondition().getParameters().getName())) {

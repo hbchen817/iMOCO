@@ -103,4 +103,32 @@ public class SpUtils {
         editor.remove(key);
         editor.apply();
     }
+
+    /**
+     * 记录本机登录过的账号
+     */
+    public static void putUserName(Context context, String value) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("user_name_list", value);
+        editor.apply();
+    }
+
+    /**
+     * 清除所有本机登录过的账号
+     */
+    public static void removeAllUserName(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("user_name_list");
+        editor.apply();
+    }
+
+    /**
+     * 获取本机登录过的账号（json字符串）
+     */
+    public static String getUserName(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        return sp.getString("user_name_list", "");
+    }
 }

@@ -84,40 +84,77 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_60">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/floor_heating"
-                android:textColor="@color/all_3"
-                android:textSize="@dimen/sp_14"
-                android:textStyle="bold" />
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp_10"
-                android:layout_marginRight="@dimen/dp_10"
-                android:text="|" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/floor_heating"
+                    android:textColor="@color/all_3"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/temperature2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="--"
-                android:textColor="@color/orange3"
-                android:textSize="@dimen/sp_14" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:text="|" />
 
-            <TextView
-                android:id="@+id/tem_unit_2"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/temperature2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="@color/orange3"
+                    android:textSize="@dimen/sp_14" />
+
+                <TextView
+                    android:id="@+id/tem_unit_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/centigrade"
+                    android:textColor="@color/orange3"
+                    android:textSize="@dimen/sp_14" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/centigrade"
-                android:textColor="@color/orange3"
-                android:textSize="@dimen/sp_14" />
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/floor_heating_auto_workmode"
+                    android:textColor="@color/all_3"
+                    android:textSize="@dimen/sp_14"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/dp_10"
+                    android:text="|" />
+
+                <TextView
+                    android:id="@+id/auto_work_mode_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textColor="@color/orange3"
+                    android:textSize="@dimen/sp_14" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

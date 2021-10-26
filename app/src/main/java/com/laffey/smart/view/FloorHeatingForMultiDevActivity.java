@@ -18,6 +18,8 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.utility.GsonUtil;
+import com.vise.log.ViseLog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +50,8 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
     TextView mTemUnit2TV;
     @BindView(R.id.temperature2)
     TextView mTemValue2TV;
+    @BindView(R.id.auto_work_mode_tv)
+    TextView mAutoWorkModeTV;
     @BindView(R.id.switch_layout)
     RelativeLayout mSwitchLayout;
     @BindView(R.id.timing_layout)
@@ -93,6 +97,12 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
             mTemValue1TV.setText(currentTem);
         }
 
+        // 加热状态
+        if (propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating) != null
+                && propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating).length() > 0) {
+            String autoWorkMode = propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating);
+            mAutoWorkModeTV.setText("0".equals(autoWorkMode) ? R.string.close : R.string.open);
+        }
         return true;
     }
 
@@ -194,6 +204,7 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
                 mTemValue.setTextColor(mOrange3);
                 mTemValue1TV.setTextColor(mOrange3);
                 mTemValue2TV.setTextColor(mOrange3);
+                mAutoWorkModeTV.setTextColor(mOrange3);
                 mTemUnit1TV.setTextColor(mOrange3);
                 mTemUnit2TV.setTextColor(mOrange3);
                 mTimingIC.setTextColor(mOrange3);
@@ -206,6 +217,7 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
                 mTemValue.setTextColor(mOrange2);
                 mTemValue1TV.setTextColor(mOrange2);
                 mTemValue2TV.setTextColor(mOrange2);
+                mAutoWorkModeTV.setTextColor(mOrange2);
                 mTemUnit1TV.setTextColor(mOrange2);
                 mTemUnit2TV.setTextColor(mOrange2);
                 mTimingIC.setTextColor(mOrange2);

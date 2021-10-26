@@ -41,6 +41,14 @@
     <string name="icon_temp">&#xe630;</string>
     <string name="icon_brightness">&#xe994;</string>
     <string name="icon_associated">&#xe63d;</string>
+    <string name="icon_user">&#xe64a;</string>
+    <string name="icon_pwd">&#xe62e;</string>
+    <string name="icon_clear_2">&#xe63e;</string>
+    <string name="icon_show">&#xe71c;</string>
+    <string name="icon_hide">&#xe718;</string>
+    <string name="icon_up_arrow">&#xe614;</string>
+    <string name="icon_verification_code">&#xe63f;</string>
+    <string name="icon_phone">&#xe640;</string>
 
     <string name="app_name">拉斐智能</string><!--莫科智家-->
     <string name="contentDescription_null"></string>
@@ -797,4 +805,15 @@
     <string name="fan_speed_freshair">风速档位 - 新风</string>
     <string name="target_temperature_airconditioner">目标温度 - 空调</string>
     <string name="target_temperature_floorheat">目标温度 - 地暖</string>
+    <string name="floor_heating_auto_workmode">加热</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="free_regist">免费注册</string>
+    <string name="forget_pwd">忘记密码</string>
+    <string name="alphabet_and_number">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789</string>
+    <string name="phone_num">手机号码</string>
+    <string name="verification_code">验证码</string>
+    <string name="send_sms_verification_code">发送短信验证码</string>
+    <string name="and">和</string>
+    <string name="next_step">下一步</string>
 </resources>

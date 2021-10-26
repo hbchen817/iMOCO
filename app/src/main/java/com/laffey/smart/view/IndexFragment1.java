@@ -267,13 +267,17 @@ public class IndexFragment1 extends BaseFragment {
         mImgAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!LoginBusiness.isLogin()) {
-                    Dialog.confirmLogin(mActivity, R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
-                    return;
-                }
+                if (Constant.IS_TEST_DATA) {
+                    LoginActivity.start(mActivity);
+                } else {
+                    if (!LoginBusiness.isLogin()) {
+                        Dialog.confirmLogin(mActivity, R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);
+                        return;
+                    }
 
-                Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
-                startActivity(intent);
+                    Intent intent = new Intent(mActivity, ChoiceProductActivity.class);
+                    startActivity(intent);
+                }
 
                 /*Intent intent = new Intent(mActivity, ChoiceRemoteProductActivity.class);
                 startActivity(intent);*/

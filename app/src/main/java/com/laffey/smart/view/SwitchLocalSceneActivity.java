@@ -166,9 +166,9 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
         initView();
         // QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         initData();
+        RealtimeDataReceiver.addEventCallbackHandler("LocalSceneCallback", mHandler);
 
-        //ViseLog.d(GsonUtil.toJson(DeviceBuffer.getAllScene()));
-        RealtimeDataReceiver.addEventCallbackHandler("SwitchLocalSceneCallback", mHandler);
+        // ViseLog.d("场景缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllScene()));
     }
 
     private void initData() {
