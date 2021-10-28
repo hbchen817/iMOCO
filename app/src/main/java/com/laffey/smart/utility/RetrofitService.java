@@ -49,6 +49,30 @@ public interface RetrofitService {
     @POST(Constant.QUERY_GW_ID_BY_SUB_ID)
     Observable<JSONObject> getGWIotIdBySubIotId(@Header("REX_TOKEN") String token, @Body RequestBody body);
 
+    // 滑动图片获取
+    @POST(Constant.GET_PV_CODE)
+    Observable<JSONObject> getPVCode(@Header("DEVICE_ID") String devId, @Body RequestBody body);
+
+    // 短信发送
+    @POST(Constant.SEND_SMS_VERIFY_CODE)
+    Observable<JSONObject> sendSMSVerifyCode(@Header("DEVICE_ID") String devId, @Body RequestBody body);
+
+    // 帐号注册
+    @POST(Constant.ACCOUNTS_REG)
+    Observable<JSONObject> accountsReg(@Header("DEVICE_ID") String devId, @Body RequestBody body);
+
+    // 帐号密码认证、登录
+    @POST(Constant.AUTH_ACCOUNTS_PWD)
+    Observable<JSONObject> authAccountsPwd(@Header("DEVICE_ID") String devId, @Body RequestBody body);
+
+    // 密码重置
+    @POST(Constant.PWD_RESET)
+    Observable<JSONObject> pwdReset(@Header("DEVICE_ID") String devId, @Body RequestBody body);
+
+    // 获取AuthCode
+    @POST(Constant.GET_AUTH_CODE)
+    Observable<JSONObject> getAuthCode(@Header("DEVICE_ID") String devId, @Header("REX_TOKEN") String token, @Body RequestBody body);
+
     @FormUrlEncoded
     @POST("/query")
     Observable<JSONObject> test(@Field("type") String type, @Field("postid") String postid);

@@ -268,7 +268,7 @@ public class IndexFragment1 extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (Constant.IS_TEST_DATA) {
-                    LoginActivity.start(mActivity);
+                    LoginActivity.start(mActivity, null);
                 } else {
                     if (!LoginBusiness.isLogin()) {
                         Dialog.confirmLogin(mActivity, R.string.dialog_title, getString(R.string.dialog_unlogin), R.drawable.dialog_fail, R.string.dialog_ok, mAPIDataHandler);

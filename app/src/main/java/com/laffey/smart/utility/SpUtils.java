@@ -131,4 +131,32 @@ public class SpUtils {
         SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
         return sp.getString("user_name_list", "");
     }
+
+    // 保存accessToken
+    public static void putAccessToken(Context context, String accessToken) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("user_access_token", accessToken);
+        editor.apply();
+    }
+
+    // 获取accessToken
+    public static String getAccessToken(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        return sp.getString("user_access_token", "");
+    }
+
+    // 保存refreshToken
+    public static void putRefreshToken(Context context, String refreshToken) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("user_refresh_token", refreshToken);
+        editor.apply();
+    }
+
+    // 获取refreshToken
+    public static String getRefreshToken(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        return sp.getString("user_refresh_token", "");
+    }
 }

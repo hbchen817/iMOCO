@@ -816,4 +816,21 @@
     <string name="send_sms_verification_code">发送短信验证码</string>
     <string name="and">和</string>
     <string name="next_step">下一步</string>
+    <string name="security_verification">安全验证</string>
+    <string name="pls_do_security_verification">请完成安全验证</string>
+    <string name="swipe_right_to_verify">向右滑动验证</string>
+    <string name="is_loading_pic">正在加载图片</string>
+    <string name="is_security_verification">正在安全验证</string>
+    <string name="pls_input_phone_num">请输入手机号码</string>
+    <!--SMS sending failure-->
+    <string name="limit_total_num_sms_in_a_day">单日短信发送总量超限制</string>
+    <string name="limit_total_num_sms_in_a_day_in_a_ip">单日单ip短信发送总量超限制</string>
+    <string name="img_verification_code_is_incorrect">图片验证码错误</string>
+    <string name="frequently_send">频繁发送</string>
+    <string name="sms_sending_failure">短信发送失败</string>
+    <string name="condition_contains_only_one_event">场景条件中只能包含一条事件条件</string>
+    <string name="pwd_must_contain_8_to_16_characters">密码长度需要在8-16位</string>
+    <string name="pwd_must_contain_digit_and_letter">密码必须包含数字和字母</string>
+    <string name="regist_success">注册成功</string>
+    <string name="is_logining">正在登录</string>
 </resources>

@@ -41,9 +41,28 @@ public class ERetrofit {
         return instance;
     }
 
+    public static ERetrofit getInstance(String url) {
+        synchronized (ERetrofit.class) {
+            if (instance == null) {
+                instance = new ERetrofit(url);
+            }
+        }
+        return instance;
+    }
+
     public ERetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://192.168.1.102:6443")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(getOkHttpClient())
+                .build();
+        service = retrofit.create(RetrofitService.class);
+    }
+
+    public ERetrofit(String url) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(getOkHttpClient())

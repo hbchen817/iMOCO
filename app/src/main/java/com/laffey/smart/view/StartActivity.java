@@ -143,6 +143,8 @@ public class StartActivity extends BaseActivity {
             overridePendingTransition(0, 0);
         } else {
             startLogin();
+
+            // LoginActivity.start(this, null);
         }
     }
 

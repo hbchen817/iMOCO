@@ -11,7 +11,7 @@ public class Constant {
     // 平台 plantForm
     public static String PLANT_FORM = "xxxxxx";
     // 测试数据开关
-    public static boolean IS_TEST_DATA = true;
+    public static boolean IS_TEST_DATA = false;
 
     // 测试环境APPKEY
     //public static final String APPKEY                               = "29162669";
@@ -19,6 +19,11 @@ public class Constant {
     // 正式环境APPKEY
     public static final String APPKEY                               = "32328272";
     public static final String APPSECRET                            = "bd4be36c5d3341bb1335f6b440bf6363";
+
+    // 本地服务appkey
+    public static final String APP_KEY                              = "npRyific";
+    public static final String CLIENT_ID                            = "rwN8MmzL";
+    public static final String ACCOUNT_URL                          = "https://192.168.1.102:5443";
 
     // 产品类型
     public static final int PRODUCT_TYPE_LIGHT                      = 0;
@@ -305,12 +310,25 @@ public class Constant {
     public static final int MSG_QUEST_DELETE_SCENE_ERROR            = 509;
     public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID           = 510;
     public static final int MSG_QUEST_QUERY_MAC_BY_IOT_ID_ERROR     = 511;
+    public static final int MSG_QUEST_GET_PV_CODE                   = 512;
+    public static final int MSG_QUEST_GET_PV_CODE_ERROR             = 513;
+    public static final int MSG_QUEST_SEND_SMS_VERIFY_CODE          = 514;
+    public static final int MSG_QUEST_SEND_SMS_VERIFY_CODE_ERROR    = 515;
+    public static final int MSG_QUEST_ACCOUNTS_REG                  = 516;
+    public static final int MSG_QUEST_ACCOUNTS_REG_ERROR            = 517;
+    public static final int MSG_QUEST_AUTH_ACCOUNTS_PWD             = 518;
+    public static final int MSG_QUEST_AUTH_ACCOUNTS_PWD_ERROR       = 519;
+    public static final int MSG_QUEST_PWD_RESET                     = 520;
+    public static final int MSG_QUEST_PWD_RESET_ERROR               = 521;
+    public static final int MSG_QUEST_GET_AUTH_CODE                 = 522;
+    public static final int MSG_QUEST_GET_AUTH_CODE_ERROR           = 523;
 
     // intent resultCode
     public static final int ADD_LOCAL_SCENE                         = 10001;
     public static final int ADD_LOCAL_SCENE_FOR_SCENE_MODEL         = 10002;
     public static final int DEL_SCENE_IN_LOCALSCENEACTIVITY         = 10003;
     public static final int RESULT_CODE_UPDATE_SCENE                = 10004;
+    public static final int REQUEST_SMS_VERIFY_CODE                 = 10005;
 
     // 定义配网常量
     public static final String CONFIGNETWORK_AES_CBC_IV             = "3333333333333333";
@@ -418,5 +436,29 @@ public class Constant {
     // 根据子设备iotId查询网关iotId
     public static final String QUERY_GW_ID_BY_SUB_ID                = "/app/device/getGWIotIdBySubIotId";
     public static final String QUERY_GW_ID_BY_SUB_ID_VER            = "1.0";
+
+    // 滑动图片获取
+    public static final String GET_PV_CODE                          = "/caccounts/basic/getPVCode";
+    public static final String GET_PV_CODE_VER                      = "1.0";
+
+    // 短信发送
+    public static final String SEND_SMS_VERIFY_CODE                 = "/caccounts/basic/sendSMSVerifyCode";
+    public static final String SEND_SMS_VERIFY_CODE_VER             = "1.0";
+
+    // 帐号注册
+    public static final String ACCOUNTS_REG                         = "/caccounts/basic/accountsReg";
+    public static final String ACCOUNTS_REG_VER                     = "1.0";
+
+    // 帐号密码认证、登录
+    public static final String AUTH_ACCOUNTS_PWD                    = "/caccounts/basic/authAccountsPwd";
+    public static final String AUTH_ACCOUNTS_PWD_VER                = "1.0";
+
+    // 密码重置
+    public static final String PWD_RESET                            = "/caccounts/basic/pwdReset";
+    public static final String PWD_RESET_VER                        = "1.0";
+
+    // 获取AuthCode
+    public static final String GET_AUTH_CODE                        = "/caccounts/oauth2/getAuthCode";
+    public static final String GET_AUTH_CODE_VER                    = "1.0";
 }
 

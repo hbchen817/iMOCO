@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission
         android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
@@ -48,9 +50,21 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.SlidingValidationActivity"></activity>
-        <activity android:name=".view.FreeRegistActivity" />
-        <activity android:name=".view.LoginActivity" />
+        <activity
+            android:name=".view.PwdSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SlidingValidationActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.VerifyCodeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.LoginActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.LocalGatewayListActivity"
             android:screenOrientation="portrait" />

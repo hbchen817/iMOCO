@@ -214,6 +214,15 @@ public class IndexActivity extends BaseActivity {
             mPermissionList.add(Manifest.permission.GET_TASKS);
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.READ_SMS);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            mPermissionList.add(Manifest.permission.RECEIVE_SMS);
+        }
     }
 
     @Override

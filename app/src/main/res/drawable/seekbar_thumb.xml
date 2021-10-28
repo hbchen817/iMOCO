@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--seekbar thumb-->
+    <item>
+        <!--形状-->
+        <shape android:shape="rectangle">
+            <!--大小-->
+            <size android:height="@dimen/dp_29" />
+            <solid android:color="@android:color/white" />
+            <stroke
+                android:width="@dimen/dp_1"
+                android:color="@color/all_c" />
+        </shape>
+    </item>
+    <!--seekbar进度条-->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/ic_seekbar_thumb"
+            tools:ignore="ResourceCycle" />
+    </item>
+</layer-list>

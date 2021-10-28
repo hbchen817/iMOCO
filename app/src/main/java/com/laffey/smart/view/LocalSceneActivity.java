@@ -974,8 +974,12 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         mViewBinding.sceneModeTv.setText(R.string.satisfy_any_of_the_following_conditions);
                         mSceneMode = "Any";
                     } else if (position == 1) {
-                        mViewBinding.sceneModeTv.setText(R.string.satisfy_all_of_the_following_conditions);
-                        mSceneMode = "All";
+                        if (isHasTwoEventCondition(mConditionList)) {
+                            ToastUtils.showLongToast(LocalSceneActivity.this, R.string.condition_contains_only_one_event);
+                        } else {
+                            mViewBinding.sceneModeTv.setText(R.string.satisfy_all_of_the_following_conditions);
+                            mSceneMode = "All";
+                        }
                     }
                 }
             });
@@ -1174,6 +1178,14 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 actionList.add(eAction.getAction());
             }
             mScene.setActions(actionList);
+
+            // 当条件只有时间段时，场景不成立
+            if ("1".equals(mSceneTimer) && "TimeRange".equals(mScene.getTime().getType()) &&
+                    mConditionList.size() == 0) {
+                ToastUtils.showLongToast(this, R.string.pls_add_condition);
+                return;
+            }
+
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
             if (getString(R.string.create_new_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
                 ItemSceneInGateway scene = new ItemSceneInGateway();
@@ -1412,6 +1424,12 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     mConditionAdapter.notifyDataSetChanged();
                     return;
                 }
+                boolean isHasTwoEvent = isHasTwoEventCondition(eCondition, mConditionList);
+                if (isHasTwoEvent) {
+                    ToastUtils.showLongToast(this, R.string.condition_contains_only_one_event);
+                    return;
+                }
+
                 if (mConditionList.contains(eCondition)) {
                     mConditionList.set(mConditionList.indexOf(eCondition), eCondition);
                 } else {
@@ -1466,6 +1484,31 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 EventBus.getDefault().removeStickyEvent(obj);
             }
         }
+    }
+
+    // 场景条件为all时，条件不能同时存在两条事件上报条件
+    private boolean isHasTwoEventCondition(ECondition eCondition, List<ECondition> eConditionList) {
+        boolean isContains = false;
+        String type = eCondition.getCondition().getType();
+        if ("Event".equals(type)) {
+            for (ECondition e : eConditionList) {
+                if ("Event".equals(e.getCondition().getType())) {
+                    isContains = true;
+                    break;
+                }
+            }
+        }
+        return isContains;
+    }
+
+    public boolean isHasTwoEventCondition(List<ECondition> eConditionList) {
+        int eventNum = 0;
+        for (ECondition e : eConditionList) {
+            if ("Event".equals(e.getCondition().getType())) {
+                eventNum++;
+            }
+        }
+        return eventNum != 0;
     }
 
     // 比较条件是否相同 true: 相同  false: 不同

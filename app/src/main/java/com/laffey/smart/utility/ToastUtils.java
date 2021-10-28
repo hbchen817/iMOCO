@@ -1,5 +1,6 @@
 package com.laffey.smart.utility;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.view.Gravity;
@@ -82,10 +83,15 @@ public class ToastUtils {
     /**
      * 在屏幕弹短吐司
      */
+    @SuppressLint("ShowToast")
     public static void showLongToast(Context context, int message) {
         if (mToast == null || mToast.getGravity() == Gravity.CENTER)
             mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        else mToast.setDuration(Toast.LENGTH_LONG);
+        else {
+            mToast.cancel();
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+            mToast.setDuration(Toast.LENGTH_LONG);
+        }
         mToast.setText(context.getResources().getString(message));
         mToast.show();
     }
@@ -93,10 +99,15 @@ public class ToastUtils {
     /**
      * 在屏幕弹短吐司
      */
+    @SuppressLint("ShowToast")
     public static void showLongToast(Context context, String message) {
         if (mToast == null || mToast.getGravity() == Gravity.CENTER)
             mToast = Toast.makeText(context, null, Toast.LENGTH_LONG);
-        else mToast.setDuration(Toast.LENGTH_LONG);
+        else {
+            mToast.cancel();
+            mToast = Toast.makeText(context, null, Toast.LENGTH_SHORT);
+            mToast.setDuration(Toast.LENGTH_LONG);
+        }
         mToast.setText(message);
         mToast.show();
     }

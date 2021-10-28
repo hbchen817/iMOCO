@@ -1,5 +1,7 @@
 package com.laffey.smart.utility;
 
+import android.content.Context;
+
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ERetrofit;
@@ -146,5 +148,90 @@ public class RetrofitUtil {
         params.put("subIotId", subId);
         object.put("params", params);
         return getRetrofitService().getGWIotIdBySubIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 滑动图片获取
+    public Observable<JSONObject> getPVCode() {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.GET_PV_CODE_VER);
+        JSONObject params = new JSONObject();
+        object.put("params", params);
+
+        //return getRetrofitService().getPVCode(AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
+        ViseLog.d("AppUtils.getPesudoUniqueID() = " + AppUtils.getPesudoUniqueID());
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().getPVCode(AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 短信发送
+    public Observable<JSONObject> sendSMSVerifyCode(String telNum, String codeType, String pvCode) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.SEND_SMS_VERIFY_CODE_VER);
+        JSONObject params = new JSONObject();
+        params.put("appKey", Constant.APP_KEY);
+        params.put("telNum", telNum);
+        params.put("codeType", codeType);
+        if (pvCode != null && pvCode.length() > 0)
+            params.put("pvCode", pvCode);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().sendSMSVerifyCode(AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 帐号注册
+    public Observable<JSONObject> accountsReg(String telNum, String pwd, String verifyCode) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.ACCOUNTS_REG_VER);
+        JSONObject params = new JSONObject();
+        params.put("appKey", Constant.APP_KEY);
+        params.put("telNum", telNum);
+        params.put("pwd", pwd);
+        params.put("pwdConfirm", pwd);
+        params.put("verifyCode", verifyCode);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().accountsReg(AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 帐号密码认证、登录
+    public Observable<JSONObject> authAccountsPwd(String accounts, String pwd) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.AUTH_ACCOUNTS_PWD_VER);
+        JSONObject params = new JSONObject();
+        params.put("appKey", Constant.APP_KEY);
+        params.put("accounts", accounts);
+        params.put("pwd", pwd);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().authAccountsPwd(AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 密码重置
+    public Observable<JSONObject> pwdReset(String telNum, String pwd, String verifyCode) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.PWD_RESET_VER);
+        JSONObject params = new JSONObject();
+        params.put("appKey", Constant.APP_KEY);
+        params.put("telNum", telNum);
+        params.put("verifyCode", verifyCode);
+        params.put("pwd", pwd);
+        params.put("pwdConfirm", pwd);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().pwdReset(AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 获取AuthCode
+    public Observable<JSONObject> getAuthCode(Context context) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.PWD_RESET_VER);
+        JSONObject params = new JSONObject();
+        params.put("clientId", Constant.CLIENT_ID);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().getAuthCode(AppUtils.getPesudoUniqueID(),
+                SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 }
