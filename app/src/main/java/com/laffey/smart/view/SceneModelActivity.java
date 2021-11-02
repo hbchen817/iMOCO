@@ -246,7 +246,7 @@ public class SceneModelActivity extends BaseActivity {
         scene.setSceneDetail(createItemScene(mParameterList, mSceneModelCode));
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
-        RetrofitUtil.getInstance().addScene("chengxunfei", scene)
+        RetrofitUtil.getInstance().addScene(this, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

@@ -8,6 +8,7 @@ import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Logger;
+import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +101,6 @@ public class HomeSpaceManager {
             Logger.e("The processDataHandler is not null!");
             return;
         }
-
         // 设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_GETHOMEDEVICELIST;

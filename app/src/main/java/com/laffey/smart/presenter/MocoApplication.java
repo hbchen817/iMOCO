@@ -3,6 +3,7 @@ package com.laffey.smart.presenter;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Point;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -10,6 +11,12 @@ import android.view.WindowManager;
 import androidx.multidex.MultiDex;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.iot.aep.sdk.IoTSmart;
+import com.aliyun.iot.aep.sdk.apiclient.IoTAPIClientImpl;
+import com.aliyun.iot.aep.sdk.apiclient.callback.IoTResponse;
+import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequest;
+import com.aliyun.iot.aep.sdk.apiclient.request.IoTRequestWrapper;
+import com.aliyun.iot.aep.sdk.apiclient.tracker.Tracker;
 import com.aliyun.iot.aep.sdk.framework.AApplication;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.login.oa.OALoginAdapter;
@@ -73,65 +80,74 @@ public class MocoApplication extends AApplication {
             adapter.setDefaultLoginClass(OALoginActivity.class);
         }*/
         initLog();
-//        IoTSmart.setDebug(true);
-//        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
-//            final String TAG = "APIGatewaySDKDele";
-//            @Override
-//            public void onSend(IoTRequest request) {
-//                //ALog.i(TAG, "onSend:\r\n" + toString(request));
-//                Log.i(TAG, "onSend:\r\n" + toString(request));
-//            }
-//            @Override
-//            public void onRealSend(IoTRequestWrapper ioTRequest) {
-//                //ALog.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
-//                Log.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
-//            }
-//            @Override
-//            public void onRawFailure(IoTRequestWrapper ioTRequest, Exception e) {
-//                //ALog.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
-//                Log.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
-//                e.printStackTrace();
-//            }
-//            @Override
-//            public void onFailure(IoTRequest request, Exception e) {
-//                //ALog.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
-//                Log.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
-//            }
-//            @Override
-//            public void onRawResponse(IoTRequestWrapper request, IoTResponse response) {
-//                //ALog.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
-//                Log.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
-//            }
-//            @Override
-//            public void onResponse(IoTRequest request, IoTResponse response) {
-//                //ALog.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
-//                Log.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
-//            }
-//            private String toString(IoTRequest request) {
-//                return new StringBuilder("Request:").append("\r\n")
-//                        .append("url:").append(request.getScheme()).append("://").append(null == request.getHost() ? "" : request.getHost()).append(request.getPath()).append("\r\n")
-//                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
-//                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n").toString();
-//            }
-//            private String toString(IoTRequestWrapper wrapper) {
-//                IoTRequest request = wrapper.request;
-//                return new StringBuilder("Request:").append("\r\n")
-//                        .append("id:").append(wrapper.payload.getId()).append("\r\n")
-//                        .append("apiEnv:").append("apiEnv").append("\r\n")
-//                        .append("url:").append(request.getScheme()).append("://").append(TextUtils.isEmpty(wrapper.request.getHost()) ? "" : wrapper.request.getHost()).append(request.getPath()).append("\r\n")
-//                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
-//                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n")
-//                        .append("payload:").append(JSON.toJSONString(wrapper.payload)).append("\r\n").toString();
-//            }
-//            private String toString(IoTResponse response) {
-//                return new StringBuilder("Response:").append("\r\n")
-//                        .append("id:").append(response.getId()).append("\r\n")
-//                        .append("code:").append(response.getCode()).append("\r\n")
-//                        .append("message:").append(response.getMessage()).append("\r\n")
-//                        .append("localizedMsg:").append(response.getLocalizedMsg()).append("\r\n")
-//                        .append("data:").append(null == response.getData() ? "" : response.getData().toString()).append("\r\n").toString();
-//            }
-//        });
+        /*IoTSmart.setDebug(true);
+        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
+            final String TAG = "APIGatewaySDKDele";
+
+            @Override
+            public void onSend(IoTRequest request) {
+                //ALog.i(TAG, "onSend:\r\n" + toString(request));
+                Log.i(TAG, "onSend:\r\n" + toString(request));
+            }
+
+            @Override
+            public void onRealSend(IoTRequestWrapper ioTRequest) {
+                //ALog.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
+                Log.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
+            }
+
+            @Override
+            public void onRawFailure(IoTRequestWrapper ioTRequest, Exception e) {
+                //ALog.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
+                Log.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onFailure(IoTRequest request, Exception e) {
+                //ALog.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
+                Log.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
+            }
+
+            @Override
+            public void onRawResponse(IoTRequestWrapper request, IoTResponse response) {
+                //ALog.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
+                Log.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
+            }
+
+            @Override
+            public void onResponse(IoTRequest request, IoTResponse response) {
+                //ALog.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
+                Log.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
+            }
+
+            private String toString(IoTRequest request) {
+                return new StringBuilder("Request:").append("\r\n")
+                        .append("url:").append(request.getScheme()).append("://").append(null == request.getHost() ? "" : request.getHost()).append(request.getPath()).append("\r\n")
+                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
+                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n").toString();
+            }
+
+            private String toString(IoTRequestWrapper wrapper) {
+                IoTRequest request = wrapper.request;
+                return new StringBuilder("Request:").append("\r\n")
+                        .append("id:").append(wrapper.payload.getId()).append("\r\n")
+                        .append("apiEnv:").append("apiEnv").append("\r\n")
+                        .append("url:").append(request.getScheme()).append("://").append(TextUtils.isEmpty(wrapper.request.getHost()) ? "" : wrapper.request.getHost()).append(request.getPath()).append("\r\n")
+                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
+                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n")
+                        .append("payload:").append(JSON.toJSONString(wrapper.payload)).append("\r\n").toString();
+            }
+
+            private String toString(IoTResponse response) {
+                return new StringBuilder("Response:").append("\r\n")
+                        .append("id:").append(response.getId()).append("\r\n")
+                        .append("code:").append(response.getCode()).append("\r\n")
+                        .append("message:").append(response.getMessage()).append("\r\n")
+                        .append("localizedMsg:").append(response.getLocalizedMsg()).append("\r\n")
+                        .append("data:").append(null == response.getData() ? "" : response.getData().toString()).append("\r\n").toString();
+            }
+        });*/
 
         ViseLog.getLogConfig()
                 .configAllowLog(BuildConfig.DEBUG)
@@ -152,6 +168,75 @@ public class MocoApplication extends AApplication {
         if (adapter != null) {
             adapter.setDefaultLoginClass(OALoginActivity.class);
         }
+
+        IoTSmart.setDebug(true);
+        IoTAPIClientImpl.getInstance().registerTracker(new Tracker() {
+            final String TAG = "APIGatewaySDKDele";
+
+            @Override
+            public void onSend(IoTRequest request) {
+                //ALog.i(TAG, "onSend:\r\n" + toString(request));
+                Log.i(TAG, "onSend:\r\n" + toString(request));
+            }
+
+            @Override
+            public void onRealSend(IoTRequestWrapper ioTRequest) {
+                //ALog.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
+                Log.d(TAG, "onRealSend:\r\n" + toString(ioTRequest));
+            }
+
+            @Override
+            public void onRawFailure(IoTRequestWrapper ioTRequest, Exception e) {
+                //ALog.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
+                Log.d(TAG, "onRawFailure:\r\n" + toString(ioTRequest) + "ERROR-MESSAGE:" + e.getMessage());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onFailure(IoTRequest request, Exception e) {
+                //ALog.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
+                Log.i(TAG, "onFailure:\r\n" + toString(request) + "ERROR-MESSAGE:" + e.getMessage());
+            }
+
+            @Override
+            public void onRawResponse(IoTRequestWrapper request, IoTResponse response) {
+                //ALog.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
+                Log.d(TAG, "onRawResponse:\r\n" + toString(request) + toString(response));
+            }
+
+            @Override
+            public void onResponse(IoTRequest request, IoTResponse response) {
+                //ALog.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
+                Log.i(TAG, "onResponse:\r\n" + toString(request) + toString(response));
+            }
+
+            private String toString(IoTRequest request) {
+                return new StringBuilder("Request:").append("\r\n")
+                        .append("url:").append(request.getScheme()).append("://").append(null == request.getHost() ? "" : request.getHost()).append(request.getPath()).append("\r\n")
+                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
+                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n").toString();
+            }
+
+            private String toString(IoTRequestWrapper wrapper) {
+                IoTRequest request = wrapper.request;
+                return new StringBuilder("Request:").append("\r\n")
+                        .append("id:").append(wrapper.payload.getId()).append("\r\n")
+                        .append("apiEnv:").append("apiEnv").append("\r\n")
+                        .append("url:").append(request.getScheme()).append("://").append(TextUtils.isEmpty(wrapper.request.getHost()) ? "" : wrapper.request.getHost()).append(request.getPath()).append("\r\n")
+                        .append("apiVersion:").append(request.getAPIVersion()).append("\r\n")
+                        .append("params:").append(null == request.getParams() ? "" : JSON.toJSONString(request.getParams())).append("\r\n")
+                        .append("payload:").append(JSON.toJSONString(wrapper.payload)).append("\r\n").toString();
+            }
+
+            private String toString(IoTResponse response) {
+                return new StringBuilder("Response:").append("\r\n")
+                        .append("id:").append(response.getId()).append("\r\n")
+                        .append("code:").append(response.getCode()).append("\r\n")
+                        .append("message:").append(response.getMessage()).append("\r\n")
+                        .append("localizedMsg:").append(response.getLocalizedMsg()).append("\r\n")
+                        .append("data:").append(null == response.getData() ? "" : response.getData().toString()).append("\r\n").toString();
+            }
+        });
     }
 
     public static String getProcessName(Context cxt, int pid) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
@@ -12,10 +13,14 @@ import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityMyinfoBinding;
 import com.laffey.smart.event.RefreshMyinfo;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.sdk.Account;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
 
@@ -31,11 +36,14 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     private final DialogInterface.OnClickListener logoutConfirmListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
+            QMUITipDialogUtil.showLoadingDialg(MyInfoActivity.this, R.string.is_submitted);
             LoginBusiness.logout(new ILogoutCallback() {
                 @Override
                 public void onLogoutSuccess() {
-                    ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_success));
+                    QMUITipDialogUtil.dismiss();
+                    ToastUtils.showToastCentrally(mActivity, getString(R.string.logout_success));
                     DeviceBuffer.initSceneBuffer();
+                    SpUtils.putAccessToken(MyInfoActivity.this, "");
                     Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -99,8 +107,9 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             intent = new Intent(mActivity, NickNameActivity.class);
             startActivity(intent);
         } else if (v.getId() == R.id.change_password) {
-            OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
-            openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);
+            /*OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
+            openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);*/
+            PwdChangeActivity.start(this);
         } else if (v.getId() == R.id.delete_account) {
             intent = new Intent(mActivity, DeleteAccountActivity.class);
             startActivity(intent);

@@ -150,9 +150,14 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         initView();
         // QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         initData();
-        RealtimeDataReceiver.addEventCallbackHandler("LocalSceneCallback", mHandler);
-
         // ViseLog.d("场景缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllScene()));
+        ViseLog.d("设备缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RealtimeDataReceiver.addEventCallbackHandler("LocalSceneCallback", mHandler);
     }
 
     private void initData() {
@@ -1012,6 +1017,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                         // 删除网关下的场景
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                        ViseLog.d("网关返回删除结果 LocalSceneActivity = " + jsonObject.toJSONString());
                         JSONObject value = jsonObject.getJSONObject("value");
                         String identifier = jsonObject.getString("identifier");
                         if ("ManageSceneNotification".equals(identifier)) {
@@ -1021,7 +1027,8 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                             if ("0".equals(status)) {
                                 // type  1: 增加场景  2: 编辑场景  3: 删除场景
                                 if ("3".equals(type)) {
-                                    activity.mSceneManager.deleteScene("chengxunfei", activity.mGatewayMac, activity.mSceneId,
+                                    ViseLog.d("网关上报后删除云端场景 activity.mSceneId = " + activity.mSceneId);
+                                    activity.mSceneManager.deleteScene(activity, activity.mGatewayMac, activity.mSceneId,
                                             Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, activity.mHandler);
                                 }
                             } else {
@@ -1031,8 +1038,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                         break;
                     }
                     case Constant.MSG_QUEST_DELETE_SCENE: {
-                        // 删除网关下本地场景
+                        // 删除本地场景
                         JSONObject response = (JSONObject) msg.obj;
+                        ViseLog.d("删除本地场景 = " + response.toJSONString());
                         int code = response.getInteger("code");
                         String message = response.getString("message");
                         boolean result = response.getBoolean("result");
@@ -1100,8 +1108,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 dialog.dismiss();
                 QMUITipDialogUtil.showLoadingDialg(LocalSceneActivity.this, R.string.is_submitted);
                 if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene("chengxunfei", mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
+                    mSceneManager.deleteScene(LocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
                 } else {
+                    ViseLog.d("需要删除的场景id = " + mSceneId);
                     mSceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 }
             }
@@ -1118,6 +1127,18 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
     // 提交场景
     private void submitScene() {
+        EDevice.deviceEntry gwDev = DeviceBuffer.getDeviceInformation(mGatewayId);
+        if (gwDev.status == Constant.CONNECTION_STATUS_OFFLINE) {
+            // 网关离线，无法创建、编辑场景
+            if (getString(R.string.create_new_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
+                // 网关离线，无法创建场景
+                ToastUtils.showLongToast(this, R.string.gw_is_offline_cannot_create_scene);
+            } else if (getString(R.string.edit_scene).equals(mViewBinding.includeToolbar.tvToolbarTitle.getText().toString())) {
+                ToastUtils.showLongToast(this, R.string.gw_is_offline_cannot_edit_scene);
+            }
+            return;
+        }
+
         if (mScene == null) mScene = new ItemScene();
         mSceneName = mViewBinding.nameTv.getText().toString();
 
@@ -1194,7 +1215,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 ViseLog.d("新建场景 = " + GsonUtil.toJson(scene));
 
                 RetrofitUtil.getInstance()
-                        .addScene("chengxunfei", Constant.ADD_SCENE_VER, scene)
+                        .addScene(this, Constant.ADD_SCENE_VER, scene)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<JSONObject>() {
@@ -1208,10 +1229,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                                 // ViseLog.d("结果 = " + GsonUtil.toJson(response));
                                 QMUITipDialogUtil.dismiss();
                                 int code = response.getInteger("code");
-                                boolean result = response.getBoolean("result");
                                 String sceneId = response.getString("sceneId");
                                 String msg = response.getString("message");
                                 if (code == 200) {
+                                    boolean result = response.getBoolean("result");
                                     if (result) {
                                         QMUITipDialogUtil.dismiss();
                                         if (!Constant.IS_TEST_DATA)
@@ -1251,7 +1272,7 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 scene.setSceneDetail(mScene);
 
                 RetrofitUtil.getInstance()
-                        .updateScene("chengxunfei", scene)
+                        .updateScene(this, scene)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<JSONObject>() {
@@ -1417,7 +1438,10 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 // 比较条件与动作是否相同
                 List<ECondition> eConditionList = new ArrayList<>();
                 eConditionList.add(eCondition);
-                boolean isSame = compareConditionAndAction(eConditionList, mActionList);
+                boolean isSame = false;
+                if (mViewBinding.sceneModeLayout.getVisibility() == View.VISIBLE) {
+                    isSame = compareConditionAndAction(eConditionList, mActionList);
+                }
                 if (isSame) {
                     ToastUtils.showLongToast(this, R.string.condition_can_not_be_action_at_same_time);
                     mConditionList.set(mConditionList.indexOf(eCondition), mTmpECondition);
@@ -1724,12 +1748,11 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
 
     // 根据Mac查询动作设备IotId
     private void queryActionIotIdByMac(String token, int pos) {
-        // ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
         ItemScene.Action action = mActionList.get(pos).getAction();
         if ("Command".equals(action.getType())) {
             // 指令
             String deviceId = action.getParameters().getDeviceId();
-            ViseLog.d("指令 = " + deviceId);
+            // ViseLog.d("指令 = " + deviceId);
             if (deviceId == null || deviceId.length() == 0) return;
             // 动作
             EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(deviceId);
@@ -2419,5 +2442,11 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                     desc.append(getString(R.string.fan_speed_freshair));
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("LocalSceneCallback");
     }
 }

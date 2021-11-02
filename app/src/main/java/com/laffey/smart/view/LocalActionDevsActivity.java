@@ -107,7 +107,7 @@ public class LocalActionDevsActivity extends BaseActivity implements View.OnClic
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry entry = mList.get(position);
-                ViseLog.d("entiry ==== " + GsonUtil.toJson(entry));
+                // ViseLog.d("entiry ==== " + GsonUtil.toJson(entry));
                 LocalActionIdentifierActivity.start(LocalActionDevsActivity.this, entry.nickName, entry.iotId, entry.deviceName, entry.productKey);
             }
         });

@@ -13,17 +13,28 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.MocoApplication;
+import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.LogcatFileManager;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class StartActivity extends BaseActivity {
     public static final int CODE = 500;
@@ -39,8 +50,10 @@ public class StartActivity extends BaseActivity {
         }
         setTheme(R.style.AppTheme_Launcher);
         setContentView(R.layout.activity_start);
+        SpUtils.putAccessToken(this, "wyy");
         initView();
 
+        // SystemParameter.getInstance().setIsRefreshDeviceData(true);
         boolean isFirst = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", false);
         if (!isFirst) {
             showPrivacyPolicyDialog();
@@ -50,7 +63,6 @@ public class StartActivity extends BaseActivity {
     }
 
     private void initView() {
-        //mDownCountTextView = findViewById(R.id.tv_count_down_splash);
         if (SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "log_state", false)) {
             String path = getApplicationContext().getExternalCacheDir() + "/Log/";
             LogcatFileManager.getInstance().start(path);
@@ -127,12 +139,6 @@ public class StartActivity extends BaseActivity {
         message.what = CODE;
         message.arg1 = TOTAL_TIME;
         myHandler.sendMessage(message);
-
-//        mDownCountTextView.setOnClickListener(v -> {
-//            goToNextActivity();
-//            finish();
-//            myHandler.removeMessages(CODE);
-//        });
     }
 
     private void goToNextActivity() {
@@ -142,8 +148,9 @@ public class StartActivity extends BaseActivity {
             finish();
             overridePendingTransition(0, 0);
         } else {
-            startLogin();
-
+            // startLogin();
+            LoginActivity.start(mActivity, null);
+            finish();
             // LoginActivity.start(this, null);
         }
     }
@@ -162,9 +169,6 @@ public class StartActivity extends BaseActivity {
             if (msg.what == CODE) {
                 if (activity != null) {
                     int time = msg.arg1;
-//                    String content = (time / INTERVAL_TIME) + activity.getResources().getString(R.string.down_count_text);
-//                    activity.mDownCountTextView.setText(content);
-
                     Message message = Message.obtain();
                     message.what = CODE;
                     message.arg1 = time - INTERVAL_TIME;
@@ -201,6 +205,5 @@ public class StartActivity extends BaseActivity {
 
     private void finishLater() {
         ThreadPool.MainThreadHandler.getInstance().post(() -> finish(), 500);
-
     }
 }

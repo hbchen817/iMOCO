@@ -833,4 +833,14 @@
     <string name="pwd_must_contain_digit_and_letter">密码必须包含数字和字母</string>
     <string name="regist_success">注册成功</string>
     <string name="is_logining">正在登录</string>
+    <string name="gw_del_scene_fail">网关场景删除失败</string>
+    <string name="local_scene">本地场景</string>
+    <string name="gw_is_offline_cannot_create_scene">网关离线，无法创建场景</string>
+    <string name="gw_is_offline_cannot_edit_scene">网关离线，无法编辑场景</string>
+    <string name="old_pwd">旧密码</string>
+    <string name="new_pwd">新密码</string>
+    <string name="old_pwd_must_contain_8_to_16_characters">旧密码长度需要在8-16位</string>
+    <string name="new_pwd_must_contain_8_to_16_characters">新密码长度需要在8-16位</string>
+    <string name="modify_success">修改成功</string>
+    <string name="no_scene_data">无场景数据</string>
 </resources>

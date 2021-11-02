@@ -2265,8 +2265,8 @@ public class SceneManager {
     }
 
     // 查询本地场景列表
-    public void querySceneList(String token, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+    public void querySceneList(Context context, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
+        RetrofitUtil.getInstance().querySceneList(context, mac, type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2299,9 +2299,9 @@ public class SceneManager {
     }
 
     // 增加本地场景
-    public void addScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+    public void addScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .addScene("chengxunfei", scene)
+                .addScene(context, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2334,9 +2334,9 @@ public class SceneManager {
     }
 
     // 更新本地场景
-    public void updateScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+    public void updateScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .updateScene("chengxunfei", scene)
+                .updateScene(context, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2369,9 +2369,9 @@ public class SceneManager {
     }
 
     // 根据子设备iotId查询网关iotId
-    public void getGWIotIdBySubIotId(String token, String subId, int resultTag, int errorTag, Handler resulthandler) {
+    public void getGWIotIdBySubIotId(Context context, String subId, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .getGWIotIdBySubIotId("chengxunfei", subId)
+                .getGWIotIdBySubIotId(context, subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2404,9 +2404,9 @@ public class SceneManager {
     }
 
     // 根据设备iotId获取设备mac
-    public void queryMacByIotId(String token, String iotId, int resultTag, int errorTag, Handler resulthandler) {
+    public void queryMacByIotId(Context context, String iotId, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .queryMacByIotId(token, iotId)
+                .queryMacByIotId(context, iotId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2439,9 +2439,9 @@ public class SceneManager {
     }
 
     // 删除本地场景
-    public void deleteScene(String token, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+    public void deleteScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .deleteScene(token, scene.getGwMac(), scene.getSceneDetail().getSceneId())
+                .deleteScene(context, scene.getGwMac(), scene.getSceneDetail().getSceneId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2474,9 +2474,9 @@ public class SceneManager {
     }
 
     // 删除本地场景
-    public void deleteScene(String token, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
+    public void deleteScene(Context context, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
         RetrofitUtil.getInstance()
-                .deleteScene(token, gwMac, sceneId)
+                .deleteScene(context, gwMac, sceneId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

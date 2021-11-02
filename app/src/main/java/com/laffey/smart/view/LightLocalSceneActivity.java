@@ -390,7 +390,7 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
         } else if (view.getId() == R.id.deleteButton) {
             // 删除场景
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_deleting_scene);
-            mSceneManager.deleteScene("chengxunfei", mGwMac, mSceneId, Constant.MSG_QUEST_DELETE_SCENE,
+            mSceneManager.deleteScene(this, mGwMac, mSceneId, Constant.MSG_QUEST_DELETE_SCENE,
                     Constant.MSG_QUEST_DELETE_SCENE_ERROR, processDataHandler);
         } else if (view.getId() == R.id.tv_toolbar_right) {
             if (mViewBinding.lightnessView.getVisibility() == View.GONE && mViewBinding.temperatureView.getVisibility() == View.GONE) {
@@ -400,13 +400,13 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
                 ItemSceneInGateway scene = createItemSceneInGateway(mViewBinding.sceneName.getText().toString(),
                         mIotID, mGwMac);
                 ViseLog.d("生成的场景信息 = " + GsonUtil.toJson(scene));
-                mSceneManager.addScene("chengxunfei", scene, Constant.MSG_QUEST_ADD_SCENE, Constant.MSG_QUEST_ADD_SCENE_ERROR, processDataHandler);
+                mSceneManager.addScene(this, scene, Constant.MSG_QUEST_ADD_SCENE, Constant.MSG_QUEST_ADD_SCENE_ERROR, processDataHandler);
             } else {
                 // 编辑本地场景
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
                 ItemSceneInGateway scene = editItemSceneInGateway(mScene, mViewBinding.sceneName.getText().toString());
                 ViseLog.d("编辑的场景信息 = " + GsonUtil.toJson(scene));
-                mSceneManager.updateScene("chengxunfei", scene,
+                mSceneManager.updateScene(this, scene,
                         Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, processDataHandler);
             }
         }

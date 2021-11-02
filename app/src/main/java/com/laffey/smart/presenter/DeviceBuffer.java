@@ -105,6 +105,17 @@ public class DeviceBuffer {
         return list;
     }
 
+    // 获取指定网关下场景列表
+    public static List<ItemSceneInGateway> getAllSceneInGW(String gwMac) {
+        List<ItemSceneInGateway> list = new ArrayList<>();
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (gwMac.equals(scene.getGwMac())) {
+                list.add(scene);
+            }
+        }
+        return list;
+    }
+
     // 获取场景
     public static ItemSceneInGateway getScene(String sceneId) {
         if (sceneId != null && mSceneBuffer.containsKey(sceneId)) {
@@ -335,6 +346,13 @@ public class DeviceBuffer {
             return null;
         } else {
             return mBuffer.get(iotId);
+        }
+    }
+
+    // 修改设备在线、离线状态
+    public static void updateDeviceStatus(String iotId, int status) {
+        if (mBuffer.containsKey(iotId)) {
+            mBuffer.get(iotId).status = status;
         }
     }
 

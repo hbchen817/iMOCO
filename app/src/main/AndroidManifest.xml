@@ -50,6 +50,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
+        <activity android:name=".view.PwdChangeActivity"></activity>
         <activity
             android:name=".view.PwdSettingActivity"
             android:screenOrientation="portrait" />

@@ -146,6 +146,7 @@ public class UserCenter {
         requestParameterEntry.path = Constant.API_PATH_UNBINDDEVICE;
         requestParameterEntry.version = "1.0.2";
         requestParameterEntry.addParameter("iotId", deviceId);
+        requestParameterEntry.addParameter("unbindSubdevice", true);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UNBINDEVICE;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);

@@ -5,7 +5,6 @@ import android.content.Context;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ERetrofit;
-import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.vise.log.ViseLog;
 
@@ -32,7 +31,7 @@ public class RetrofitUtil {
     }
 
     // 根据IotId查询Mac
-    public Observable<JSONObject> queryMacByIotId(String token, String apiVer, String plantForm, String iotId) {
+    public Observable<JSONObject> queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", apiVer);
 
@@ -42,10 +41,10 @@ public class RetrofitUtil {
 
         object.put("params", params);
 
-        return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().queryMacByIotId(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
-    public Observable<JSONObject> queryMacByIotId(String token, String plantForm, String iotId) {
+    public Observable<JSONObject> queryMacByIotId(Context context, String plantForm, String iotId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.QUERY_MAC_BY_IOTID_VER);
 
@@ -55,24 +54,24 @@ public class RetrofitUtil {
 
         object.put("params", params);
 
-        return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().queryMacByIotId(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
-    public Observable<JSONObject> queryMacByIotId(String token, String iotId) {
+    public Observable<JSONObject> queryMacByIotId(Context context, String iotId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.QUERY_MAC_BY_IOTID_VER);
 
         JSONObject params = new JSONObject();
-        params.put("plantForm", "xxxxxx");
+        params.put("plantForm", Constant.PLANT_FORM);
         params.put("iotId", iotId);
 
         object.put("params", params);
 
-        return getRetrofitService().queryMacByIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().queryMacByIotId(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 查询本地场景列表
-    public Observable<JSONObject> querySceneList(String token, String mac, String type) {
+    public Observable<JSONObject> querySceneList(Context context, String mac, String type) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.QUERY_SCENE_LIST_VER);
 
@@ -83,29 +82,32 @@ public class RetrofitUtil {
 
         object.put("params", params);
 
-        return getRetrofitService().querySceneList(token, ERetrofit.convertToBody(object.toJSONString()));
+        ViseLog.d("查询本地场景列表 SpUtils.getAccessToken(context) = " + SpUtils.getAccessToken(context));
+        return getRetrofitService().querySceneList(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
+        // String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJhcHBLZXkiOiJucFJ5aWZpYyIsImV4cCI6MTYzNTgzMDQ5MiwidHlwZSI6IkFDQ0VTUyIsImlhdCI6MTYzNTgyMzI5MiwiYWNjb3VudHNJZCI6ImZhODNlMDMxMDIwMjRhODU4NmVlOTY0ODIyMzVjYjZkIn0.GnTYLbn69xYnUWdkG6O6NaYlzp9AVyQEdrYCKL3eCHW63_Q3tELcOF-K536TBP-u1jbI_a7K2lI0HupR9SUiMEH_MsnMdEC_y77_kH4zIYm7uAPacGOOqU94-uywowrSaQMdoSc-DJh5RYfev0SnERAZO_vBRTLbQcppzqx9zrMfYjoWWK7i-EjmNvzHD6GVCzHDXA2Plfvv2xsKwwOlXiQvopdH_ufwu7LeHXf5yDZI0m4-GwYP45bmpth-VYSC-QmdVCtaHx0lPoGrcvN0Meq8vNj7Pjk5ri9g8HusFJXzOGXZ1cUIDdMvwjebxKUPyQk71-4i994fP4Iqv22ZWNU0nzWkbPoApglOrEZK7ijZDw__puFqFY7g-7rSUb-_MQEucdERMGm6jyWTq0lR0-yTAg6Em51TdufyYdOz0Vq2NL3F0YTTf-HXFyY-iZrXm5F651O2EPNju1zu-gaMXb9qAj6-oySAczLgzkiFHm4Q0Wo0meKrzGeW_tEzL1_o";
+        // return getRetrofitService().querySceneList(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 增加本地场景
-    public Observable<JSONObject> addScene(String token, String apiVer, ItemSceneInGateway scene) {
+    public Observable<JSONObject> addScene(Context context, String apiVer, ItemSceneInGateway scene) {
         JSONObject object = new JSONObject();
         object.put("apiVer", apiVer);
         object.put("params", scene);
         ViseLog.d(GsonUtil.toJson(object));
-        return getRetrofitService().addScene(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().addScene(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 增加本地场景
-    public Observable<JSONObject> addScene(String token, ItemSceneInGateway scene) {
+    public Observable<JSONObject> addScene(Context context, ItemSceneInGateway scene) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.ADD_SCENE_VER);
         object.put("params", scene);
         // ViseLog.d(GsonUtil.toJson(object));
-        return getRetrofitService().addScene(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().addScene(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 删除场景
-    public Observable<JSONObject> deleteScene(String token, String gatewayMac, String sceneId) {
+    public Observable<JSONObject> deleteScene(Context context, String gatewayMac, String sceneId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.DELETE_SCENE_VER);
 
@@ -114,19 +116,20 @@ public class RetrofitUtil {
         params.put("sceneId", sceneId);
         object.put("params", params);
 
-        return getRetrofitService().deleteScene(token, ERetrofit.convertToBody(object.toJSONString()));
+        ViseLog.d("删除场景ssss sceneId = " + sceneId + " , context = " + context.getClass().toString());
+        return getRetrofitService().deleteScene(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 更新场景
-    public Observable<JSONObject> updateScene(String token, ItemSceneInGateway scene) {
+    public Observable<JSONObject> updateScene(Context context, ItemSceneInGateway scene) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.UPDATE_SCENE_VER);
         object.put("params", scene);
-        return getRetrofitService().updateScene(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().updateScene(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 根据Mac查询IotId
-    public Observable<JSONObject> queryIotIdByMac(String token, String plantForm, String mac) {
+    public Observable<JSONObject> queryIotIdByMac(Context context, String plantForm, String mac) {
         JSONObject obj = new JSONObject();
         obj.put("apiVer", Constant.QUERY_IOT_ID_BY_MAC_VER);
 
@@ -136,18 +139,18 @@ public class RetrofitUtil {
 
         obj.put("params", params);
 
-        return getRetrofitService().queryIotIdByMac(token, ERetrofit.convertToBody(obj.toJSONString()));
+        return getRetrofitService().queryIotIdByMac(SpUtils.getAccessToken(context), ERetrofit.convertToBody(obj.toJSONString()));
     }
 
     // 根据子设备iotId查询网关iotId
-    public Observable<JSONObject> getGWIotIdBySubIotId(String token, String subId) {
+    public Observable<JSONObject> getGWIotIdBySubIotId(Context context, String subId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.ADD_SCENE_VER);
         JSONObject params = new JSONObject();
         params.put("plantForm", Constant.PLANT_FORM);
         params.put("subIotId", subId);
         object.put("params", params);
-        return getRetrofitService().getGWIotIdBySubIotId(token, ERetrofit.convertToBody(object.toJSONString()));
+        return getRetrofitService().getGWIotIdBySubIotId(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 滑动图片获取
@@ -233,5 +236,25 @@ public class RetrofitUtil {
 
         return new ERetrofit(Constant.ACCOUNT_URL).getService().getAuthCode(AppUtils.getPesudoUniqueID(),
                 SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // token刷新
+    public Observable<JSONObject> refreshToken(Context context) {
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().refreshToken(
+                SpUtils.getRefreshToken(context));
+    }
+
+    // 密码修改
+    public Observable<JSONObject> pwdChange(Context context, String oldPwd, String newPwd) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.PWD_RESET_VER);
+        JSONObject params = new JSONObject();
+        params.put("oldPwd", oldPwd);
+        params.put("newPwd", newPwd);
+        params.put("newPwdConfirm", newPwd);
+        object.put("params", params);
+
+        return new ERetrofit(Constant.ACCOUNT_URL).getService().pwdChange(SpUtils.getAccessToken(context),
+                AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
     }
 }

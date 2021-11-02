@@ -140,13 +140,13 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         if (Constant.IS_TEST_DATA) {
             mGatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
         }
-        queryMacByIotId("chengxunfei", Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", mGatewayId);
+        queryMacByIotId(this, Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", mGatewayId);
     }
 
     // 根据IotId查询Mac
-    private void queryMacByIotId(String token, String apiVer, String plantForm, String iotId) {
+    private void queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
         RetrofitUtil.getInstance()
-                .queryMacByIotId(token, apiVer, plantForm, iotId)
+                .queryMacByIotId(context, apiVer, plantForm, iotId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -169,7 +169,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                                 mac = "LUXE_TEST";
                             }
                             mGatewayMac = mac;
-                            querySceneList(token, mac, "1");
+                            querySceneList(context, mac, "1");
                         } else if (code == 404) {
                             ToastUtils.showLongToast(LocalActionScenesActivity.this, msg);
                         } else {
@@ -191,8 +191,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
     }
 
     // 查询本地场景列表
-    private void querySceneList(String token, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+    private void querySceneList(Context context, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(context, mac, type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -291,6 +291,10 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         if (v.getId() == mViewBinding.includeToolbar.ivToolbarLeft.getId()) {
             finish();
         } else if (v.getId() == mViewBinding.includeToolbar.tvToolbarRight.getId()) {
+            if (mSceneList.size() == 0) {
+                ToastUtils.showLongToast(this, R.string.no_scene_data);
+                return;
+            }
             String target = DeviceBuffer.getCacheInfo("LocalSceneTag");
             mEAction.setTarget(target);
             ItemScene.Action action = new ItemScene.Action();

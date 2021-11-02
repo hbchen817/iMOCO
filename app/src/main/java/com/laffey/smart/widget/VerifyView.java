@@ -100,8 +100,8 @@ public class VerifyView extends View {
         // canvas.drawBitmap(verifyBitmap, matrix, paint);// 画验证图片
         Bitmap resizeVerifyBitmap = Bitmap.createBitmap(verifyBitmap, 0, 0, verifyBitmap.getWidth(), verifyBitmap.getHeight(), matrix, true);
         //if (moveX <= verifyBitmap.getWidth()) {
-            canvas.drawBitmap(resizeVerifyBitmap, moveX, y, paint);// 画验证图片
-            // canvas.drawBitmap(resizeVerifyBitmap, null, new Rect(moveX, 0, drawBitmap.getWidth(), drawBitmap.getHeight()), paint);
+        canvas.drawBitmap(resizeVerifyBitmap, moveX, y, paint);// 画验证图片
+        // canvas.drawBitmap(resizeVerifyBitmap, null, new Rect(moveX, 0, drawBitmap.getWidth(), drawBitmap.getHeight()), paint);
         //}
     }
 
@@ -132,6 +132,9 @@ public class VerifyView extends View {
         } else if (heightSpecMode == MeasureSpec.AT_MOST) {
             w = widthSpecSize;
             h = (int) (scaleValue * drawBitmap.getHeight());
+        } else {
+            w = widthSpecSize;
+            h = heightSpecSize;
         }
         setMeasuredDimension(w, h);
     }

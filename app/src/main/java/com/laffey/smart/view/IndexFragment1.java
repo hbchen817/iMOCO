@@ -42,6 +42,7 @@ import com.laffey.smart.event.ShareDeviceSuccessEvent;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ERealtimeData;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
@@ -68,6 +69,7 @@ import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -82,16 +84,23 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
+import rx.functions.Func1;
 
 /**
  * @author fyy
@@ -162,7 +171,7 @@ public class IndexFragment1 extends BaseFragment {
 
     private HomeSpaceManager mHomeSpaceManager = null;
     private UserCenter mUserCenter = null;
-    private List<EScene.sceneListItemEntry> mSceneList = null;
+    private List<EScene.sceneListItemEntry> mSceneList = new ArrayList<>();
     private List<EDevice.deviceEntry> mDeviceList = null;
     private List<EDevice.deviceEntry> mShareDeviceList = null;
     private List<EHomeSpace.roomEntry> mRoomList = null;
@@ -216,7 +225,7 @@ public class IndexFragment1 extends BaseFragment {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 startGetSceneList2();
-                startGetDeviceList2();
+                // startGetDeviceList2();
             }
         });
         mGridRL.setEnableLoadMore(false);
@@ -224,7 +233,7 @@ public class IndexFragment1 extends BaseFragment {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 startGetSceneList2();
-                startGetDeviceList2();
+                // startGetDeviceList2();
             }
         });
         initView();
@@ -450,6 +459,7 @@ public class IndexFragment1 extends BaseFragment {
         if (SystemParameter.getInstance().getIsRefreshDeviceData()) {
             // 如果绑定或解绑定了网关则重新获取设备列表
             startGetDeviceList();
+            // querySceneList(mActivity, "", "0");
             SystemParameter.getInstance().setIsRefreshDeviceData(false);
         } else {
             if (mDeviceList != null && mDeviceList.size() > 0) {
@@ -649,9 +659,9 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList("chengxunfei", "", "0");
+            querySceneList(mActivity, "", "0");
             // 数据获取完则开始获取设备列表数据
-            startGetDeviceList();
+            // startGetDeviceList();
         } else
             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
                     mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -665,7 +675,7 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList("chengxunfei", "", "0");
+            querySceneList(mActivity, "", "0");
             // 数据获取完则开始获取设备列表数据
             // startGetDeviceList();
         } else
@@ -674,8 +684,16 @@ public class IndexFragment1 extends BaseFragment {
     }
 
     // 查询本地场景列表
-    private void querySceneList(String token, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(token, mac, type)
+    private void querySceneList(Context context, String mac, String type) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<Object, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull Object o) throws Exception {
+                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -686,7 +704,7 @@ public class IndexFragment1 extends BaseFragment {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        // ViseLog.d("手动场景 = " + GsonUtil.toJson(response));
+                        ViseLog.d("场景 = " + GsonUtil.toJson(response));
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
@@ -695,32 +713,37 @@ public class IndexFragment1 extends BaseFragment {
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
+                                    try {
+                                        ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
 
-                                    DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+                                        DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
 
-                                    if ("1".equals(type)) {
-                                        JSONObject appParams = scene.getAppParams();
-                                        if (appParams != null) {
-                                            String switchIotId = appParams.getString("switchIotId");
-                                            if (switchIotId != null && switchIotId.length() > 0)
-                                                continue;
+                                        if ("1".equals(type)) {
+                                            JSONObject appParams = scene.getAppParams();
+                                            if (appParams != null) {
+                                                String switchIotId = appParams.getString("switchIotId");
+                                                if (switchIotId != null && switchIotId.length() > 0)
+                                                    continue;
+                                            }
+
+                                            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                            entry.id = scene.getSceneDetail().getSceneId();
+                                            entry.name = scene.getSceneDetail().getName();
+                                            entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                            entry.description = scene.getGwMac();
+                                            mSceneList.add(entry);
                                         }
-
-                                        EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                        entry.id = scene.getSceneDetail().getSceneId();
-                                        entry.name = scene.getSceneDetail().getName();
-                                        entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
-                                        entry.description = scene.getGwMac();
-                                        mSceneList.add(entry);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
                             }
                             if ("1".equals(type)) {
                                 // 数据获取完则设置场景列表数据
                                 setSceneList(mSceneList);
+                                startGetDeviceList();
                             } else if ("0".equals(type)) {
-                                querySceneList("chengxunfei", "", "1");
+                                querySceneList(mActivity, "", "1");
                             }
                         } else {
                             QMUITipDialogUtil.dismiss();
@@ -734,7 +757,7 @@ public class IndexFragment1 extends BaseFragment {
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         ViseLog.e(e);
-                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        ToastUtils.showLongToast(mActivity, e.getMessage());
                     }
 
                     @Override
@@ -786,7 +809,8 @@ public class IndexFragment1 extends BaseFragment {
         DeviceBuffer.initProcess();
         mAptDeviceList.clearData();
         // 获取家设备列表
-        mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, DEV_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, DEV_PAGE_SIZE,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -897,6 +921,8 @@ public class IndexFragment1 extends BaseFragment {
 
         if (mDeviceList.size() > 0)
             queryMac(0);
+        else
+            refreshListView();
     }
 
     private void refreshListView() {
@@ -952,8 +978,16 @@ public class IndexFragment1 extends BaseFragment {
 
     private void queryMac(int pos) {
         if (pos >= mDeviceList.size()) return;
-        RetrofitUtil.getInstance()
-                .queryMacByIotId("chengxunfei", "xxxxxx", mDeviceList.get(pos).iotId)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .queryMacByIotId(mActivity, mDeviceList.get(pos).iotId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(mActivity))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -1107,7 +1141,7 @@ public class IndexFragment1 extends BaseFragment {
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
-                    //ViseLog.d("------------" + (String) msg.obj);
+                    ViseLog.d("------------" + (String) msg.obj);
                     EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList((String) msg.obj);
                     if (homeDeviceList != null && homeDeviceList.data != null) {
                         // 向缓存追加家列表数据
@@ -1155,7 +1189,7 @@ public class IndexFragment1 extends BaseFragment {
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
                     JSONObject items = JSON.parseObject((String) msg.obj);
-                    //HiLog.i("PROPERTY" + (String) msg.obj);
+                    HiLog.i("PROPERTY" + (String) msg.obj);
                     if (items != null) {
                         TSLHelper.parseProperty(mCurrentProductKey, items, propertyEntry);
                         propertyEntry.iotId = mCurrentGetPropertyIotId;
@@ -1214,6 +1248,7 @@ public class IndexFragment1 extends BaseFragment {
                         for (int i = 0; i < mDeviceList.size(); i++) {
                             if (mDeviceList.get(i).iotId.equalsIgnoreCase(entry.iotId)) {
                                 mDeviceList.get(i).status = entry.status;
+                                DeviceBuffer.updateDeviceStatus(entry.iotId, entry.status);
                                 // 如果变为在线则要重新获取状态1
                                 if (entry.status == Constant.CONNECTION_STATUS_ONLINE) {
                                     Log.i("lzm", "状态改变 在线获取属性 iotId = " + entry.iotId);
@@ -1329,6 +1364,7 @@ public class IndexFragment1 extends BaseFragment {
 
         // 处理刷新手动执行场景列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
+            ViseLog.d("处理刷新手动执行场景列表数据");
             startGetSceneList();
         }
 

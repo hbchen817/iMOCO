@@ -220,81 +220,81 @@ public class ItemScene {
     }
 
     public static class ConditionParameter {
-        private String DeviceId;
-        private String EndpointId;
-        private String Name;
-        private String CompareType;
-        private String CompareValue;
-        private String EventType;
-        private String ParameterName;
+        private String deviceId;
+        private String endpointId;
+        private String name;
+        private String compareType;
+        private String compareValue;
+        private String eventType;
+        private String parameterName;
 
         public String getDeviceId() {
-            return DeviceId;
+            return deviceId;
         }
 
         public void setDeviceId(String deviceId) {
-            DeviceId = deviceId;
+            this.deviceId = deviceId;
         }
 
         public String getEndpointId() {
-            return EndpointId;
+            return endpointId;
         }
 
         public void setEndpointId(String endpointId) {
-            EndpointId = endpointId;
+            this.endpointId = endpointId;
         }
 
         public String getName() {
-            return Name;
+            return name;
         }
 
         public void setName(String name) {
-            Name = name;
+            this.name = name;
         }
 
         public String getCompareType() {
-            return CompareType;
+            return compareType;
         }
 
         public void setCompareType(String compareType) {
-            CompareType = compareType;
+            this.compareType = compareType;
         }
 
         public String getCompareValue() {
-            return CompareValue;
+            return compareValue;
         }
 
         public void setCompareValue(String compareValue) {
-            CompareValue = compareValue;
+            this.compareValue = compareValue;
         }
 
         public String getEventType() {
-            return EventType;
+            return eventType;
         }
 
         public void setEventType(String eventType) {
-            EventType = eventType;
+            this.eventType = eventType;
         }
 
         public String getParameterName() {
-            return ParameterName;
+            return parameterName;
         }
 
         public void setParameterName(String parameterName) {
-            ParameterName = parameterName;
+            this.parameterName = parameterName;
         }
 
         public ConditionParameter() {
         }
 
         public ConditionParameter(String deviceId, String endpointId, String name, String compareType, String compareValue, String eventType, String parameterName) {
-            DeviceId = deviceId;
-            EndpointId = endpointId;
-            Name = name;
-            CompareType = compareType;
-            CompareValue = compareValue;
-            EventType = eventType;
-            ParameterName = parameterName;
+            this.deviceId = deviceId;
+            this.endpointId = endpointId;
+            this.name = name;
+            this.compareType = compareType;
+            this.compareValue = compareValue;
+            this.eventType = eventType;
+            this.parameterName = parameterName;
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
@@ -55,12 +57,18 @@ import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Creator: xieshaobing
@@ -89,6 +97,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     private String mSceneType;
 
     private List<ItemSceneInGateway> mSceneList = new ArrayList<>();
+    private final List<EUser.deviceEntry> mSubDevList = new ArrayList<>();
 
     // 更新状态
     @SuppressLint("SetTextI18n")
@@ -158,11 +167,13 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                                     break;
                                 }
                             }
+                            ViseLog.d("云端删除场景 = " + mSceneList.size());
                             if (mSceneList.size() > 0) {
                                 if (Constant.IS_TEST_DATA) {
-                                    mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                    mSceneManager.deleteScene(MoreGatewayActivity.this, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
                                             Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
                                 } else {
+                                    ViseLog.d("去网关删除场景 = " + mSceneList.get(0).getSceneDetail().getSceneId());
                                     SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
                                             mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 }
@@ -201,7 +212,8 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                         if ("0".equals(status)) {
                             // type  1: 增加场景  2: 编辑场景  3: 删除场景
                             if ("3".equals(type)) {
-                                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                ViseLog.d("网关删除场景 = " + mSceneList.get(0).getSceneDetail().getSceneId());
+                                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
                                         Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
                             }
                         } else {
@@ -244,6 +256,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     mViewBinding.moreGatewayLblVersion.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
+                    QMUITipDialogUtil.dismiss();
                     // 处理设备解除绑定回调
                     setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
                     // 设置系统参数解绑网关以触发数据刷新
@@ -261,9 +274,10 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     hasNewerVersion = !currentVersion.equals(theNewVersion);
                     mViewBinding.moreGatewayLblVersion.setText(currentVersion);
                     break;
-                case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST:
+                case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST: {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
                     if (list != null && list.data != null) {
+                        mSubDevList.addAll(list.data);
                         for (EUser.deviceEntry e : list.data) {
                             switch (e.productKey) {
                                 case CTSL.PK_LIGHT:
@@ -322,15 +336,18 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             mUserCenter.getGatewaySubdeviceList(mIOTId, list.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则加载显示
-                            if (mDeviceMap.size() > 0) {
+                            /*if (mDeviceMap.size() > 0) {
                                 mSceneType = CScene.TYPE_AUTOMATIC;
-                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                // mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             } else {
                                 mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                            }
+                            }*/
+                            unBindingDev(0);
+                            /*mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);*/
                         }
                     }
                     break;
+                }
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
@@ -362,6 +379,35 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
             return false;
         }
     });
+
+    private void unBindingDev(int pos) {
+        if (pos <= mSubDevList.size() - 1)
+            mUserCenter.unbindSubDevice(mSubDevList.get(pos).productKey, mSubDevList.get(pos).deviceName,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(Message msg) {
+                            unBindingDev(pos + 1);
+                            return false;
+                        }
+                    }));
+        else
+            mUserCenter.unbindDevice(mIOTId,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(Message msg) {
+                            QMUITipDialogUtil.dismiss();
+                            // 处理设备解除绑定回调
+                            setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
+                            // 设置系统参数解绑网关以触发数据刷新
+                            SystemParameter.getInstance().setIsRefreshDeviceData(true);
+                            // 删除缓存中的数据
+                            DeviceBuffer.deleteDevice(mIOTId);
+                            //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
+                            Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                            return false;
+                        }
+                    }));
+    }
 
     // 实时数据处理器
     private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
@@ -629,6 +675,8 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
         // 添加实时数据属性回调处理器
         RealtimeDataReceiver.addPropertyCallbackHandler("MoreGatewayProperty", mRealtimeDataHandler);
 
+        RealtimeDataReceiver.addEventCallbackHandler("MoreGatewaySceneListCallback", mAPIDataHandler);
+
         mUserCenter = new UserCenter(this);
         mSceneManager = new SceneManager(this);
         // 非共享设备才能去获取版本号信息
@@ -648,7 +696,10 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
             builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    deleteScene();
+                    //deleteScene();
+                    QMUITipDialogUtil.showLoadingDialg(MoreGatewayActivity.this, R.string.is_submitted);
+                    mSubDevList.clear();
+                    querySceneList(MoreGatewayActivity.this, DeviceBuffer.getDeviceInformation(mIOTId).mac, "0");
                 }
             });
             builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -715,13 +766,22 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
     private void deleteScene() {
         mSceneList.clear();
-        mSceneList.addAll(DeviceBuffer.getAllScene(DeviceBuffer.getDeviceMac(mIOTId)));
+        mSceneList.addAll(DeviceBuffer.getAllSceneInGW(DeviceBuffer.getDeviceMac(mIOTId)));
+        ViseLog.d("2 = " + GsonUtil.toJson(mSceneList));
         if (Constant.IS_TEST_DATA) {
-            mSceneManager.deleteScene("chengxunfei", DeviceBuffer.getDeviceMac(mIOTId), mSceneList.get(0).getSceneDetail().getSceneId(),
-                    Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+            if (mSceneList.size() > 0) {
+                mSceneManager.deleteScene(this, DeviceBuffer.getDeviceMac(mIOTId), mSceneList.get(0).getSceneDetail().getSceneId(),
+                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
+            } else {
+                mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
         } else {
-            SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
-                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            if (mSceneList.size() > 0) {
+                SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            } else {
+                mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            }
         }
     }
 
@@ -764,5 +824,70 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.current_version_is_new));
             }
         }
+    }
+
+    // 查询本地场景列表
+    private void querySceneList(Context context, String mac, String type) {
+        RetrofitUtil.getInstance().querySceneList(context, mac, type)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        // ViseLog.d("手动场景 = " + GsonUtil.toJson(response));
+                        int code = response.getInteger("code");
+                        String msg = response.getString("message");
+                        JSONArray sceneList = response.getJSONArray("sceneList");
+                        if (code == 0 || code == 200) {
+                            mSceneList.clear();
+                            if (sceneList != null) {
+                                for (int i = 0; i < sceneList.size(); i++) {
+                                    JSONObject sceneObj = sceneList.getJSONObject(i);
+                                    try {
+                                        ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
+
+                                        DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                            if ("1".equals(type)) {
+                                // 数据获取完则设置场景列表数据
+                                deleteScene();
+                            } else if ("0".equals(type)) {
+                                querySceneList(mActivity, mac, "1");
+                            }
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            if (msg != null && msg.length() > 0)
+                                ToastUtils.showLongToast(mActivity, msg);
+                            else
+                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(mActivity, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("MoreGatewaySceneListCallback");
     }
 }

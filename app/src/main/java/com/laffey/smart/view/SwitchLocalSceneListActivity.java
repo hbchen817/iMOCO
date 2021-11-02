@@ -14,6 +14,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.alibaba.fastjson.JSON;
@@ -116,20 +117,20 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
 
         initStatusBar();
         RealtimeDataReceiver.addEventCallbackHandler("SwitchLocalSceneListCallback", mAPIDataHandler);
-        if (mSceneId != null && mSceneId.length() > 0) {
+        /*if (mSceneId != null && mSceneId.length() > 0) {
             ViseLog.d("更改scene = " + GsonUtil.toJson(DeviceBuffer.getScene(mSceneId)) +
                     "\n更改自动scene = " + GsonUtil.toJson(DeviceBuffer.getSceneByCid(mSceneId, mKeyCode)));
-        }
+        }*/
     }
 
     // 修改按键绑定的场景，将原自动场景删除
     private void deletePreAutoScene() {
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_binding_scene);
         if (Constant.IS_TEST_DATA) {
-            mSceneManager.deleteScene("chengxunfei", DeviceBuffer.getSceneByCid(mSceneId, mKeyCode),
+            mSceneManager.deleteScene(this, DeviceBuffer.getSceneByCid(mSceneId, mKeyCode),
                     Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
         } else {
-            mSceneManager.manageSceneService(mGatewayId, mSceneId, 3,
+            mSceneManager.manageSceneService(mGatewayId, DeviceBuffer.getSceneByCid(mSceneId, mKeyCode).getSceneDetail().getSceneId(), 3,
                     mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
     }
@@ -174,7 +175,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
             scene.getAppParams().put("cId", cIdSB.toString());
         }
 
-        mSceneManager.updateScene("chengxunfei", scene, Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mAPIDataHandler);
+        mSceneManager.updateScene(this, scene, Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mAPIDataHandler);
     }
 
     // 嵌入式状态栏
@@ -196,17 +197,22 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("SwitchLocalSceneListCallback");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        RealtimeDataReceiver.deleteCallbackHandler("SwitchLocalSceneListCallback");
     }
 
     private void getList() {
         mSType = "0";
         mItemSceneList.clear();
         mList.clear();
-        mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSType,
+        mSceneManager.querySceneList(this, mGatewayMac, mSType,
                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
     }
 
@@ -226,8 +232,8 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                         // status  0: 成功  1: 失败
                         if ("0".equals(status)) {
                             // type  1: 增加场景  2: 编辑场景  3: 删除场景
-                            if ("3".equals(type)) {
-                                mSceneManager.deleteScene("chengxunfei", DeviceBuffer.getSceneByCid(mSceneId, mKeyCode),
+                            if ("3".equals(type) && mSceneId != null) {
+                                mSceneManager.deleteScene(SwitchLocalSceneListActivity.this, DeviceBuffer.getSceneByCid(mSceneId, mKeyCode),
                                         Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
                             }
                         } else {
@@ -343,7 +349,9 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                                 tmp.getSceneDetail().setType("1");
                                 // ViseLog.d("自动场景提交成功后 = " + GsonUtil.toJson(tmp));
                                 mSceneType = 1;
-                                mSceneManager.updateScene("chengxunfei", tmp, Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mAPIDataHandler);
+                                if (!Constant.IS_TEST_DATA)
+                                    mSceneManager.manageSceneService(mGatewayId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                mSceneManager.updateScene(SwitchLocalSceneListActivity.this, tmp, Constant.MSG_QUEST_UPDATE_SCENE, Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mAPIDataHandler);
                             } else {
                                 QMUITipDialogUtil.dismiss();
                             }
@@ -364,7 +372,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                 case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
                     // 查询本地场景列表
                     JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("查询本地场景列表 = " + GsonUtil.toJson(response));
+                    ViseLog.d("查询本地场景列表 = " + GsonUtil.toJson(response));
                     int code = response.getInteger("code");
                     String message = response.getString("message");
                     JSONArray sceneList = response.getJSONArray("sceneList");
@@ -396,6 +404,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                                 }
                             }
                         }
+                        mAdapter.notifyDataSetChanged();
                     } else {
                         QMUITipDialogUtil.dismiss();
                         if (message != null && message.length() > 0)
@@ -405,7 +414,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                     }
                     if ("0".equals(mSType)) {
                         mSType = "1";
-                        mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSType,
+                        mSceneManager.querySceneList(SwitchLocalSceneListActivity.this, mGatewayMac, mSType,
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                     }
                     break;
@@ -540,6 +549,9 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
                 int i = mList.indexOf(sceneListItemEntry);
                 i = i % mSceneBgs.length();
                 baseViewHolder.setText(R.id.sceneName, sceneListItemEntry.name);
+                if (mSceneId != null && mSceneId.equals(sceneListItemEntry.id)) {
+                    baseViewHolder.setTextColor(R.id.sceneName, ContextCompat.getColor(SwitchLocalSceneListActivity.this, R.color.appcolor));
+                }
                 baseViewHolder.setGone(R.id.editMask, mClickPosition != baseViewHolder.getAdapterPosition());
                 baseViewHolder.setImageResource(R.id.image, mSceneBgs.getResourceId(i, 0));
             }
@@ -589,8 +601,9 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
         String cId = appParams.getString("cId");
         if (key == null || key.length() == 0) {
             // 此手动场景未绑定按键
-            ViseLog.d("新自动场景 = " + GsonUtil.toJson(getNewAutoScene(mBindScene, mKeyCode)));
-            mSceneManager.addScene("chengxunfei", getNewAutoScene(mBindScene, mKeyCode),
+            ItemSceneInGateway scene = getNewAutoScene(mBindScene, mKeyCode);
+            // ViseLog.d("新自动场景 = " + GsonUtil.toJson(scene));
+            mSceneManager.addScene(this, scene,
                     Constant.MSG_QUEST_ADD_SCENE, Constant.MSG_QUEST_ADD_SCENE_ERROR, mAPIDataHandler);
         } else {
             boolean isContains = false;
@@ -607,7 +620,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
             } else {
                 // 此手动场景未绑定此按键
                 ViseLog.d("新自动场景2 = " + GsonUtil.toJson(getNewAutoScene(mBindScene, mKeyCode)));
-                mSceneManager.addScene("chengxunfei", getNewAutoScene(mBindScene, mKeyCode),
+                mSceneManager.addScene(this, getNewAutoScene(mBindScene, mKeyCode),
                         Constant.MSG_QUEST_ADD_SCENE, Constant.MSG_QUEST_ADD_SCENE_ERROR, mAPIDataHandler);
             }
         }
@@ -624,7 +637,8 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
         tmpScene.getSceneDetail().setType("0");
 
         List<ItemScene.Condition> list = new ArrayList<>();
-        list.add(getCondition("03A1", "KeyValue", mKeyCode));
+        ItemScene.Condition condition = getCondition("03A1", "KeyValue", mKeyCode);
+        list.add(condition);
         tmpScene.getSceneDetail().setConditions(list);
         return tmpScene;
     }
@@ -640,6 +654,7 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
         parameter.setParameterName(name);
         parameter.setCompareType("==");
         parameter.setCompareValue(keyCode);
+        ViseLog.d("parameter = " + GsonUtil.toJson(parameter));
 
         condition.setParameters(parameter);
         return condition;

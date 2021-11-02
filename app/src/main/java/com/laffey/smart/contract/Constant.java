@@ -7,11 +7,11 @@ package com.laffey.smart.contract;
  */
 public class Constant {
     // 包名
-    public static String PACKAGE_NAME = "com.laffey.smart";
+    public static String PACKAGE_NAME                                 = "com.laffey.smart";
     // 平台 plantForm
-    public static String PLANT_FORM = "xxxxxx";
+    public static String PLANT_FORM                                   = "xxxxxx";
     // 测试数据开关
-    public static boolean IS_TEST_DATA = false;
+    public static boolean IS_TEST_DATA                                = false;
 
     // 测试环境APPKEY
     //public static final String APPKEY                               = "29162669";
@@ -23,7 +23,7 @@ public class Constant {
     // 本地服务appkey
     public static final String APP_KEY                              = "npRyific";
     public static final String CLIENT_ID                            = "rwN8MmzL";
-    public static final String ACCOUNT_URL                          = "https://192.168.1.102:5443";
+    public static final String ACCOUNT_URL                          = "https://iot.rexense.cn:5443";
 
     // 产品类型
     public static final int PRODUCT_TYPE_LIGHT                      = 0;
@@ -322,6 +322,8 @@ public class Constant {
     public static final int MSG_QUEST_PWD_RESET_ERROR               = 521;
     public static final int MSG_QUEST_GET_AUTH_CODE                 = 522;
     public static final int MSG_QUEST_GET_AUTH_CODE_ERROR           = 523;
+    public static final int MSG_QUEST_PWD_CHANGE                    = 524;
+    public static final int MSG_QUEST_PWD_CHANGE_ERROR              = 525;
 
     // intent resultCode
     public static final int ADD_LOCAL_SCENE                         = 10001;
@@ -460,5 +462,13 @@ public class Constant {
     // 获取AuthCode
     public static final String GET_AUTH_CODE                        = "/caccounts/oauth2/getAuthCode";
     public static final String GET_AUTH_CODE_VER                    = "1.0";
+
+    // token刷新
+    public static final String REFRESH_TOKEN                        = "/caccounts/basic/refreshToken";
+    public static final String REFRESH_TOKEN_VER                    = "1.0";
+
+    // 密码修改
+    public static final String PWD_CHANGE                           = "/caccounts/basic/pwdChange";
+    public static final String PWD_CHANGE_VER                       = "1.0";
 }
 

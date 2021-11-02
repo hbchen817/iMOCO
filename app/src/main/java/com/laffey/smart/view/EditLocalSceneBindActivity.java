@@ -70,13 +70,18 @@ public class EditLocalSceneBindActivity extends BaseActivity {
         mGwMac = getIntent().getStringExtra("gwMac");
         mSceneId = getIntent().getStringExtra("sceneId");
 
-        mScene = DeviceBuffer.getScene(mSceneId);
-        initView();
         initStatusBar();
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        mSceneManager.querySceneList("chengxunfei", mGwMac, "0", Constant.MSG_QUEST_QUERY_SCENE_LIST,
+        mSceneManager.querySceneList(this, mGwMac, "0", Constant.MSG_QUEST_QUERY_SCENE_LIST,
                 Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mMyHandler);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mScene = DeviceBuffer.getScene(mSceneId);
+        initView();
     }
 
     // 嵌入式状态栏
@@ -103,11 +108,16 @@ public class EditLocalSceneBindActivity extends BaseActivity {
     private void initView() {
         String title = getIntent().getStringExtra("title");
         mViewBinding.includeToolbar.tvToolbarTitle.setText(title + "绑定场景");
-        mViewBinding.mSceneContentText.setText(getIntent().getStringExtra("sceneName"));
+        if (mScene != null) {
+            mViewBinding.mSceneContentText.setText(mScene.getSceneDetail().getName());
+        } else {
+            finish();
+        }
 
         mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this::onViewClicked);
         mViewBinding.mSceneContentText.setOnClickListener(this::onViewClicked);
         mViewBinding.unbind.setOnClickListener(this::onViewClicked);
+        mViewBinding.goTv.setOnClickListener(this::onViewClicked);
     }
 
     public static void start(Activity activity, String title, String iotId, String keyCode, String sceneName, String gwId, String gwMac, String sceneId, int requestCode) {
@@ -127,7 +137,8 @@ public class EditLocalSceneBindActivity extends BaseActivity {
         int id = view.getId();
         if (id == R.id.iv_toolbar_left) {
             finish();
-        } else if (id == R.id.mSceneContentText) {
+        } else if (id == R.id.mSceneContentText ||
+                id == R.id.go_tv) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 SwitchLocalSceneListActivity.start(this, mIotId, mGwId, mGwMac, mKeyCode, mSceneId, BIND_SCENE_REQUEST_CODE);
             } else {
@@ -185,7 +196,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
             scene.getAppParams().put("cId", cIdSB.toString());
         }
 
-        mSceneManager.updateScene("chengxunfei", scene, Constant.MSG_QUEST_UPDATE_SCENE,
+        mSceneManager.updateScene(this, scene, Constant.MSG_QUEST_UPDATE_SCENE,
                 Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mMyHandler);
     }
 
@@ -242,7 +253,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                             activity.mSceneManager.manageSceneService(activity.mGwId, sceneId, 2,
                                     activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
                             ItemSceneInGateway gwScene = DeviceBuffer.getSceneByCid(sceneId, activity.mKeyCode);
-                            activity.mSceneManager.deleteScene("chengxunfei", gwScene, Constant.MSG_QUEST_DELETE_SCENE,
+                            activity.mSceneManager.deleteScene(activity, gwScene, Constant.MSG_QUEST_DELETE_SCENE,
                                     Constant.MSG_QUEST_DELETE_SCENE_ERROR, activity.mMyHandler);
                         } else {
                             if (message == null || message.length() == 0) {

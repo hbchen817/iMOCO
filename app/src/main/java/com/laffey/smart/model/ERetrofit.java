@@ -1,10 +1,15 @@
 package com.laffey.smart.model;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.utility.RetrofitService;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.vise.log.ViseLog;
 
 import java.io.InputStream;
@@ -20,9 +25,16 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -52,7 +64,8 @@ public class ERetrofit {
 
     public ERetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://192.168.1.102:6443")
+                //.baseUrl("https://192.168.1.102:5443")
+                .baseUrl(Constant.ACCOUNT_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(getOkHttpClient())
@@ -92,7 +105,9 @@ public class ERetrofit {
         // OkHttp进行添加拦截器loggingInterceptor
         httpClientBuilder.addInterceptor(loggingInterceptor);
         // https证书
-        httpClientBuilder.sslSocketFactory(getSSLContextForCertificate("dssServer.cer").getSocketFactory(), getTrustManager());
+        //httpClientBuilder.sslSocketFactory(getSSLContextForCertificate("dssServer.cer").getSocketFactory(), getTrustManager());
+        // httpClientBuilder.sslSocketFactory(getSSLContextForCertificate("rexiotServer.cer").getSocketFactory(), getTrustManager());
+        httpClientBuilder.sslSocketFactory(getSSLContextForCertificate("new6.cer").getSocketFactory(), getTrustManager());
         httpClientBuilder.hostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
@@ -172,4 +187,38 @@ public class ERetrofit {
         }
         return x509TrustManager;
     }
+
+    // token超时自动获取刷新
+    public static Function<Observable<Throwable>, ObservableSource<?>> retryTokenFun(Context context) {
+        return new Function<Observable<Throwable>, ObservableSource<?>>() {
+            @Override
+            public ObservableSource<?> apply(@io.reactivex.annotations.NonNull Observable<Throwable> throwableObservable) throws Exception {
+                return throwableObservable.flatMap(new Function<Throwable, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+                        if (throwable instanceof HttpException) {
+                            HttpException exception = (HttpException) throwable;
+                            if (exception.code() == 401) {
+                                return RetrofitUtil.getInstance().refreshToken(context)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .unsubscribeOn(Schedulers.io())
+                                        .doOnNext(new Consumer<JSONObject>() {
+                                            @Override
+                                            public void accept(JSONObject jsonObject) throws Exception {
+                                                String accessToken = jsonObject.getString("accessToken");
+                                                String refreshToken = jsonObject.getString("refreshToken");
+                                                SpUtils.putAccessToken(context, accessToken);
+                                                SpUtils.putRefreshToken(context, refreshToken);
+                                            }
+                                        });
+                            } else return Observable.error(throwable);
+                        } else
+                            return Observable.error(throwable);
+                    }
+                });
+            }
+        };
+    }
+
 }

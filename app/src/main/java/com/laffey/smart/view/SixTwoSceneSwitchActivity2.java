@@ -215,7 +215,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         if (Constant.IS_TEST_DATA) {
             iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
         }
-        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+        mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }
 
@@ -719,7 +719,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                             activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
                         }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac, "1",
+                        activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, "1",
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
@@ -794,10 +794,13 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
                     // 查询本地场景列表
                     JSONObject response = (JSONObject) msg.obj;
+                    // ViseLog.d("查询本地场景列表 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     String message = response.getString("message");
                     JSONArray sceneList = response.getJSONArray("sceneList");
                     if (code == 0 || code == 200) {
+                        activity.mSceneContentText2.setText(R.string.no_bind_scene);
+                        activity.mSceneContentText5.setText(R.string.no_bind_scene);
                         if (sceneList != null) {
                             activity.querySceneName(sceneList);
                         }
@@ -823,7 +826,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     // 获取按键绑定场景的名称
     private void querySceneName(JSONArray list) {
-        // ViseLog.d(GsonUtil.toJson(list));
+        ViseLog.d("获取按键绑定场景的名称 = " + list.toJSONString());
         for (int i = 0; i < list.size(); i++) {
             JSONObject object = list.getJSONObject(i);
             ItemSceneInGateway scene = JSONObject.parseObject(object.toJSONString(), ItemSceneInGateway.class);

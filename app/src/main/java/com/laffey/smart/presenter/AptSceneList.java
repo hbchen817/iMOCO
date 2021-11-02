@@ -208,7 +208,7 @@ public class AptSceneList extends BaseAdapter {
                             if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                                 new SceneManager(mContext).deleteScene(mSceneList.get(index).id, null, null, new Myhandler(mContext));
                             }
-                            mDeleteList.remove(position);
+                            // mDeleteList.remove(position);
                             mCallback.onDelItem(mSceneList.get(index).id);
                         }
                     });

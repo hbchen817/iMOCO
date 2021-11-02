@@ -165,7 +165,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
         if (Constant.IS_TEST_DATA) {
             iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
         }
-        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+        mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }
 
@@ -176,7 +176,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
     }
 
     private static class MyResponseErrHandler extends Handler {
-        private WeakReference<ThreeSceneSwitchActivity2> ref;
+        private final WeakReference<ThreeSceneSwitchActivity2> ref;
 
         public MyResponseErrHandler(ThreeSceneSwitchActivity2 activity) {
             ref = new WeakReference<>(activity);
@@ -615,7 +615,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                             activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
                         }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac
+                        activity.mSceneManager.querySceneList(activity, activity.mGatewayMac
                                 , "1",
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST,
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);

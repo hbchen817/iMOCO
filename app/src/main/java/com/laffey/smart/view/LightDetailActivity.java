@@ -192,7 +192,7 @@ public class LightDetailActivity extends DetailActivity {
         if (Constant.IS_TEST_DATA) {
             iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
         }
-        mSceneManager.getGWIotIdBySubIotId("chengxunfei", iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+        mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
     }
 
@@ -320,7 +320,7 @@ public class LightDetailActivity extends DetailActivity {
                             mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
                         }
                         mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
-                        mSceneManager.querySceneList("chengxunfei", mGatewayMac, "1",
+                        mSceneManager.querySceneList(LightDetailActivity.this, mGatewayMac, "1",
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();

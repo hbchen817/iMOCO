@@ -130,6 +130,8 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
         mViewBinding.topBar.includeDetailImgMore.setVisibility(View.GONE);
 
         mViewBinding.topBar.includeDetailImgBack.setOnClickListener(this);
+        mViewBinding.userAgreementTv.setOnClickListener(this);
+        mViewBinding.privacyPolicyTv.setOnClickListener(this);
     }
 
     @Override
@@ -167,6 +169,20 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
             }
         } else if (v.getId() == mViewBinding.topBar.includeDetailImgBack.getId()) {
             finish();
+        } else if (v.getId() == mViewBinding.userAgreementTv.getId()) {
+            // 用户协议
+            if (getString(R.string.app_user_deal_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.USER_PROTOCOL_URL, getString(R.string.aboutus_user_deal));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_user_deal_url), getString(R.string.aboutus_user_deal));
+            }
+        } else if (v.getId() == mViewBinding.privacyPolicyTv.getId()) {
+            // 隐私政策
+            if (getString(R.string.app_privacy_policy_url).length() == 0) {
+                H5Activity.actionStart(this, Constant.PRIVACY_POLICY_URL, getString(R.string.aboutus_privacy_policy));
+            } else {
+                H5Activity.actionStart(this, getString(R.string.app_privacy_policy_url), getString(R.string.aboutus_privacy_policy));
+            }
         }
     }
 

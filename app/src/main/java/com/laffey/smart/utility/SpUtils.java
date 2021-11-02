@@ -143,7 +143,7 @@ public class SpUtils {
     // 获取accessToken
     public static String getAccessToken(Context context) {
         SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
-        return sp.getString("user_access_token", "");
+        return sp.getString("user_access_token", "chengxunfei");
     }
 
     // 保存refreshToken

@@ -301,12 +301,12 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             JSONObject command1 = new JSONObject();
             command1.put("WorkMode", "");
             mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "01EF", command1));
+                    "1", "011F", command1));
             // 工作模式
             JSONObject command2 = new JSONObject();
             command2.put("WorkMode", "");
             mList.add(initStateEAction(mDevIot, getString(R.string.work_mode), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "01EF", command2));
+                    "1", "011F", command2));
             // 风速
             JSONObject command3 = new JSONObject();
             command3.put("FanMode", "");
@@ -325,7 +325,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             JSONObject command1 = new JSONObject();
             command1.put("WorkMode", "");
             mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "01EF", command1));
+                    "1", "011F", command1));
             // 目标温度
             JSONObject command2 = new JSONObject();
             command2.put("Temperature", "");
@@ -337,7 +337,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             JSONObject command1 = new JSONObject();
             command1.put("FanMode", "");
             mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "01EF", command1));
+                    "1", "011F", command1));
             // 风速
             JSONObject command2 = new JSONObject();
             command2.put("FanMode", "");
@@ -384,13 +384,13 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         JSONObject command2 = new JSONObject();
         command2.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command2));
+                "1", "011F", command2));
 
         // 电源开关 - 新风
         JSONObject command3 = new JSONObject();
         command3.put("FanMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "2", "01EF", command3));
+                "2", "011F", command3));
 
         // 目标温度 - 地暖
         JSONObject command8 = new JSONObject();
@@ -412,13 +412,13 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         JSONObject command1 = new JSONObject();
         command1.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command1));
+                "1", "011F", command1));
 
         // 电源开关 - 新风
         JSONObject command3 = new JSONObject();
         command3.put("FanMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "2", "01EF", command3));
+                "2", "011F", command3));
 
         // 目标温度 - 空调
         JSONObject command7 = new JSONObject();
@@ -443,7 +443,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         JSONObject command4 = new JSONObject();
         command4.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.work_mode_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command4));
+                "1", "011F", command4));
     }
 
     // 空调+地暖二合一温控器
@@ -452,19 +452,19 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         JSONObject command1 = new JSONObject();
         command1.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command1));
+                "1", "011F", command1));
 
         // 电源开关 - 地暖
         JSONObject command2 = new JSONObject();
         command2.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "2", "01EF", command2));
+                "2", "011F", command2));
 
         // 工作模式 - 空调
         JSONObject command4 = new JSONObject();
         command4.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.work_mode_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command4));
+                "1", "011F", command4));
 
         // 风速 - 空调
         JSONObject command5 = new JSONObject();
@@ -493,25 +493,25 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         JSONObject command1 = new JSONObject();
         command1.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command1));
+                "1", "011F", command1));
 
         // 电源开关 - 地暖
         JSONObject command2 = new JSONObject();
         command2.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_floorheat), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "2", "01EF", command2));
+                "2", "011F", command2));
 
         // 电源开关 - 新风
         JSONObject command3 = new JSONObject();
         command3.put("FanMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.power_switch_freshair), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "3", "01EF", command3));
+                "3", "011F", command3));
 
         // 工作模式 - 空调
         JSONObject command4 = new JSONObject();
         command4.put("WorkMode", "");
         mList.add(initStateEAction(mDevIot, getString(R.string.work_mode_airconditioner), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "01EF", command4));
+                "1", "011F", command4));
 
         // 风速 - 空调
         JSONObject command5 = new JSONObject();

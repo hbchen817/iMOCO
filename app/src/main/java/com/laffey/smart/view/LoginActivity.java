@@ -46,12 +46,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private static final String TEL_NUM = "tel_num";
 
-    private Typeface mIconFont;
     private String mTelNum;
 
     private final List<String> mUserNameList = new ArrayList<>();
-    private BaseQuickAdapter<String, BaseViewHolder> mUserNameAdapter;
     private MyHandler mHandler;
+    /**
+     * 第一次按返回键的时间, 默认为0
+     */
+    private long mFirstPressTime = 0;
 
     public static void start(Context context, String telNum) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -71,12 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initRecyclerView() {
-        /*JSONObject o = new JSONObject();
-        o.put("17858421203", "");
-        o.put("17858421204", "");
-        o.put("17858421205", "");
-        SpUtils.putUserName(this, o.toJSONString());*/
-
         JSONObject resutObject = JSONObject.parseObject(SpUtils.getUserName(this));
         if (resutObject != null) {
             for (Map.Entry<String, Object> entry : resutObject.entrySet()) {
@@ -84,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
-        mUserNameAdapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_user_name, mUserNameList) {
+        BaseQuickAdapter<String, BaseViewHolder> mUserNameAdapter = new BaseQuickAdapter<String, BaseViewHolder>(R.layout.item_user_name, mUserNameList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, String s) {
                 String result = s.substring(0, 3) + "****" + s.substring(7, s.length());
@@ -107,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
-        mIconFont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        Typeface mIconFont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mViewBinding.userNameIc.setTypeface(mIconFont);
         mViewBinding.userPwdIc.setTypeface(mIconFont);
         mViewBinding.userNameClearIc.setTypeface(mIconFont);
@@ -138,6 +134,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mViewBinding.userNameEt.setText(mTelNum);
             ToastUtils.showLongToast(this, R.string.regist_success);
         }
+        ViseLog.d("onNewIntent");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mViewBinding.pwdEt.setText("");
     }
 
     private final TextWatcher mUserNameTW = new TextWatcher() {
@@ -213,10 +216,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             mViewBinding.pwdEt.setSelection(mViewBinding.pwdEt.getText().toString().length());
         } else if (v.getId() == mViewBinding.freeRegistTv.getId()) {
-            // 免费注册 01：注册02：短信登录03：密码找回
+            // 免费注册 01：注册02：短信登录03：密码找回 04: 修改密码
             VerifyCodeActivity.start(this, "01");
         } else if (v.getId() == mViewBinding.forgetPwdTv.getId()) {
-            // 忘记密码 01：注册02：短信登录03：密码找回
+            // 忘记密码 01：注册02：短信登录03：密码找回 04: 修改密码
             VerifyCodeActivity.start(this, "03");
         } else if (v.getId() == mViewBinding.loginBtn.getId()) {
             // 登录
@@ -255,7 +258,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 case Constant.MSG_QUEST_GET_AUTH_CODE: {
                     // 获取AuthCode
                     JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("获取AuthCode = " + response.toJSONString());
+                    // ViseLog.d("获取AuthCode = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
                         // 登录成功 authCode
@@ -264,15 +267,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         LoginBusiness.authCodeLogin(authCode, new ILoginCallback() {
                             @Override
                             public void onLoginSuccess() {
+                                QMUITipDialogUtil.dismiss();
                                 ToastUtils.showLongToast(activity, "登录成功");
 
-                                JSONObject userName = JSONObject.parseObject(SpUtils.getUserName(activity));
-                                SpUtils.putUserName(activity, userName.toJSONString());
+                                try {
+                                    JSONObject userName = JSONObject.parseObject(SpUtils.getUserName(activity));
+                                    if (userName == null)
+                                        userName = new JSONObject();
+                                    userName.put(activity.mViewBinding.userNameEt.getText().toString(), "");
+                                    SpUtils.putUserName(activity, userName.toJSONString());
+                                } catch (Exception e) {
+                                    ViseLog.e(e);
+                                }
+
+                                Intent intent = new Intent(activity, IndexActivity.class);
+                                activity.startActivity(intent);
                             }
 
                             @Override
                             public void onLoginFailed(int i, String s) {
-                                ViseLog.e("登录失败 = " + s);
                                 ToastUtils.showLongToast(activity, s);
                             }
                         });
@@ -296,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 case Constant.MSG_QUEST_AUTH_ACCOUNTS_PWD: {
                     // 帐号密码认证、登录
                     JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
+                    // ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
                         // 登录成功
@@ -330,11 +343,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // 帐号密码认证、登录失败
                     QMUITipDialogUtil.dismiss();
                     Throwable e = (Throwable) msg.obj;
-                    ViseLog.e(e.getMessage());
+                    ViseLog.e(e.toString());
                     ToastUtils.showLongToast(activity, e.getMessage());
                     break;
                 }
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        Intent intent= new Intent(Intent.ACTION_MAIN);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addCategory(Intent.CATEGORY_HOME);
+//        startActivity(intent);
+        // 第二次按返回键的时间, 为当前系统时间
+        long secondPressTime = System.currentTimeMillis();
+
+        // 设置一个为时2秒的间隔时间
+        long intervalTime = 2000;
+
+        if (secondPressTime - mFirstPressTime <= intervalTime) {
+            // 如果两次点按返回键的间隔时间小于2秒, 直接退出程序
+            finish();
+            System.exit(0);
+        } else {
+            // 如果两次点按返回键的间隔时间不小于2秒, 弹吐司提示用户
+            ToastUtils.showToastCentrally(this, getString(R.string.press_again_to_exit));
+
+            // 将第一次点按返回键的时间置为系统的当前时间
+            mFirstPressTime = System.currentTimeMillis();
         }
     }
 }

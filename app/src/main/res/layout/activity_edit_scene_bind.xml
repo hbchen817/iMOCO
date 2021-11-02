@@ -15,7 +15,7 @@
         android:layout_marginHorizontal="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/key_status_background"
-        android:paddingHorizontal="@dimen/dp_20">
+        android:paddingLeft="@dimen/dp_20">
 
         <TextView
             android:layout_width="0dp"
@@ -34,10 +34,12 @@
             android:textColor="#565353" />
 
         <TextView
+            android:id="@+id/go_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingVertical="@dimen/dp_20"
             android:text="@string/small_small"
+            android:paddingRight="@dimen/dp_20"
             android:textColor="#565353" />
 
     </LinearLayout>

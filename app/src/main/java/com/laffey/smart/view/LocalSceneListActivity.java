@@ -100,7 +100,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
         if (Constant.IS_TEST_DATA) {
             mGatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
         }
-        mSceneManager.queryMacByIotId("chengxunfei", mGatewayId, Constant.MSG_QUEST_QUERY_MAC_BY_IOT_ID,
+        mSceneManager.queryMacByIotId(this, mGatewayId, Constant.MSG_QUEST_QUERY_MAC_BY_IOT_ID,
                 Constant.MSG_QUEST_QUERY_MAC_BY_IOT_ID_ERROR, mHandler);
     }
 
@@ -129,7 +129,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                             if ("0".equals(status)) {
                                 // type  1: 增加场景  2: 编辑场景  3: 删除场景
                                 if ("3".equals(type)) {
-                                    activity.mSceneManager.deleteScene("chengxunfei", activity.mList.get(activity.mDeletePos),
+                                    activity.mSceneManager.deleteScene(activity, activity.mList.get(activity.mDeletePos),
                                             Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, activity.mHandler);
                                 }
                             } else {
@@ -203,7 +203,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                             if ("0".equals(activity.mSceneType)) {
                                 activity.mSceneType = "1";
                                 // querySceneList("chengxunfei", mGatewayMac, mSceneType);
-                                activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType,
+                                activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, activity.mSceneType,
                                         Constant.MSG_QUEST_QUERY_SCENE_LIST,
                                         Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mHandler);
                             } else if ("1".equals(activity.mSceneType)) {
@@ -246,7 +246,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                             // ViseLog.d("mGatewayMac = " + activity.mGatewayMac);
                             // activity.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType);
                             activity.mSceneType = "0";
-                            activity.mSceneManager.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType, Constant.MSG_QUEST_QUERY_SCENE_LIST,
+                            activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, activity.mSceneType, Constant.MSG_QUEST_QUERY_SCENE_LIST,
                                     Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mHandler);
                         } else {
                             if (message != null && message.length() > 0) {
@@ -267,8 +267,8 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                         QMUITipDialogUtil.dismiss();
                         ViseLog.e(e);
                         activity.mSceneType = "0";
-                        ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        activity.mViewBinding.nodataTv.setText(R.string.pls_try_again_later);
+                        ToastUtils.showLongToast(activity, e.getMessage());
+                        activity.mViewBinding.nodataTv.setText(e.getMessage());
                         break;
                     }
                 }
@@ -290,10 +290,15 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mSceneType = "0";
                 mList.clear();
-                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                mSceneManager.querySceneList(LocalSceneListActivity.this, mGatewayMac, mSceneType,
                         Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         RealtimeDataReceiver.addEventCallbackHandler("LocalSceneListCallback", mHandler);
     }
 
@@ -354,6 +359,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
             finish();
         } else if (v.getId() == mViewBinding.createSceneTv.getId()) {
             // ViseLog.d("跳转 mGatewayId = " + mGatewayId + " , mGatewayMac = " + mGatewayMac);
+            // EventBus.getDefault().postSticky(null);
             LocalSceneActivity.start(this, mGatewayId, mGatewayMac, SCENE_LIST_REQUEST_CODE);
         }
     }
@@ -367,21 +373,21 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                 mSceneType = "0";
                 ToastUtils.showLongToast(this, R.string.scenario_created_successfully);
                 mList.clear();
-                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                mSceneManager.querySceneList(this, mGatewayMac, mSceneType,
                         Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
             } else if (resultCode == Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY) {
                 // 删除场景
                 ToastUtils.showLongToast(mActivity, R.string.scene_delete_successfully);
                 mSceneType = "0";
                 mList.clear();
-                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                mSceneManager.querySceneList(this, mGatewayMac, mSceneType,
                         Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
             } else if (resultCode == Constant.RESULT_CODE_UPDATE_SCENE) {
                 // 编辑场景
                 mSceneType = "0";
                 ToastUtils.showLongToast(this, R.string.scene_updated_successfully);
                 mList.clear();
-                mSceneManager.querySceneList("chengxunfei", mGatewayMac, mSceneType,
+                mSceneManager.querySceneList(this, mGatewayMac, mSceneType,
                         Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mHandler);
             }
         }
@@ -417,7 +423,7 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
             public void onClick(View v) {
                 dialog.dismiss();
                 if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene("chengxunfei", scene,
+                    mSceneManager.deleteScene(LocalSceneListActivity.this, scene,
                             Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
                 } else {
                     mSceneManager.manageSceneService(mGatewayId, scene.getSceneDetail().getSceneId(), 3,
@@ -436,8 +442,13 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("LocalSceneListCallback");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        RealtimeDataReceiver.deleteCallbackHandler("LocalSceneListCallback");
     }
 }

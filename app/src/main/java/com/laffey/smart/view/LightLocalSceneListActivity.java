@@ -106,7 +106,7 @@ public class LightLocalSceneListActivity extends BaseActivity {
     }
 
     private void getList() {
-        mSceneManager.querySceneList("chengxunfei", mGwMac, "1",
+        mSceneManager.querySceneList(this, mGwMac, "1",
                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
     }
 

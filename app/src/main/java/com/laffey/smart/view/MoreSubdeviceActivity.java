@@ -35,6 +35,7 @@ import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.HomeSpaceManager;
+import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
@@ -68,15 +69,48 @@ public class MoreSubdeviceActivity extends BaseActivity {
     private String mSceneType;
 
     private final List<ItemSceneInGateway> mSceneList = new ArrayList<>();
+    private String mGwId;
 
     // API数据处理器
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID: {
+                    // 根据子设备iotId查询网关iotId
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    mGwId = response.getString("gwIotId");
+                    if (code == 200) {
+                        SceneManager.manageSceneService(mGwId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        String message = response.getString("message");
+                        String localizedMsg = response.getString("localizedMsg");
+                        String errorMess = response.getString("errorMess");
+                        if (message != null && message.length() > 0) {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
+                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, localizedMsg);
+                        } else if (errorMess != null && errorMess.length() > 0) {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, errorMess);
+                        } else {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
+                    // 根据子设备iotId查询网关iotId失败
+                    Throwable e = (Throwable) msg.obj;
+                    ViseLog.e(e.getMessage());
+                    ToastUtils.showLongToast(MoreSubdeviceActivity.this, e.getMessage());
+                    break;
+                }
                 case Constant.MSG_QUEST_DELETE_SCENE: {
                     // 删除本地场景
                     JSONObject response = (JSONObject) msg.obj;
+                    ViseLog.d("云端删除场景 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     String message = response.getString("message");
                     if (code == 200) {
@@ -90,12 +124,13 @@ public class MoreSubdeviceActivity extends BaseActivity {
                                     break;
                                 }
                             }
+                            ViseLog.d("mSceneList.size = " + mSceneList.size());
                             if (mSceneList.size() > 0) {
                                 if (Constant.IS_TEST_DATA) {
-                                    mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                    mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
                                             Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
                                 } else {
-                                    SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                                    SceneManager.manageSceneService(mGwId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
                                             mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 }
                             } else {
@@ -133,7 +168,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
                         if ("0".equals(status)) {
                             // type  1: 增加场景  2: 编辑场景  3: 删除场景
                             if ("3".equals(type)) {
-                                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                                ViseLog.d("网关删除场景成功 = " + mSceneList.get(0).getSceneDetail().getSceneId());
+                                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
                                         Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
                             }
                         } else {
@@ -459,8 +495,9 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mHomeSpaceManager.getHomeRoomList(SystemParameter.getInstance().getHomeId(), 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         mSceneManager = new SceneManager(this);
         mUserCenter = new UserCenter(this);
-    }
 
+        RealtimeDataReceiver.addEventCallbackHandler("MoreSubDevSceneListCallback", mAPIDataHandler);
+    }
 
     private void unbindDevice() {
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
@@ -470,10 +507,12 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mSceneList.addAll(DeviceBuffer.getScenesBySwitchIotId(mIOTId));
         if (mSceneList.size() > 0) {
             if (Constant.IS_TEST_DATA) {
-                mSceneManager.deleteScene("chengxunfei", mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
+                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
                         Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
             } else {
-                SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                mSceneManager.getGWIotIdBySubIotId(this, mIOTId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
+                        Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
+                // SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
             }
         } else {
             EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
@@ -493,5 +532,11 @@ public class MoreSubdeviceActivity extends BaseActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("MoreSubDevSceneListCallback");
     }
 }
