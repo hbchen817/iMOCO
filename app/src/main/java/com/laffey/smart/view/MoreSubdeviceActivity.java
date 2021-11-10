@@ -82,7 +82,19 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     int code = response.getInteger("code");
                     mGwId = response.getString("gwIotId");
                     if (code == 200) {
-                        SceneManager.manageSceneService(mGwId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        EDevice.deviceEntry gwDev = DeviceBuffer.getDeviceInformation(mGwId);
+                        if (gwDev.status == Constant.CONNECTION_STATUS_OFFLINE) {
+                            EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                            if (deviceEntry != null) {
+                                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            } else {
+                                ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                            }
+                        } else {
+                            SceneManager.manageSceneService(mGwId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        }
                     } else {
                         QMUITipDialogUtil.dismiss();
                         String message = response.getString("message");

@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.vise.log.ViseLog;
 
-public class AirConditionerForMultiDevActivity extends DetailActivity {
+public class AirConditionerActivity extends DetailActivity {
     private ActivityAirConditionerForFullScreenBinding mViewBinding;
 
     private int mTargetTem = 20;
@@ -33,6 +34,7 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
         if (propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
             return false;
         }
+        ViseLog.d(GsonUtil.toJson(propertyEntry));
         // 室温
         if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner).length() > 0) {
@@ -170,13 +172,6 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.air_conditioner);
-        mViewBinding.includeToolbar.includeDetailImgBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 
     // 嵌入式状态栏
@@ -187,7 +182,10 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
             getWindow().setStatusBarColor(getColor(R.color.appcolor));
         }
 
-        mViewBinding.includeToolbar.includeDetailImgMore.setVisibility(View.GONE);
+        mViewBinding.includeToolbar.includeDetailLblTitle.setText(mName);
+        mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.air_conditioner);
+        mViewBinding.includeToolbar.includeDetailImgBack.setOnClickListener(this::onViewClicked);
+        mViewBinding.includeToolbar.includeDetailImgMore.setOnClickListener(this::onViewClicked);
     }
 
     protected void onViewClicked(View view) {
@@ -212,7 +210,7 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
         } else if (id == R.id.add_tv) {
             // 加
             if (mViewBinding.addTv.getCurrentTextColor() == getResources().getColor(R.color.white)) {
-                if (mTargetTem < 32) {
+                if (mTargetTem < 30) {
                     mTargetTem++;
                 }
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_AirConditioner}, new String[]{"" + mTargetTem});
@@ -258,8 +256,19 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
         } else if (id == R.id.timing_layout) {
             // 定时
             if (mViewBinding.switchIc.getCurrentTextColor() == getResources().getColor(R.color.index_imgcolor)) {
-                PluginHelper.cloudTimer(AirConditionerForMultiDevActivity.this, mIOTId, mProductKey);
+                //PluginHelper.cloudTimer(AirConditionerActivity.this, mIOTId, mProductKey);
+                TimerLocalSceneListActivity.start(this, mIOTId);
             }
+        } else if (id == mViewBinding.includeToolbar.includeDetailImgBack.getId()) {
+            finish();
+        } else if (id == mViewBinding.includeToolbar.includeDetailImgMore.getId()) {
+            Intent intent;
+            intent = new Intent(this, MoreSubdeviceActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", mProductKey);
+            intent.putExtra("name", mName);
+            intent.putExtra("owned", mOwned);
+            startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
         }
     }
 
@@ -305,6 +314,17 @@ public class AirConditionerForMultiDevActivity extends DetailActivity {
                 mViewBinding.targetTemShowTv.setTextColor(white);
                 mViewBinding.targetTemTv.setTextColor(white);
                 break;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUESTCODE_CALLMOREACTIVITY) {
+            if (resultCode == Constant.RESULTCODE_CALLMOREACTIVITYUNBIND) {
+                // 执行了解绑则直接退出
+                finish();
             }
         }
     }

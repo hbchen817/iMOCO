@@ -711,7 +711,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     // 根据子设备iotId查询网关iotId
                     JSONObject response = (JSONObject) msg.obj;
                     int code = response.getInteger("code");
-                    String message = response.getString("message");
                     String gwId = response.getString("gwIotId");
                     if (code == 200) {
                         activity.mGatewayId = gwId;
@@ -719,14 +718,10 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                             activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
                         }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, "1",
-                                Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);
+                        activity.querySceneName();
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }
@@ -769,13 +764,15 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 }
                 case TAG_GET_EXTENDED_PRO: {
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    activity.mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
-                    activity.mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
-                    activity.mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
-                    activity.mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
-                    activity.mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
-                    activity.mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
-                    DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    if (object.toJSONString().length() > 2) {
+                        activity.mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
+                        activity.mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
+                        activity.mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
+                        activity.mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
+                        activity.mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
+                        activity.mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
+                        DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
+                    }
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
@@ -791,33 +788,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
-                    // 查询本地场景列表
-                    JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("查询本地场景列表 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    String message = response.getString("message");
-                    JSONArray sceneList = response.getJSONArray("sceneList");
-                    if (code == 0 || code == 200) {
-                        activity.mSceneContentText2.setText(R.string.no_bind_scene);
-                        activity.mSceneContentText5.setText(R.string.no_bind_scene);
-                        if (sceneList != null) {
-                            activity.querySceneName(sceneList);
-                        }
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
-                    // 查询本地场景列表错误
-                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    break;
-                }
                 default:
                     break;
             }
@@ -826,7 +796,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
     // 获取按键绑定场景的名称
     private void querySceneName(JSONArray list) {
-        ViseLog.d("获取按键绑定场景的名称 = " + list.toJSONString());
         for (int i = 0; i < list.size(); i++) {
             JSONObject object = list.getJSONObject(i);
             ItemSceneInGateway scene = JSONObject.parseObject(object.toJSONString(), ItemSceneInGateway.class);
@@ -838,11 +807,41 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             } else if (!switchIotId.contains(mIOTId)) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
-            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_5)) {
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_5) && "1".equals(scene.getSceneDetail().getType())) {
                 mSceneContentText2.setText(scene.getSceneDetail().getName());
                 m5Scene = scene;
             }
-            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_6)) {
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_6) && "1".equals(scene.getSceneDetail().getType())) {
+                mSceneContentText5.setText(scene.getSceneDetail().getName());
+                m6Scene = scene;
+            }
+        }
+    }
+
+    private void initSceneView() {
+        mSceneContentText2.setText(R.string.no_bind_scene);
+        mSceneContentText5.setText(R.string.no_bind_scene);
+        m5Scene = null;
+        m6Scene = null;
+    }
+
+    // 获取按键绑定场景的名称
+    private void querySceneName() {
+        mSceneContentText2.setText(R.string.no_bind_scene);
+        mSceneContentText5.setText(R.string.no_bind_scene);
+        for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
+            if (scene.getAppParams() == null) continue;
+            String switchIotId = scene.getAppParams().getString("switchIotId");
+            if (switchIotId == null || switchIotId.length() == 0) {
+                continue;
+            } else if (!switchIotId.contains(mIOTId)) continue;
+            String key = scene.getAppParams().getString("key");
+            if (key == null) continue;
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_5) && "1".equals(scene.getSceneDetail().getType())) {
+                mSceneContentText2.setText(scene.getSceneDetail().getName());
+                m5Scene = scene;
+            }
+            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_6) && "1".equals(scene.getSceneDetail().getType())) {
                 mSceneContentText5.setText(scene.getSceneDetail().getName());
                 m6Scene = scene;
             }
@@ -879,7 +878,11 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @Override
     protected void onResume() {
         super.onResume();
-        getGatewayId(mIOTId);
+        if (mGatewayMac == null || mGatewayMac.length() == 0)
+            getGatewayId(mIOTId);
+        else {
+            querySceneName();
+        }
     }
 
     @Override
@@ -887,10 +890,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_LOCAL_SCENE) {
             if (resultCode == 2) {
-                mSceneContentText2.setText(R.string.no_bind_scene);
-                mSceneContentText5.setText(R.string.no_bind_scene);
-                m5Scene = null;
-                m6Scene = null;
+                initSceneView();
                 ToastUtils.showLongToast(this, R.string.unbind_scene_success);
             }
         } else if (requestCode == BIND_SCENE_REQUEST_CODE) {

@@ -380,6 +380,7 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    if (object.toJSONString().length() == 2) break;
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
                     activity.mStateName1.setText(object.getString(CTSL.TWS_P3_PowerSwitch_1));
                     activity.mStateName2.setText(object.getString(CTSL.TWS_P3_PowerSwitch_2));

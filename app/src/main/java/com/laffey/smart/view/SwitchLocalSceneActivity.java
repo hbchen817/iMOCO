@@ -49,6 +49,7 @@ import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vise.log.ViseLog;
 
@@ -1062,16 +1063,18 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                         JSONObject response = (JSONObject) msg.obj;
                         int code = response.getInteger("code");
                         String message = response.getString("message");
-                        boolean result = response.getBoolean("result");
                         if (code == 200) {
+                            boolean result = response.getBoolean("result");
                             if (result) {
                                 String sceneId = response.getString("sceneId");
                                 if (activity.mSceneId != null && activity.mSceneId.equals(sceneId)) {
                                     DeviceBuffer.removeScene(activity.mSceneId);
+                                    ViseLog.d("删除手动场景id = " + activity.mSceneId);
                                     if (activity.mAutoSceneId != null && activity.mAutoSceneId.length() > 0)
-                                        activity.mSceneManager.manageSceneService(activity.mGatewayId, activity.mAutoSceneId, 3,
+                                        SceneManager.manageSceneService(activity.mGatewayId, activity.mAutoSceneId, 3,
                                                 activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
                                 } else if (activity.mAutoSceneId != null && activity.mAutoSceneId.equals(sceneId)) {
+                                    ViseLog.d("删除自动场景id = " + activity.mAutoSceneId);
                                     DeviceBuffer.removeScene(activity.mAutoSceneId);
                                     QMUITipDialogUtil.dismiss();
                                     RefreshData.refreshHomeSceneListData();
@@ -1109,9 +1112,8 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                         if (code == 200) {
                             boolean result = response.getBoolean("result");
                             if (result) {
-                                if (!Constant.IS_TEST_DATA)
-                                    activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 2,
-                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                SceneManager.manageSceneService(activity.mGatewayId, sceneId, 2,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
                                 if (activity.mAutoScenes == null || activity.mAutoScenes.size() == 0) {
                                     QMUITipDialogUtil.dismiss();
                                     // RefreshData.refreshHomeSceneListData();
@@ -1176,9 +1178,8 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                             boolean result = response.getBoolean("result");
                             if (result) {
                                 QMUITipDialogUtil.dismiss();
-                                if (!Constant.IS_TEST_DATA)
-                                    activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 1,
-                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                SceneManager.manageSceneService(activity.mGatewayId, sceneId, 1,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
                                 // RefreshData.refreshHomeSceneListData();
                                 activity.setResult(Constant.ADD_LOCAL_SCENE);
                                 activity.finish();
@@ -1202,7 +1203,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
     }
 
     private void showConfirmDialog(String title, String content, String cancel, String ok, String sceneId) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
+        /*View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
         AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
 
         TextView titleTV = (TextView) view.findViewById(R.id.title_tv);
@@ -1235,7 +1236,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                     mSceneManager.deleteScene(SwitchLocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE,
                             Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
                 } else {
-                    mSceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
                 }
             }
         });
@@ -1246,7 +1247,20 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
 
         dialog.show();
         window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shape_white_solid));
-        window.setLayout(width - 150, height / 5);
+        window.setLayout(width - 150, height / 5);*/
+
+        DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                QMUITipDialogUtil.showLoadingDialg(SwitchLocalSceneActivity.this, R.string.is_submitted);
+                if (Constant.IS_TEST_DATA) {
+                    mSceneManager.deleteScene(SwitchLocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE,
+                            Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
+                } else {
+                    SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                }
+            }
+        }, content, title);
     }
 
     // 提交场景

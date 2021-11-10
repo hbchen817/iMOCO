@@ -5,17 +5,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.component.router.Router;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.sdk.Account;
 import com.laffey.smart.utility.AppUtils;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.SpUtils;
+import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -38,6 +48,7 @@ public class IndexFragment3 extends BaseFragment {
     ImageView headImg;
 
     private Intent mIntent;
+    private MyHandler mHandler;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -62,6 +73,11 @@ public class IndexFragment3 extends BaseFragment {
         tvToolbarTitle.setText(getString(R.string.rb_tab_three_desc));
         ivToolbarLeft.setVisibility(View.GONE);
         userAccount.setText(Account.getUserPhone());
+
+        mHandler = new MyHandler(this);
+        QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
+        AccountManager.getCaccountsInfo(mActivity, Constant.MSG_QUEST_GET_CACCOUNTS_INFO,
+                Constant.MSG_QUEST_GET_CACCOUNTS_INFO_ERROR, mHandler);
     }
 
     // 点击事件处理
@@ -93,6 +109,57 @@ public class IndexFragment3 extends BaseFragment {
         } else if (id == R.id.aboutus_view) {
             mIntent = new Intent(mActivity, AboutUsActivity.class);
             startActivity(mIntent);
+        }
+    }
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<IndexFragment3> ref;
+
+        public MyHandler(IndexFragment3 fragment) {
+            ref = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            IndexFragment3 fragment = ref.get();
+            if (fragment == null) return;
+            switch (msg.what) {
+                case Constant.MSG_QUEST_GET_CACCOUNTS_INFO: {
+                    // 查询用户信息
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    ViseLog.d("查询用户信息 = " + response.toJSONString());
+                    if (code == 200) {
+                        QMUITipDialogUtil.dismiss();
+
+                        fragment.userAccount.setText(response.getString("accounts"));
+                        SpUtils.putCaccountsInfo(fragment.mActivity, response.toJSONString());
+                    } else {
+                        String message = response.getString("message");
+                        String localizedMsg = response.getString("localizedMsg");
+                        String errorMess = response.getString("errorMess");
+                        if (message != null && message.length() > 0) {
+                            ToastUtils.showLongToast(fragment.mActivity, message);
+                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
+                            ToastUtils.showLongToast(fragment.mActivity, localizedMsg);
+                        } else if (errorMess != null && errorMess.length() > 0) {
+                            ToastUtils.showLongToast(fragment.mActivity, errorMess);
+                        } else {
+                            ToastUtils.showLongToast(fragment.mActivity, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_GET_CACCOUNTS_INFO_ERROR: {
+                    // 查询用户信息失败
+                    QMUITipDialogUtil.dismiss();
+                    Throwable e = (Throwable) msg.obj;
+                    ViseLog.e(e);
+                    ToastUtils.showLongToast(fragment.mActivity, e.getMessage());
+                    break;
+                }
+            }
         }
     }
 }

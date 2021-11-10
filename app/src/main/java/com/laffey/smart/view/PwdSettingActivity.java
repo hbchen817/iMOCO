@@ -22,6 +22,7 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityPwdSettingBinding;
 import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -219,24 +220,12 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
                 case Constant.MSG_QUEST_PWD_RESET: {
                     // 密码重置
                     JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("密码重置 = " + response.toJSONString());
+                    // ViseLog.d("密码重置 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
-                        ViseLog.d("activity.mTelNum = " + activity.mTelNum);
                         LoginActivity.start(activity, activity.mTelNum);
                     } else {
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }
@@ -246,21 +235,9 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
                     ViseLog.d("帐号注册 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
-                        ViseLog.d("activity.mTelNum = " + activity.mTelNum);
                         LoginActivity.start(activity, activity.mTelNum);
                     } else {
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }

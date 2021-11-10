@@ -40,6 +40,8 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import com.alibaba.fastjson.JSONObject;
@@ -137,11 +139,41 @@ public class AssociatedBindListActivity extends BaseActivity {
         initData();
 
         mTSLHelper = new TSLHelper(this);
-        // 添加实时数据属性回调处理器
-        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
-        queryBindingTable();
 
-        new SceneManager(this).getExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, GET_EXTEND_INFO, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        // new SceneManager(this).getExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, GET_EXTEND_INFO, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        new SceneManager(this).getGWIotIdBySubIotId(this, mIotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID, Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR,
+                new Handler(new Handler.Callback() {
+                    @Override
+                    public boolean handleMessage(Message msg) {
+                        switch (msg.what) {
+                            case Constant.MSG_QUEST_GW_ID_BY_SUB_ID: {
+                                // 网关id
+                                // 根据子设备iotId查询网关iotId
+                                JSONObject response = (JSONObject) msg.obj;
+                                int code = response.getInteger("code");
+                                if (code == 200) {
+                                    mGatewayId = response.getString("gwIotId");
+                                    queryBindingTable();
+                                } else {
+                                    QMUITipDialogUtil.dismiss();
+                                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                                }
+                                break;
+                            }
+                            case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
+                                // 网关id失败
+                                QMUITipDialogUtil.dismiss();
+                                Throwable e = (Throwable) msg.obj;
+                                ViseLog.e(e);
+                                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage());
+                                break;
+                            }
+                        }
+                        return false;
+                    }
+                }));
 
         initAdapter();
     }
@@ -192,7 +224,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                     EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
                     SelectAssociatedKeyActivity.start(AssociatedBindListActivity.this, entry.productKey, mIotId, DeviceBuffer.getDeviceInformation(mIotId).mac,
                             entry.iotId, Integer.parseInt(item.getDstEndpointId()) - 1, mKeyValue, mProductKey,
-                            Integer.parseInt(mList.get(position).getDstEndpointId()) - 1);
+                            mGatewayId, Integer.parseInt(mList.get(position).getDstEndpointId()) - 1);
                 }
             }
         });
@@ -214,7 +246,8 @@ public class AssociatedBindListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        // 添加实时数据属性回调处理器
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mHandler);
     }
 
     @Override
@@ -234,7 +267,6 @@ public class AssociatedBindListActivity extends BaseActivity {
 
     // 查询绑定列表
     private void queryBindingTable() {
-        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mTSLHelper.setProperty(mIotId, mProductKey, new String[]{mActionMap.get(String.valueOf(mKeyValue)), CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
                 new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
     }
@@ -310,7 +342,7 @@ public class AssociatedBindListActivity extends BaseActivity {
                     case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
                         // 处理属性通知回调
                         ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
-                        // ViseLog.d("双控 = " + GsonUtil.toJson(propertyEntry));
+                        ViseLog.d("双控 = " + GsonUtil.toJson(propertyEntry) + "\n" + DeviceBuffer.getDeviceInformation(activity.mIotId).mac);
                         if (propertyEntry == null) break;
                         if ("U".equals(propertyEntry.getPropertyValue("ResponseType")) &&
                                 "0".equals(propertyEntry.getPropertyValue("Result"))) {
@@ -347,9 +379,9 @@ public class AssociatedBindListActivity extends BaseActivity {
 
     private void refreshBindingTable(JSONArray array) {
         for (int i = 0; i < array.size(); i++) {
-            ViseLog.d("双控 = " + GsonUtil.toJson(array.get(i)));
+            // ViseLog.d("双控 = " + GsonUtil.toJson(array.get(i)));
             ItemBinding item = JSONObject.parseObject(GsonUtil.toJson(array.get(i)), ItemBinding.class);
-            if (String.valueOf(mKeyValue).equals(item.getSrcEndpointId())) {
+            /*if (String.valueOf(mKeyValue).equals(item.getSrcEndpointId())) {
                 EDevice.deviceEntry entry = DeviceBuffer.getDevByMac(item.getDstAddr());
                 if (entry != null)
                     mList.add(item);
@@ -360,7 +392,8 @@ public class AssociatedBindListActivity extends BaseActivity {
                     mTSLHelper.setProperty(mIotId, mProductKey, new String[]{mActionMap.get(item.getSrcEndpointId()), CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
                             new String[]{"U", "0006", "3", item.getDstAddr(), item.getDstEndpointId()});
                 }
-            }
+            }*/
+            mList.add(item);
         }
         mAdapter.notifyDataSetChanged();
         refreshNoDataView();
@@ -400,7 +433,19 @@ public class AssociatedBindListActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SelectAssociatedDevActivity.start(AssociatedBindListActivity.this, mIotId, mGatewayId, mKeyValue, mProductKey);
+                if (DeviceBuffer.getDeviceInformation(mGatewayId).status == Constant.CONNECTION_STATUS_OFFLINE) {
+                    // 网关离线
+                    ToastUtils.showLongToast(AssociatedBindListActivity.this, R.string.gw_is_offline_cannot_add_bind);
+                } else if (DeviceBuffer.getDeviceInformation(mIotId).status == Constant.CONNECTION_STATUS_OFFLINE) {
+                    // 设备离线
+                    ToastUtils.showLongToast(AssociatedBindListActivity.this, R.string.dev_is_offline_cannot_add_bind);
+                } else {
+                    if (mList.size() < 4) {
+                        SelectAssociatedDevActivity.start(AssociatedBindListActivity.this, mIotId, mGatewayId, mKeyValue, mProductKey);
+                    } else {
+                        ToastUtils.showLongToast(AssociatedBindListActivity.this, R.string.max_of_four_keys_can_be_temporarily_bound_to_one_key);
+                    }
+                }
             }
         });
     }

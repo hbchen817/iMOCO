@@ -18,15 +18,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityBindSuccessBinding;
+import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.RealtimeDataParser;
+import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -84,10 +91,27 @@ public class BindSuccessActivity extends BaseActivity {
         mViewBinding.currentTestBtn.setOnClickListener(this::onViewClicked);
         mViewBinding.editNameBtn.setOnClickListener(this::onViewClicked);
 
-        if (!mIotId.equals(mGatewayId)) {
+        /*if (!mIotId.equals(mGatewayId)) {
             // TAG_GATEWAY_FOR_DEV
             new SceneManager(this).setExtendedProperty(mIotId, Constant.TAG_GATEWAY_FOR_DEV, mGatewayId, null, null, null);
+        }*/
+    }
+
+    // 查询绑定列表
+    private void queryBindingTable() {
+        if (mPK.equals(CTSL.PK_ONEWAYSWITCH) || mPK.equals(CTSL.PK_TWOWAYSWITCH) ||
+                mPK.equals(CTSL.PK_THREE_KEY_SWITCH) || mPK.equals(CTSL.PK_FOURWAYSWITCH_2) ||
+                mPK.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
+            mTSLHelper.setProperty(mIotId, mPK, new String[]{"Action_1", CTSL.FWS_P_FUNCTION, CTSL.FWS_P_DSTADDRMODE, CTSL.FWS_P_DSTADDR, CTSL.FWS_P_DSTENDPOINTID},
+                    new String[]{"Q", "xxx", "xxx", "xxx", "xxx"});
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 添加实时数据属性回调处理器
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", mAPIDataHandler);
     }
 
     // 嵌入式状态栏
@@ -142,6 +166,25 @@ public class BindSuccessActivity extends BaseActivity {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
+                    // 返回双控绑定关系
+                    if (mPK.equals(CTSL.PK_ONEWAYSWITCH) || mPK.equals(CTSL.PK_TWOWAYSWITCH) ||
+                            mPK.equals(CTSL.PK_THREE_KEY_SWITCH) || mPK.equals(CTSL.PK_FOURWAYSWITCH_2) ||
+                            mPK.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
+                        ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                        if (propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE) != null && propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE).length() > 0) {
+                            ViseLog.d("绑定成功双控 = " + GsonUtil.toJson(propertyEntry));
+                            /*String bindingTable = propertyEntry.getPropertyValue(CTSL.FWS_P_BINDINGTABLE);
+                            String totalCount = propertyEntry.getPropertyValue(CTSL.TOTAL_COUNT);
+                            activity.mBindingArray.addAll(JSONArray.parseArray(bindingTable));
+                            ViseLog.d("totalCount = " + totalCount + " , array = " + activity.mBindingArray.size());
+                            if (Integer.parseInt(totalCount) == activity.mBindingArray.size()) {
+                                activity.refreshBindingTable(activity.mBindingArray);
+                            }*/
+                        }
+                    }
+                    break;
+                }
                 case Constant.MSG_CALLBACK_SETDEVICENICKNAME:
                     ViseLog.d("nickname change success " + (String) msg.obj);
                     // 更新设备缓存备注名称
@@ -215,7 +258,15 @@ public class BindSuccessActivity extends BaseActivity {
                 JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
                 activity.mPK = jsonObject.getString("productKey");
                 activity.mStatus = jsonObject.getIntValue("status");
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                    activity.queryBindingTable();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler(this.toString() + "Property");
     }
 }

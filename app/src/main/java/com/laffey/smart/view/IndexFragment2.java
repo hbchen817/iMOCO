@@ -43,6 +43,7 @@ import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -50,6 +51,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -133,7 +135,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         super.onResume();
         RealtimeDataReceiver.addEventCallbackHandler("IndexFragment2LocalSceneCallback", mAPIDataHandler);
         // 刷新场景列表数据
-        if (SystemParameter.getInstance().getIsRefreshSceneListData()) {
+        /*if (SystemParameter.getInstance().getIsRefreshSceneListData()) {
             // this.startGetSceneList(CScene.TYPE_AUTOMATIC);
             SystemParameter.getInstance().setIsRefreshSceneListData(false);
             RefreshData.refreshSceneListData();
@@ -145,7 +147,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 mSceneNodataView.setVisibility(View.GONE);
                 mListMy.setVisibility(View.VISIBLE);
             }
-        }
+        }*/
     }
 
     @Override
@@ -187,12 +189,39 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         initView();
         // 开始获取场景列表
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            mLocalSceneType = "0";
-            mSceneManager.querySceneList(mActivity, "", "0", Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
+            loadAllScene();
         } else {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
         }
         return view;
+    }
+
+    private void loadAllScene() {
+        for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
+            JSONObject appParams = scene.getAppParams();
+            if (appParams != null) {
+                String switchIotId = appParams.getString("switchIotId");
+                if (switchIotId != null && switchIotId.length() > 0) continue;
+            }
+
+            mItemSceneList.add(scene);
+            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+            entry.id = scene.getSceneDetail().getSceneId();
+            entry.name = scene.getSceneDetail().getName();
+            entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+            entry.description = scene.getSceneDetail().getMac();
+            entry.catalogId = scene.getSceneDetail().getType();
+            mSceneList.add(entry);
+        }
+
+        mAptSceneList.setData(mSceneList);
+        if (mSceneList.size() > 0) {
+            mListMy.setVisibility(View.VISIBLE);
+            mSceneNodataView.setVisibility(View.GONE);
+        } else {
+            mListMy.setVisibility(View.GONE);
+            mSceneNodataView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -531,7 +560,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 mSceneList.clear();
             }
         }
-        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        // mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
     // API数据处理器
@@ -542,7 +571,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                     // 删除网关下的场景
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    ViseLog.d("网关返回删除结果 IndexFragment2 = " + jsonObject.toJSONString());
+                    // ViseLog.d("网关返回删除结果 IndexFragment2 = " + jsonObject.toJSONString());
                     JSONObject value = jsonObject.getJSONObject("value");
                     String identifier = jsonObject.getString("identifier");
                     if ("ManageSceneNotification".equals(identifier)) {
@@ -573,11 +602,12 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
                     // 获取本地场景列表
                     JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("场景列表 = " + response.toJSONString());
+                    ViseLog.d("场景列表 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     String message = response.getString("message");
                     JSONArray sceneList = response.getJSONArray("sceneList");
                     if (code == 0 || code == 200) {
+                        if ("0".equals(mLocalSceneType)) DeviceBuffer.initSceneBuffer();
                         if (sceneList != null) {
                             for (int i = 0; i < sceneList.size(); i++) {
                                 JSONObject sceneObj = sceneList.getJSONObject(i);

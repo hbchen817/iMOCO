@@ -20,6 +20,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -175,6 +176,7 @@ public class AptDeviceGrid extends BaseAdapter {
         viewHolder.state1.setVisibility(View.GONE);
         viewHolder.state2.setVisibility(View.GONE);
         viewHolder.time.setVisibility(View.GONE);
+        // ViseLog.d("刷新数据表");
         if (mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
             //viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
             viewHolder.name.setTextColor(mContext.getResources().getColor(R.color.white3));
@@ -187,6 +189,7 @@ public class AptDeviceGrid extends BaseAdapter {
             viewHolder.room.setTextColor(mContext.getResources().getColor(R.color.normal_font_color));
             viewHolder.status.setVisibility(View.VISIBLE);
             viewHolder.status.setTextColor(mContext.getResources().getColor(R.color.normal_font_color));
+            // ViseLog.d("pk = " + mDeviceList.get(position).productKey + " , " + mDeviceList.get(position).stateTimes.size());
             // 如果有属性状态则显示属性状态
             if (mDeviceList.get(position).stateTimes != null && mDeviceList.get(position).stateTimes.size() > 0
                     && !mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)) {
@@ -212,7 +215,7 @@ public class AptDeviceGrid extends BaseAdapter {
                         }
                     } else if (CTSL.PK_ONE_WAY_DIMMABLE_LIGHT.equals(deviceEntry.productKey)) {
                         // 单调光面板
-                        viewHolder.state.setText("亮度："+mDeviceList.get(position).stateTimes.get(0).value+"%");
+                        viewHolder.state.setText("亮度：" + mDeviceList.get(position).stateTimes.get(0).value + "%");
                     }
                     viewHolder.time.setText(mDeviceList.get(position).stateTimes.get(0).time);
                 }
@@ -228,7 +231,6 @@ public class AptDeviceGrid extends BaseAdapter {
                         viewHolder.state2.setText(devItem.stateTimes.get(1).value + " / " + devItem.stateTimes.get(1).time);
                         if (CTSL.PK_TWOWAYSWITCH.equals(deviceEntry.productKey)) {
                             JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
-                            //ViseLog.d("eviceEntry.iotId = " + deviceEntry.iotId + "\n" + jsonObject);
                             if (jsonObject != null) {
                                 String name1 = jsonObject.getString(deviceEntry.stateTimes.get(0).name);
                                 if (name1 != null) {

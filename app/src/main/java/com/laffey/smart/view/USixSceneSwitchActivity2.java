@@ -623,6 +623,7 @@ public class USixSceneSwitchActivity2 extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    if (object.toJSONString().length() == 2) break;
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
                     activity.mKey1TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_1));
                     activity.mKey2TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_2));

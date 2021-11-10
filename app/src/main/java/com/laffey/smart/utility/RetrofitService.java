@@ -75,11 +75,27 @@ public interface RetrofitService {
 
     // token刷新
     @POST(Constant.REFRESH_TOKEN)
-    Observable<JSONObject> refreshToken(@Header("REX-REFRESH-TOKEN") String refreshToken);
+    Observable<JSONObject> refreshToken(@Header("REX-REFRESH-TOKEN") String refreshToken, @Header("DEVICE-ID") String devId);
 
     // 密码修改
     @POST(Constant.PWD_CHANGE)
     Observable<JSONObject> pwdChange(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
+
+    // 用户注销接口（账号系统）
+    @POST(Constant.CANCELLATION)
+    Observable<JSONObject> cancellation(@Header("REX-TOKEN") String token);
+
+    // 用户注销接口（iot系统）
+    @POST(Constant.CANCELLATION_IOT)
+    Observable<JSONObject> cancellationIot(@Header("REX-TOKEN") String token);
+
+    // 查询用户信息
+    @POST(Constant.GET_CACCOUNTS_INFO)
+    Observable<JSONObject> getCaccountsInfo(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId);
+
+    // 编辑用户信息
+    @POST(Constant.UPDATE_CACCOUNTS_INFO)
+    Observable<JSONObject> updateCaccountsInfo(@Header("REX-TOKEN") String token, @Body RequestBody Body);
 
     @FormUrlEncoded
     @POST("/query")

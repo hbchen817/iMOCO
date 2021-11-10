@@ -23,7 +23,7 @@ public class Constant {
     // 本地服务appkey
     public static final String APP_KEY                              = "npRyific";
     public static final String CLIENT_ID                            = "rwN8MmzL";
-    public static final String ACCOUNT_URL                          = "https://iot.rexense.cn:5443";
+    public static final String ACCOUNT_URL                          = "https://iot.rexense.cn:5443";// 123.56.94.209:5443
 
     // 产品类型
     public static final int PRODUCT_TYPE_LIGHT                      = 0;
@@ -324,6 +324,14 @@ public class Constant {
     public static final int MSG_QUEST_GET_AUTH_CODE_ERROR           = 523;
     public static final int MSG_QUEST_PWD_CHANGE                    = 524;
     public static final int MSG_QUEST_PWD_CHANGE_ERROR              = 525;
+    public static final int MSG_QUEST_CANCELLATION                  = 526;
+    public static final int MSG_QUEST_CANCELLATION_ERROR            = 527;
+    public static final int MSG_QUEST_CANCELLATION_IOT              = 528;
+    public static final int MSG_QUEST_CANCELLATION_IOT_ERROR        = 529;
+    public static final int MSG_QUEST_GET_CACCOUNTS_INFO            = 530;
+    public static final int MSG_QUEST_GET_CACCOUNTS_INFO_ERROR      = 531;
+    public static final int MSG_QUEST_UPDATE_CACCOUNTS_INFO         = 532;
+    public static final int MSG_QUEST_UPDATE_CACCOUNTS_INFO_ERROR   = 533;
 
     // intent resultCode
     public static final int ADD_LOCAL_SCENE                         = 10001;
@@ -470,5 +478,21 @@ public class Constant {
     // 密码修改
     public static final String PWD_CHANGE                           = "/caccounts/basic/pwdChange";
     public static final String PWD_CHANGE_VER                       = "1.0";
+
+    // 用户注销接口（账号系统）
+    public static final String CANCELLATION                         = "/caccounts/basic/user/cancellation";
+    public static final String CANCELLATION_VER                     = "1.0";
+
+    // 用户注销接口（iot系统）
+    public static final String CANCELLATION_IOT                     = "/app/user/cancellation";
+    public static final String CANCELLATION_IOT_VER                 = "1.0";
+
+    // 查询用户信息
+    public static final String GET_CACCOUNTS_INFO                   = "/caccounts/basic/user/get";
+    public static final String GET_CACCOUNTS_INFO_VER               = "1.0";
+
+    // 编辑用户信息
+    public static final String UPDATE_CACCOUNTS_INFO                = "/caccounts/basic/user/update";
+    public static final String UPDATE_CACCOUNTS_INFO_VER            = "1.0";
 }
 

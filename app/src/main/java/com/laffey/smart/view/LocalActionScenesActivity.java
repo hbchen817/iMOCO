@@ -25,6 +25,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalActionScenesBinding;
 import com.laffey.smart.model.EAction;
 import com.laffey.smart.model.EActionScene;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -41,10 +42,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class LocalActionScenesActivity extends AppCompatActivity implements View.OnClickListener {
@@ -145,8 +149,16 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
 
     // 根据IotId查询Mac
     private void queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
-        RetrofitUtil.getInstance()
-                .queryMacByIotId(context, apiVer, plantForm, iotId)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .queryMacByIotId(context, apiVer, plantForm, iotId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -192,7 +204,15 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
 
     // 查询本地场景列表
     private void querySceneList(Context context, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(context, mac, type)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -244,8 +264,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                                 mViewBinding.nodataView.setVisibility(View.GONE);
                                 mViewBinding.sceneRl.setVisibility(View.VISIBLE);
                             }
-                            ViseLog.d("mEAction = " + GsonUtil.toJson(mEAction) +
-                                    "\nmSceneList = " + GsonUtil.toJson(mSceneList));
+                            /*ViseLog.d("mEAction = " + GsonUtil.toJson(mEAction) +
+                                    "\nmSceneList = " + GsonUtil.toJson(mSceneList));*/
                             if (mEAction.getAction() != null && mEAction.getAction().getParameters() != null && mSceneList != null) {
                                 for (ItemScene scene : mSceneList) {
                                     if (scene.getSceneId().equals(mEAction.getAction().getParameters().getSceneId())) {

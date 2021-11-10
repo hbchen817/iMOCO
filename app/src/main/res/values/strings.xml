@@ -843,4 +843,10 @@
     <string name="new_pwd_must_contain_8_to_16_characters">新密码长度需要在8-16位</string>
     <string name="modify_success">修改成功</string>
     <string name="no_scene_data">无场景数据</string>
+    <string name="max_of_four_keys_can_be_temporarily_bound_to_one_key">一个按键暂定最多可绑定四个按键</string>
+    <string name="gw_is_offline_cannot_unbind_scene">网关离线，无法解绑场景</string>
+    <string name="gw_is_offline_cannot_add_bind">网关离线，无法创建绑定关系</string>
+    <string name="dev_is_offline_cannot_add_bind">设备离线，无法创建绑定关系</string>
+    <string name="is_offline_cannot_add_bind">%1$s离线，无法创建绑定关系</string>
+    <string name="scene_do_fail">场景执行失败</string>
 </resources>

@@ -161,6 +161,11 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_multi_dev_for_fh_and_af);
                 break;
             }
+            case CTSL.PK_AIRCOMDITION_TWO: {
+                // 空调二管制
+                setContentView(R.layout.activity_air_conditioner_for_full_screen);
+                break;
+            }
             default:
                 //todo 换回gateway
                 StatusBarUtils.getStatusBarHeight(this);

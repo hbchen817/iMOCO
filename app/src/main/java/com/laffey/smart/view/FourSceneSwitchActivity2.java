@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
@@ -32,7 +31,6 @@ import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
-import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
@@ -157,7 +155,9 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getGatewayId(mIOTId);
+        if (mGatewayMac == null || mGatewayMac.length() == 0)
+            getGatewayId(mIOTId);
+        else querySceneName();
     }
 
     // 获取面板所属网关iotId
@@ -213,7 +213,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
+                    SceneManager.invokeLocalSceneService(mGatewayId,
                             m1Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
                             mResponseErrorHandler, null);
                 }
@@ -237,7 +237,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m2Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
+                    SceneManager.invokeLocalSceneService(mGatewayId,
                             m2Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
                             mResponseErrorHandler, null);
                 }
@@ -261,7 +261,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m3Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
+                    SceneManager.invokeLocalSceneService(mGatewayId,
                             m3Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
                             mResponseErrorHandler, null);
                 }
@@ -285,7 +285,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m4Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
+                    SceneManager.invokeLocalSceneService(mGatewayId,
                             m4Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
                             mResponseErrorHandler, null);
                 }
@@ -377,7 +377,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         if (id == R.id.mSceneContentText1) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName1, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
                             m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -390,7 +390,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         } else if (id == R.id.mSceneContentText2) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m2Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName2, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
                             m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -403,7 +403,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         } else if (id == R.id.mSceneContentText3) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m3Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName3, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey3TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_3,
                             mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
                             m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -416,7 +416,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         } else if (id == R.id.mSceneContentText4) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m4Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName4, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey4TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_4,
                             mSceneContentText4.getText().toString(), mGatewayId, mGatewayMac,
                             m4Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -503,30 +503,6 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
             FourSceneSwitchActivity2 activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
-                    // 查询本地场景列表
-                    JSONObject response = (JSONObject) msg.obj;
-                    int code = response.getInteger("code");
-                    String message = response.getString("message");
-                    JSONArray sceneList = response.getJSONArray("sceneList");
-                    if (code == 0 || code == 200) {
-                        if (sceneList != null) {
-                            activity.querySceneName(sceneList);
-                        }
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
-                    // 查询本地场景列表错误
-                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    break;
-                }
                 case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
                     // 根据子设备iotId查询网关iotId
                     Throwable e = (Throwable) msg.obj;
@@ -546,10 +522,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                             activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
                         }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.mSceneManager.querySceneList(activity, activity.mGatewayMac
-                                , "1",
-                                Constant.MSG_QUEST_QUERY_SCENE_LIST,
-                                Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);
+                        activity.querySceneName();
                     } else {
                         QMUITipDialogUtil.dismiss();
                         if (message != null && message.length() > 0)
@@ -649,6 +622,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    if (object.toJSONString().length() == 2) break;
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
                     activity.mKey1TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_1));
                     activity.mKey2TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_2));
@@ -815,14 +789,25 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         });
     }
 
+    private void initSceneView() {
+        mSceneContentText1.setText(R.string.no_bind_scene);
+        mSceneContentText2.setText(R.string.no_bind_scene);
+        mSceneContentText3.setText(R.string.no_bind_scene);
+        mSceneContentText4.setText(R.string.no_bind_scene);
+
+        m1Scene = null;
+        m2Scene = null;
+        m3Scene = null;
+        m4Scene = null;
+    }
+
     // 获取按键绑定场景的名称
-    private void querySceneName(JSONArray list) {
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject object = list.getJSONObject(i);
-            ItemSceneInGateway scene = JSONObject.toJavaObject(object, ItemSceneInGateway.class);
-            ViseLog.d("sss = " + GsonUtil.toJson(scene));
+    private void querySceneName() {
+        initSceneView();
+        for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
             DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
             if (scene.getAppParams() == null) continue;
+            if ("0".equals(scene.getSceneDetail().getType())) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
             if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_1)) {
@@ -850,17 +835,9 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         if (requestCode == EDIT_LOCAL_SCENE) {
             if (resultCode == 2) {
                 ToastUtils.showLongToast(this, R.string.unbind_scene_success);
-                mSceneContentText1.setText(R.string.no_bind_scene);
-                mSceneContentText2.setText(R.string.no_bind_scene);
-                mSceneContentText3.setText(R.string.no_bind_scene);
-                mSceneContentText4.setText(R.string.no_bind_scene);
-
-                m1Scene = null;
-                m2Scene = null;
-                m3Scene = null;
-                m4Scene = null;
+                initSceneView();
             }
-        } else if (requestCode == BIND_SCENE_REQUEST_CODE){
+        } else if (requestCode == BIND_SCENE_REQUEST_CODE) {
             if (resultCode == 2)
                 ToastUtils.showLongToast(this, R.string.bind_scene_success);
         }

@@ -11,6 +11,7 @@ import com.aliyun.iot.aep.component.router.Router;
 import com.google.gson.Gson;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.contract.CTSL;
+import com.laffey.smart.view.AirConditionerActivity;
 import com.laffey.smart.view.ColorLightDetailActivity;
 import com.laffey.smart.view.DetailFourSwitchActivity;
 import com.laffey.smart.view.DetailFourSwitchActivity2;
@@ -163,6 +164,11 @@ public class ActivityRouter {
             case CTSL.PK_MULTI_THREE_IN_ONE: {
                 // 多功能设备（三合一、二合一）
                 intent = new Intent(context, MultiDevActivity.class);
+                break;
+            }
+            case CTSL.PK_AIRCOMDITION_TWO: {
+                // 空调二管制
+                intent = new Intent(context, AirConditionerActivity.class);
                 break;
             }
             default:

@@ -1,8 +1,10 @@
 package com.laffey.smart.utility;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.ItemSceneInGateway;
@@ -82,10 +84,8 @@ public class RetrofitUtil {
 
         object.put("params", params);
 
-        ViseLog.d("查询本地场景列表 SpUtils.getAccessToken(context) = " + SpUtils.getAccessToken(context));
+        ViseLog.d("查询本地场景列表 SpUtils.getAccessToken(context) = " + SpUtils.getAccessToken(context) + "\nmac = " + mac);
         return getRetrofitService().querySceneList(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
-        // String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJhcHBLZXkiOiJucFJ5aWZpYyIsImV4cCI6MTYzNTgzMDQ5MiwidHlwZSI6IkFDQ0VTUyIsImlhdCI6MTYzNTgyMzI5MiwiYWNjb3VudHNJZCI6ImZhODNlMDMxMDIwMjRhODU4NmVlOTY0ODIyMzVjYjZkIn0.GnTYLbn69xYnUWdkG6O6NaYlzp9AVyQEdrYCKL3eCHW63_Q3tELcOF-K536TBP-u1jbI_a7K2lI0HupR9SUiMEH_MsnMdEC_y77_kH4zIYm7uAPacGOOqU94-uywowrSaQMdoSc-DJh5RYfev0SnERAZO_vBRTLbQcppzqx9zrMfYjoWWK7i-EjmNvzHD6GVCzHDXA2Plfvv2xsKwwOlXiQvopdH_ufwu7LeHXf5yDZI0m4-GwYP45bmpth-VYSC-QmdVCtaHx0lPoGrcvN0Meq8vNj7Pjk5ri9g8HusFJXzOGXZ1cUIDdMvwjebxKUPyQk71-4i994fP4Iqv22ZWNU0nzWkbPoApglOrEZK7ijZDw__puFqFY7g-7rSUb-_MQEucdERMGm6jyWTq0lR0-yTAg6Em51TdufyYdOz0Vq2NL3F0YTTf-HXFyY-iZrXm5F651O2EPNju1zu-gaMXb9qAj6-oySAczLgzkiFHm4Q0Wo0meKrzGeW_tEzL1_o";
-        // return getRetrofitService().querySceneList(token, ERetrofit.convertToBody(object.toJSONString()));
     }
 
     // 增加本地场景
@@ -93,7 +93,7 @@ public class RetrofitUtil {
         JSONObject object = new JSONObject();
         object.put("apiVer", apiVer);
         object.put("params", scene);
-        ViseLog.d(GsonUtil.toJson(object));
+        // ViseLog.d(GsonUtil.toJson(object));
         return getRetrofitService().addScene(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
     }
 
@@ -161,7 +161,7 @@ public class RetrofitUtil {
         object.put("params", params);
 
         //return getRetrofitService().getPVCode(AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
-        ViseLog.d("AppUtils.getPesudoUniqueID() = " + AppUtils.getPesudoUniqueID());
+        // ViseLog.d("AppUtils.getPesudoUniqueID() = " + AppUtils.getPesudoUniqueID());
         return new ERetrofit(Constant.ACCOUNT_URL).getService().getPVCode(AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
     }
 
@@ -229,7 +229,7 @@ public class RetrofitUtil {
     // 获取AuthCode
     public Observable<JSONObject> getAuthCode(Context context) {
         JSONObject object = new JSONObject();
-        object.put("apiVer", Constant.PWD_RESET_VER);
+        object.put("apiVer", Constant.GET_AUTH_CODE_VER);
         JSONObject params = new JSONObject();
         params.put("clientId", Constant.CLIENT_ID);
         object.put("params", params);
@@ -240,14 +240,15 @@ public class RetrofitUtil {
 
     // token刷新
     public Observable<JSONObject> refreshToken(Context context) {
+        ViseLog.d("refreshtoken = " + SpUtils.getRefreshToken(context));
         return new ERetrofit(Constant.ACCOUNT_URL).getService().refreshToken(
-                SpUtils.getRefreshToken(context));
+                SpUtils.getRefreshToken(context), AppUtils.getPesudoUniqueID());
     }
 
     // 密码修改
     public Observable<JSONObject> pwdChange(Context context, String oldPwd, String newPwd) {
         JSONObject object = new JSONObject();
-        object.put("apiVer", Constant.PWD_RESET_VER);
+        object.put("apiVer", Constant.PWD_CHANGE_VER);
         JSONObject params = new JSONObject();
         params.put("oldPwd", oldPwd);
         params.put("newPwd", newPwd);
@@ -256,5 +257,58 @@ public class RetrofitUtil {
 
         return new ERetrofit(Constant.ACCOUNT_URL).getService().pwdChange(SpUtils.getAccessToken(context),
                 AppUtils.getPesudoUniqueID(), ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 用户注销接口（账号系统）
+    public Observable<JSONObject> cancellation(Context context) {
+        return getRetrofitService().cancellation(SpUtils.getAccessToken(context));
+    }
+
+    // 用户注销接口（iot系统）
+    public Observable<JSONObject> cancellationIot(Context context) {
+        return getRetrofitService().cancellationIot(SpUtils.getAccessToken(context));
+    }
+
+    // 查询用户信息
+    public Observable<JSONObject> getCaccountsInfo(Context context) {
+        return getRetrofitService().getCaccountsInfo(SpUtils.getAccessToken(context), AppUtils.getPesudoUniqueID());
+    }
+
+    // 编辑用户信息
+    public Observable<JSONObject> updateCaccountsInfo(Context context, String email, String nickName,
+                                                      String headPortrait, String gender, String area, String personalSignature) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.UPDATE_CACCOUNTS_INFO_VER);
+        JSONObject params = new JSONObject();
+        if (email != null && email.length() > 0)
+            params.put("email", email);
+        if (nickName != null && nickName.length() > 0)
+            params.put("nickname", nickName);
+        if (headPortrait != null && headPortrait.length() > 0)
+            params.put("headPortrait", headPortrait);
+        if (gender != null && gender.length() > 0)
+            object.put("gender", gender);
+        if (area != null && area.length() > 0)
+            object.put("area", area);
+        if (personalSignature != null && personalSignature.length() > 0)
+            object.put("personalSignature", personalSignature);
+        object.put("params", params);
+
+        return getRetrofitService().updateCaccountsInfo(SpUtils.getAccessToken(context), ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    public static void showErrorMsg(Activity activity, JSONObject response) {
+        String message = response.getString("message");
+        String localizedMsg = response.getString("localizedMsg");
+        String errorMess = response.getString("errorMess");
+        if (message != null && message.length() > 0) {
+            ToastUtils.showLongToast(activity, message);
+        } else if (localizedMsg != null && localizedMsg.length() > 0) {
+            ToastUtils.showLongToast(activity, localizedMsg);
+        } else if (errorMess != null && errorMess.length() > 0) {
+            ToastUtils.showLongToast(activity, errorMess);
+        } else {
+            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+        }
     }
 }

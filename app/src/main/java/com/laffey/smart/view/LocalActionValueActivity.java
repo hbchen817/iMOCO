@@ -880,6 +880,9 @@ public class LocalActionValueActivity extends BaseActivity {
         } else if ("SwitchLocalSceneActivity".equals(target)) {
             Intent intent = new Intent(this, SwitchLocalSceneActivity.class);
             startActivity(intent);
+        } else if ("TimerLocalSceneActivity".equals(target)){
+            Intent intent = new Intent(this, TimerLocalSceneActivity.class);
+            startActivity(intent);
         }
     }
 

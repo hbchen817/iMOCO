@@ -10,6 +10,7 @@ import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +24,7 @@ public class DeviceBuffer {
     private static Map<String, EDevice.deviceEntry> mBuffer = new HashMap<String, EDevice.deviceEntry>();
     private static Map<String, JSONObject> mExtendedBuffer = new HashMap<String, JSONObject>();
     private static Map<String, String> mCacheBuffer = new HashMap<>();
-    private static Map<String, ItemSceneInGateway> mSceneBuffer = new HashMap<>();
+    private static Map<String, ItemSceneInGateway> mSceneBuffer = new LinkedHashMap<>();
 
     // 初始化处理
     public static void initProcess() {
@@ -32,6 +33,10 @@ public class DeviceBuffer {
 
     public static void initSceneBuffer() {
         mSceneBuffer.clear();
+    }
+
+    public static void initExtendedBuffer() {
+        mExtendedBuffer.clear();
     }
 
     public static void addCacheInfo(String key, String value) {
@@ -204,6 +209,7 @@ public class DeviceBuffer {
             for (EUser.deviceEntry entry : userListEntry.data) {
                 if (mBuffer.containsKey(entry.iotId)) {
                     Objects.requireNonNull(mBuffer.get(entry.iotId)).bindTime = entry.bindTime;
+                    Objects.requireNonNull(mBuffer.get(entry.iotId)).status = entry.status;
                 } else {
                     EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
                     deviceEntry.iotId = entry.iotId;

@@ -12,6 +12,7 @@ import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
 import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityMyinfoBinding;
@@ -44,6 +45,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                     ToastUtils.showToastCentrally(mActivity, getString(R.string.logout_success));
                     DeviceBuffer.initSceneBuffer();
                     SpUtils.putAccessToken(MyInfoActivity.this, "");
+                    SpUtils.putRefreshTokenTime(MyInfoActivity.this, -1);
                     Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
@@ -73,8 +75,6 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         EventBus.getDefault().register(this);
         myInfoActivity = this;
         mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.myinfo_title));
-        mViewBinding.nickName.setText(Account.getUserNick());
-        mViewBinding.userAccount.setText(Account.getUserPhone());
 
         initStatusBar();
         mViewBinding.headImg.setOnClickListener(this);
@@ -82,6 +82,13 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         mViewBinding.changePassword.setOnClickListener(this);
         mViewBinding.deleteAccount.setOnClickListener(this);
         mViewBinding.logoutBtn.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mViewBinding.nickName.setText(SpUtils.getNickName(this));//Account.getUserNick()
+        mViewBinding.userAccount.setText(SpUtils.getTelNum(this));
     }
 
     // 嵌入式状态栏
@@ -107,9 +114,12 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             intent = new Intent(mActivity, NickNameActivity.class);
             startActivity(intent);
         } else if (v.getId() == R.id.change_password) {
-            /*OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
-            openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);*/
-            PwdChangeActivity.start(this);
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                PwdChangeActivity.start(this);
+            } else {
+                OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);
+                openAccountUIService.showResetPassword(this, ResetPasswordActivity.class, null);
+            }
         } else if (v.getId() == R.id.delete_account) {
             intent = new Intent(mActivity, DeleteAccountActivity.class);
             startActivity(intent);

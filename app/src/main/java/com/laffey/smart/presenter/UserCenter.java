@@ -144,7 +144,7 @@ public class UserCenter {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_UNBINDDEVICE;
-        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.version = "1.0.8";
         requestParameterEntry.addParameter("iotId", deviceId);
         requestParameterEntry.addParameter("unbindSubdevice", true);
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_UNBINDEVICE;

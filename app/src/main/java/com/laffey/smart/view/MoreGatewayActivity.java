@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,7 @@ import com.aigestudio.wheelpicker.WheelPicker;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
@@ -36,6 +39,7 @@ import com.laffey.smart.databinding.ActivityMoreGatewayBinding;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.EUser;
 import com.laffey.smart.model.ItemSceneInGateway;
@@ -65,9 +69,13 @@ import com.vise.log.ViseLog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -98,6 +106,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
     private List<ItemSceneInGateway> mSceneList = new ArrayList<>();
     private final List<EUser.deviceEntry> mSubDevList = new ArrayList<>();
+    private UnBindingHandler mUnBindingHandler;
 
     // 更新状态
     @SuppressLint("SetTextI18n")
@@ -279,41 +288,56 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     if (list != null && list.data != null) {
                         mSubDevList.addAll(list.data);
                         for (EUser.deviceEntry e : list.data) {
-                            switch (e.productKey) {
-                                case CTSL.PK_LIGHT:
-                                case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
-                                case CTSL.PK_SYT_ONE_SCENE_SWITCH:
-                                case CTSL.PK_ONE_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                case CTSL.PK_ANY_TWO_SCENE_SWITCH:
-                                case CTSL.PK_TWO_SCENE_SWITCH:
-                                case CTSL.PK_SYT_TWO_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                case CTSL.PK_THREE_SCENE_SWITCH:
-                                case CTSL.PK_SYT_THREE_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
-                                case CTSL.PK_FOUR_SCENE_SWITCH:
-                                case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
-                                case CTSL.PK_U_SIX_SCENE_SWITCH:
-                                case CTSL.PK_SIX_SCENE_SWITCH:
-                                case CTSL.PK_SYT_SIX_SCENE_SWITCH:
+                            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                                mSceneManager.setExtendedProperty(e.iotId, Constant.TAG_DEV_KEY_NICKNAME, "{}",
+                                        null, null, null);
+                            } else {
+                                switch (e.productKey) {
+                                    case CTSL.PK_LIGHT:
+                                    case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
+                                    case CTSL.PK_SYT_ONE_SCENE_SWITCH:
+                                    case CTSL.PK_ONE_SCENE_SWITCH:
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mDeviceMap.put(e.iotId, e.iotId);
+                                        break;
+                                    case CTSL.PK_ANY_TWO_SCENE_SWITCH:
+                                    case CTSL.PK_TWO_SCENE_SWITCH:
+                                    case CTSL.PK_SYT_TWO_SCENE_SWITCH:
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        mDeviceMap.put(e.iotId, e.iotId);
+                                        break;
+                                    case CTSL.PK_THREE_SCENE_SWITCH:
+                                    case CTSL.PK_SYT_THREE_SCENE_SWITCH:
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                        mDeviceMap.put(e.iotId, e.iotId);
+                                        break;
+                                    case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
+                                    case CTSL.PK_FOUR_SCENE_SWITCH:
+                                    case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                        mDeviceMap.put(e.iotId, e.iotId);
+                                        break;
+                                    case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
+                                    case CTSL.PK_U_SIX_SCENE_SWITCH:
+                                    case CTSL.PK_SIX_SCENE_SWITCH:
+                                    case CTSL.PK_SYT_SIX_SCENE_SWITCH:
+                                    case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                                        ViseLog.d("CTSL.PK_SIX_TWO_SCENE_SWITCH = " + CTSL.PK_SIX_TWO_SCENE_SWITCH);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        mDeviceMap.put(e.iotId, e.iotId);
+                                        break;
+                                /*case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
@@ -321,14 +345,10 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;
-                                default:
-                                    break;
+                                    break;*/
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         if (list.data.size() >= list.pageSize) {
@@ -380,17 +400,34 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
         }
     });
 
+    private static class UnBindingHandler extends Handler {
+        private final WeakReference<MoreGatewayActivity> ref;
+
+        public UnBindingHandler(MoreGatewayActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MoreGatewayActivity activity = ref.get();
+            if (activity == null) return;
+            activity.unBindingDev(msg.what);
+        }
+    }
+
     private void unBindingDev(int pos) {
         if (pos <= mSubDevList.size() - 1)
             mUserCenter.unbindSubDevice(mSubDevList.get(pos).productKey, mSubDevList.get(pos).deviceName,
                     mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
                         @Override
                         public boolean handleMessage(Message msg) {
-                            unBindingDev(pos + 1);
+                            DeviceBuffer.deleteDevice(mSubDevList.get(pos).iotId);
+                            mUnBindingHandler.sendEmptyMessageDelayed(pos + 1, 2000);
                             return false;
                         }
                     }));
-        else
+        else {
             mUserCenter.unbindDevice(mIOTId,
                     mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
                         @Override
@@ -407,6 +444,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             return false;
                         }
                     }));
+        }
     }
 
     // 实时数据处理器
@@ -683,6 +721,8 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
         if (mOwned > 0) {
             OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
+
+        mUnBindingHandler = new UnBindingHandler(this);
     }
 
     // 解除绑定处理
@@ -699,7 +739,11 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     //deleteScene();
                     QMUITipDialogUtil.showLoadingDialg(MoreGatewayActivity.this, R.string.is_submitted);
                     mSubDevList.clear();
-                    querySceneList(MoreGatewayActivity.this, DeviceBuffer.getDeviceInformation(mIOTId).mac, "0");
+                    EDevice.deviceEntry gwDev = DeviceBuffer.getDeviceInformation(mIOTId);
+                    if (gwDev.status == Constant.CONNECTION_STATUS_OFFLINE) {
+                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else
+                        querySceneList(MoreGatewayActivity.this, DeviceBuffer.getDeviceInformation(mIOTId).mac, "0");
                 }
             });
             builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -828,7 +872,15 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
     // 查询本地场景列表
     private void querySceneList(Context context, String mac, String type) {
-        RetrofitUtil.getInstance().querySceneList(context, mac, type)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

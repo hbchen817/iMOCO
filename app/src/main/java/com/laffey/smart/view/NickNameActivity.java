@@ -3,23 +3,32 @@ package com.laffey.smart.view;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
 import com.alibaba.sdk.android.openaccount.callback.LoginCallback;
 import com.alibaba.sdk.android.openaccount.model.OpenAccountSession;
 import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityNicknameBinding;
 import com.laffey.smart.event.RefreshMyinfo;
+import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,8 +37,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class NickNameActivity extends BaseActivity {
-
     private ActivityNicknameBinding mViewBinding;
+
+    private MyHandler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +51,9 @@ public class NickNameActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.myinfo_nickname));
 
         initStatusBar();
+        mViewBinding.nickNameEt.setText(SpUtils.getNickName(this));
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onClick);
+        mHandler = new MyHandler(this);
     }
 
     // 嵌入式状态栏
@@ -60,22 +72,78 @@ public class NickNameActivity extends BaseActivity {
                 ToastUtils.showToastCentrally(mActivity, mViewBinding.nickNameEt.getHint().toString());
                 return;
             }
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("displayName", nickNameStr);
-            OpenAccountUIService oas = OpenAccountSDK.getService(OpenAccountUIService.class);
-            oas.updateProfile(getApplicationContext(), map, new LoginCallback() {
-                @Override
-                public void onSuccess(OpenAccountSession openAccountSession) {
-                    ToastUtils.showToastCentrally(mActivity, getString(R.string.nick_name_modify_success));
-                    EventBus.getDefault().post(new RefreshMyinfo());
-                    finish();
-                }
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
+            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                AccountManager.updateCaccountsInfo(this, null, mViewBinding.nickNameEt.getText().toString(),
+                        null, null, null, null,
+                        Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO, Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO_ERROR, mHandler);
+            } else {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("displayName", nickNameStr);
+                OpenAccountUIService oas = OpenAccountSDK.getService(OpenAccountUIService.class);
+                oas.updateProfile(getApplicationContext(), map, new LoginCallback() {
+                    @Override
+                    public void onSuccess(OpenAccountSession openAccountSession) {
+                        ToastUtils.showToastCentrally(mActivity, getString(R.string.nick_name_modify_success));
+                        EventBus.getDefault().post(new RefreshMyinfo());
+                        finish();
+                    }
 
-                @Override
-                public void onFailure(int i, String s) {
-                }
-            });
+                    @Override
+                    public void onFailure(int i, String s) {
+                    }
+                });
+            }
         }
     }
 
+    private static class MyHandler extends Handler {
+        private final WeakReference<NickNameActivity> ref;
+
+        public MyHandler(NickNameActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            NickNameActivity activity = ref.get();
+            if (activity == null) return;
+            switch (msg.what) {
+                case Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO: {
+                    // 编辑用户信息
+                    QMUITipDialogUtil.dismiss();
+                    JSONObject response = (JSONObject) msg.obj;
+                    int code = response.getInteger("code");
+                    if (code == 200) {
+                        SpUtils.putNickName(activity, activity.mViewBinding.nickNameEt.getText().toString());
+                        ToastUtils.showLongToast(activity, R.string.submit_completed);
+                        activity.finish();
+                    } else {
+                        String message = response.getString("message");
+                        String localizedMsg = response.getString("localizedMsg");
+                        String errorMess = response.getString("errorMess");
+                        if (message != null && message.length() > 0) {
+                            ToastUtils.showLongToast(activity, message);
+                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
+                            ToastUtils.showLongToast(activity, localizedMsg);
+                        } else if (errorMess != null && errorMess.length() > 0) {
+                            ToastUtils.showLongToast(activity, errorMess);
+                        } else {
+                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        }
+                    }
+                    break;
+                }
+                case Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO_ERROR: {
+                    // 编辑用户信息失败
+                    QMUITipDialogUtil.dismiss();
+                    Throwable e = (Throwable) msg.obj;
+                    ViseLog.e(e);
+                    ToastUtils.showLongToast(activity, e.getMessage());
+                    break;
+                }
+            }
+        }
+    }
 }

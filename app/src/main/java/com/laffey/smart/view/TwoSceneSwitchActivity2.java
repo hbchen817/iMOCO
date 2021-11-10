@@ -35,6 +35,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -492,30 +493,6 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             TwoSceneSwitchActivity2 activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST: {
-                    // 查询本地场景列表
-                    JSONObject response = (JSONObject) msg.obj;
-                    int code = response.getInteger("code");
-                    String message = response.getString("message");
-                    JSONArray sceneList = response.getJSONArray("sceneList");
-                    if (code == 0 || code == 200) {
-                        if (sceneList != null) {
-                            activity.querySceneName(sceneList);
-                        }
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR: {
-                    // 查询本地场景列表错误
-                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                    break;
-                }
                 case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
                     // 根据子设备iotId查询网关iotId
                     Throwable e = (Throwable) msg.obj;
@@ -527,24 +504,14 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     // 根据子设备iotId查询网关iotId
                     JSONObject response = (JSONObject) msg.obj;
                     int code = response.getInteger("code");
-                    String message = response.getString("message");
                     String gwId = response.getString("gwIotId");
                     if (code == 200) {
                         activity.mGatewayId = gwId;
-                        if (Constant.IS_TEST_DATA) {
-                            activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                        }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.mSceneManager.querySceneList(activity, activity.mGatewayMac
-                                , "1",
-                                Constant.MSG_QUEST_QUERY_SCENE_LIST,
-                                Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mMyHandler);
+                        activity.querySceneName();
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }
@@ -654,13 +621,18 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         }
     });
 
+    private void initSceneView() {
+        mSceneContentText1.setText(R.string.no_bind_scene);
+        mSceneContentText2.setText(R.string.no_bind_scene);
+
+        m1Scene = null;
+        m2Scene = null;
+    }
+
     // 获取按键绑定场景的名称
-    private void querySceneName(JSONArray list) {
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject object = list.getJSONObject(i);
-            ItemSceneInGateway scene = JSONObject.toJavaObject(object, ItemSceneInGateway.class);
-            ViseLog.d("sss = " + GsonUtil.toJson(scene));
-            DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+    private void querySceneName() {
+        initSceneView();
+        for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
             if (scene.getAppParams() == null) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
@@ -678,7 +650,9 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getGatewayId(mIOTId);
+        if (mGatewayMac == null || mGatewayMac.length() == 0)
+            getGatewayId(mIOTId);
+        else querySceneName();
     }
 
     @Override
@@ -687,11 +661,7 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         if (requestCode == EDIT_LOCAL_SCENE) {
             if (resultCode == 2) {
                 ToastUtils.showLongToast(this, R.string.unbind_scene_success);
-                mSceneContentText1.setText(R.string.no_bind_scene);
-                mSceneContentText2.setText(R.string.no_bind_scene);
-
-                m1Scene = null;
-                m2Scene = null;
+                initSceneView();
             }
         } else if (requestCode == BIND_SCENE_REQUEST_CODE) {
             if (resultCode == 2)

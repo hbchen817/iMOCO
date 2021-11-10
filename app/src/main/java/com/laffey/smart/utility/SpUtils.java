@@ -3,6 +3,9 @@ package com.laffey.smart.utility;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.presenter.DeviceBuffer;
+
 /**
  * @author imjackzhao@gmail.com
  * @date 2018/5/15
@@ -146,6 +149,14 @@ public class SpUtils {
         return sp.getString("user_access_token", "chengxunfei");
     }
 
+    // 清除accessToken
+    public static void removeAccessToken(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("user_access_token");
+        editor.apply();
+    }
+
     // 保存refreshToken
     public static void putRefreshToken(Context context, String refreshToken) {
         SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
@@ -158,5 +169,107 @@ public class SpUtils {
     public static String getRefreshToken(Context context) {
         SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
         return sp.getString("user_refresh_token", "");
+    }
+
+    // 清除refreshToken
+    public static void removeRefreshToken(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("user_refresh_token");
+        editor.apply();
+    }
+
+    // 保存refreshToken获取时间
+    public static void putRefreshTokenTime(Context context, long time) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putLong("user_refresh_token_time", time);
+        editor.apply();
+    }
+
+    // 获取refreshToken保存时间
+    public static long getRefreshTokenTime(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        return sp.getLong("user_refresh_token_time", -1);
+    }
+
+    // 清除refreshToken保存时间
+    public static void removeRefreshTokenTime(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("user_refresh_token_time");
+        editor.apply();
+    }
+
+    // 保存用户信息
+    public static void putCaccountsInfo(Context context, String info) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("caccounts_info", info);
+        editor.apply();
+    }
+
+    // 用户账号
+    public static String getCaccounts(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        String info = sp.getString("caccounts_info", null);
+        if (info == null || info.length() == 0) {
+            return null;
+        } else {
+            JSONObject o = JSONObject.parseObject(info);
+            return o.getString("accounts");
+        }
+    }
+
+    // 用户手机号
+    public static String getTelNum(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        String info = sp.getString("caccounts_info", null);
+        if (info == null || info.length() == 0) {
+            return null;
+        } else {
+            JSONObject o = JSONObject.parseObject(info);
+            return o.getString("telNum");
+        }
+    }
+
+    // 用户昵称
+    public static String getNickName(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        String info = sp.getString("caccounts_info", null);
+        if (info == null || info.length() == 0) {
+            return null;
+        } else {
+            JSONObject o = JSONObject.parseObject(info);
+            return o.getString("nickname");
+        }
+    }
+
+    public static void putNickName(Context context, String nickName) {
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        String info = sp.getString("caccounts_info", null);
+        if (info != null && info.length() >= 0) {
+            JSONObject o = JSONObject.parseObject(info);
+            o.put("nickname", nickName);
+
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("caccounts_info", o.toJSONString());
+            editor.apply();
+        }
+    }
+
+    // 用户注销接口
+    public static void cancellation(Context context) {
+        DeviceBuffer.initSceneBuffer();
+        DeviceBuffer.initProcess();
+        DeviceBuffer.initExtendedBuffer();
+
+        SharedPreferences sp = context.getSharedPreferences(SP_USER_INFO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove("user_access_token");
+        editor.remove("user_refresh_token");
+        editor.remove("user_refresh_token_time");
+        editor.remove("caccounts_info");
+        editor.apply();
     }
 }

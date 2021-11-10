@@ -33,6 +33,7 @@ import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +53,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
     private static final String SRC_ENDPOINT_ID = "src_endpoint_id";
     private static final String SRC_PRODUCT_KEY = "src_product_key";
     private static final String EDIT_POSITION = "edit_pos";
+    private static final String GW_ID = "gw_id";
 
     private String mPk;
     private String mIotId;
@@ -62,6 +64,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
     private int mSrcEndId;
     private String mSrcPK;
     private int mEditPos;
+    private String mGwId;
 
     private String mFirstIotId;
     private String mSecondIotId;
@@ -75,7 +78,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
 
     private MyHandler mHandler;
 
-    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK) {
+    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK, String gwId) {
         Intent intent = new Intent(context, SelectAssociatedKeyActivity.class);
         intent.putExtra(PRODUCT_KEY, pk);
         intent.putExtra(IOT_ID, iotId);
@@ -84,10 +87,11 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         intent.putExtra(A_MAC, aMac);
         intent.putExtra(SRC_ENDPOINT_ID, srcEndId);
         intent.putExtra(SRC_PRODUCT_KEY, srcPK);
+        intent.putExtra(GW_ID, gwId);
         context.startActivity(intent);
     }
 
-    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK, int editPos) {
+    public static void start(Context context, String pk, String aIotId, String aMac, String iotId, int pos, int srcEndId, String srcPK, String gwId, int editPos) {
         Intent intent = new Intent(context, SelectAssociatedKeyActivity.class);
         intent.putExtra(PRODUCT_KEY, pk);
         intent.putExtra(IOT_ID, iotId);
@@ -97,6 +101,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         intent.putExtra(SRC_ENDPOINT_ID, srcEndId);
         intent.putExtra(SRC_PRODUCT_KEY, srcPK);
         intent.putExtra(EDIT_POSITION, editPos);
+        intent.putExtra(GW_ID, gwId);
         context.startActivity(intent);
     }
 
@@ -114,6 +119,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         mSrcEndId = getIntent().getIntExtra(SRC_ENDPOINT_ID, 0);
         mSrcPK = getIntent().getStringExtra(SRC_PRODUCT_KEY);
         mEditPos = getIntent().getIntExtra(EDIT_POSITION, -1);
+        mGwId = getIntent().getStringExtra(GW_ID);
         mTSLHelper = new TSLHelper(this);
         mIconFace = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
@@ -153,39 +159,6 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         initData();
-        /*MacByIotIdRequest request = new MacByIotIdRequest(Constant.GET_MAC_BY_IOTID_VER, new MacByIotIdRequest.Param("0", mIotId));
-        RetrofitUtil.getInstance().getService()
-                .getMacByIotId("token", request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<MacByIotIdResponse>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull MacByIotIdResponse response) {
-                        if (response.getCode() == 0) {
-                            mBMac = response.getMac();
-                            initData();
-                        } else {
-                            QMUITipDialogUtil.showFailDialog(SelectAssociatedKeyActivity.this, response.getMessage());
-                            mViewBinding.nodataTv.setText(response.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        mViewBinding.nodataTv.setText(e.getMessage());
-                        QMUITipDialogUtil.showFailDialog(SelectAssociatedKeyActivity.this, R.string.unknown_err);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });*/
     }
 
     private void initData() {
@@ -195,7 +168,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                 // 一键
                 mList.clear();
                 KeyItem item;
-                if (object != null) {
+                if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.OWS_P_PowerSwitch_1), 1);
                 } else {
                     item = new KeyItem(getString(R.string.one_way_powerswitch), 1);
@@ -208,7 +181,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                 // 二键
                 mList.clear();
                 KeyItem item;
-                if (object != null) {
+                if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.TWS_P_PowerSwitch_1), 1);
                     mList.add(item);
 
@@ -228,7 +201,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                 // 三键
                 mList.clear();
                 KeyItem item;
-                if (object != null) {
+                if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.TWS_P3_PowerSwitch_1), 1);
                     mList.add(item);
 
@@ -254,7 +227,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                 // 四键
                 mList.clear();
                 KeyItem item;
-                if (object != null) {
+                if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.FWS_P_PowerSwitch_1), 1);
                     mList.add(item);
 
@@ -286,7 +259,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                 // 六键四开关二场景
                 mList.clear();
                 KeyItem item;
-                if (object != null) {
+                if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1), 1);
                     mList.add(item);
 
@@ -340,6 +313,20 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (DeviceBuffer.getDeviceInformation(mGwId).status == Constant.CONNECTION_STATUS_OFFLINE) {
+                    ToastUtils.showLongToast(SelectAssociatedKeyActivity.this, R.string.gw_is_offline_cannot_create_scene);
+                    return;
+                } else if (DeviceBuffer.getDeviceInformation(mIotId).status == Constant.CONNECTION_STATUS_OFFLINE) {
+                    String tip = String.format(getString(R.string.is_offline_cannot_add_bind),
+                            DeviceBuffer.getDeviceInformation(mIotId).nickName);
+                    ToastUtils.showLongToast(SelectAssociatedKeyActivity.this, tip);
+                    return;
+                } else if (DeviceBuffer.getDeviceInformation(mAIotId).status == Constant.CONNECTION_STATUS_OFFLINE){
+                    String tip = String.format(getString(R.string.is_offline_cannot_add_bind),
+                            DeviceBuffer.getDeviceInformation(mAIotId).nickName);
+                    ToastUtils.showLongToast(SelectAssociatedKeyActivity.this, tip);
+                    return;
+                }
                 QMUITipDialogUtil.showLoadingDialg(SelectAssociatedKeyActivity.this, R.string.is_submitted);
                 if (mEditPos != -1 && mEditPos != mSelectPos) {
                     delBinding();
@@ -448,7 +435,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity {
                     case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY: {
                         // 处理属性通知回调
                         ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
-                        // ViseLog.d("绑定回调 = " + GsonUtil.toJson(propertyEntry));
+                        ViseLog.d("绑定回调 = " + GsonUtil.toJson(propertyEntry));
                         if ("B".equals(propertyEntry.getPropertyValue("ResponseType"))) {
                             if ("0".equals(propertyEntry.getPropertyValue("Result"))) {
                                 if (activity.mFirstIotId.equals(propertyEntry.iotId)) {

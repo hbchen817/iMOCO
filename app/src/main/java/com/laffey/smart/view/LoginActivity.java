@@ -30,6 +30,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLoginBinding;
 import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -134,7 +135,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mViewBinding.userNameEt.setText(mTelNum);
             ToastUtils.showLongToast(this, R.string.regist_success);
         }
-        ViseLog.d("onNewIntent");
     }
 
     @Override
@@ -286,23 +286,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             @Override
                             public void onLoginFailed(int i, String s) {
+                                ViseLog.e("i = " + i + " , s = " + s);
                                 ToastUtils.showLongToast(activity, s);
                             }
                         });
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        ViseLog.e(response.toJSONString());
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }
@@ -318,6 +309,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String refreshToken = response.getString("refreshToken");
                         SpUtils.putAccessToken(activity, accessToken);
                         SpUtils.putRefreshToken(activity, refreshToken);
+                        SpUtils.putRefreshTokenTime(activity, System.currentTimeMillis());
 
                         AccountManager.getAuthCode(activity, Constant.MSG_QUEST_GET_AUTH_CODE, Constant.MSG_QUEST_GET_AUTH_CODE_ERROR,
                                 activity.mHandler);
@@ -365,7 +357,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (secondPressTime - mFirstPressTime <= intervalTime) {
             // 如果两次点按返回键的间隔时间小于2秒, 直接退出程序
-            finish();
+            // finish();
+            // ThreadPool.MainThreadHandler.getInstance().post(() -> Process.killProcess(Process.myPid()), 0);
             System.exit(0);
         } else {
             // 如果两次点按返回键的间隔时间不小于2秒, 弹吐司提示用户

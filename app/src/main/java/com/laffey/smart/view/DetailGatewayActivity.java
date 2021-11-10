@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
@@ -35,6 +36,7 @@ import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.OTAHelper;
 import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
+import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.contract.Constant;
@@ -42,6 +44,7 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -274,6 +277,18 @@ public class DetailGatewayActivity extends DetailActivity {
                     ToastUtils.showLongToast(DetailGatewayActivity.this, R.string.pls_try_again_later);
                 }
             }
+            /*JSONArray array = new JSONArray();
+            for (int i = 0; i < 15; i++) {
+                JSONObject object = new JSONObject();
+                object.put("mac", "000AD04112345" + i);
+                object.put("state", i % 2 + "");
+                array.add(object);
+            }
+
+            ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+            ViseLog.d("mIOTId = " + mIOTId + " , mProductKey = " + mProductKey + " , array = " + array.toJSONString());
+            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{"subGWList"},
+                    new String[]{array.toJSONString().replace("\"", "")});*/
         }
     };
 
@@ -377,6 +392,29 @@ public class DetailGatewayActivity extends DetailActivity {
             }
             mAptDeviceList.notifyDataSetChanged();
             onlineCount();
+        }
+        // deleteSceneInGW();
+    }
+
+    private void deleteSceneInGW() {
+        try {
+
+            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "117", 3,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
+            Thread.sleep(2000);
+            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "119", 3,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
+            /*Thread.sleep(2000);
+            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "98", 3,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
+            Thread.sleep(2000);
+            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "99", 3,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
+            Thread.sleep(2000);
+            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "100", 3,
+                    mCommitFailureHandler, mResponseErrorHandler, new Handler());*/
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

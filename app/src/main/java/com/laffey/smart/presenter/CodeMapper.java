@@ -2,6 +2,7 @@ package com.laffey.smart.presenter;
 
 import android.content.Context;
 
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
@@ -253,42 +254,54 @@ public class CodeMapper {
                     mapValue = context.getString(R.string.sensorstate_trigger);
                 }
                 break;
-            case CTSL.PK_AIRCOMDITION_TWO:{
+            case CTSL.PK_AIRCOMDITION_TWO: {
                 // 处理空调二管制状态
-                if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)){
-                    mapName = context.getString(R.string.sensorstate_buttonstate);
-                    if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
-                        mapValue = context.getString(R.string.oneswitch_state_on);
-                    else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)){
-                    mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    if (propertyName.equals(CTSL.M3I1_PowerSwitch_AirConditioner)) {
+                        mapName = context.getString(R.string.sensorstate_buttonstate);
+                        if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
+                            mapValue = context.getString(R.string.oneswitch_state_on);
+                        else mapValue = context.getString(R.string.oneswitch_state_off);
+                    } else if (CTSL.M3I1_TargetTemperature_AirConditioner.equals(propertyName)) {
+                        mapName = context.getString(R.string.target_temperature);
+                        mapValue = propertyValue + "°C";
+                    }
+                } else {
+                    if (propertyName.equals(CTSL.AIRC_T_PowerSwitch)) {
+                        mapName = context.getString(R.string.sensorstate_buttonstate);
+                        if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
+                            mapValue = context.getString(R.string.oneswitch_state_on);
+                        else mapValue = context.getString(R.string.oneswitch_state_off);
+                    } else if (CTSL.AIRC_T_TargetTemperature.equals(propertyName)) {
+                        mapName = context.getString(R.string.target_temperature);
+                        mapValue = propertyValue + "°C";
+                    }
                 }
                 break;
             }
-            case CTSL.PK_AIRCOMDITION_FOUR:{
+            case CTSL.PK_AIRCOMDITION_FOUR: {
                 // 处理空调四管制状态
-                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)){
+                if (propertyName.equals(CTSL.AIRC_F_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.AIRC_F_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }
-            case CTSL.PK_FLOORHEATING001:{
+            case CTSL.PK_FLOORHEATING001: {
                 // 处理地暖（电机）状态
-                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)){
+                if (propertyName.equals(CTSL.FLOORH_001_PowerSwitch)) {
                     mapName = context.getString(R.string.sensorstate_buttonstate);
                     if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))
                         mapValue = context.getString(R.string.oneswitch_state_on);
                     else mapValue = context.getString(R.string.oneswitch_state_off);
-                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)){
+                } else if (CTSL.FLOORH_001_TargetTemperature.equals(propertyName)) {
                     mapName = context.getString(R.string.target_temperature);
-                    mapValue = propertyValue+"°C";
+                    mapValue = propertyValue + "°C";
                 }
                 break;
             }

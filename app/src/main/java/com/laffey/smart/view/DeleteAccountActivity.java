@@ -9,14 +9,18 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityDeleteAccountBinding;
 import com.laffey.smart.presenter.AccountHelper;
+import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
+import com.vise.log.ViseLog;
 
 public class DeleteAccountActivity extends BaseActivity {
     private ActivityDeleteAccountBinding mViewBinding;
@@ -60,18 +64,13 @@ public class DeleteAccountActivity extends BaseActivity {
     private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            if (msg.what == Constant.MSG_CALLBACK_UNREGISTER) {
+            if (msg.what == Constant.MSG_CALLBACK_UNREGISTER/* || msg.what == Constant.MSG_QUEST_CANCELLATION*/) {
                 ToastUtils.showToastCentrally(mActivity, getString(R.string.delete_account_success));
                 LoginBusiness.logout(new ILogoutCallback() {
                     @Override
                     public void onLogoutSuccess() {
-                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        IndexActivity.mainActivity.finish();
-                        MyInfoActivity.myInfoActivity.finish();
-                        finish();
-                        overridePendingTransition(0, 0);
+                        AccountManager.cancellation(mActivity,
+                                Constant.MSG_QUEST_CANCELLATION, Constant.MSG_QUEST_CANCELLATION_ERROR, mAPIDataHandler);
                     }
 
                     @Override
@@ -79,6 +78,57 @@ public class DeleteAccountActivity extends BaseActivity {
                         ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
                     }
                 });
+            } else if (msg.what == Constant.MSG_QUEST_CANCELLATION_IOT) {
+                JSONObject response = (JSONObject) msg.obj;
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    SpUtils.cancellation(mActivity);
+                    Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    IndexActivity.mainActivity.finish();
+                    MyInfoActivity.myInfoActivity.finish();
+                    finish();
+                    overridePendingTransition(0, 0);
+                } else {
+                    String message = response.getString("message");
+                    String localizedMsg = response.getString("localizedMsg");
+                    String errorMess = response.getString("errorMess");
+                    if (message != null && message.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, message);
+                    } else if (localizedMsg != null && localizedMsg.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, localizedMsg);
+                    } else if (errorMess != null && errorMess.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, errorMess);
+                    } else {
+                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_QUEST_CANCELLATION) {
+                JSONObject response = (JSONObject) msg.obj;
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    AccountManager.cancellationIot(mActivity, Constant.MSG_QUEST_CANCELLATION_IOT,
+                            Constant.MSG_QUEST_CANCELLATION_IOT_ERROR, mAPIDataHandler);
+                } else {
+                    String message = response.getString("message");
+                    String localizedMsg = response.getString("localizedMsg");
+                    String errorMess = response.getString("errorMess");
+                    if (message != null && message.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, message);
+                    } else if (localizedMsg != null && localizedMsg.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, localizedMsg);
+                    } else if (errorMess != null && errorMess.length() > 0) {
+                        ToastUtils.showLongToast(mActivity, errorMess);
+                    } else {
+                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                    }
+                }
+            } else if (msg.what == Constant.MSG_QUEST_CANCELLATION_ERROR ||
+                    msg.what == Constant.MSG_QUEST_CANCELLATION_IOT_ERROR) {
+                Throwable e = (Throwable) msg.obj;
+                ViseLog.e(e);
+                ToastUtils.showLongToast(DeleteAccountActivity.this, e.getMessage());
             }
             return false;
         }

@@ -103,7 +103,8 @@ public class SelectAssociatedDevActivity extends BaseActivity {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry deviceEntry = mList.get(position);
-                SelectAssociatedKeyActivity.start(SelectAssociatedDevActivity.this, deviceEntry.productKey, mIotId, mDevMac, deviceEntry.iotId, 0, mSrcEndId, mSrcPK);
+                SelectAssociatedKeyActivity.start(SelectAssociatedDevActivity.this, deviceEntry.productKey,
+                        mIotId, mDevMac, deviceEntry.iotId, 0, mSrcEndId, mSrcPK, mGatewayId);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -115,40 +116,6 @@ public class SelectAssociatedDevActivity extends BaseActivity {
 
         new UserCenter(SelectAssociatedDevActivity.this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
-
-        /*MacByIotIdRequst requst = new MacByIotIdRequst(Constant.GET_MAC_BY_IOTID_VER, new MacByIotIdRequst.Param("0", mIotId));
-        RetrofitUtil.getInstance().getService().getMacByIotId("token", requst)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<MacByIotIdResponse>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull MacByIotIdResponse response) {
-                        if (response.getCode() == 200) {
-                            mDevMac = response.getMac();
-                            new UserCenter(SelectAssociatedDevActivity.this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
-                                    mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                        } else {
-                            mViewBinding.nodataTv.setText(response.getMessage());
-                            QMUITipDialogUtil.showFailDialog(SelectAssociatedDevActivity.this, response.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        mViewBinding.nodataTv.setText(e.getMessage());
-                        QMUITipDialogUtil.showFailDialog(SelectAssociatedDevActivity.this, R.string.unknown_err);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });*/
     }
 
     // 嵌入式状态栏

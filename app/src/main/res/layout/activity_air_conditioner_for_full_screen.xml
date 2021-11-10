@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/appcolor"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".view.AirConditionerForFSSActivity">
 
     <include
@@ -184,7 +185,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:paddingLeft="@dimen/dp_10"
+                android:paddingLeft="@dimen/dp_5"
                 android:paddingRight="@dimen/dp_5">
 
                 <RelativeLayout
@@ -254,7 +255,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:paddingLeft="@dimen/dp_5"
-                android:paddingRight="@dimen/dp_10">
+                android:paddingRight="@dimen/dp_5">
 
                 <RelativeLayout
                     android:id="@+id/fanmode_layout"

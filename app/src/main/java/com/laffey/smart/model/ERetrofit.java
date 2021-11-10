@@ -1,15 +1,18 @@
 package com.laffey.smart.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.MocoApplication;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.RetrofitService;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
+import com.laffey.smart.view.LoginActivity;
 import com.vise.log.ViseLog;
 
 import java.io.InputStream;
@@ -43,6 +46,7 @@ public class ERetrofit {
     private RetrofitService service;
 
     public static ERetrofit instance;
+    public static int count = 0;
 
     public static ERetrofit getInstance() {
         synchronized (ERetrofit.class) {
@@ -199,19 +203,30 @@ public class ERetrofit {
                         if (throwable instanceof HttpException) {
                             HttpException exception = (HttpException) throwable;
                             if (exception.code() == 401) {
-                                return RetrofitUtil.getInstance().refreshToken(context)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .unsubscribeOn(Schedulers.io())
-                                        .doOnNext(new Consumer<JSONObject>() {
-                                            @Override
-                                            public void accept(JSONObject jsonObject) throws Exception {
-                                                String accessToken = jsonObject.getString("accessToken");
-                                                String refreshToken = jsonObject.getString("refreshToken");
-                                                SpUtils.putAccessToken(context, accessToken);
-                                                SpUtils.putRefreshToken(context, refreshToken);
-                                            }
-                                        });
+                                ViseLog.d("刷新token111");
+                                if (count == 0) {
+                                    ViseLog.d("刷新token22222");
+                                    count++;
+                                    Observable<JSONObject> o = RetrofitUtil.getInstance().refreshToken(context)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .unsubscribeOn(Schedulers.io())
+                                            .doOnNext(new Consumer<JSONObject>() {
+                                                @Override
+                                                public void accept(JSONObject jsonObject) throws Exception {
+                                                    String accessToken = jsonObject.getString("accessToken");
+                                                    String refreshToken = jsonObject.getString("refreshToken");
+                                                    SpUtils.putAccessToken(context, accessToken);
+                                                    SpUtils.putRefreshToken(context, refreshToken);
+                                                }
+                                            });
+                                    ViseLog.d("o = " + GsonUtil.toJson(o));
+                                    return o;
+                                } else {
+                                    count = 0;
+                                    LoginActivity.start(context, null);
+                                    return Observable.error(throwable);
+                                }
                             } else return Observable.error(throwable);
                         } else
                             return Observable.error(throwable);

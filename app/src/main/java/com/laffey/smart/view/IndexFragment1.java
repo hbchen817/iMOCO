@@ -395,6 +395,7 @@ public class IndexFragment1 extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        RealtimeDataReceiver.addEventCallbackHandler("IndexfragmentLocalSceneCallback", mAPIDataHandler);
         refreshData();
     }
 
@@ -583,6 +584,7 @@ public class IndexFragment1 extends BaseFragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mDeviceList != null && position < mDeviceList.size()) {
                 if (mDeviceList.get(position) != null && mDeviceList.get(position).productKey != null) {
+                    // ViseLog.d("mDeviceList.get(position) = " + GsonUtil.toJson(mDeviceList.get(position)));
                     ActivityRouter.toDetail(mActivity, mDeviceList.get(position).iotId, mDeviceList.get(position).productKey,
                             mDeviceList.get(position).status, mDeviceList.get(position).nickName, mDeviceList.get(position).owned);
                 } else {
@@ -704,12 +706,15 @@ public class IndexFragment1 extends BaseFragment {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        ViseLog.d("场景 = " + GsonUtil.toJson(response));
+                        // ViseLog.d("场景 = " + GsonUtil.toJson(response));
                         int code = response.getInteger("code");
                         String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
                         if (code == 0 || code == 200) {
                             mSceneList.clear();
+                            if ("0".equals(type)) {
+                                DeviceBuffer.initSceneBuffer();
+                            }
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
                                     JSONObject sceneObj = sceneList.getJSONObject(i);
@@ -805,11 +810,9 @@ public class IndexFragment1 extends BaseFragment {
 
     // 开始获取设备列表
     private void startGetDeviceList() {
-        // 初始化处理设备缓存器
-        DeviceBuffer.initProcess();
-        mAptDeviceList.clearData();
         // 获取家设备列表
         mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, DEV_PAGE_SIZE,
+                Constant.MSG_CALLBACK_GETHOMEDEVICELIST,
                 mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         /*new Handler().postDelayed(new Runnable() {
             @Override
@@ -1053,6 +1056,27 @@ public class IndexFragment1 extends BaseFragment {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
+                case Constant.MSG_CALLBACK_LNEVENTNOTIFY:
+                    // 处理触发手动场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("InvokeLocalSceneNotification".equals(identifier)) {
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        if ("0".equals(status)) {
+                            String name = DeviceBuffer.getScene(value.getString("SceneId")).getSceneDetail().getName();
+                            if (name != null && name.length() > 0) {
+                                String tip = String.format(getString(R.string.main_scene_execute_hint_2), name);
+                                ToastUtils.showLongToast(mActivity, tip);
+                            } else {
+                                ToastUtils.showLongToast(mActivity, R.string.perform_scene);
+                            }
+                        } else {
+                            ToastUtils.showLongToast(mActivity, R.string.scene_do_fail);
+                        }
+                    }
+                    break;
                 case Constant.MSG_POSTLOGINPORCESS:
                     HiLog.i("开始建立长连接 initProcess");
                     // 初始化实时数据接收器
@@ -1141,8 +1165,9 @@ public class IndexFragment1 extends BaseFragment {
                     break;
                 case Constant.MSG_CALLBACK_GETHOMEDEVICELIST:
                     // 处理获取家设备列表数据
-                    ViseLog.d("------------" + (String) msg.obj);
+                    // ViseLog.d("------------" + (String) msg.obj);
                     EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList((String) msg.obj);
+                    DeviceBuffer.initProcess();
                     if (homeDeviceList != null && homeDeviceList.data != null) {
                         // 向缓存追加家列表数据
                         DeviceBuffer.addHomeDeviceList(homeDeviceList);
@@ -1275,6 +1300,9 @@ public class IndexFragment1 extends BaseFragment {
                     //HiLog.i("MSG_CALLBACK_LNPROPERTYNOTIFY , ", propertyEntry);
                     if (propertyEntry != null) {
                         for (String name : propertyEntry.properties.keySet()) {
+                            /*ViseLog.d("propertyEntry.iotId = " + propertyEntry.iotId +
+                                    "\nname = " + name +
+                                    "\npropertyEntry.properties.get(name) = " + propertyEntry.properties.get(name));*/
                             mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
                             mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), Utility.getCurrentTimeStamp());
                         }
@@ -1332,7 +1360,7 @@ public class IndexFragment1 extends BaseFragment {
     // 订阅刷新数据事件
     @Subscribe
     public void onRefreshRoomData(EEvent eventEntry) {
-        //ViseLog.d("订阅刷新数据事件 eventEntry.name = " + eventEntry.name);
+        // ViseLog.d("订阅刷新数据事件 eventEntry.name = " + eventEntry.name);
         // 处理刷新房间列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)) {
             syncRoomListData();
@@ -1364,7 +1392,6 @@ public class IndexFragment1 extends BaseFragment {
 
         // 处理刷新手动执行场景列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
-            ViseLog.d("处理刷新手动执行场景列表数据");
             startGetSceneList();
         }
 
@@ -1415,5 +1442,11 @@ public class IndexFragment1 extends BaseFragment {
                 DeviceBuffer.addExtendedInfo(iotId, object);
             }
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("IndexfragmentLocalSceneCallback");
     }
 }

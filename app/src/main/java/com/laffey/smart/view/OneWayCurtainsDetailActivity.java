@@ -226,6 +226,7 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
                 case TAG_GET_EXTENDED_PRO: {
                     // 获取按键昵称
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
+                    if (object.toJSONString().length() == 2) break;
                     DeviceBuffer.addExtendedInfo(mIOTId, object);
                     mKeyName1TV.setText(object.getString(CTSL.WC_CurtainConrtol));
                     mTitleTV.setText(object.getString(CTSL.WC_CurtainConrtol));

@@ -5,15 +5,19 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.HttpException;
 
@@ -195,7 +199,15 @@ public class AccountManager {
 
     // 获取AuthCode
     public static void getAuthCode(Context context, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance().getAuthCode(context)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().getAuthCode(context);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -240,9 +252,18 @@ public class AccountManager {
                 });
     }
 
-    // token刷新
-    public static void refreshToken(Context context, int resultTag, int errorTag, Handler resultHandler) {
-        RetrofitUtil.getInstance().refreshToken(context)
+    // 密码修改
+    public static void pwdChange(Context context, String oldPwd, String newPwd, int resultTag,
+                                 int errorTag, Handler resultHandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().pwdChange(context, oldPwd, newPwd);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -253,20 +274,10 @@ public class AccountManager {
 
                     @Override
                     public void onNext(@NonNull JSONObject response) {
-                        int code = response.getInteger("code");
-                        if (code == 200) {
-                            String accessToken = response.getString("accessToken");
-                            String refreshToken = response.getString("refreshToken");
-                            SpUtils.putAccessToken(context, accessToken);
-                            SpUtils.putRefreshToken(context, refreshToken);
-
-                            getAuthCode(context, resultTag, errorTag, resultHandler);
-                        } else {
-                            Message msg = resultHandler.obtainMessage();
-                            msg.what = resultTag;
-                            msg.obj = response;
-                            msg.sendToTarget();
-                        }
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
                     }
 
                     @Override
@@ -284,10 +295,146 @@ public class AccountManager {
                 });
     }
 
-    // 密码修改
-    public static void pwdChange(Context context, String oldPwd, String newPwd, int resultTag,
-                                 int errorTag, Handler resultHandler) {
-        RetrofitUtil.getInstance().pwdChange(context, oldPwd, newPwd)
+    // 用户注销接口（账号系统）
+    public static void cancellation(Context context, int resultTag, int errorTag, Handler resultHandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().cancellation(context);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 用户注销接口（iot系统）
+    public static void cancellationIot(Context context, int resultTag, int errorTag, Handler resultHandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().cancellationIot(context);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 查询用户信息
+    public static void getCaccountsInfo(Context context, int resultTag, int errorTag, Handler resultHandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().getCaccountsInfo(context);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = resultTag;
+                        msg.obj = response;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Message msg = resultHandler.obtainMessage();
+                        msg.what = errorTag;
+                        msg.obj = e;
+                        msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 编辑用户信息
+    public static void updateCaccountsInfo(Context context, String email, String nickName, String headPortrait,
+                                           String gender, String area, String personalSignature,
+                                           int resultTag, int errorTag, Handler resultHandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().updateCaccountsInfo(context, email, nickName,
+                                headPortrait, gender, area, personalSignature);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

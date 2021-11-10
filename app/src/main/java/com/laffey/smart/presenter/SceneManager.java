@@ -25,6 +25,7 @@ import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EProduct;
+import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.ItemScene;
@@ -39,9 +40,12 @@ import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.view.SwitchLocalSceneActivity;
 import com.vise.log.ViseLog;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -2266,7 +2270,15 @@ public class SceneManager {
 
     // 查询本地场景列表
     public void querySceneList(Context context, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance().querySceneList(context, mac, type)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2279,6 +2291,7 @@ public class SceneManager {
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
                         Message msg = resulthandler.obtainMessage();
                         msg.what = resultTag;
+                        msg.arg1 = Integer.parseInt(type);
                         msg.obj = response;
                         msg.sendToTarget();
                     }
@@ -2300,8 +2313,15 @@ public class SceneManager {
 
     // 增加本地场景
     public void addScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .addScene(context, scene)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().addScene(context, scene);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2335,8 +2355,15 @@ public class SceneManager {
 
     // 更新本地场景
     public void updateScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .updateScene(context, scene)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().updateScene(context, scene);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2370,8 +2397,15 @@ public class SceneManager {
 
     // 根据子设备iotId查询网关iotId
     public void getGWIotIdBySubIotId(Context context, String subId, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .getGWIotIdBySubIotId(context, subId)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().getGWIotIdBySubIotId(context, subId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2405,8 +2439,15 @@ public class SceneManager {
 
     // 根据设备iotId获取设备mac
     public void queryMacByIotId(Context context, String iotId, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .queryMacByIotId(context, iotId)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().queryMacByIotId(context, iotId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2440,8 +2481,16 @@ public class SceneManager {
 
     // 删除本地场景
     public void deleteScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .deleteScene(context, scene.getGwMac(), scene.getSceneDetail().getSceneId())
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .deleteScene(context, scene.getGwMac(), scene.getSceneDetail().getSceneId());
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2475,8 +2524,16 @@ public class SceneManager {
 
     // 删除本地场景
     public void deleteScene(Context context, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
-        RetrofitUtil.getInstance()
-                .deleteScene(context, gwMac, sceneId)
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .deleteScene(context, gwMac, sceneId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(context))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {

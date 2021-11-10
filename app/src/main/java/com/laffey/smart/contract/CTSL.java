@@ -124,6 +124,7 @@ public class CTSL {
     public static final String GW_4100_EXT_PAN_ID              = "EXT_PAN_ID";//扩展网路标识
     public static final String GW_4100_ZB_Channel              = "ZB_Channel";//ZB通道
     public static final String GW_4100_ZB_PAN_ID               = "ZB_PAN_ID";//网路标识
+    public static final String GW_4100_subGWList               = "subGWList";//网路标识
     public static final Map<String, PTYPE> GW_4100_Properties  = new HashMap<String, PTYPE>() {
         {
             put(GW_4100_ZB_Band, PTYPE.t_enum);
@@ -132,6 +133,7 @@ public class CTSL {
             put(GW_4100_EXT_PAN_ID, PTYPE.t_text);
             put(GW_4100_ZB_Channel, PTYPE.t_int32);
             put(GW_4100_ZB_PAN_ID, PTYPE.t_text);
+            put(GW_4100_subGWList, PTYPE.t_text);
         }
     };
 
@@ -362,6 +364,11 @@ public class CTSL {
             put(AIRC_T_PowerSwitch, PTYPE.t_bool);
             put(AIRC_T_CurrentHumidity, PTYPE.t_double);
             put(AIRC_T_TargetTemperature, PTYPE.t_double);
+            put(M3I1_PowerSwitch_AirConditioner, PTYPE.t_bool);
+            put(M3I1_CurrentTemperature_AirConditioner, PTYPE.t_int32);
+            put(M3I1_TargetTemperature_AirConditioner, PTYPE.t_int32);
+            put(M3I1_WindSpeed_AirConditioner, PTYPE.t_enum);
+            put(M3I1_WorkMode_AirConditioner, PTYPE.t_enum);
         }
     };
 
