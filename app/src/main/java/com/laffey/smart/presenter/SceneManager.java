@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -37,6 +38,7 @@ import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.view.LoginActivity;
 import com.laffey.smart.view.SwitchLocalSceneActivity;
 import com.vise.log.ViseLog;
 
@@ -825,6 +827,25 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    //设置设备扩展信息
+    public static void setExtendedProperty(Activity activity, String iotId,
+                                           String dataKey,
+                                           String dataValue,
+                                           APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_SET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.addParameter("dataValue", dataValue);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     //获取设备扩展信息
     public void getExtendedProperty(String iotId,
                                     String dataKey,
@@ -861,6 +882,21 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //获取设备扩展信息
+    public static void getExtendedProperty(Activity activity, String iotId,
+                                           String dataKey, APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_GET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 删除设备扩展属性信息
@@ -2229,6 +2265,23 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 管理多控组服务
+    public static void invokeManageControlGroupService(Activity activity, String iotId, String groupId, int type, APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "ManageControlGroupService");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("GroupId", groupId);
+        jsonObject.put("Type", type);
+        requestParameterEntry.addParameter("args", jsonObject);
+        requestParameterEntry.callbackMessageType = -1;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 管理本地场景
     public static void manageSceneService(String iotId, String sceneid, int type,
                                           Handler commitFailureHandler,
@@ -2249,11 +2302,27 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 管理本地场景
+    public static void manageSceneService(Activity activity, String iotId, String sceneid, int type,
+                                          APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "ManageSceneService");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("SceneId", sceneid);
+        jsonObject.put("Type", type);
+        requestParameterEntry.addParameter("args", jsonObject);
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 触发手动场景服务
-    public static void invokeLocalSceneService(String iotId, String sceneid,
-                                               Handler commitFailureHandler,
-                                               Handler responseErrorHandler,
-                                               @NonNull Handler processDataHandler) {
+    public static void invokeLocalSceneService(Activity activity, String iotId, String sceneid,
+                                               APIChannel.Callback callback) {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
@@ -2265,20 +2334,20 @@ public class SceneManager {
         requestParameterEntry.addParameter("args", jsonObject);
 
         //提交
-        new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 查询本地场景列表
-    public void querySceneList(Context context, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
+    public void querySceneList(Activity activity, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
+                        return RetrofitUtil.getInstance().querySceneList(activity, mac, type);
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+                .retryWhen(ERetrofit.retryTokenFun(activity))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2289,11 +2358,25 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.arg1 = Integer.parseInt(type);
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    querySceneList(activity, mac, type, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2312,16 +2395,16 @@ public class SceneManager {
     }
 
     // 增加本地场景
-    public void addScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+    public void addScene(Activity activity, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().addScene(context, scene);
+                        return RetrofitUtil.getInstance().addScene(activity, scene);
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+                .retryWhen(ERetrofit.retryTokenFun(activity))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2332,10 +2415,125 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    addScene(activity, scene, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
                         Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
+                        msg.what = errorTag;
+                        msg.obj = e;
                         msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 增加本地场景
+    public static void addScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
+        RetrofitUtil.getInstance().addScene(activity, scene)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    addScene(activity, scene, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 更新本地场景
+    public void updateScene(Activity activity, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().updateScene(activity, scene);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    updateScene(activity, scene, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2354,16 +2552,8 @@ public class SceneManager {
     }
 
     // 更新本地场景
-    public void updateScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().updateScene(context, scene);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+    public static void updateScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
+        RetrofitUtil.getInstance().updateScene(activity, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2374,10 +2564,76 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    updateScene(activity, scene, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 根据子设备iotId查询网关iotId
+    public static void getGWIotIdBySubIotId(Activity activity, String subId, int resultTag, int errorTag, Handler resulthandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().getGWIotIdBySubIotId(activity, subId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    getGWIotIdBySubIotId(activity, subId, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2396,16 +2652,8 @@ public class SceneManager {
     }
 
     // 根据子设备iotId查询网关iotId
-    public void getGWIotIdBySubIotId(Context context, String subId, int resultTag, int errorTag, Handler resulthandler) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().getGWIotIdBySubIotId(context, subId);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+    public static void getGWIotIdBySubIotId(Activity activity, String subId, Callback callback) {
+        RetrofitUtil.getInstance().getGWIotIdBySubIotId(activity, subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2416,18 +2664,28 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    getGWIotIdBySubIotId(activity, subId, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    LoginActivity.start(activity, null);
+                                    activity.finish();
+                                }
+                            });
+                        }
                     }
 
                     @Override
                     public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = errorTag;
-                        msg.obj = e;
-                        msg.sendToTarget();
+                        callback.onError(e);
                     }
 
                     @Override
@@ -2438,16 +2696,16 @@ public class SceneManager {
     }
 
     // 根据设备iotId获取设备mac
-    public void queryMacByIotId(Context context, String iotId, int resultTag, int errorTag, Handler resulthandler) {
+    public void queryMacByIotId(Activity activity, String iotId, int resultTag, int errorTag, Handler resulthandler) {
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().queryMacByIotId(context, iotId);
+                        return RetrofitUtil.getInstance().queryMacByIotId(activity, iotId);
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+                .retryWhen(ERetrofit.retryTokenFun(activity))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2458,10 +2716,25 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    queryMacByIotId(activity, iotId, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2480,17 +2753,17 @@ public class SceneManager {
     }
 
     // 删除本地场景
-    public void deleteScene(Context context, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+    public void deleteScene(Activity activity, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
                         return RetrofitUtil.getInstance()
-                                .deleteScene(context, scene.getGwMac(), scene.getSceneDetail().getSceneId());
+                                .deleteScene(activity, scene.getGwMac(), scene.getSceneDetail().getSceneId());
                     }
                 })
                 .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+                .retryWhen(ERetrofit.retryTokenFun(activity))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2501,10 +2774,25 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    deleteScene(activity, scene, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2523,17 +2811,9 @@ public class SceneManager {
     }
 
     // 删除本地场景
-    public void deleteScene(Context context, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance()
-                                .deleteScene(context, gwMac, sceneId);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
+    public static void deleteScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
+        RetrofitUtil.getInstance()
+                .deleteScene(activity, scene.getGwMac(), scene.getSceneDetail().getSceneId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2544,10 +2824,77 @@ public class SceneManager {
 
                     @Override
                     public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        Message msg = resulthandler.obtainMessage();
-                        msg.what = resultTag;
-                        msg.obj = response;
-                        msg.sendToTarget();
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    deleteScene(activity, scene, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 删除本地场景
+    public void deleteScene(Activity activity, String gwMac, String sceneId, int resultTag, int errorTag, Handler resulthandler) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .deleteScene(activity, gwMac, sceneId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            Message msg = resulthandler.obtainMessage();
+                            msg.what = resultTag;
+                            msg.obj = response;
+                            msg.sendToTarget();
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    deleteScene(activity, gwMac, sceneId, resultTag, errorTag, resulthandler);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -2563,5 +2910,114 @@ public class SceneManager {
 
                     }
                 });
+    }
+
+    // 删除本地场景
+    public static void deleteScene(Activity activity, String gwMac, String sceneId, Callback callback) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance()
+                                .deleteScene(activity, gwMac, sceneId);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    deleteScene(activity, gwMac, sceneId, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 查询本地场景列表
+    public static void querySceneList(Activity activity, String mac, String type, Callback callback) {
+        Observable.just(new JSONObject())
+                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
+                    @Override
+                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
+                        return RetrofitUtil.getInstance().querySceneList(activity, mac, type);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    querySceneList(activity, mac, type, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public interface Callback {
+        void onNext(JSONObject response);
+
+        void onError(Throwable e);
     }
 }

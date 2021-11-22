@@ -50,7 +50,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.PwdChangeActivity"></activity>
+        <activity android:name=".view.SubGwInfoActivity"></activity>
+        <activity android:name=".view.AddSubGwActivity" />
+        <activity android:name=".view.PwdChangeActivity" />
         <activity
             android:name=".view.PwdSettingActivity"
             android:screenOrientation="portrait" />
@@ -453,6 +455,7 @@
         <activity
             android:name=".view.DetailGatewayActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.DetailSensorActivity"
@@ -611,6 +614,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.SubGwGatewayListActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".utility.BLEService"
@@ -629,6 +637,8 @@
                 <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".service.TestService" />
     </application>
 
 </manifest>

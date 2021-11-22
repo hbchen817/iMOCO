@@ -34,6 +34,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityFreeRegistBinding;
 import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.VerifyView;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -247,8 +248,6 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                         String floatImage = response.getString("floatImage");
                         String backgroundImage = response.getString("backgroundImage");
 
-                        //ViseLog.d("mBackgroundImage = " + activity.mBackgroundImage);
-                        // Log.d("wyylog", activity.mBackgroundImage.length() + "");
                         floatImage = floatImage.replace("data:image/png;base64,", "");
                         backgroundImage = backgroundImage.replace("data:image/png;base64,", "");
                         activity.mBackgroundBitmap = activity.base64ToBitmap(backgroundImage);
@@ -266,18 +265,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                         activity.mVerifyViewDialog.show();
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }
@@ -320,9 +308,12 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                                 AccountManager.getPVCode(Constant.MSG_QUEST_GET_PV_CODE, Constant.MSG_QUEST_GET_PV_CODE_ERROR, activity.mHandler);
                                 break;
                             }
+                            case "04": {// 图片验证码错误！
+                                AccountManager.getPVCode(Constant.MSG_QUEST_GET_PV_CODE, Constant.MSG_QUEST_GET_PV_CODE_ERROR, activity.mHandler);
+                                break;
+                            }
                             case "01":// 单日短信发送总量超限制！
                             case "02":// 单日单ip短信发送总量超限制！
-                            case "04":// 图片验证码错误！
                             case "05":// 频繁发送！
                             case "06": {
                                 // 短信发送失败！

@@ -39,6 +39,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -238,7 +239,7 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
                         if (result) {
                             String sceneId = response.getString("sceneId");
                             DeviceBuffer.removeScene(sceneId);
-                            mSceneManager.manageSceneService(mGwId, sceneId, 3, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                            SceneManager.manageSceneService(mGwId, sceneId, 3, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                             RefreshData.refreshHomeSceneListData();
                             setResult(10003);
                             finish();
@@ -249,10 +250,7 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
                                 ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
                         }
                     } else {
-                        if (message == null || message.length() == 0) {
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, R.string.pls_try_again_later);
-                        } else
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
+                        RetrofitUtil.showErrorMsg(LightLocalSceneActivity.this, response);
                     }
                     break;
                 }
@@ -277,10 +275,7 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
                                 ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
                         }
                     } else {
-                        if (message == null || message.length() == 0) {
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, R.string.pls_try_again_later);
-                        } else
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
+                        RetrofitUtil.showErrorMsg(LightLocalSceneActivity.this, response);
                     }
                     break;
                 }
@@ -306,10 +301,7 @@ public class LightLocalSceneActivity extends BaseActivity implements View.OnLong
                                 ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
                         }
                     } else {
-                        if (message == null || message.length() == 0) {
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, R.string.pls_try_again_later);
-                        } else
-                            ToastUtils.showLongToast(LightLocalSceneActivity.this, message);
+                        RetrofitUtil.showErrorMsg(LightLocalSceneActivity.this, response);
                     }
                     break;
                 }

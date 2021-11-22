@@ -32,6 +32,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -170,10 +171,7 @@ public class LightLocalSceneListActivity extends BaseActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(LightLocalSceneListActivity.this, message);
-                        else
-                            ToastUtils.showLongToast(LightLocalSceneListActivity.this, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(LightLocalSceneListActivity.this, response);
                     }
                     break;
                 }

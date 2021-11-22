@@ -28,6 +28,7 @@ import com.laffey.smart.presenter.ProductHelper;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EProduct;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.widget.DialogUtils;
 
 /**
  * Creator: xieshaobing
@@ -111,7 +112,20 @@ public class ProductGuidanceActivity extends BaseActivity {
                 // 选中的是子设备处理
                 if (mGatewayNumber <= 0) {
                     // 如果没有网关则退出
-                    Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.choicegateway_nohasgatewayhint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
+                    // Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.choicegateway_nohasgatewayhint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
+                    DialogUtils.showConfirmDialog(ProductGuidanceActivity.this, R.string.dialog_title,
+                            R.string.choicegateway_nohasgatewayhint, R.string.dialog_confirm,
+                            new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    ProductGuidanceActivity.this.finish();
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
                 } else {
                     if (mGatewayIOTId != null && mGatewayIOTId.length() > 0) {
                         // 如果网关已经选定则直接进入允许子设备入网

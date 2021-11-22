@@ -22,6 +22,7 @@ import com.laffey.smart.databinding.ActivityNicknameBinding;
 import com.laffey.smart.event.RefreshMyinfo;
 import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -120,18 +121,7 @@ public class NickNameActivity extends BaseActivity {
                         ToastUtils.showLongToast(activity, R.string.submit_completed);
                         activity.finish();
                     } else {
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }

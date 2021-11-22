@@ -71,6 +71,8 @@ public class Constant {
     public static final int REQUESTCODE_CALLCHOICECONTENTACTIVITY   = 3;
     public static final int REQUESTCODE_CALLCHOICEWIFIACTIVITY      = 4;
     public static final int REQUESTCODE_CALLSETTIMEACTIVITY         = 5;
+    public static final int REQUESTCODE_CALLADDSUBGWACTIVITY        = 6;
+    public static final int REQUESTCODE_CALLSUBGWINFOACTIVITY       = 7;
 
     // 定义结果码
     public static final int RESULTCODE_CALLCHOICEACTIVITY_TIME      = 1000;
@@ -79,6 +81,8 @@ public class Constant {
     public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY    = 1003;
     public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY       = 1004;
     public static final int RESULTCODE_CALLSETTIMEACTIVITY          = 1005;
+    public static final int RESULTCODE_CALLADDSUBGWACTIVITY         = 1006;
+    public static final int RESULTCODE_CALLSUBGWINFOACTIVITY        = 1007;
 
     // 定义API PATH常量
     public static final String API_PATH_GETCONFIGPROCDUCTLIST       = "/thing/productInfo/getByAppKey";
@@ -332,6 +336,10 @@ public class Constant {
     public static final int MSG_QUEST_GET_CACCOUNTS_INFO_ERROR      = 531;
     public static final int MSG_QUEST_UPDATE_CACCOUNTS_INFO         = 532;
     public static final int MSG_QUEST_UPDATE_CACCOUNTS_INFO_ERROR   = 533;
+    public static final int MSG_QUEST_GET_SUB_GW_LIST               = 534;
+    public static final int MSG_QUEST_GET_SUB_GW_LIST_ERROR         = 535;
+    public static final int MSG_QUEST_ADD_SUB_GW                    = 536;
+    public static final int MSG_QUEST_ADD_SUB_GW_ERROR              = 537;
 
     // intent resultCode
     public static final int ADD_LOCAL_SCENE                         = 10001;
@@ -463,6 +471,10 @@ public class Constant {
     public static final String AUTH_ACCOUNTS_PWD                    = "/caccounts/basic/authAccountsPwd";
     public static final String AUTH_ACCOUNTS_PWD_VER                = "1.0";
 
+    // 短信验证码认证、登录
+    public static final String AUTH_ACCOUNTS_VC                     = "/caccounts/basic/authSMSVerifyCode";
+    public static final String AUTH_ACCOUNTS_VC_VER                 = "1.0";
+
     // 密码重置
     public static final String PWD_RESET                            = "/caccounts/basic/pwdReset";
     public static final String PWD_RESET_VER                        = "1.0";
@@ -494,5 +506,69 @@ public class Constant {
     // 编辑用户信息
     public static final String UPDATE_CACCOUNTS_INFO                = "/caccounts/basic/user/update";
     public static final String UPDATE_CACCOUNTS_INFO_VER            = "1.0";
+
+    // 获取子网关所关联的主网关Mac，校验子网关有没有被绑定
+    public static final String VERIFY_SUB_GW_MAC                    = "/app/subGw/getMac";
+    public static final String VERIFY_SUB_GW_MAC_VER                = "1.0";
+
+    // 获取网关下的子网关列表
+    public static final String GET_SUB_GW_LIST                      = "/app/subGw/getSubGwList";
+    public static final String GET_SUB_GW_LIST_VER                  = "1.0";
+
+    // 添加子网关信息
+    public static final String ADD_SUB_GW                           = "/app/subGw/add";
+    public static final String ADD_SUB_GW_VER                       = "1.0";
+
+    // 修改子网关信息
+    public static final String UPDATE_SUB_GW                        = "/app/subGw/update";
+    public static final String UPDATE_SUB_GW_VER                    = "1.0";
+
+    // 删除子网关信息
+    public static final String DELETE_SUB_GW                        = "/app/subGw/delete";
+    public static final String DELETE_SUB_GW_VER                    = "1.0";
+
+    // 获取绑定关系
+    public static final String GET_BIND_RELATION                    = "/app/moreSwitch/getBindRelation";
+    public static final String GET_BIND_RELATION_VER                = "1.0";
+
+    // 获取Mac所有路绑定关系
+    public static final String GET_ALL_BIND_RELATION                = "/app/moreSwitch/getAllBindRelation";
+    public static final String GET_ALL_BIND_RELATION_VER            = "1.0";
+
+    // 添加绑定关系
+    public static final String ADD_BIND_RELATION                    = "/app/moreSwitch/addBindRelation";
+    public static final String ADD_BIND_RELATION_VER                = "1.0";
+
+    // 取消绑定关系
+    public static final String CANCEL_BIND_RELATION                 = "/app/moreSwitch/cancelBindRelation";
+    public static final String CANCEL_BIND_RELATION_VER             = "1.0";
+
+    // 获取多控组列表
+    public static final String GET_MULTI_CONTROL                    = "/app/multiControl/get";
+    public static final String GET_MULTI_CONTROL_VER                = "1.0";
+
+    // 添加/编辑多控组
+    public static final String ADD_OR_EDIT_MULTI_CONTROL            = "/app/multiControl/addOrEdit";
+    public static final String ADD_OR_EDIT_MULTI_CONTROL_VER        = "1.0";
+
+    // 删除组关系接口
+    public static final String DEL_MULTI_CONTROL_GROUP              = "/app/multiControl/group/delete";
+    public static final String DEL_MULTI_CONTROL_GROUP_VER          = "1.0";
+
+    // 修改组昵称
+    public static final String EDIT_CONTROL_GROUP_NAME              = "/app/multiControl/nickname/edit";
+    public static final String EDIT_CONTROL_GROUP_NAME_VER          = "1.0";
+
+    // 删除子设备相关多控组
+    public static final String DEL_SUB_MAC_CONTROL_GROUP            = "/app/multiControl/subDev/delete";
+    public static final String DEL_SUB_MAC_CONTROL_GROUP_VER        = "1.0";
+
+    // 获取Mac被绑定的路
+    public static final String GET_AVAILABLE_KEY                    = "/app/multiControl/subDev/get";
+    public static final String GET_AVAILABLE_KEY_VER                = "1.0";
+
+    // 清空主网关下的多控组
+    public static final String DEL_MAC_CONTROL_GROUP                = "/app/multiControl/mac/delete";
+    public static final String DEL_MAC_CONTROL_GROUP_VER            = "1.0";
 }
 

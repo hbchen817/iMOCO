@@ -40,6 +40,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.viewholder.CommonAdapter;
 
@@ -189,9 +190,6 @@ public class LightDetailActivity extends DetailActivity {
 
     // 获取面板所属网关iotId
     private void getGatewayId(String iotId) {
-        if (Constant.IS_TEST_DATA) {
-            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
-        }
         mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
     }
@@ -262,9 +260,8 @@ public class LightDetailActivity extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             colorLightScene.getSceneName());
                     ToastUtils.showLongToast(LightDetailActivity.this, msg);
-                    SceneManager.invokeLocalSceneService(mGatewayId,
-                            colorLightScene.getId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(LightDetailActivity.this, mGatewayId,
+                            colorLightScene.getId(), null);
                 }
             }
         });
@@ -301,10 +298,7 @@ public class LightDetailActivity extends DetailActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(LightDetailActivity.this, message);
-                        else
-                            ToastUtils.showLongToast(LightDetailActivity.this, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(LightDetailActivity.this, response);
                     }
                     break;
                 }
@@ -324,10 +318,7 @@ public class LightDetailActivity extends DetailActivity {
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(LightDetailActivity.this, message);
-                        else
-                            ToastUtils.showLongToast(LightDetailActivity.this, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(LightDetailActivity.this, response);
                     }
                     break;
                 }

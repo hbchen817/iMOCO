@@ -25,6 +25,7 @@ import com.laffey.smart.contract.CScene;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 /**
@@ -190,29 +191,24 @@ public class AptSceneList extends BaseAdapter {
                 public void onClick(View v) {
                     final int index = Integer.parseInt(v.getTag().toString());
 
-                    AlertDialog alert = new AlertDialog.Builder(mContext).create();
-                    alert.setIcon(R.drawable.dialog_quest);
-                    alert.setTitle(R.string.dialog_title);
-                    alert.setMessage(mContext.getString(R.string.scene_delete_confirm));
-                    //添加否按钮
-                    alert.setButton(DialogInterface.BUTTON_NEGATIVE, mContext.getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    //添加是按钮
-                    alert.setButton(DialogInterface.BUTTON_POSITIVE, mContext.getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            //new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
-                            if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                                new SceneManager(mContext).deleteScene(mSceneList.get(index).id, null, null, new Myhandler(mContext));
-                            }
-                            // mDeleteList.remove(position);
-                            mCallback.onDelItem(mSceneList.get(index).id);
-                        }
-                    });
-                    alert.show();
+                    DialogUtils.showConfirmDialog((Activity) mContext, R.string.dialog_title, R.string.scene_delete_confirm,
+                            R.string.dialog_yes, R.string.dialog_no, new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    //new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
+                                    if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                                        new SceneManager(mContext).deleteScene(mSceneList.get(index).id,
+                                                null, null, new Myhandler(mContext));
+                                    }
+                                    // mDeleteList.remove(position);
+                                    mCallback.onDelItem(mSceneList.get(index).id);
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
                 }
             });
         } else {

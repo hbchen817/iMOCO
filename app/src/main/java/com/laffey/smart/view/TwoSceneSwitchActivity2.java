@@ -255,9 +255,8 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m1Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m1Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -278,9 +277,8 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m2Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m2Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[1] != null) {

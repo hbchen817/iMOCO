@@ -21,6 +21,7 @@ import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.sdk.Account;
 import com.laffey.smart.utility.AppUtils;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -136,18 +137,7 @@ public class IndexFragment3 extends BaseFragment {
                         fragment.userAccount.setText(response.getString("accounts"));
                         SpUtils.putCaccountsInfo(fragment.mActivity, response.toJSONString());
                     } else {
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(fragment.mActivity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(fragment.mActivity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(fragment.mActivity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(fragment.mActivity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(fragment.mActivity, response);
                     }
                     break;
                 }

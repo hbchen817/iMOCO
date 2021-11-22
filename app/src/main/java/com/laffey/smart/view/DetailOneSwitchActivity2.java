@@ -76,6 +76,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickL
     private RelativeLayout mBackLightLayout;
     private RelativeLayout mBackLightRoot;
     private RelativeLayout mAssociatedLayout;
+    private RelativeLayout mAssociatedRootLayout;
     private LinearLayout mRootLayout;
 
     private SceneManager mSceneManager;
@@ -166,10 +167,18 @@ public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickL
 
         mhandler = new MyHandler(this);
         mSceneManager = new SceneManager(this);
-        //mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, mCommitFailureHandler, mResponseErrorHandler, mhandler);
         initKeyNickName();
 
         mBackLightRoot.setVisibility(View.VISIBLE);
+
+        mAssociatedRootLayout = (RelativeLayout) findViewById(R.id.associated_root_layout);
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            mAssociatedRootLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 分享者
+            mAssociatedRootLayout.setVisibility(View.GONE);
+        }
     }
 
     // 嵌入式状态栏

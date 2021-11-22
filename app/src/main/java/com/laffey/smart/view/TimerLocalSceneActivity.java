@@ -45,6 +45,7 @@ import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
@@ -1029,17 +1030,7 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
                                 }
                             }
                         } else {
-                            String localizedMsg = response.getString("localizedMsg");
-                            String errorMess = response.getString("errorMess");
-                            if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
-                            } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                                ToastUtils.showLongToast(activity, localizedMsg);
-                            } else if (errorMess != null && errorMess.length() > 0) {
-                                ToastUtils.showLongToast(activity, errorMess);
-                            } else {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            }
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
@@ -1076,17 +1067,7 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
                             }
                         } else {
                             QMUITipDialogUtil.dismiss();
-                            String localizedMsg = response.getString("localizedMsg");
-                            String errorMess = response.getString("errorMess");
-                            if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
-                            } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                                ToastUtils.showLongToast(activity, localizedMsg);
-                            } else if (errorMess != null && errorMess.length() > 0) {
-                                ToastUtils.showLongToast(activity, errorMess);
-                            } else {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            }
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
@@ -1141,10 +1122,7 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
                                     ToastUtils.showLongToast(activity, message);
                             }
                         } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(activity, message);
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }

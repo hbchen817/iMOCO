@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appbgcolor"
+    android:orientation="vertical"
+    tools:context=".view.AddSubGwActivity">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_common_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            style="@style/InputItemStyle_Low"
+            android:layout_marginTop="@dimen/dp_10">
+
+            <TextView
+                android:id="@+id/sub_gw_mac_title"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/moredevice_address_2" />
+
+            <TextView
+                android:id="@+id/sub_gw_mac_tv"
+                style="@style/NormalFontStyle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="35dp"
+                android:layout_toRightOf="@id/sub_gw_mac_title"
+                android:gravity="center_vertical|right"
+                android:text="--" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            style="@style/InputItemStyle_Low"
+            android:layout_marginTop="@dimen/dp_10">
+
+            <TextView
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/devicelist_name" />
+
+            <TextView
+                android:id="@+id/sub_gw_name_tv"
+                style="@style/NormalFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/sub_gw_name_iv"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_20"
+                android:text="@string/sub_gateway" />
+
+            <ImageView
+                android:id="@+id/sub_gw_name_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/contentDescription_null"
+                android:src="@drawable/go" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

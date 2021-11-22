@@ -34,6 +34,7 @@ import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.HomeSpaceManager;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
@@ -47,8 +48,10 @@ import com.laffey.smart.model.ETSL;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 /**
@@ -56,7 +59,7 @@ import com.vise.log.ViseLog;
  * creat time: 2020-04-21 17:14
  * Description: 子设备更多界面
  */
-public class MoreSubdeviceActivity extends BaseActivity {
+public class MoreSubdeviceActivity extends BaseActivity implements OnClickListener {
     private ActivityMoreSubdeviceBinding mViewBinding;
 
     private String mIOTId, mProductKey;
@@ -97,18 +100,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(MoreSubdeviceActivity.this, response);
                     }
                     break;
                 }
@@ -119,75 +111,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     ToastUtils.showLongToast(MoreSubdeviceActivity.this, e.getMessage());
                     break;
                 }
-                case Constant.MSG_QUEST_DELETE_SCENE: {
-                    // 删除本地场景
-                    JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("云端删除场景 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    String message = response.getString("message");
-                    if (code == 200) {
-                        boolean result = response.getBoolean("result");
-                        if (result) {
-                            String sceneId = response.getString("sceneId");
-                            DeviceBuffer.removeScene(sceneId);
-                            for (ItemSceneInGateway scene : mSceneList) {
-                                if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
-                                    mSceneList.remove(scene);
-                                    break;
-                                }
-                            }
-                            ViseLog.d("mSceneList.size = " + mSceneList.size());
-                            if (mSceneList.size() > 0) {
-                                if (Constant.IS_TEST_DATA) {
-                                    mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
-                                            Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-                                } else {
-                                    SceneManager.manageSceneService(mGwId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
-                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                                }
-                            } else {
-                                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
-                                if (deviceEntry != null) {
-                                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
-                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                                } else {
-                                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                                }
-                            }
-                        } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
-                        }
-                    } else {
-                        if (message == null || message.length() == 0) {
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                        } else
-                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, message);
-                    }
-                    break;
-                }
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                     // 删除设备相关场景
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    JSONObject value = jsonObject.getJSONObject("value");
-                    String identifier = jsonObject.getString("identifier");
-                    if ("ManageSceneNotification".equals(identifier)) {
-                        String type = value.getString("Type");
-                        String status = value.getString("Status");
-                        // status  0: 成功  1: 失败
-                        if ("0".equals(status)) {
-                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
-                            if ("3".equals(type)) {
-                                ViseLog.d("网关删除场景成功 = " + mSceneList.get(0).getSceneDetail().getSceneId());
-                                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
-                                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-                            }
-                        } else {
-                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                        }
-                    }
                     break;
                 }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL: {
@@ -226,7 +151,18 @@ public class MoreSubdeviceActivity extends BaseActivity {
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     SystemParameter.getInstance().setIsRefreshDeviceData(true);
-                    Dialog.confirm(MoreSubdeviceActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                    DialogUtils.showConfirmDialog(MoreSubdeviceActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                            R.string.dialog_confirm, new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    finish();
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
                     break;
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
@@ -404,12 +340,7 @@ public class MoreSubdeviceActivity extends BaseActivity {
         initStatusBar();
 
         // 回退处理
-        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(this);
 
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
@@ -421,18 +352,8 @@ public class MoreSubdeviceActivity extends BaseActivity {
             mViewBinding.moreSubdeviceLblMACAddress.setText(deviceEntry.deviceName);
         } else {
             ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-            mViewBinding.moreSubdeviceLblUnbind.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                }
-            });
-            mViewBinding.moreSubdeviceImgUnbind.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
-                }
-            });
+            mViewBinding.moreSubdeviceLblUnbind.setOnClickListener(this);
+            mViewBinding.moreSubdeviceImgUnbind.setOnClickListener(this);
             return;
         }
 
@@ -442,62 +363,20 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
         // 显示设备名称修改对话框事件处理
         mViewBinding.moreSubdeviceLblName.setText(name);
-        mViewBinding.moreSubdeviceImgName.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeviceNameDialogEdit();
-            }
-        });
+        mViewBinding.moreSubdeviceImgName.setOnClickListener(this);
 
         // 选择所属房间处理
-        OnClickListener selectRoomListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setWheelPicker(1, mViewBinding.moreSubdeviceLblRoom.getText().toString());
-            }
-        };
-        mViewBinding.moreSubdeviceImgRoom.setOnClickListener(selectRoomListener);
+        mViewBinding.moreSubdeviceImgRoom.setOnClickListener(this);
 
         // 解除绑定处理
-        OnClickListener unBindListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MoreSubdeviceActivity.this);
-                builder.setIcon(R.drawable.dialog_quest);
-                builder.setTitle(R.string.dialog_title);
-                builder.setMessage(R.string.dialog_unbind);
-                builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // 设备解除绑定
-                        unbindDevice();
-                    }
-                });
-                builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    }
-                });
-                builder.create().show();
-            }
-        };
-        mViewBinding.moreSubdeviceLblUnbind.setOnClickListener(unBindListener);
-        mViewBinding.moreSubdeviceImgUnbind.setOnClickListener(unBindListener);
+        mViewBinding.moreSubdeviceLblUnbind.setOnClickListener(this);
+        mViewBinding.moreSubdeviceImgUnbind.setOnClickListener(this);
         List<ETSL.messageRecordContentEntry> list = new TSLHelper(this).getMessageRecordContent(mProductKey);
         if (list == null || list.size() == 0) {
             mViewBinding.recordLayout.setVisibility(View.GONE);
         }
         // 消息记录处理
-        OnClickListener messageRecordListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MoreSubdeviceActivity.this, MessageRecordActivity.class);
-                intent.putExtra("iotId", mIOTId);
-                intent.putExtra("productKey", mProductKey);
-                startActivity(intent);
-            }
-        };
-        mViewBinding.moreSubdeviceImgMsg.setOnClickListener(messageRecordListener);
+        mViewBinding.moreSubdeviceImgMsg.setOnClickListener(this);
 
         // 获取设备基本信息
         new TSLHelper(this).getBaseInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -509,6 +388,30 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mUserCenter = new UserCenter(this);
 
         RealtimeDataReceiver.addEventCallbackHandler("MoreSubDevSceneListCallback", mAPIDataHandler);
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        getGWIotIdBySubIotId();
+    }
+
+    private void getGWIotIdBySubIotId() {
+        SceneManager.getGWIotIdBySubIotId(this, mIOTId, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                QMUITipDialogUtil.dismiss();
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    mGwId = response.getString("gwIotId");
+                } else {
+                    RetrofitUtil.showErrorMsg(MoreSubdeviceActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.d(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreSubdeviceActivity.this, e.getMessage());
+            }
+        });
     }
 
     private void unbindDevice() {
@@ -518,23 +421,72 @@ public class MoreSubdeviceActivity extends BaseActivity {
         mSceneList.clear();
         mSceneList.addAll(DeviceBuffer.getScenesBySwitchIotId(mIOTId));
         if (mSceneList.size() > 0) {
-            if (Constant.IS_TEST_DATA) {
-                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
-                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-            } else {
-                mSceneManager.getGWIotIdBySubIotId(this, mIOTId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
-                        Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
-                // SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            }
+            deleteScene(0);
         } else {
-            EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
-            if (deviceEntry != null) {
-                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
-                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            } else {
-                ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-            }
+            deleteMacControlGroup();
         }
+    }
+
+    // 删除子设备相关多控组
+    private void deleteMacControlGroup() {
+        DeviceManager.deleteSubMacControlGroup(this, DeviceBuffer.getDeviceMac(mIOTId),
+                DeviceBuffer.getDeviceMac(mGwId), new DeviceManager.Callback() {
+                    @Override
+                    public void onNext(JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code == 200) {
+                            EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                            if (deviceEntry != null) {
+                                mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, Constant.MSG_CALLBACK_UNBINDEVICE,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            } else {
+                                ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                            }
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            RetrofitUtil.showErrorMsg(MoreSubdeviceActivity.this, response);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ViseLog.d(e);
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(MoreSubdeviceActivity.this, e.getMessage());
+                    }
+                });
+    }
+
+    // 删除场景
+    private void deleteScene(int pos) {
+        SceneManager.deleteScene(this, mSceneList.get(pos), new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String sceneId = response.getString("sceneId");
+                    DeviceBuffer.removeScene(sceneId);
+                    SceneManager.manageSceneService(mGwId, sceneId, 3,
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    int index = pos + 1;
+                    if (index < mSceneList.size()) {
+                        deleteScene(index);
+                    } else {
+                        deleteMacControlGroup();
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreSubdeviceActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.d(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreSubdeviceActivity.this, e.getMessage());
+            }
+        });
     }
 
     // 嵌入式状态栏
@@ -550,5 +502,63 @@ public class MoreSubdeviceActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         RealtimeDataReceiver.deleteCallbackHandler("MoreSubDevSceneListCallback");
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mViewBinding.includeToolbar.includeTitleImgBack.getId()) {
+            // 返回
+            finish();
+        } else if (v.getId() == mViewBinding.moreSubdeviceLblUnbind.getId()) {
+            if (DeviceBuffer.getDeviceInformation(mIOTId) == null) {
+                ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+            } else {
+                DialogUtils.showConfirmDialog(MoreSubdeviceActivity.this, R.string.dialog_title,
+                        R.string.dialog_unbind, R.string.dialog_confirm, R.string.dialog_cancel,
+                        new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+                                // 设备解除绑定
+                                unbindDevice();
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
+            }
+        } else if (v.getId() == mViewBinding.moreSubdeviceImgUnbind.getId()) {
+            if (DeviceBuffer.getDeviceInformation(mIOTId) == null) {
+                ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+            } else {
+                DialogUtils.showConfirmDialog(MoreSubdeviceActivity.this, R.string.dialog_title,
+                        R.string.dialog_unbind, R.string.dialog_confirm, R.string.dialog_cancel,
+                        new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+                                // 设备解除绑定
+                                unbindDevice();
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
+            }
+        } else if (v.getId() == mViewBinding.moreSubdeviceImgName.getId()) {
+            // 设备名称
+            showDeviceNameDialogEdit();
+        } else if (v.getId() == mViewBinding.moreSubdeviceImgRoom.getId()) {
+            // 所属房间
+            setWheelPicker(1, mViewBinding.moreSubdeviceLblRoom.getText().toString());
+        } else if (v.getId() == mViewBinding.moreSubdeviceImgMsg.getId()) {
+            // 消息记录处理
+            Intent intent = new Intent(this, MessageRecordActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", mProductKey);
+            startActivity(intent);
+        }
     }
 }

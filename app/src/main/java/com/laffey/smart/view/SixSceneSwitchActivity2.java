@@ -35,6 +35,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -298,9 +299,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m1Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m1Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -322,9 +322,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m2Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m2Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m2Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[1] != null) {
@@ -346,9 +345,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m3Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m3Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m3Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[2] != null) {
@@ -370,9 +368,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m4Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m4Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m4Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[3] != null) {
@@ -394,9 +391,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m5Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m5Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m5Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[4] != null) {
@@ -418,9 +414,8 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m6Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m6Scene.getSceneDetail().getSceneId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m6Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[5] != null) {
@@ -770,10 +765,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                         activity.querySceneName(DeviceBuffer.getAllScene());
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(activity, message);
-                        else
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }

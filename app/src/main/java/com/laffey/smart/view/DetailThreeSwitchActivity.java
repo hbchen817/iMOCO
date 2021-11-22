@@ -71,6 +71,7 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
     private RelativeLayout mTimerLayout;
     private RelativeLayout mBackLightLayout;
     private RelativeLayout mAssociatedLayout;
+    private RelativeLayout mAssociatedRootLayout;
     private LinearLayout mRootLayout;
 
     private static final int TAG_GET_EXTENDED_PRO = 10000;
@@ -189,20 +190,20 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
         mBackLightLayout = (RelativeLayout) findViewById(R.id.back_light_layout);
         mBackLightLayout.setOnClickListener(this);
 
-        // 云端定时处理
-        /*RelativeLayout timer = (RelativeLayout) findViewById(R.id.timer_layout);
-        timer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PluginHelper.cloudTimer(DetailThreeSwitchActivity.this, mIOTId, mProductKey);
-            }
-        });*/
-
         initStatusBar();
         initKeyNickName();
 
         mAssociatedLayout = (RelativeLayout) findViewById(R.id.associated_layout);
         mAssociatedLayout.setOnClickListener(this);
+
+        mAssociatedRootLayout = (RelativeLayout) findViewById(R.id.associated_root_layout);
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            mAssociatedRootLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 分享者
+            mAssociatedRootLayout.setVisibility(View.GONE);
+        }
     }
 
     private void initKeyNickName() {

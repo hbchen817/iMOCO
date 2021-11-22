@@ -13,11 +13,12 @@
         layout="@layout/layout_common_toolbar" />
 
     <LinearLayout
-        android:id="@+id/grid_dev_nodata_view"
+        android:id="@+id/bindrelation_nodata_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="@dimen/dp_100"
@@ -32,10 +33,43 @@
             android:textColor="@color/black" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/binding_rv"
+    <LinearLayout
+        android:id="@+id/group_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_10"
-        android:visibility="gone" />
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@drawable/shape_frame_item"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/group_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/dp_10"
+                android:text="多控组名称" />
+
+            <TextView
+                android:id="@+id/name_edit_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_margin="@dimen/dp_10"
+                android:text="@string/icon_edit"
+                android:textColor="@color/appcolor"
+                android:textSize="@dimen/sp_22" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/binding_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

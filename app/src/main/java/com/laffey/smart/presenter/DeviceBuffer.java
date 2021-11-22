@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemBindList;
 import com.laffey.smart.model.ItemSceneInGateway;
+import com.laffey.smart.utility.GsonUtil;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ public class DeviceBuffer {
     private static Map<String, JSONObject> mExtendedBuffer = new HashMap<String, JSONObject>();
     private static Map<String, String> mCacheBuffer = new HashMap<>();
     private static Map<String, ItemSceneInGateway> mSceneBuffer = new LinkedHashMap<>();
+    private static Map<String, ItemBindList> mBindRelationBuffer = new HashMap<>();
+    private static Map<String, EDevice.subGwEntry> mSubGwBuffer = new HashMap<>();
 
     // 初始化处理
     public static void initProcess() {
@@ -37,6 +41,53 @@ public class DeviceBuffer {
 
     public static void initExtendedBuffer() {
         mExtendedBuffer.clear();
+    }
+
+    public static void initBindRelationBuffer() {
+        mBindRelationBuffer.clear();
+    }
+
+    public static void initSubGw() {
+        mSubGwBuffer.clear();
+    }
+
+    public static void addSubGw(String subMac, EDevice.subGwEntry entry) {
+        mSubGwBuffer.put(subMac, entry);
+    }
+
+    public static EDevice.subGwEntry getSubGw(String subMac) {
+        if (subMac != null && mSubGwBuffer.containsKey(subMac)) {
+            return mSubGwBuffer.get(subMac);
+        }
+        return null;
+    }
+
+    public static void removeSubGw(String subMac) {
+        if (subMac != null && mSubGwBuffer.containsKey(subMac)) {
+            mSubGwBuffer.remove(subMac);
+        }
+    }
+
+    public static void addBindList(String macAndKey, ItemBindList list) {
+        if (macAndKey != null && macAndKey.length() > 0)
+            mBindRelationBuffer.put(macAndKey, list);
+    }
+
+    public static void removeBindList(String macAndKey) {
+        if (macAndKey != null && macAndKey.length() > 0)
+            mBindRelationBuffer.remove(macAndKey);
+    }
+
+    public static ItemBindList getBindList(String macAndKey) {
+        if (macAndKey != null && macAndKey.length() > 0 &&
+                mBindRelationBuffer.containsKey(macAndKey)) {
+            return mBindRelationBuffer.get(macAndKey);
+        }
+        return null;
+    }
+
+    public static Map<String, ItemBindList> getAllBindList() {
+        return mBindRelationBuffer;
     }
 
     public static void addCacheInfo(String key, String value) {
@@ -238,6 +289,17 @@ public class DeviceBuffer {
     // 获取所有设备信息
     public static Map<String, EDevice.deviceEntry> getAllDeviceInformation() {
         return mBuffer;
+    }
+
+    // 为获取网关设备列表
+    public static List<EDevice.deviceEntry> queryGwDevList() {
+        List<EDevice.deviceEntry> list = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if ("GATEWAY".equals(entry.nodeType)) {
+                list.add(entry);
+            }
+        }
+        return list;
     }
 
     // 获取同类设备信息

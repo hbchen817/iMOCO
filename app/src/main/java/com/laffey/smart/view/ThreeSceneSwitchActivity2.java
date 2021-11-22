@@ -273,9 +273,8 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m1Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m1Scene.getSceneDetail().getSceneId(),
-                            mCommitFailureHandler, mResponseErrorHandler, null);
+                    mSceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m1Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -297,9 +296,8 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m2Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m2Scene.getSceneDetail().getSceneId(),
-                            mCommitFailureHandler, mResponseErrorHandler, null);
+                    mSceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m2Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[1] != null) {
@@ -321,9 +319,8 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             m3Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId,
-                            m3Scene.getSceneDetail().getSceneId(),
-                            mCommitFailureHandler, mResponseErrorHandler, null);
+                    mSceneManager.invokeLocalSceneService(this, mGatewayId,
+                            m3Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mManualIDs[2] != null) {

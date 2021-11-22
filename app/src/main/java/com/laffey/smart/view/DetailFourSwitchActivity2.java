@@ -90,6 +90,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     RelativeLayout mBackLightRoot;
     @BindView(R.id.associated_layout)
     RelativeLayout mAssociatedLayout;
+    @BindView(R.id.associated_root_layout)
+    RelativeLayout mAssociatedRootLayout;
     @BindView(R.id.detailTwoSwitchLl)
     LinearLayout mRootLayout;
 
@@ -307,6 +309,14 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
         initStatusBar();
         initKeyNickName();
         mBackLightRoot.setVisibility(View.VISIBLE);
+
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            mAssociatedRootLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 分享者
+            mAssociatedRootLayout.setVisibility(View.GONE);
+        }
     }
 
     private void showAssociatedPopupWindow() {

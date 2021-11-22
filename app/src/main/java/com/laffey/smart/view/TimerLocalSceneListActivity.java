@@ -40,6 +40,7 @@ import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -159,18 +160,7 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                             activity.mViewBinding.sceneRl.finishRefresh(true);
                         } else {
                             QMUITipDialogUtil.dismiss();
-                            String message = response.getString("message");
-                            String localizedMsg = response.getString("localizedMsg");
-                            String errorMess = response.getString("errorMess");
-                            if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
-                            } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                                ToastUtils.showLongToast(activity, localizedMsg);
-                            } else if (errorMess != null && errorMess.length() > 0) {
-                                ToastUtils.showLongToast(activity, errorMess);
-                            } else {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            }
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
@@ -228,10 +218,7 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                                     ToastUtils.showLongToast(activity, message);
                             }
                         } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(activity, message);
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
@@ -273,18 +260,7 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                             activity.mViewBinding.sceneRl.finishRefresh(true);
                         } else {
                             QMUITipDialogUtil.dismiss();
-                            String message = response.getString("message");
-                            String localizedMsg = response.getString("localizedMsg");
-                            String errorMess = response.getString("errorMess");
-                            if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
-                            } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                                ToastUtils.showLongToast(activity, localizedMsg);
-                            } else if (errorMess != null && errorMess.length() > 0) {
-                                ToastUtils.showLongToast(activity, errorMess);
-                            } else {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            }
+                            RetrofitUtil.showErrorMsg(activity, response);
                             activity.mViewBinding.sceneRl.finishRefresh(false);
                         }
                         break;
@@ -308,11 +284,10 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                             activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, activity.mSceneType, Constant.MSG_QUEST_QUERY_SCENE_LIST,
                                     Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mHandler);
                         } else {
+                            RetrofitUtil.showErrorMsg(activity, response);
                             if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
                                 activity.mViewBinding.nodataTv.setText(message);
                             } else {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
                                 activity.mViewBinding.nodataTv.setText(R.string.pls_try_again_later);
                             }
                         }

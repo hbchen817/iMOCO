@@ -17,10 +17,14 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ResponseMessageUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -59,6 +63,13 @@ public abstract class BaseFragment extends Fragment {
             return false;
         }
     });
+
+    protected void commitFailure(Activity activity, EAPIChannel.commitFailEntry failEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nfailEntry = \n" + GsonUtil.toJson(failEntry));
+        QMUITipDialogUtil.dismiss();
+        notifyFailureOrError(1);
+        ToastUtils.showLongToast(activity, failEntry.exception.getMessage());
+    }
 
     // 响应错误处理器
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
@@ -113,6 +124,23 @@ public abstract class BaseFragment extends Fragment {
     });
     public final String TAG = getClass().getSimpleName();
 
+    protected void responseError(Activity activity, EAPIChannel.responseErrorEntry errorEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nerrorEntry = \n" + GsonUtil.toJson(errorEntry));
+        QMUITipDialogUtil.dismiss();
+        if (errorEntry.code == 401 || errorEntry.code == 29003) {
+            //检查用户是否登录了其他App
+            logOut();
+        } else if (errorEntry.code != 6741) {
+            // 6741: 无扩展信息
+            String msg = mErrorMap.get(errorEntry.code);
+            if (msg != null && msg.length() > 0) {
+                ToastUtils.showLongToast(activity, msg);
+            } else {
+                ToastUtils.showLongToast(activity, errorEntry.localizedMsg);
+            }
+        }
+    }
+
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {
     }
@@ -155,6 +183,8 @@ public abstract class BaseFragment extends Fragment {
     public Unbinder mUnbinder;
     private View rootView;
 
+    private final Map<Integer, String> mErrorMap = new HashMap<>();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -165,6 +195,23 @@ public abstract class BaseFragment extends Fragment {
 
         // 绑定ButterKnife
         mUnbinder = ButterKnife.bind(this, rootView);
+
+        mErrorMap.put(200, "请求成功");
+        mErrorMap.put(400, "请求错误");
+        mErrorMap.put(401, "请求认证错误");
+        mErrorMap.put(403, "请求被禁止");
+        mErrorMap.put(404, "服务未找到");
+        mErrorMap.put(429, "请求频繁");
+        mErrorMap.put(460, "请求参数错误");
+        mErrorMap.put(500, "服务端错误");
+        mErrorMap.put(503, "服务不可用");
+        mErrorMap.put(2000, "请求参数错误");
+        mErrorMap.put(2062, "identityId不存在");
+        mErrorMap.put(2063, "设备不存在");
+        mErrorMap.put(2065, "设备和账号未绑定");
+        mErrorMap.put(2066, "该用户不是设备的管理员");
+        mErrorMap.put(2073, "该设备的分享模式不支持生成二维码，例如抢占式设备不支持分享");
+        mErrorMap.put(2074, "调用消息中心错误");
 
         init();
 

@@ -110,53 +110,59 @@ public class ScanGatewayByNetActivity extends BaseActivity {
     }
 
     private void showConfirmDialog(int index) {
-        DialogUtils.showEnsureDialog(this, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                // 取消设备发现
-                stopDiscovery();
-                mViewBinding.scanBLERLHint.setVisibility(View.GONE);
-                ConfigureNetwork network = new ConfigureNetwork(ScanGatewayByNetActivity.this);
-                EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
-                parameter.homeId = SystemParameter.getInstance().getHomeId();
-                ItemGateway gateway = (ItemGateway) mList.get(index);
-                parameter.productKey = CTSL.PK_GATEWAY_RG4100;
-                parameter.deviceName = gateway.getName();
-                parameter.token = mDeviceMap.get(gateway.getName()).token;
-                mBindName = gateway.getName();
-                network.bindDevice(parameter, null, mResponseErrorHandler, mHandler);
-                mProgressDialog = ProgressDialog.show(ScanGatewayByNetActivity.this, getString(R.string.gateway_bind_title), getString(R.string.gateway_bind_progress_hint), true);
-                Observable.timer(15000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Long>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable disposable) {
-                                mDisposable = disposable;
-                            }
+        DialogUtils.showConfirmDialog(this, R.string.dialog_title, R.string.gateway_bind_confirm,
+                R.string.dialog_confirm, R.string.dialog_cancel, new DialogUtils.Callback() {
+                    @Override
+                    public void positive() {
+                        // 取消设备发现
+                        stopDiscovery();
+                        mViewBinding.scanBLERLHint.setVisibility(View.GONE);
+                        ConfigureNetwork network = new ConfigureNetwork(ScanGatewayByNetActivity.this);
+                        EConfigureNetwork.bindDeviceParameterEntry parameter = new EConfigureNetwork.bindDeviceParameterEntry();
+                        parameter.homeId = SystemParameter.getInstance().getHomeId();
+                        ItemGateway gateway = (ItemGateway) mList.get(index);
+                        parameter.productKey = CTSL.PK_GATEWAY_RG4100;
+                        parameter.deviceName = gateway.getName();
+                        parameter.token = mDeviceMap.get(gateway.getName()).token;
+                        mBindName = gateway.getName();
+                        network.bindDevice(parameter, null, mResponseErrorHandler, mHandler);
+                        mProgressDialog = ProgressDialog.show(ScanGatewayByNetActivity.this, getString(R.string.gateway_bind_title), getString(R.string.gateway_bind_progress_hint), true);
+                        Observable.timer(15000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<Long>() {
+                                    @Override
+                                    public void onSubscribe(@NonNull Disposable disposable) {
+                                        mDisposable = disposable;
+                                    }
 
-                            @Override
-                            public void onNext(@NonNull Long number) {
-                                mProgressDialog.dismiss();
-                                Dialog.confirm(ScanGatewayByNetActivity.this, R.string.dialog_title, getString(R.string.confignetwork_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
-                            }
+                                    @Override
+                                    public void onNext(@NonNull Long number) {
+                                        mProgressDialog.dismiss();
+                                        Dialog.confirm(ScanGatewayByNetActivity.this, R.string.dialog_title, getString(R.string.confignetwork_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
+                                    }
 
-                            @Override
-                            public void onError(@NonNull Throwable e) {
-                                if (mDisposable != null && !mDisposable.isDisposed()) {
-                                    mDisposable.dispose();
-                                    mProgressDialog.dismiss();
-                                }
-                            }
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                        if (mDisposable != null && !mDisposable.isDisposed()) {
+                                            mDisposable.dispose();
+                                            mProgressDialog.dismiss();
+                                        }
+                                    }
 
-                            @Override
-                            public void onComplete() {
-                                if (mDisposable != null && !mDisposable.isDisposed()) {
-                                    mDisposable.dispose();
-                                    mProgressDialog.dismiss();
-                                }
-                            }
-                        });
-            }
-        }, getString(R.string.gateway_bind_confirm), null);
+                                    @Override
+                                    public void onComplete() {
+                                        if (mDisposable != null && !mDisposable.isDisposed()) {
+                                            mDisposable.dispose();
+                                            mProgressDialog.dismiss();
+                                        }
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void negative() {
+
+                    }
+                });
     }
 
     /**

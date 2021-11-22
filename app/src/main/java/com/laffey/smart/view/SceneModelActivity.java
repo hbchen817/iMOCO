@@ -275,10 +275,7 @@ public class SceneModelActivity extends BaseActivity {
                                     ToastUtils.showLongToast(mActivity, msg);
                             }
                         } else {
-                            if (msg == null || msg.length() == 0) {
-                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(mActivity, msg);
+                            RetrofitUtil.showErrorMsg(SceneModelActivity.this, response);
                         }
                     }
 

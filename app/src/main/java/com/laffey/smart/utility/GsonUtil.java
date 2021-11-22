@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 public class GsonUtil {
 
     public static String toJson(Object o) {
-        return new GsonBuilder().disableHtmlEscaping().create().toJson(o);
+        return new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(o);
     }
 
     public static Gson create() {

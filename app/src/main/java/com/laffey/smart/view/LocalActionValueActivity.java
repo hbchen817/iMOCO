@@ -24,9 +24,11 @@ import com.laffey.smart.databinding.ActivityEditPropertyValueBinding;
 import com.laffey.smart.model.EAction;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.utility.AppUtils;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -880,7 +882,7 @@ public class LocalActionValueActivity extends BaseActivity {
         } else if ("SwitchLocalSceneActivity".equals(target)) {
             Intent intent = new Intent(this, SwitchLocalSceneActivity.class);
             startActivity(intent);
-        } else if ("TimerLocalSceneActivity".equals(target)){
+        } else if ("TimerLocalSceneActivity".equals(target)) {
             Intent intent = new Intent(this, TimerLocalSceneActivity.class);
             startActivity(intent);
         }
@@ -972,7 +974,8 @@ public class LocalActionValueActivity extends BaseActivity {
         obj.put("params", params);
 
         ERetrofit.getInstance().getService()
-                .queryMacByIotId(token, ERetrofit.convertToBody(obj.toJSONString()))
+                .queryMacByIotId(token, AppUtils.getPesudoUniqueID(),
+                        ERetrofit.convertToBody(obj.toJSONString()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -992,11 +995,7 @@ public class LocalActionValueActivity extends BaseActivity {
                                 QMUITipDialogUtil.showFailDialog(LocalActionValueActivity.this, R.string.pls_try_again_later);
                             }
                         } else {
-                            String msg = jsonObject.getString("message");
-                            if (msg == null || msg.length() == 0) {
-                                QMUITipDialogUtil.showFailDialog(LocalActionValueActivity.this, R.string.pls_try_again_later);
-                            } else
-                                QMUITipDialogUtil.showFailDialog(LocalActionValueActivity.this, msg);
+                            RetrofitUtil.showErrorMsg(LocalActionValueActivity.this, jsonObject);
                         }
                     }
 

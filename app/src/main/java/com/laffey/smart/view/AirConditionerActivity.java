@@ -256,8 +256,8 @@ public class AirConditionerActivity extends DetailActivity {
         } else if (id == R.id.timing_layout) {
             // 定时
             if (mViewBinding.switchIc.getCurrentTextColor() == getResources().getColor(R.color.index_imgcolor)) {
-                //PluginHelper.cloudTimer(AirConditionerActivity.this, mIOTId, mProductKey);
-                TimerLocalSceneListActivity.start(this, mIOTId);
+                PluginHelper.cloudTimer(AirConditionerActivity.this, mIOTId, mProductKey);
+                // TimerLocalSceneListActivity.start(this, mIOTId);
             }
         } else if (id == mViewBinding.includeToolbar.includeDetailImgBack.getId()) {
             finish();

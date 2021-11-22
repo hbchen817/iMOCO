@@ -86,6 +86,8 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
     protected RelativeLayout mBackLightRoot;
     @BindView(R.id.associated_layout)
     protected RelativeLayout mAssociatedLayout;
+    @BindView(R.id.associated_root_layout)
+    protected RelativeLayout mAssociatedRootLayout;
     @BindView(R.id.detailTwoSwitchLl)
     protected LinearLayout mRootLayout;
 
@@ -100,7 +102,6 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
     private int mBackLightState = 1;
 
     private Typeface mIconfont;
-    private PopupWindow mAssociatedPopupWindow;
 
     // 更新状态
     @Override
@@ -156,54 +157,14 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         mSceneManager = new SceneManager(this);
         mHandler = new MyHandler(this);
 
-        // 键1操作事件处理
-        OnClickListener operateOnClickListener1 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState1 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate1.setOnClickListener(operateOnClickListener1);
-
-        mStateName1.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName1);
-            }
-        });
-
-        mStateName2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName2);
-            }
-        });
-
-        // 键2操作事件处理
-        OnClickListener operateOnClickListener2 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState2 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate2.setOnClickListener(operateOnClickListener2);
+        mImgOperate1.setOnClickListener(this);
+        mImgOperate2.setOnClickListener(this);
+        mStateName1.setOnClickListener(this);
+        mStateName2.setOnClickListener(this);
 
         // 云端定时处理
         RelativeLayout timer = (RelativeLayout) findViewById(R.id.detailTwoSwitchRLTimer);
-        timer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PluginHelper.cloudTimer(DetailTwoSwitchActivity2.this, mIOTId, mProductKey);
-            }
-        });
+        timer.setOnClickListener(this);
 
         initStatusBar();
 
@@ -212,21 +173,20 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         mBackLightIc.setTypeface(mIconfont);
         mAssociatedTv.setTypeface(mIconfont);
 
-        mBackLightLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBackLightState == CTSL.STATUS_OFF) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-            }
-        });
+        mBackLightLayout.setOnClickListener(this);
 
         initKeyNickName();
         mBackLightRoot.setVisibility(View.VISIBLE);
 
         mAssociatedLayout.setOnClickListener(this);
+
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            mAssociatedRootLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 分享者
+            mAssociatedRootLayout.setVisibility(View.GONE);
+        }
     }
 
     private JSONObject mResultObj;
@@ -324,6 +284,36 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         if (v.getId() == mAssociatedLayout.getId()) {
             // 双控
             showAssociatedPopupWindow();
+        } else if (v.getId() == mImgOperate1.getId()) {
+            // 键1操作事件处理
+            if (mState1 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (v.getId() == mStateName1.getId()) {
+            // 按键1昵称
+            showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName1);
+        } else if (v.getId() == mStateName2.getId()) {
+            // 按键2昵称
+            showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName2);
+        } else if (v.getId() == mImgOperate2.getId()) {
+            // 键2操作事件处理
+            if (mState2 == CTSL.STATUS_ON) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
+            }
+        } else if (v.getId() == R.id.detailTwoSwitchRLTimer) {
+            // 云端定时处理
+            PluginHelper.cloudTimer(this, mIOTId, mProductKey);
+        } else if (v.getId() == mBackLightLayout.getId()) {
+            // 按键背光
+            if (mBackLightState == CTSL.STATUS_OFF) {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
+            } else {
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.TWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
+            }
         }
     }
 
@@ -375,16 +365,16 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         recyclerView.setAdapter(adapter);
 
         setBackgroundAlpha(0.4f);
-        mAssociatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-        mAssociatedPopupWindow.setTouchable(true);
-        mAssociatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        PopupWindow associatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        associatedPopupWindow.setTouchable(true);
+        associatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 setBackgroundAlpha(1.0f);
             }
         });
-        mAssociatedPopupWindow.setAnimationStyle(R.style.pop_anim);
-        mAssociatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
+        associatedPopupWindow.setAnimationStyle(R.style.pop_anim);
+        associatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
     }
 
     private void setBackgroundAlpha(float f) {

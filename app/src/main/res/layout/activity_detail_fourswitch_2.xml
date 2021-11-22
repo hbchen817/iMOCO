@@ -246,6 +246,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/associated_root_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"

@@ -3,6 +3,7 @@ package com.laffey.smart.model;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.util.TimeUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
@@ -20,6 +21,7 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -118,6 +120,9 @@ public class ERetrofit {
                 return true;
             }
         });
+        httpClientBuilder.connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS);
         return httpClientBuilder.build();
     }
 
@@ -202,10 +207,9 @@ public class ERetrofit {
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
                         if (throwable instanceof HttpException) {
                             HttpException exception = (HttpException) throwable;
+                            ViseLog.d("刷新token = " + exception.code());
                             if (exception.code() == 401) {
-                                ViseLog.d("刷新token111");
                                 if (count == 0) {
-                                    ViseLog.d("刷新token22222");
                                     count++;
                                     Observable<JSONObject> o = RetrofitUtil.getInstance().refreshToken(context)
                                             .subscribeOn(Schedulers.io())

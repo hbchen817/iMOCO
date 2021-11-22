@@ -35,6 +35,7 @@ import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -76,16 +77,12 @@ public class EditLocalSceneBindActivity extends BaseActivity {
         mSceneId = getIntent().getStringExtra("sceneId");
 
         initStatusBar();
-
-        /*QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        mSceneManager.querySceneList(this, mGwMac, "0", Constant.MSG_QUEST_QUERY_SCENE_LIST,
-                Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mMyHandler);*/
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        RealtimeDataReceiver.addEventCallbackHandler("EditLocalSceneBindCallback", mMyHandler);
+        /*RealtimeDataReceiver.addEventCallbackHandler("EditLocalSceneBindCallback", mMyHandler);*/
 
         mScene = null;
         for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
@@ -174,13 +171,28 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                     ToastUtils.showLongToast(this, R.string.gw_is_offline_cannot_unbind_scene);
                     return;
                 }
-                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
-                updateManualScene(mSceneId, mKeyCode);
+                showUnbindDialog();
             } else {
                 mSceneManager.getExtendedProperty(mIotId, mKeyCode,
                         mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
             }
         }
+    }
+
+    private void showUnbindDialog() {
+        DialogUtils.showConfirmDialog(this, R.string.dialog_title, R.string.do_you_want_unbind_scene,
+                R.string.dialog_confirm, R.string.dialog_cancel, new DialogUtils.Callback() {
+                    @Override
+                    public void positive() {
+                        QMUITipDialogUtil.showLoadingDialg(EditLocalSceneBindActivity.this, R.string.is_submitted);
+                        updateManualScene(mSceneId, mKeyCode);
+                    }
+
+                    @Override
+                    public void negative() {
+
+                    }
+                });
     }
 
     // 更新手动场景
@@ -208,7 +220,9 @@ public class EditLocalSceneBindActivity extends BaseActivity {
 
         // 去掉手动场景cId中包含的自动场景id
         ItemSceneInGateway autoScene = DeviceBuffer.getSceneByCid(sceneId, keyCode);
-        String autoCId = autoScene.getSceneDetail().getSceneId();
+        String autoCId = "";
+        if (autoScene != null)
+            autoCId = autoScene.getSceneDetail().getSceneId();
         String cId = scene.getAppParams().getString("cId");
         StringBuilder cIdSB = new StringBuilder();
         String[] cIds = cId.split(",");
@@ -246,7 +260,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
             EditLocalSceneBindActivity activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
-                case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                /*case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                     // 删除网关下的场景
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     ViseLog.d("网关返回删除结果 LocalSceneActivity = " + jsonObject.toJSONString());
@@ -269,19 +283,24 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                         }
                     }
                     break;
-                }
+                }*/
                 case Constant.MSG_QUEST_DELETE_SCENE: {
                     // 删除本地场景
                     QMUITipDialogUtil.dismiss();
                     JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("删除自动场景 = " + response.toJSONString());
+                    // ViseLog.d("删除自动场景 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
                         boolean result = response.getBoolean("result");
                         if (result) {
                             String sceneId = response.getString("sceneId");
                             DeviceBuffer.addScene(activity.mUpdateScene.getSceneDetail().getSceneId(), activity.mUpdateScene);
+
+                            // ViseLog.d("需要删除的自动场景id = " + DeviceBuffer.getScene(sceneId));
+                            SceneManager.manageSceneService(activity.mGwId, sceneId, 3,
+                                    activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
                             DeviceBuffer.removeScene(sceneId);
+
                             ToastUtils.showLongToast(activity, R.string.unbind_scene_success);
                             activity.setResult(2);
                             activity.finish();
@@ -304,10 +323,17 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                             String sceneId = response.getString("sceneId");
                             SceneManager.manageSceneService(activity.mGwId, sceneId, 2,
                                     activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
-                            ItemSceneInGateway gwScene = DeviceBuffer.getSceneByCid(sceneId, activity.mKeyCode);
-                            ViseLog.d("需要删除的自动场景id = " + gwScene.getSceneDetail().getSceneId());
-                            SceneManager.manageSceneService(activity.mGwId, gwScene.getSceneDetail().getSceneId(), 3,
-                                    activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
+
+                            ItemSceneInGateway scene = DeviceBuffer.getSceneByCid(sceneId, activity.mKeyCode);
+                            if (scene != null) {
+                                ViseLog.d("网关上报后删除云端场景 sceneId = " + scene.getSceneDetail().getSceneId());
+                                activity.mSceneManager.deleteScene(activity, scene.getGwMac(), scene.getSceneDetail().getSceneId(),
+                                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, activity.mMyHandler);
+                            } else {
+                                ToastUtils.showLongToast(activity, R.string.unbind_scene_success);
+                                activity.setResult(2);
+                                activity.finish();
+                            }
                         } else {
                             QMUITipDialogUtil.dismiss();
                             RetrofitUtil.showErrorMsg(activity, response);
@@ -419,6 +445,6 @@ public class EditLocalSceneBindActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        RealtimeDataReceiver.deleteCallbackHandler("EditLocalSceneBindCallback");
+        /*RealtimeDataReceiver.deleteCallbackHandler("EditLocalSceneBindCallback");*/
     }
 }

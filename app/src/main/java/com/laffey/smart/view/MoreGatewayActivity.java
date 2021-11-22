@@ -46,6 +46,7 @@ import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.HomeSpaceManager;
 import com.laffey.smart.presenter.OTAHelper;
 import com.laffey.smart.presenter.RealtimeDataParser;
@@ -64,6 +65,7 @@ import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -202,33 +204,12 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                                 ToastUtils.showLongToast(MoreGatewayActivity.this, message);
                         }
                     } else {
-                        if (message == null || message.length() == 0) {
-                            ToastUtils.showLongToast(MoreGatewayActivity.this, R.string.pls_try_again_later);
-                        } else
-                            ToastUtils.showLongToast(MoreGatewayActivity.this, message);
+                        RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
                     }
                     break;
                 }
                 case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                     // 删除设备相关场景
-                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
-                    JSONObject value = jsonObject.getJSONObject("value");
-                    String identifier = jsonObject.getString("identifier");
-                    if ("ManageSceneNotification".equals(identifier)) {
-                        String type = value.getString("Type");
-                        String status = value.getString("Status");
-                        // status  0: 成功  1: 失败
-                        if ("0".equals(status)) {
-                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
-                            if ("3".equals(type)) {
-                                ViseLog.d("网关删除场景 = " + mSceneList.get(0).getSceneDetail().getSceneId());
-                                mSceneManager.deleteScene(mActivity, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
-                                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-                            }
-                        } else {
-                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                        }
-                    }
                     break;
                 }
                 case Constant.MSG_CALLBACK_GETTSLPROPERTY:
@@ -273,7 +254,18 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
-                    Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                    DialogUtils.showConfirmDialog(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                            R.string.dialog_confirm, new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    finish();
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
                     break;
                 case Constant.MSG_CALLBACK_GETOTAFIRMWAREINFO:
                     // 处理获取OTA固件信息
@@ -440,7 +432,19 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             // 删除缓存中的数据
                             DeviceBuffer.deleteDevice(mIOTId);
                             //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
-                            Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                            // Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
+                            DialogUtils.showConfirmDialog(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                                    R.string.dialog_confirm, new DialogUtils.Callback() {
+                                        @Override
+                                        public void positive() {
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void negative() {
+
+                                        }
+                                    });
                             return false;
                         }
                     }));
@@ -729,31 +733,48 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     private final OnClickListener mUnBindListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MoreGatewayActivity.this);
-            builder.setIcon(R.drawable.dialog_quest);
-            builder.setTitle(R.string.dialog_title);
-            builder.setMessage(R.string.dialog_unbind);
-            builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    //deleteScene();
-                    QMUITipDialogUtil.showLoadingDialg(MoreGatewayActivity.this, R.string.is_submitted);
-                    mSubDevList.clear();
-                    EDevice.deviceEntry gwDev = DeviceBuffer.getDeviceInformation(mIOTId);
-                    if (gwDev.status == Constant.CONNECTION_STATUS_OFFLINE) {
-                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                    } else
-                        querySceneList(MoreGatewayActivity.this, DeviceBuffer.getDeviceInformation(mIOTId).mac, "0");
-                }
-            });
-            builder.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            });
-            builder.create().show();
+            DialogUtils.showConfirmDialog(MoreGatewayActivity.this, R.string.dialog_title,
+                    R.string.dialog_unbind, R.string.dialog_confirm, R.string.dialog_cancel, new DialogUtils.Callback() {
+                        @Override
+                        public void positive() {
+                            //deleteScene();
+                            QMUITipDialogUtil.showLoadingDialg(MoreGatewayActivity.this, R.string.is_submitted);
+                            mSubDevList.clear();
+                            deleteControlGroup();
+                        }
+
+                        @Override
+                        public void negative() {
+
+                        }
+                    });
         }
     };
+
+    // 删除多控组
+    private void deleteControlGroup() {
+        ViseLog.d("删除网关下的多控组 = " + DeviceBuffer.getDeviceMac(mIOTId));
+        DeviceManager.deleteMacControlGroup(this, DeviceBuffer.getDeviceMac(mIOTId), new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                ViseLog.d("删除网关下的多控组结果 = \n" + GsonUtil.toJson(response));
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    querySceneList(DeviceBuffer.getDeviceMac(mIOTId), "");
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage());
+                QMUITipDialogUtil.dismiss();
+            }
+        });
+    }
 
     // 消息记录处理
     private final OnClickListener mMessageRecordListener = new OnClickListener() {
@@ -808,25 +829,40 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
         }
     };
 
-    private void deleteScene() {
-        mSceneList.clear();
-        mSceneList.addAll(DeviceBuffer.getAllSceneInGW(DeviceBuffer.getDeviceMac(mIOTId)));
-        ViseLog.d("2 = " + GsonUtil.toJson(mSceneList));
-        if (Constant.IS_TEST_DATA) {
-            if (mSceneList.size() > 0) {
-                mSceneManager.deleteScene(this, DeviceBuffer.getDeviceMac(mIOTId), mSceneList.get(0).getSceneDetail().getSceneId(),
-                        Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-            } else {
-                mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    private void deleteScene(int pos) {
+        ViseLog.d("删除场景id = " + mSceneList.get(pos).getSceneDetail().getSceneId());
+        SceneManager.deleteScene(this, mSceneList.get(pos), new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("删除场景结果 = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    if (pos < mSceneList.size()) {
+                        SceneManager.manageSceneService(MoreGatewayActivity.this, mIOTId, mSceneList.get(pos).getSceneDetail().getSceneId(),
+                                3, null);
+                        if (pos + 1 < mSceneList.size())
+                            deleteScene(pos + 1);
+                        else {
+                            mSceneList.clear();
+                            DeviceBuffer.initSceneBuffer();
+                            RefreshData.refreshHomeSceneListData();
+                            mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50,
+                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        }
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
+                }
             }
-        } else {
-            if (mSceneList.size() > 0) {
-                SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
-                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            } else {
-                mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.d(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage());
             }
-        }
+        });
     }
 
     // 嵌入式状态栏
@@ -871,70 +907,49 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     }
 
     // 查询本地场景列表
-    private void querySceneList(Context context, String mac, String type) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+    private void querySceneList(String mac, String type) {
+        ViseLog.d("查询网关下所有场景 = " + mac);
+        SceneManager.querySceneList(this, mac, type, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                ViseLog.d("获取场景结果 = \n" + GsonUtil.toJson(response));
+                int code = response.getInteger("code");
+                if (code == 0 || code == 200) {
+                    mSceneList.clear();
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    if (sceneList != null) {
+                        for (int i = 0; i < sceneList.size(); i++) {
+                            JSONObject sceneObj = sceneList.getJSONObject(i);
+                            try {
+                                ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
 
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        // ViseLog.d("手动场景 = " + GsonUtil.toJson(response));
-                        int code = response.getInteger("code");
-                        String msg = response.getString("message");
-                        JSONArray sceneList = response.getJSONArray("sceneList");
-                        if (code == 0 || code == 200) {
-                            mSceneList.clear();
-                            if (sceneList != null) {
-                                for (int i = 0; i < sceneList.size(); i++) {
-                                    JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    try {
-                                        ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
-
-                                        DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+                                DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            if ("1".equals(type)) {
-                                // 数据获取完则设置场景列表数据
-                                deleteScene();
-                            } else if ("0".equals(type)) {
-                                querySceneList(mActivity, mac, "1");
-                            }
-                        } else {
-                            QMUITipDialogUtil.dismiss();
-                            if (msg != null && msg.length() > 0)
-                                ToastUtils.showLongToast(mActivity, msg);
-                            else
-                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
                         }
                     }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(mActivity, e.getMessage());
+                    // 数据获取完则设置场景列表数据
+                    mSceneList.addAll(DeviceBuffer.getAllSceneInGW(DeviceBuffer.getDeviceMac(mIOTId)));
+                    if (mSceneList.size() > 0)
+                        deleteScene(0);
+                    else {
+                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
+                }
+            }
 
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage());
+            }
+        });
     }
 
     @Override

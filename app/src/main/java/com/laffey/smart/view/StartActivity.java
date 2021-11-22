@@ -57,6 +57,8 @@ public class StartActivity extends BaseActivity {
         // SpUtils.putAccessToken(this, "wyy");
         initView();
 
+        ViseLog.d("REX-TOKEN = " + SpUtils.getAccessToken(this) +
+                "\nDEVICE-ID = " + AppUtils.getPesudoUniqueID());
         // SystemParameter.getInstance().setIsRefreshDeviceData(true);
         boolean isFirst = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, "show_policy", false);
         if (!isFirst) {

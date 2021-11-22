@@ -32,6 +32,7 @@ import com.laffey.smart.databinding.ActivitySlidingValidationBinding;
 import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.utility.AppUtils;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -165,23 +166,7 @@ public class SlidingValidationActivity extends AppCompatActivity implements View
                         activity.finish();
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        String errorCode = response.getString("errorCode");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            if ("05".equals(errorCode)) {
-                                // 发送较为频繁,1小时后重试!
-                                activity.finish();
-                            }
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                         AccountManager.getPVCode(Constant.MSG_QUEST_GET_PV_CODE, Constant.MSG_QUEST_GET_PV_CODE_ERROR, activity.mHandler);
                     }
                     break;
@@ -213,18 +198,7 @@ public class SlidingValidationActivity extends AppCompatActivity implements View
                         activity.mViewBinding.verifyView.setVerifyBitmap(activity.mFloatBitmap);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
+                        RetrofitUtil.showErrorMsg(activity, response);
                     }
                     break;
                 }

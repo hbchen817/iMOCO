@@ -89,6 +89,9 @@ public class ETSL {
         public String value;
         public String time;
 
+        public stateTimeEntry() {
+        }
+
         // 构造
         public stateTimeEntry(String productKey, String name, String value, String time) {
             this.processStateTime(productKey, name, value, time);

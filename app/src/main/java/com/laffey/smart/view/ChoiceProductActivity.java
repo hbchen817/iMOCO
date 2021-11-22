@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -21,10 +22,13 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.databinding.ActivityChoiceProductBinding;
 import com.laffey.smart.event.ShareDeviceSuccessEvent;
+import com.laffey.smart.model.EDevice;
 import com.laffey.smart.presenter.AptConfigProductList;
 import com.laffey.smart.presenter.CloudDataParser;
+import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.HomeSpaceManager;
 import com.laffey.smart.presenter.ProductHelper;
 import com.laffey.smart.presenter.ShareDeviceManager;
@@ -33,9 +37,11 @@ import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.EProduct;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -96,6 +102,23 @@ public class ChoiceProductActivity extends BaseActivity {
             }
         }
 
+        // 子网关选项
+        if (productType == Constant.PRODUCT_TYPE_GATEWAY) {
+            String img = null;
+            for (EProduct.configListEntry entry : mConfigProductList) {
+                if (CTSL.PK_GATEWAY_RG4100.equals(entry.productKey)) {
+                    img = entry.image;
+                }
+            }
+
+            EProduct.configListEntry entry = new EProduct.configListEntry();
+            entry.productKey = "subGateway";
+            entry.name = getString(R.string.sub_gateway);
+            if (img != null && img.length() > 0)
+                entry.image = img;
+            mConfigProductList.add(entry);
+        }
+
         AptConfigProductList adapter = new AptConfigProductList(this, mConfigProductList);
         mViewBinding.choiceProductGrdProduct.setAdapter(adapter);
         mViewBinding.choiceProductGrdProduct.setOnItemClickListener(onItemClickProduct);
@@ -114,16 +137,50 @@ public class ChoiceProductActivity extends BaseActivity {
                 }
             }
 
-            // 进入产品配网引导
-            Intent intent = new Intent(ChoiceProductActivity.this, ProductGuidanceActivity.class);
-            intent.putExtra("productKey", mConfigProductList.get(position).productKey);
-            intent.putExtra("productName", mConfigProductList.get(position).name);
-            intent.putExtra("nodeType", mConfigProductList.get(position).nodeType);
-            intent.putExtra("gatewayIOTId", mGatewayIOTId);
-            intent.putExtra("gatewayNumber", mGatewayNumber);
-            startActivity(intent);
+            EProduct.configListEntry entry = mConfigProductList.get(position);
+            if (!"subGateway".equals(entry.productKey)) {
+                // 进入产品配网引导
+                Intent intent = new Intent(ChoiceProductActivity.this, ProductGuidanceActivity.class);
+                intent.putExtra("productKey", entry.productKey);
+                intent.putExtra("productName", entry.name);
+                intent.putExtra("nodeType", entry.nodeType);
+                intent.putExtra("gatewayIOTId", mGatewayIOTId);
+                intent.putExtra("gatewayNumber", mGatewayNumber);
+                startActivity(intent);
+            } else {
+                List<EDevice.deviceEntry> deviceEntries = DeviceBuffer.getGatewayDevs();
+                if (deviceEntries.size() == 1) {
+                    showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+                } else if (deviceEntries.size() > 1) {
+                    SubGwGatewayListActivity.start(ChoiceProductActivity.this);
+                } else {
+                    DialogUtils.showConfirmDialog(ChoiceProductActivity.this, R.string.dialog_title,
+                            R.string.choicegateway_nohasgatewayhint, R.string.dialog_confirm,
+                            new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
+                }
+            }
         }
     };
+
+    private void showConfirmDialog(String title, String content) {
+        DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(mActivity, ScanActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        }, content, title);
+    }
 
     // 数据处理器
     private final Handler processDataHandler = new Handler(new Handler.Callback() {
@@ -321,7 +378,15 @@ public class ChoiceProductActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == -1 && requestCode == 1) {
             String qrKey = data.getStringExtra("result");
-            shareDeviceManager.scanQrcode(qrKey, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            if (qrKey == null) return;
+            if (qrKey.length() != 16)
+                shareDeviceManager.scanQrcode(qrKey, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+            else {
+                // 添加子网关
+                List<EDevice.deviceEntry> entries = DeviceBuffer.getGatewayDevs();
+                if (entries.size() > 0)
+                    AddSubGwActivity.start(this, entries.get(0).iotId, qrKey, Constant.REQUESTCODE_CALLADDSUBGWACTIVITY);
+            }
         }
     }
 

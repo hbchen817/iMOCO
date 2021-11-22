@@ -39,6 +39,7 @@ import com.laffey.smart.event.RefreshRoomName;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.ShareDeviceSuccessEvent;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ERealtimeData;
@@ -55,6 +56,7 @@ import com.laffey.smart.presenter.AptRoomList;
 import com.laffey.smart.presenter.AptSceneGrid;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.HomeSpaceManager;
 import com.laffey.smart.presenter.LockManager;
 import com.laffey.smart.presenter.RealtimeDataParser;
@@ -63,6 +65,7 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Configure;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.GsonUtil;
@@ -406,13 +409,14 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.deleteCallbackHandler("MainJoinCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainPropertyCallback");
         RealtimeDataReceiver.deleteCallbackHandler("MainEventCallback");
+        RealtimeDataReceiver.deleteCallbackHandler("IndexfragmentLocalSceneCallback");
         // 注销事件总线
         EventBus.getDefault().unregister(this);
         super.onDestroyView();
     }
 
     // 主动获取设备属性
-    private void getDeviceProperty() {
+    private void getDeviceProperty(int pos) {
         if (mDeviceList == null || mDeviceList.size() == 0) {
             mGridRL.finishRefresh(true);
             mListRL.finishRefresh(true);
@@ -423,9 +427,51 @@ public class IndexFragment1 extends BaseFragment {
             mListRL.finishRefresh(true);
             return;
         }
-        mCurrentGetPropertyIotId = mDeviceList.get(mGetPropertyIndex).iotId;
-        mCurrentProductKey = mDeviceList.get(mGetPropertyIndex).productKey;
-        new TSLHelper(mActivity).getProperty(mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        TSLHelper.getProperty(mActivity, mDeviceList.get(pos).iotId, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(mActivity, failEntry);
+                mGridRL.finishRefresh(false);
+                mListRL.finishRefresh(false);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(mActivity, errorEntry);
+                mGridRL.finishRefresh(false);
+                mListRL.finishRefresh(false);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 处理获取属性回调
+                ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                JSONObject items = JSON.parseObject(result);
+                // ViseLog.d("设备属性 = \n" + GsonUtil.toJson(items));
+                if (items != null) {
+                    TSLHelper.parseProperty(mDeviceList.get(pos).productKey, items, propertyEntry);
+                    propertyEntry.iotId = mDeviceList.get(pos).iotId;
+                    if (propertyEntry != null) {
+                        for (String name : propertyEntry.properties.keySet()) {
+                            if (propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)) {
+                                mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                                mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                            }
+                        }
+                    }
+                    // 继续获取
+                    if (pos < mDeviceList.size() - 1) {
+                        getDeviceProperty(pos + 1);
+                    } else {
+                        mGridRL.finishRefresh(true);
+                        mListRL.finishRefresh(true);
+                    }
+                } else {
+                    mGridRL.finishRefresh(true);
+                    mListRL.finishRefresh(true);
+                }
+            }
+        });
     }
 
     private void getDeviceProperty(String iotId) {
@@ -445,13 +491,52 @@ public class IndexFragment1 extends BaseFragment {
             index++;
         }
 
-        if (isHas == false || mGetPropertyIndex < 0 || mGetPropertyIndex >= mDeviceList.size()) {
+        if (!isHas || mGetPropertyIndex < 0 || mGetPropertyIndex >= mDeviceList.size()) {
             return;
         }
 
         mCurrentGetPropertyIotId = mDeviceList.get(mGetPropertyIndex).iotId;
         mCurrentProductKey = mDeviceList.get(mGetPropertyIndex).productKey;
-        new TSLHelper(mActivity).getProperty(mCurrentGetPropertyIotId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        TSLHelper.getProperty(mActivity, mCurrentGetPropertyIotId, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(mActivity, failEntry);
+                mGridRL.finishRefresh(false);
+                mListRL.finishRefresh(false);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(mActivity, errorEntry);
+                mGridRL.finishRefresh(false);
+                mListRL.finishRefresh(false);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 处理获取属性回调
+                ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                JSONObject items = JSON.parseObject(result);
+                // ViseLog.d("设备属性 = \n" + GsonUtil.toJson(items));
+                if (items != null) {
+                    TSLHelper.parseProperty(mCurrentProductKey, items, propertyEntry);
+                    propertyEntry.iotId = mCurrentGetPropertyIotId;
+                    if (propertyEntry != null) {
+                        for (String name : propertyEntry.properties.keySet()) {
+                            if (propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)) {
+                                mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                                mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                            }
+                        }
+                    }
+                    mGridRL.finishRefresh(true);
+                    mListRL.finishRefresh(true);
+                } else {
+                    mGridRL.finishRefresh(true);
+                    mListRL.finishRefresh(true);
+                }
+            }
+        });
     }
 
     //刷新数据
@@ -576,6 +661,7 @@ public class IndexFragment1 extends BaseFragment {
         RealtimeDataReceiver.addPropertyCallbackHandler("MainPropertyCallback", mRealtimeDataHandler);
         RealtimeDataReceiver.addEventCallbackHandler("MainEventCallback", mRealtimeDataHandler);
         RealtimeDataReceiver.addThingEventCallbackHandler("MainEventCallback", mRealtimeDataHandler);
+        RealtimeDataReceiver.addEventCallbackHandler("IndexfragmentLocalSceneCallback", mAPIDataHandler);
     }
 
     // 设备列表点击监听器
@@ -631,12 +717,8 @@ public class IndexFragment1 extends BaseFragment {
                     String gatewayMac = scene.description;
                     EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
 
-                    ViseLog.d("网关mac = " + gatewayMac + "\n缓存 = " +
-                            GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
-
                     if (dev != null) {
-                        mSceneManager.invokeLocalSceneService(dev.iotId, scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                        //mSceneManager.invokeLocalSceneService("SgQZHtfLJr3vYMAaIpfA000100", scene.id, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        SceneManager.invokeLocalSceneService(mActivity, dev.iotId, scene.id, null);
                     } else {
                         ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
                     }
@@ -661,7 +743,7 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList(mActivity, "", "0");
+            querySceneList();
             // 数据获取完则开始获取设备列表数据
             // startGetDeviceList();
         } else
@@ -677,99 +759,68 @@ public class IndexFragment1 extends BaseFragment {
             mSceneList.clear();
         }
         if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-            querySceneList(mActivity, "", "0");
+            querySceneList();
             // 数据获取完则开始获取设备列表数据
-            // startGetDeviceList();
         } else
             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, SCENE_PAGE_SIZE,
                     mCommitFailureHandler, mResponseErrorHandler, mGetSceneHandler);
     }
 
     // 查询本地场景列表
-    private void querySceneList(Context context, String mac, String type) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<Object, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull Object o) throws Exception {
-                        return RetrofitUtil.getInstance().querySceneList(context, mac, type);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+    private void querySceneList() {
+        SceneManager.querySceneList(mActivity, "", "", new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                // ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    mSceneList.clear();
+                    DeviceBuffer.initSceneBuffer();
+                    if (sceneList != null) {
+                        for (int i = 0; i < sceneList.size(); i++) {
+                            JSONObject sceneObj = sceneList.getJSONObject(i);
+                            try {
+                                ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
 
-                    }
+                                DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
 
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        // ViseLog.d("场景 = " + GsonUtil.toJson(response));
-                        int code = response.getInteger("code");
-                        String msg = response.getString("message");
-                        JSONArray sceneList = response.getJSONArray("sceneList");
-                        if (code == 0 || code == 200) {
-                            mSceneList.clear();
-                            if ("0".equals(type)) {
-                                DeviceBuffer.initSceneBuffer();
-                            }
-                            if (sceneList != null) {
-                                for (int i = 0; i < sceneList.size(); i++) {
-                                    JSONObject sceneObj = sceneList.getJSONObject(i);
-                                    try {
-                                        ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
-
-                                        DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
-
-                                        if ("1".equals(type)) {
-                                            JSONObject appParams = scene.getAppParams();
-                                            if (appParams != null) {
-                                                String switchIotId = appParams.getString("switchIotId");
-                                                if (switchIotId != null && switchIotId.length() > 0)
-                                                    continue;
-                                            }
-
-                                            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
-                                            entry.id = scene.getSceneDetail().getSceneId();
-                                            entry.name = scene.getSceneDetail().getName();
-                                            entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
-                                            entry.description = scene.getGwMac();
-                                            mSceneList.add(entry);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                if ("1".equals(scene.getSceneDetail().getType())) {
+                                    JSONObject appParams = scene.getAppParams();
+                                    if (appParams != null) {
+                                        String switchIotId = appParams.getString("switchIotId");
+                                        if (switchIotId != null && switchIotId.length() > 0)
+                                            continue;
                                     }
+
+                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                    entry.id = scene.getSceneDetail().getSceneId();
+                                    entry.name = scene.getSceneDetail().getName();
+                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                    entry.description = scene.getGwMac();
+                                    mSceneList.add(entry);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            if ("1".equals(type)) {
-                                // 数据获取完则设置场景列表数据
-                                setSceneList(mSceneList);
-                                startGetDeviceList();
-                            } else if ("0".equals(type)) {
-                                querySceneList(mActivity, "", "1");
-                            }
-                        } else {
-                            QMUITipDialogUtil.dismiss();
-                            if (msg != null && msg.length() > 0)
-                                ToastUtils.showLongToast(mActivity, msg);
-                            else
-                                ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
                         }
                     }
+                    // 数据获取完则设置场景列表数据
+                    setSceneList(mSceneList);
+                    startGetDeviceList();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response);
+                }
+            }
 
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(mActivity, e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(mActivity, e.getMessage());
+            }
+        });
     }
 
     private static class GetSceneHandler extends Handler {
@@ -814,29 +865,11 @@ public class IndexFragment1 extends BaseFragment {
         mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, DEV_PAGE_SIZE,
                 Constant.MSG_CALLBACK_GETHOMEDEVICELIST,
                 mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // 获取用户设备列表
-                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            }
-        },200);*/
     }
 
-    // 开始获取设备列表
-    private void startGetDeviceList2() {
-        // 初始化处理设备缓存器
-        DeviceBuffer.initProcess();
-        // 获取家设备列表
-        mHomeSpaceManager.getHomeDeviceList(SystemParameter.getInstance().getHomeId(), "", 1, DEV_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // 获取用户设备列表
-                mUserCenter.getDeviceList(1, mDevicePageSize, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-            }
-        },200);*/
-    }
+    /*private void getDeviceList(){
+        UserCenter
+    }*/
 
     // 设备统计
     private void deviceCount() {
@@ -844,17 +877,63 @@ public class IndexFragment1 extends BaseFragment {
         int total = mDeviceList == null ? 0 : mDeviceList.size();
         if (total > 0) {
             for (EDevice.deviceEntry device : mDeviceList) {
-                if (Constant.KEY_NICK_NAME_PK.contains(device.productKey) && mRefreshExtendedBuffer) {
-                    mSceneManager.getExtendedProperty(device.iotId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, null,
-                            new ExtendedHandler(this, device.iotId));
-                }
                 if (device.status == Constant.CONNECTION_STATUS_ONLINE) {
                     online++;
                 }
             }
         }
-        mRefreshExtendedBuffer = false;
         mLblDeviceDescription.setText(String.format(getString(R.string.main_device_description), total, online));
+    }
+
+    // 获取设备昵称
+    private void getKeyName(int pos) {
+        if (mRefreshExtendedBuffer) {
+            if (Constant.KEY_NICK_NAME_PK.contains(mDeviceList.get(pos).productKey)) {
+                SceneManager.getExtendedProperty(mActivity, mDeviceList.get(pos).iotId, Constant.TAG_DEV_KEY_NICKNAME, new APIChannel.Callback() {
+                    @Override
+                    public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                        commitFailure(mActivity, failEntry);
+                        if (pos < mDeviceList.size() - 1) {
+                            getKeyName(pos + 1);
+                        } else {
+                            mRefreshExtendedBuffer = false;
+                            QMUITipDialogUtil.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                        responseError(mActivity, errorEntry);
+                        if (pos < mDeviceList.size() - 1) {
+                            getKeyName(pos + 1);
+                        } else {
+                            mRefreshExtendedBuffer = false;
+                            QMUITipDialogUtil.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onProcessData(String result) {
+                        // ViseLog.d("pos = " + pos + "\nname = " + mDeviceList.get(pos).nickName + "\n按键昵称 = \n" + GsonUtil.toJson(JSONObject.parseObject(result)));
+                        JSONObject object = JSONObject.parseObject(result);
+                        DeviceBuffer.addExtendedInfo(mDeviceList.get(pos).iotId, object);
+                        if (pos < mDeviceList.size() - 1) {
+                            getKeyName(pos + 1);
+                        } else {
+                            mRefreshExtendedBuffer = false;
+                            QMUITipDialogUtil.dismiss();
+                        }
+                    }
+                });
+            } else {
+                if (pos < mDeviceList.size() - 1) {
+                    getKeyName(pos + 1);
+                } else {
+                    mRefreshExtendedBuffer = false;
+                    QMUITipDialogUtil.dismiss();
+                }
+            }
+        }
     }
 
     // 同步设备列表数据
@@ -923,9 +1002,43 @@ public class IndexFragment1 extends BaseFragment {
         }
 
         if (mDeviceList.size() > 0)
-            queryMac(0);
+            queryMac();
         else
             refreshListView();
+    }
+
+    private void queryMac() {
+        List<String> iotList = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mDeviceList) {
+            iotList.add(entry.iotId);
+        }
+        DeviceManager.queryMacByIotId(mActivity, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                // ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    refreshListView();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage());
+            }
+        });
     }
 
     private void refreshListView() {
@@ -977,57 +1090,9 @@ public class IndexFragment1 extends BaseFragment {
             }
         }
         deviceCount();
-    }
-
-    private void queryMac(int pos) {
-        if (pos >= mDeviceList.size()) return;
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance()
-                                .queryMacByIotId(mActivity, mDeviceList.get(pos).iotId);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(mActivity))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject jsonObject) {
-                        // ViseLog.d("获取mac = " + GsonUtil.toJson(jsonObject));
-                        int code = jsonObject.getInteger("code");
-                        if (code == 200) {
-                            String mac = jsonObject.getString("mac");
-                            if (pos < mDeviceList.size())
-                                DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, mac);
-                        } else {
-                            if (pos < mDeviceList.size())
-                                DeviceBuffer.updateDeviceMac(mDeviceList.get(pos).iotId, DeviceBuffer.getDeviceInformation(mDeviceList.get(pos).iotId).deviceName);
-                        }
-                        if (pos < mDeviceList.size() - 1)
-                            queryMac(pos + 1);
-                        else {
-                            refreshListView();
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        queryMac(pos + 1);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        if (mDeviceList.size() > 0) {
+            getKeyName(0);
+        }
     }
 
     // 同步房间列表数据
@@ -1183,6 +1248,7 @@ public class IndexFragment1 extends BaseFragment {
                 case Constant.MSG_CALLBACK_GETUSERDEVICTLIST:
                     // 处理获取用户设备列表数据
                     EUser.bindDeviceListEntry userBindDeviceList = CloudDataParser.processUserDeviceList((String) msg.obj);
+                    ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
                     if (userBindDeviceList != null && userBindDeviceList.data != null) {
                         // 向缓存追加用户绑定设备列表数据
                         DeviceBuffer.addUserBindDeviceList(userBindDeviceList);
@@ -1195,7 +1261,7 @@ public class IndexFragment1 extends BaseFragment {
                             // 开始主动获取设备属性
                             mGetPropertyIndex = 0;
                             mIsContinuouslyGetState = true;
-                            getDeviceProperty();
+                            getDeviceProperty(0);
                             if (mProgressDialog != null) {
                                 mProgressDialog.dismiss();
                             }
@@ -1207,33 +1273,7 @@ public class IndexFragment1 extends BaseFragment {
                         // 开始主动获取设备属性
                         mGetPropertyIndex = 0;
                         mIsContinuouslyGetState = true;
-                        getDeviceProperty();
-                    }
-                    break;
-                case Constant.MSG_CALLBACK_GETTSLPROPERTY:
-                    // 处理获取属性回调
-                    ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
-                    JSONObject items = JSON.parseObject((String) msg.obj);
-                    HiLog.i("PROPERTY" + (String) msg.obj);
-                    if (items != null) {
-                        TSLHelper.parseProperty(mCurrentProductKey, items, propertyEntry);
-                        propertyEntry.iotId = mCurrentGetPropertyIotId;
-                        if (propertyEntry != null) {
-                            for (String name : propertyEntry.properties.keySet()) {
-                                if (propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)) {
-                                    mAptDeviceGrid.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
-                                    mAptDeviceList.updateStateData(propertyEntry.iotId, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
-                                }
-                            }
-                        }
-                        // 继续获取
-                        if (mIsContinuouslyGetState) {
-                            mGetPropertyIndex++;
-                            getDeviceProperty();
-                        }
-                    } else {
-                        mGridRL.finishRefresh(true);
-                        mListRL.finishRefresh(true);
+                        getDeviceProperty(0);
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
@@ -1438,6 +1478,7 @@ public class IndexFragment1 extends BaseFragment {
             IndexFragment1 fragment = ref.get();
             if (fragment == null) return;
             if (msg.what == TAG_GET_EXTENDED_PRO) {
+                QMUITipDialogUtil.dismiss();
                 JSONObject object = JSONObject.parseObject((String) msg.obj);
                 DeviceBuffer.addExtendedInfo(iotId, object);
             }

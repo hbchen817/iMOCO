@@ -124,7 +124,39 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             intent = new Intent(mActivity, DeleteAccountActivity.class);
             startActivity(intent);
         } else if (v.getId() == R.id.logout_btn) {
-            DialogUtils.showEnsureDialog(mActivity, logoutConfirmListener, getString(R.string.myinfo_logout_tips), null);
+            DialogUtils.showConfirmDialog(this, R.string.dialog_title, R.string.myinfo_logout_tips,
+                    R.string.dialog_confirm, R.string.dialog_cancel, new DialogUtils.Callback() {
+                        @Override
+                        public void positive() {
+                            QMUITipDialogUtil.showLoadingDialg(MyInfoActivity.this, R.string.is_submitted);
+                            LoginBusiness.logout(new ILogoutCallback() {
+                                @Override
+                                public void onLogoutSuccess() {
+                                    QMUITipDialogUtil.dismiss();
+                                    ToastUtils.showToastCentrally(mActivity, getString(R.string.logout_success));
+                                    DeviceBuffer.initSceneBuffer();
+                                    SpUtils.putAccessToken(MyInfoActivity.this, "");
+                                    SpUtils.putRefreshTokenTime(MyInfoActivity.this, -1);
+                                    Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    IndexActivity.mainActivity.finish();
+                                    finish();
+                                    overridePendingTransition(0, 0);
+                                }
+
+                                @Override
+                                public void onLogoutFailed(int code, String error) {
+                                    ToastUtils.showToastCentrally(mActivity, getString(R.string.account_logout_failed) + error);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void negative() {
+
+                        }
+                    });
         }
     }
 

@@ -3,9 +3,12 @@ package com.laffey.smart.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,17 +21,24 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.iot.ilop.page.scan.ScanActivity;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.AptDeviceList;
+import com.laffey.smart.presenter.AptSubGwList;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -45,7 +55,12 @@ import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
 import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
+import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,7 +74,7 @@ import butterknife.ButterKnife;
  * creat time: 2020-04-21 17:14
  * Description: 网关详细界面
  */
-public class DetailGatewayActivity extends DetailActivity {
+public class DetailGatewayActivity extends DetailActivity implements OnClickListener {
     @BindView(R.id.fake_statusbar_view)
     protected View mFakeStatusbarView;
     @BindView(R.id.detailGatewayLblCount)
@@ -72,13 +87,40 @@ public class DetailGatewayActivity extends DetailActivity {
     protected ImageView mImgSecurity;
     @BindView(R.id.detailGatewayImgSecurityRound)
     protected ImageView mImgSecurityRound;
+    @BindView(R.id.dev_rg)
+    protected RadioGroup mDevRG;
+    @BindView(R.id.sub_dev_rb)
+    protected RadioButton mSubDevRB;
+    @BindView(R.id.sub_gw_rb)
+    protected RadioButton mSubGwRB;
+    @BindView(R.id.detailGatewayLstSubdevice)
+    protected ListView mSubDevLV;
+    @BindView(R.id.gw_dev_lv)
+    protected ListView mSubGwLV;
 
     private AptDeviceList mAptDeviceList = null;
-    private List<EDevice.deviceEntry> mDeviceList;
+    private final List<EDevice.deviceEntry> mDeviceList = new ArrayList<>();
+    private AptSubGwList mGwDeviceList = null;
+    private final List<EDevice.subGwEntry> mGwList = new ArrayList<>();
     private int mStatus;
     private TSLHelper mTSLHelper;
     private final int PAGE_SIZE = 50;
     private int mAarmMode = 0;
+    private String mGwMac;
+    private boolean mIsShowSubGwList;
+
+    private static final String SHOW_SUB_GW_LIST = "showSubGwList";
+
+    public static void start(Activity activity, String iotId, String productKey, int status, String name, int owned, boolean showSubGwList) {
+        Intent intent = new Intent(activity, DetailGatewayActivity.class);
+        intent.putExtra("iotId", iotId);
+        intent.putExtra("productKey", productKey);
+        intent.putExtra("status", status);
+        intent.putExtra("name", name);
+        intent.putExtra("owned", owned);
+        intent.putExtra(SHOW_SUB_GW_LIST, showSubGwList);
+        activity.startActivity(intent);
+    }
 
     // 开始获取网关子设备列表
     private void startGetGatewaySubdeive() {
@@ -146,11 +188,12 @@ public class DetailGatewayActivity extends DetailActivity {
                         new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
                     } else {
                         // 数据获取完则加载显示
-                        ListView subdeviceList = (ListView) findViewById(R.id.detailGatewayLstSubdevice);
                         mAptDeviceList.setData(mDeviceList);
-                        subdeviceList.setAdapter(mAptDeviceList);
-                        subdeviceList.setOnItemClickListener(deviceListOnItemClickListener);
+                        mSubDevLV.setAdapter(mAptDeviceList);
+                        mSubDevLV.setOnItemClickListener(deviceListOnItemClickListener);
                         onlineCount();
+                        // 子网关列表
+                        getSubGwList();
                     }
                 }
             }
@@ -187,7 +230,6 @@ public class DetailGatewayActivity extends DetailActivity {
             return false;
         }
     });
-
 
     // 实时数据处理器
     private final Handler mRealtimeDataHandler = new Handler(new Handler.Callback() {
@@ -238,17 +280,29 @@ public class DetailGatewayActivity extends DetailActivity {
 
     // 在线统计
     private void onlineCount() {
-        TextView lblCount = (TextView) findViewById(R.id.detailGatewayLblCount);
-        if (mDeviceList != null && mDeviceList.size() > 0) {
-            int online = 0;
-            for (EDevice.deviceEntry e : mDeviceList) {
-                if (e.status == Constant.CONNECTION_STATUS_ONLINE) {
-                    online++;
+        int total = 0;
+        int onLine = 0;
+        if (mSubDevRB.isChecked()) {
+            if (mDeviceList != null && mDeviceList.size() > 0) {
+                total = mDeviceList.size();
+                for (EDevice.deviceEntry e : mDeviceList) {
+                    if (e.status == Constant.CONNECTION_STATUS_ONLINE) {
+                        onLine++;
+                    }
                 }
             }
-            lblCount.setText(String.format(getString(R.string.detailgateway_count), mDeviceList.size(), online));
-        } else {
-            lblCount.setText(String.format(getString(R.string.detailgateway_count), 0, 0));
+            mLblCount.setText(String.format(getString(R.string.detailgateway_count), total, onLine));
+        } else if (mSubGwRB.isChecked()) {
+            if (mGwList != null && mGwList.size() > 0) {
+                total = mGwList.size();
+                for (EDevice.subGwEntry e : mGwList) {
+                    // 子网关状态0-未激活，1-已激活，2-所有
+                    if ("1".equals(e.getState())) {
+                        onLine++;
+                    }
+                }
+            }
+            mLblCount.setText(String.format(getString(R.string.detailgateway_count_2), total, onLine));
         }
         mLblCount.setVisibility(View.VISIBLE);
     }
@@ -277,18 +331,15 @@ public class DetailGatewayActivity extends DetailActivity {
                     ToastUtils.showLongToast(DetailGatewayActivity.this, R.string.pls_try_again_later);
                 }
             }
-            /*JSONArray array = new JSONArray();
-            for (int i = 0; i < 15; i++) {
-                JSONObject object = new JSONObject();
-                object.put("mac", "000AD04112345" + i);
-                object.put("state", i % 2 + "");
-                array.add(object);
-            }
+        }
+    };
 
-            ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
-            ViseLog.d("mIOTId = " + mIOTId + " , mProductKey = " + mProductKey + " , array = " + array.toJSONString());
-            mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{"subGWList"},
-                    new String[]{array.toJSONString().replace("\"", "")});*/
+    // 子网关列表点击监听器
+    private final AdapterView.OnItemClickListener mSubGwListOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            SubGwInfoActivity.start(DetailGatewayActivity.this, mIOTId,
+                    GsonUtil.toJson(mGwList.get(position)), Constant.REQUESTCODE_CALLSUBGWINFOACTIVITY);
         }
     };
 
@@ -300,8 +351,11 @@ public class DetailGatewayActivity extends DetailActivity {
 
         mLblCount.setVisibility(View.INVISIBLE);
         mTSLHelper = new TSLHelper(this);
-        mDeviceList = new ArrayList<EDevice.deviceEntry>();
         mAptDeviceList = new AptDeviceList(this);
+        mGwDeviceList = new AptSubGwList(this);
+        mGwDeviceList.setData(mGwList);
+        mSubGwLV.setAdapter(mGwDeviceList);
+        mSubGwLV.setOnItemClickListener(mSubGwListOnItemClickListener);
 
         RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
         ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
@@ -325,20 +379,13 @@ public class DetailGatewayActivity extends DetailActivity {
             rlAdd.setVisibility(View.GONE);
         }
 
-        // 添加子设备处理
-        OnClickListener onAddClickListener = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DetailGatewayActivity.this, ChoiceProductActivity.class);
-                intent.putExtra("gatewayIOTId", mIOTId);
-                intent.putExtra("gatewayStatus", mStatus);
-                startActivity(intent);
-            }
-        };
         ImageView imgAdd = (ImageView) findViewById(R.id.detailGatewayImgAdd);
         TextView lblAdd = (TextView) findViewById(R.id.detailGatewayLblAdd);
-        imgAdd.setOnClickListener(onAddClickListener);
-        lblAdd.setOnClickListener(onAddClickListener);
+        imgAdd.setOnClickListener(mOnAddClickListener);
+        lblAdd.setOnClickListener(mOnAddClickListener);
+
+        RelativeLayout addDevRL = (RelativeLayout) findViewById(R.id.add_dev_rl);
+        addDevRL.setOnClickListener(this);
 
         ImageView sceneAdd = (ImageView) findViewById(R.id.scene_add_img);
         sceneAdd.setOnClickListener(new OnClickListener() {
@@ -362,7 +409,46 @@ public class DetailGatewayActivity extends DetailActivity {
             OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
         }
         initStatusBar();
+
+        mDevRG.setOnCheckedChangeListener(mDevCheckedChangeListener);
+        mGwMac = DeviceBuffer.getDeviceMac(mIOTId);
+        mDevRG.setVisibility(DeviceBuffer.getDeviceOwned(mIOTId) == 1 ? View.VISIBLE : View.GONE);
+
+        mIsShowSubGwList = getIntent().getBooleanExtra(SHOW_SUB_GW_LIST, false);
+        if (mIsShowSubGwList) mSubGwRB.setChecked(true);
     }
+
+    // 添加子设备处理
+    private final OnClickListener mOnAddClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(DetailGatewayActivity.this, ChoiceProductActivity.class);
+            intent.putExtra("gatewayIOTId", mIOTId);
+            intent.putExtra("gatewayStatus", mStatus);
+            startActivity(intent);
+        }
+    };
+
+    // 子设备、子网关列表切换
+    private final RadioGroup.OnCheckedChangeListener mDevCheckedChangeListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId == R.id.sub_dev_rb) {
+                // 子设备列表
+                mSubDevRB.setTextColor(ContextCompat.getColor(DetailGatewayActivity.this, R.color.topic_color1));
+                mSubGwRB.setTextColor(ContextCompat.getColor(DetailGatewayActivity.this, R.color.black));
+                mSubDevLV.setVisibility(View.VISIBLE);
+                mSubGwLV.setVisibility(View.GONE);
+            } else if (checkedId == R.id.sub_gw_rb) {
+                // 子网关列表
+                mSubDevRB.setTextColor(ContextCompat.getColor(DetailGatewayActivity.this, R.color.black));
+                mSubGwRB.setTextColor(ContextCompat.getColor(DetailGatewayActivity.this, R.color.topic_color1));
+                mSubDevLV.setVisibility(View.GONE);
+                mSubGwLV.setVisibility(View.VISIBLE);
+            }
+            onlineCount();
+        }
+    };
 
     // 嵌入式状态栏
     private void initStatusBar() {
@@ -391,18 +477,27 @@ public class DetailGatewayActivity extends DetailActivity {
                 }
             }
             mAptDeviceList.notifyDataSetChanged();
-            onlineCount();
         }
         // deleteSceneInGW();
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            for (EDevice.subGwEntry entry : mGwList) {
+                EDevice.subGwEntry subGwEntry = DeviceBuffer.getSubGw(entry.getMac());
+                if (subGwEntry != null)
+                    entry.setNickname(subGwEntry.getNickname());
+            }
+            mGwDeviceList.notifyDataSetChanged();
+        }
+        onlineCount();
     }
 
     private void deleteSceneInGW() {
         try {
 
-            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "117", 3,
+            SceneManager.manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "157", 3,
                     mCommitFailureHandler, mResponseErrorHandler, new Handler());
             Thread.sleep(2000);
-            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "119", 3,
+            SceneManager.manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "158", 3,
                     mCommitFailureHandler, mResponseErrorHandler, new Handler());
             /*Thread.sleep(2000);
             new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "98", 3,
@@ -440,5 +535,153 @@ public class DetailGatewayActivity extends DetailActivity {
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA)) {
             startGetGatewaySubdeive();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.add_dev_rl) {
+            // 新增设备
+            if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+                // 拥有者
+                QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
+                builder.addItem(getString(R.string.detailgateway_add));
+                builder.addItem(getString(R.string.add_sub_gateway));
+                builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                    @Override
+                    public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                        dialog.dismiss();
+                        switch (position) {
+                            case 0: {
+                                // 添加子设备
+                                Intent intent = new Intent(DetailGatewayActivity.this, ChoiceProductActivity.class);
+                                intent.putExtra("gatewayIOTId", mIOTId);
+                                intent.putExtra("gatewayStatus", mStatus);
+                                startActivity(intent);
+                                break;
+                            }
+                            case 1: {
+                                // 添加子网关
+                                // 已经获取权限
+                                requestPermission();
+                                break;
+                            }
+                        }
+                    }
+                });
+                builder.build().show();
+            } else {
+                // 分享者
+                Intent intent = new Intent(this, ChoiceProductActivity.class);
+                intent.putExtra("gatewayIOTId", mIOTId);
+                intent.putExtra("gatewayStatus", mStatus);
+                startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == -1 && requestCode == 1) {
+            String qrKey = data.getStringExtra("result");
+            ViseLog.d("qrKey = " + qrKey);
+            AddSubGwActivity.start(this, mIOTId, qrKey, Constant.REQUESTCODE_CALLADDSUBGWACTIVITY);
+        } else if (requestCode == Constant.REQUESTCODE_CALLSUBGWINFOACTIVITY &&
+                resultCode == Constant.RESULTCODE_CALLSUBGWINFOACTIVITY) {
+            getSubGwList();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        // 重新获取子网关列表
+        mSubGwRB.setChecked(true);
+        // 子网关状态0-未激活，1-已激活，2-所有
+        getSubGwList();
+        mIsShowSubGwList = getIntent().getBooleanExtra(SHOW_SUB_GW_LIST, false);
+    }
+
+    private void getSubGwList() {
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1)
+            UserCenter.getSubGwList(this, mGwMac, "2",
+                    new UserCenter.Callback() {
+                        @Override
+                        public void onNext(JSONObject response) {
+                            // 获取网关下的子网关列表
+                            int code = response.getInteger("code");
+                            // ViseLog.d("子网关列表 = \n" + GsonUtil.toJson(response));
+                            if (code == 200) {
+                                JSONArray subGwList = response.getJSONArray("subGwList");
+                                mGwList.clear();
+                                DeviceBuffer.initSubGw();
+                                if (subGwList != null) {
+                                    for (int i = 0; i < subGwList.size(); i++) {
+                                        JSONObject object = subGwList.getJSONObject(i);
+
+                                        EDevice.subGwEntry entry = new EDevice.subGwEntry();
+                                        entry.setMac(object.getString("mac"));
+                                        entry.setNickname(object.getString("nickname"));
+                                        entry.setPosition(object.getString("position"));
+                                        entry.setCreateTime(object.getString("createTime"));
+                                        entry.setState(object.getString("state"));
+                                        entry.setImage(DeviceBuffer.getDeviceInformation(mIOTId).image);
+                                        mGwList.add(entry);
+                                        DeviceBuffer.addSubGw(entry.getMac(), entry);
+                                    }
+                                }
+                                mGwDeviceList.notifyDataSetChanged();
+                                onlineCount();
+                            } else {
+                                RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            // 获取网关下的子网关列表失败
+                            ViseLog.e(e);
+                            ToastUtils.showLongToast(DetailGatewayActivity.this, e.getMessage());
+                        }
+                    });
+    }
+
+    private void requestPermission() {
+        if (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            boolean hasRequstCamera = SpUtils.getBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, false);
+            // 未有权限
+            // 第一次请求权限 false
+            // 第一次请求权限拒绝，但未选择“不再提醒” true
+            // 第一次请求权限拒绝，并选择“不再提醒” false
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) || !hasRequstCamera) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+
+                SpUtils.putBooleanValue(this, SpUtils.SP_APP_INFO, SpUtils.PS_REQUEST_CAMERA_PERMISSION, true);
+            } else {
+                ToastUtils.showLongToast(mActivity, getString(R.string.camera_denied_and_dont_ask_msg));
+            }
+
+            /*ViseLog.d("flag = " + ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA));*/
+        } else {
+            // 已经获取权限
+            showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+        }
+    }
+
+    private void showConfirmDialog(String title, String content) {
+        DialogUtils.showConfirmDialog(this, title, content, getString(R.string.dialog_confirm),
+                getString(R.string.dialog_cancel), new DialogUtils.Callback() {
+                    @Override
+                    public void positive() {
+                        Intent intent = new Intent(mActivity, ScanActivity.class);
+                        startActivityForResult(intent, 1);
+                    }
+
+                    @Override
+                    public void negative() {
+
+                    }
+                });
     }
 }

@@ -23,6 +23,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
@@ -79,7 +80,19 @@ public class ChoiceGatewayActivity extends BaseActivity {
                 // 处理获取家网关列表数据
                 EHomeSpace.homeDeviceListEntry list = CloudDataParser.processHomeDeviceList((String) msg.obj);
                 if (list == null || list.total == 0) {
-                    Dialog.confirm(ChoiceGatewayActivity.this, R.string.dialog_title, getString(R.string.choicegateway_nohasgatewayhint), R.drawable.dialog_fail, R.string.dialog_confirm, true);
+                    DialogUtils.showConfirmDialog(ChoiceGatewayActivity.this, R.string.dialog_title,
+                            R.string.choicegateway_nohasgatewayhint, R.string.dialog_confirm,
+                            new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    ChoiceGatewayActivity.this.finish();
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
                 } else {
                     for (EHomeSpace.deviceEntry e : list.data) {
                         EDevice.deviceEntry entry = new EDevice.deviceEntry();
@@ -99,7 +112,18 @@ public class ChoiceGatewayActivity extends BaseActivity {
                         mViewBinding.choiceGatewayLstGateway.setAdapter(adapter);
                         mViewBinding.choiceGatewayLstGateway.setOnItemClickListener((parent, view, position, id) -> {
                             if (mDeviceList.get(position).status != Constant.CONNECTION_STATUS_ONLINE) {
-                                Dialog.confirm(ChoiceGatewayActivity.this, R.string.dialog_title, getString(R.string.choicegateway_gateofflinehint), R.drawable.dialog_fail, R.string.dialog_confirm, false);
+                                DialogUtils.showConfirmDialog(ChoiceGatewayActivity.this, R.string.dialog_title, R.string.choicegateway_gateofflinehint,
+                                        R.string.dialog_confirm, new DialogUtils.Callback() {
+                                            @Override
+                                            public void positive() {
+
+                                            }
+
+                                            @Override
+                                            public void negative() {
+
+                                            }
+                                        });
                                 return;
                             }
                             // 进入允许子设备入网

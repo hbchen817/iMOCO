@@ -6,8 +6,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,9 +21,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SeekBar;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.sdk.android.openaccount.util.safe.Base64;
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -29,10 +39,14 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLoginBinding;
 import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.VerifyView;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,11 +64,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String mTelNum;
 
     private final List<String> mUserNameList = new ArrayList<>();
-    private MyHandler mHandler;
     /**
      * 第一次按返回键的时间, 默认为0
      */
     private long mFirstPressTime = 0;
+
+    private int mCountdownTime = 60;
+    private MyHandler mHandler;
+    private SeekBar mVerifyViewSb;
+    private VerifyView mVerifyView;
+    private AlertDialog mVerifyViewDialog;
+    private Bitmap mBackgroundBitmap;
 
     public static void start(Context context, String telNum) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -71,6 +91,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         initStatusBar();
         initView();
         initRecyclerView();
+        initCache();
+        mHandler = new MyHandler(this);
+    }
+
+    private void initCache() {
+        DeviceBuffer.initSubGw();
     }
 
     private void initRecyclerView() {
@@ -111,9 +137,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mViewBinding.userNameMoreIc.setTypeface(mIconFont);
         mViewBinding.pwdClearIc.setTypeface(mIconFont);
         mViewBinding.pwdShowIc.setTypeface(mIconFont);
+        mViewBinding.verificationCodeIc.setTypeface(mIconFont);
+        mViewBinding.loginMethodsIc.setTypeface(mIconFont);
+        mViewBinding.verificationCodeClearIc.setTypeface(mIconFont);
 
         mViewBinding.userNameEt.addTextChangedListener(mUserNameTW);
         mViewBinding.pwdEt.addTextChangedListener(mPwdTW);
+        mViewBinding.verificationCodeEt.addTextChangedListener(mVerifyCodeTW);
 
         mViewBinding.userNameClearIc.setOnClickListener(this);
         mViewBinding.pwdClearIc.setOnClickListener(this);
@@ -122,8 +152,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mViewBinding.forgetPwdTv.setOnClickListener(this);
         mViewBinding.loginBtn.setOnClickListener(this);
         mViewBinding.userNameMoreIc.setOnClickListener(this);
+        mViewBinding.sendVerifiCodeTv.setOnClickListener(this);
+        mViewBinding.loginMethodsLayout.setOnClickListener(this);
+        mViewBinding.verificationCodeClearIc.setOnClickListener(this);
 
-        mHandler = new MyHandler(this);
+        showSlidingValidationLayout();
     }
 
     @Override
@@ -141,6 +174,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         mViewBinding.pwdEt.setText("");
+        mViewBinding.verificationCodeEt.setText("");
     }
 
     private final TextWatcher mUserNameTW = new TextWatcher() {
@@ -156,12 +190,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (s.toString().length() > 0 && mViewBinding.pwdEt.getText().toString().length() > 0) {
-                mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
-                        R.drawable.shape_button_appcolor));
-            } else if (s.toString().length() == 0 || mViewBinding.pwdEt.getText().toString().length() == 0) {
-                mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
-                        R.drawable.shape_button_all_c));
+            if (mViewBinding.userPwdLayout.getVisibility() == View.VISIBLE) {
+                // 账号登录
+                if (s.toString().length() > 0 && mViewBinding.pwdEt.getText().toString().length() > 0) {
+                    mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                            R.drawable.shape_button_appcolor));
+                } else if (s.toString().length() == 0 || mViewBinding.pwdEt.getText().toString().length() == 0) {
+                    mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                            R.drawable.shape_button_all_c));
+                }
+            } else {
+                // 短信登录
+                if (s.toString().length() > 0 && mViewBinding.verificationCodeEt.getText().toString().length() > 0) {
+                    mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                            R.drawable.shape_button_appcolor));
+                } else if (s.toString().length() == 0 || mViewBinding.verificationCodeEt.getText().toString().length() == 0) {
+                    mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                            R.drawable.shape_button_all_c));
+                }
             }
             mViewBinding.userNameClearIc.setVisibility(s.toString().length() > 0 ? View.VISIBLE : View.GONE);
         }
@@ -191,6 +237,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     };
 
+    private final TextWatcher mVerifyCodeTW = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (s.toString().length() > 0 && mViewBinding.userNameEt.getText().toString().length() > 0) {
+                mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                        R.drawable.shape_button_appcolor));
+            } else if (s.toString().length() == 0 || mViewBinding.userNameEt.getText().toString().length() == 0) {
+                mViewBinding.loginBtn.setBackground(ContextCompat.getDrawable(LoginActivity.this,
+                        R.drawable.shape_button_all_c));
+            }
+            mViewBinding.verificationCodeClearIc.setVisibility(s.toString().length() > 0 ? View.VISIBLE : View.GONE);
+        }
+    };
+
     // 嵌入式状态栏
     private void initStatusBar() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -206,6 +276,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mViewBinding.userNameEt.setText("");
         } else if (v.getId() == mViewBinding.pwdClearIc.getId()) {
             mViewBinding.pwdEt.setText("");
+        } else if (v.getId() == mViewBinding.verificationCodeClearIc.getId()) {
+            mViewBinding.verificationCodeEt.setText("");
         } else if (v.getId() == mViewBinding.pwdShowIc.getId()) {
             if (mViewBinding.pwdEt.getTransformationMethod() == HideReturnsTransformationMethod.getInstance()) {
                 mViewBinding.pwdEt.setTransformationMethod(PasswordTransformationMethod.getInstance());
@@ -223,12 +295,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             VerifyCodeActivity.start(this, "03");
         } else if (v.getId() == mViewBinding.loginBtn.getId()) {
             // 登录
-            String telNum = mViewBinding.userNameEt.getText().toString();
-            String pwd = mViewBinding.pwdEt.getText().toString();
-            if (telNum.length() > 0 && pwd.length() > 0) {
+            if (mViewBinding.userPwdLayout.getVisibility() == View.VISIBLE) {
+                // 账号登录
+                String telNum = mViewBinding.userNameEt.getText().toString();
+                String pwd = mViewBinding.pwdEt.getText().toString();
+                if (telNum.length() > 0 && pwd.length() > 0) {
+                    QMUITipDialogUtil.showLoadingDialg(this, R.string.is_logining);
+                    authAccountsPwd(LoginActivity.this, telNum, pwd);
+                }
+            } else {
+                // 短信登录
+                String telNum = mViewBinding.userNameEt.getText().toString();
+                String verifyCode = mViewBinding.verificationCodeEt.getText().toString();
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.is_logining);
-                AccountManager.authAccountsPwd(telNum, pwd, Constant.MSG_QUEST_AUTH_ACCOUNTS_PWD,
-                        Constant.MSG_QUEST_AUTH_ACCOUNTS_PWD_ERROR, mHandler);
+                authAccountsVC(telNum, verifyCode);
             }
         } else if (v.getId() == mViewBinding.userNameMoreIc.getId()) {
             // 登录过的账号
@@ -239,7 +319,118 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mViewBinding.userNameListLayout.setVisibility(View.GONE);
                 mViewBinding.userNameMoreIc.setText(R.string.icon_more);
             }
+        } else if (v.getId() == mViewBinding.sendVerifiCodeTv.getId()) {
+            // 请求短信验证码
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mViewBinding.sendVerifiCodeTv.getWindowToken(), 0);
+
+            String phoneNum = mViewBinding.userNameEt.getText().toString();
+            if (phoneNum.length() > 0) {
+                // 短信类型。01：注册02：短信登录03：密码找回 04: 修改密码
+                sendSMSVerifyCode(null);
+            } else ToastUtils.showLongToast(this, R.string.pls_input_phone_num);
+        } else if (v.getId() == mViewBinding.loginMethodsLayout.getId()) {
+            // 切换登录方式
+            if (mViewBinding.userPwdLayout.getVisibility() == View.VISIBLE) {
+                // 切换到短信登录
+                mViewBinding.userPwdLayout.setVisibility(View.GONE);
+                mViewBinding.verificationCodeLayout.setVisibility(View.VISIBLE);
+                mViewBinding.accountManagerLayout.setVisibility(View.GONE);
+                mViewBinding.loginMethodsIc.setText(R.string.icon_phone);
+                mViewBinding.loginMethodsTv.setText(R.string.pwd_login_methods);
+            } else {
+                // 切换到密码登录
+                mViewBinding.userPwdLayout.setVisibility(View.VISIBLE);
+                mViewBinding.verificationCodeLayout.setVisibility(View.GONE);
+                mViewBinding.accountManagerLayout.setVisibility(View.VISIBLE);
+                mViewBinding.loginMethodsIc.setText(R.string.icon_msg);
+                mViewBinding.loginMethodsTv.setText(R.string.msg_login_methods);
+            }
         }
+    }
+
+    // 短信验证码认证、登录
+    private void authAccountsVC(String telNum, String verifyCode) {
+        AccountManager.authAccountsVC(this, telNum, verifyCode, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // ViseLog.d("短信验证码登录 = \n" + GsonUtil.toJson(response));
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    // 登录成功
+                    String accessToken = response.getString("accessToken");
+                    String refreshToken = response.getString("refreshToken");
+                    SpUtils.putAccessToken(LoginActivity.this, accessToken);
+                    SpUtils.putRefreshToken(LoginActivity.this, refreshToken);
+                    SpUtils.putRefreshTokenTime(LoginActivity.this, System.currentTimeMillis());
+
+                    getAuthCode(LoginActivity.this);
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(LoginActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(LoginActivity.this, e.getMessage());
+            }
+        });
+    }
+
+    // 请求登录短信验证码
+    private void sendSMSVerifyCode(String pvCode) {
+        // 短信类型。01：注册02：短信登录03：密码找回 04: 修改密码
+        AccountManager.sendSMSVerifyCode(this, mViewBinding.userNameEt.getText().toString(),
+                "02", pvCode, new AccountManager.Callback() {
+                    @Override
+                    public void onNext(JSONObject response) {
+                        int code = response.getInteger("code");
+                        ViseLog.d("请求短信验证码 = \n" + GsonUtil.toJson(response));
+                        if (code == 200) {
+                            QMUITipDialogUtil.dismiss();
+                            mVerifyViewDialog.dismiss();
+
+                            mCountdownTime = 60;
+                            mViewBinding.sendVerifiCodeTv.setText(mCountdownTime + "秒");
+                            mViewBinding.sendVerifiCodeTv.setClickable(false);
+
+                            mHandler.sendEmptyMessageDelayed(0, 1000);
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            String resultCode = response.getString("errorCode");
+                            switch (resultCode) {
+                                case "03": // 请先获取图片验证码！
+                                case "04": {
+                                    // 图片验证码错误！
+                                    QMUITipDialogUtil.showLoadingDialg(LoginActivity.this, R.string.is_loading_pic);
+                                    getPVCode();
+                                    break;
+                                }
+                                case "01":// 单日短信发送总量超限制！
+                                case "02":// 单日单ip短信发送总量超限制！
+                                case "05":// 频繁发送！
+                                case "06": {
+                                    // 短信发送失败！
+                                    RetrofitUtil.showErrorMsg(LoginActivity.this, response);
+                                    break;
+                                }
+                                default: {
+                                    RetrofitUtil.showErrorMsg(LoginActivity.this, response);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        ViseLog.d(e);
+                        QMUITipDialogUtil.dismiss();
+                        ToastUtils.showLongToast(LoginActivity.this, e.getMessage());
+                    }
+                });
     }
 
     private static class MyHandler extends Handler {
@@ -254,101 +445,196 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             super.handleMessage(msg);
             LoginActivity activity = ref.get();
             if (activity == null) return;
-            switch (msg.what) {
-                case Constant.MSG_QUEST_GET_AUTH_CODE: {
-                    // 获取AuthCode
-                    JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("获取AuthCode = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    if (code == 200) {
-                        // 登录成功 authCode
-                        String authCode = response.getString("authCode");
-
-                        LoginBusiness.authCodeLogin(authCode, new ILoginCallback() {
-                            @Override
-                            public void onLoginSuccess() {
-                                QMUITipDialogUtil.dismiss();
-                                ToastUtils.showLongToast(activity, "登录成功");
-
-                                try {
-                                    JSONObject userName = JSONObject.parseObject(SpUtils.getUserName(activity));
-                                    if (userName == null)
-                                        userName = new JSONObject();
-                                    userName.put(activity.mViewBinding.userNameEt.getText().toString(), "");
-                                    SpUtils.putUserName(activity, userName.toJSONString());
-                                } catch (Exception e) {
-                                    ViseLog.e(e);
-                                }
-
-                                Intent intent = new Intent(activity, IndexActivity.class);
-                                activity.startActivity(intent);
-                            }
-
-                            @Override
-                            public void onLoginFailed(int i, String s) {
-                                ViseLog.e("i = " + i + " , s = " + s);
-                                ToastUtils.showLongToast(activity, s);
-                            }
-                        });
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        ViseLog.e(response.toJSONString());
-                        RetrofitUtil.showErrorMsg(activity, response);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_AUTH_ACCOUNTS_PWD: {
-                    // 帐号密码认证、登录
-                    JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    if (code == 200) {
-                        // 登录成功
-                        // ToastUtils.showLongToast(activity, "登录成功");
-                        String accessToken = response.getString("accessToken");
-                        String refreshToken = response.getString("refreshToken");
-                        SpUtils.putAccessToken(activity, accessToken);
-                        SpUtils.putRefreshToken(activity, refreshToken);
-                        SpUtils.putRefreshTokenTime(activity, System.currentTimeMillis());
-
-                        AccountManager.getAuthCode(activity, Constant.MSG_QUEST_GET_AUTH_CODE, Constant.MSG_QUEST_GET_AUTH_CODE_ERROR,
-                                activity.mHandler);
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        String message = response.getString("message");
-                        String localizedMsg = response.getString("localizedMsg");
-                        String errorMess = response.getString("errorMess");
-                        if (message != null && message.length() > 0) {
-                            ToastUtils.showLongToast(activity, message);
-                        } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                            ToastUtils.showLongToast(activity, localizedMsg);
-                        } else if (errorMess != null && errorMess.length() > 0) {
-                            ToastUtils.showLongToast(activity, errorMess);
-                        } else {
-                            ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                        }
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_GET_AUTH_CODE_ERROR:// 获取AuthCode失败
-                case Constant.MSG_QUEST_AUTH_ACCOUNTS_PWD_ERROR: {
-                    // 帐号密码认证、登录失败
-                    QMUITipDialogUtil.dismiss();
-                    Throwable e = (Throwable) msg.obj;
-                    ViseLog.e(e.toString());
-                    ToastUtils.showLongToast(activity, e.getMessage());
-                    break;
-                }
+            if (activity.mCountdownTime > 0) {
+                activity.mCountdownTime--;
+                activity.mViewBinding.sendVerifiCodeTv.setText(activity.mCountdownTime + "秒");
+                activity.mViewBinding.sendVerifiCodeTv.setClickable(false);
+                activity.mHandler.sendEmptyMessageDelayed(0, 1000);
+            } else {
+                activity.mViewBinding.sendVerifiCodeTv.setText(R.string.send_sms_verification_code);
+                activity.mViewBinding.sendVerifiCodeTv.setClickable(true);
             }
         }
     }
 
+    // 获取验证图片
+    private void getPVCode() {
+        AccountManager.getPVCode(this, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 验证图片获取
+                QMUITipDialogUtil.dismiss();
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String floatImage = response.getString("floatImage");
+                    String backgroundImage = response.getString("backgroundImage");
+
+                    floatImage = floatImage.replace("data:image/png;base64,", "");
+                    backgroundImage = backgroundImage.replace("data:image/png;base64,", "");
+                    mBackgroundBitmap = base64ToBitmap(backgroundImage);
+                    Bitmap floatBitmap = base64ToBitmap(floatImage);
+
+                    float scaleValue = (float) (QMUIDisplayHelper.getScreenWidth(LoginActivity.this) - 120) / mBackgroundBitmap.getWidth();
+                    mVerifyView.setWidthAndHeightAndScaleView(QMUIDisplayHelper.getScreenWidth(LoginActivity.this),
+                            QMUIDisplayHelper.getScreenHeight(LoginActivity.this), scaleValue);
+
+                    mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    mVerifyViewSb.setProgress(0);
+
+                    mVerifyView.setDrawBitmap(mBackgroundBitmap);
+                    mVerifyView.setVerifyBitmap(floatBitmap);
+                    mVerifyViewDialog.show();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(LoginActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+        });
+    }
+
+    private void showSlidingValidationLayout() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_sliding_validation, null, false);
+        mVerifyViewDialog = new AlertDialog.Builder(this).setView(view).create();
+
+        mVerifyViewSb = (SeekBar) view.findViewById(R.id.verify_view_sb);
+        mVerifyView = (VerifyView) view.findViewById(R.id.verify_view);
+
+        mVerifyViewSb.setOnSeekBarChangeListener(mSeekBarChangeListener);
+
+        Window window = mVerifyViewDialog.getWindow();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+
+        // mVerifyViewDialog.show();
+        window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shape_white_solid));
+
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.width = width - 60;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        window.setAttributes(lp);
+        // window.setLayout(width - 60, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    private final SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            mVerifyView.setMove(progress * 0.001);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            // 真实滑动值 = 滑动值 * 图片宽度 / 滑动最大值
+            /*ViseLog.d("滑动最大值 = " + mViewBinding.verifyViewSb.getMax()
+                    + "\n图片宽度 = " + mBackgroundBitmap.getWidth()
+                    + "\n滑动值 = " + mViewBinding.verifyViewSb.getProgress()
+                    + "\n小图片宽度 = " + mFloatBitmap.getWidth());*/
+            float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
+            result = result - 10;
+            // ViseLog.d("真实值 = " + result);
+            QMUITipDialogUtil.showLoadingDialg(LoginActivity.this, R.string.is_security_verification);
+            sendSMSVerifyCode(String.valueOf(result));
+        }
+    };
+
+    private Bitmap base64ToBitmap(String base64String) {
+        byte[] bytes = Base64.decode(base64String);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+    private void authAccountsPwd(Activity activity, String accounts, String pwd) {
+        AccountManager.authAccountsPwd(activity, accounts, pwd, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    // 登录成功
+                    String accessToken = response.getString("accessToken");
+                    String refreshToken = response.getString("refreshToken");
+                    SpUtils.putAccessToken(activity, accessToken);
+                    SpUtils.putRefreshToken(activity, refreshToken);
+                    SpUtils.putRefreshTokenTime(activity, System.currentTimeMillis());
+
+                    getAuthCode(activity);
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(activity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(activity, e.getMessage());
+                ViseLog.e(e);
+            }
+        });
+    }
+
+    private void getAuthCode(Activity activity) {
+        AccountManager.getAuthCode(activity, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 获取AuthCode
+                // ViseLog.d("获取AuthCode = " + response.toJSONString());
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    // 登录成功 authCode
+                    String authCode = response.getString("authCode");
+                    LoginBusiness.authCodeLogin(authCode, new ILoginCallback() {
+                        @Override
+                        public void onLoginSuccess() {
+                            QMUITipDialogUtil.dismiss();
+                            ToastUtils.showLongToast(activity, "登录成功");
+
+                            try {
+                                JSONObject userName = JSONObject.parseObject(SpUtils.getUserName(activity));
+                                if (userName == null)
+                                    userName = new JSONObject();
+                                userName.put(mViewBinding.userNameEt.getText().toString(), "");
+                                SpUtils.putUserName(activity, userName.toJSONString());
+                            } catch (Exception e) {
+                                ViseLog.e(e);
+                            }
+
+                            Intent intent = new Intent(activity, IndexActivity.class);
+                            activity.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onLoginFailed(int i, String s) {
+                            ViseLog.e("i = " + i + " , s = " + s);
+                            QMUITipDialogUtil.dismiss();
+                            ToastUtils.showLongToast(activity, s);
+                        }
+                    });
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    ViseLog.e(response.toJSONString());
+                    RetrofitUtil.showErrorMsg(activity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(activity, e.getMessage());
+                ViseLog.e(e);
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
-//        Intent intent= new Intent(Intent.ACTION_MAIN);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.addCategory(Intent.CATEGORY_HOME);
-//        startActivity(intent);
         // 第二次按返回键的时间, 为当前系统时间
         long secondPressTime = System.currentTimeMillis();
 

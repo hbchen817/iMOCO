@@ -1,6 +1,7 @@
 package com.laffey.smart.view;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,11 +27,16 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySelectAssociatedDevBinding;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.model.ItemBindList;
+import com.laffey.smart.model.ItemBindRelation;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.SpUtils;
+import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,11 +53,13 @@ public class SelectAssociatedDevActivity extends BaseActivity {
     private static final String SRC_PRODUCT_KEY = "src_product_key";
     private final int PAGE_SIZE = 10;
 
-    private String mIotId;
+    private String mOriginIotId;
     private String mGatewayId;
-    private String mDevMac;
-    private int mSrcEndId;
+    private String mOriginMac;
+    private int mOriginEndId;
     private String mSrcPK;
+    private ItemBindList mCacheBindList;
+    private final List<ItemBindRelation> mCacheRelations = new ArrayList<>();
 
     private MyHandler mHandler;
     private List<EDevice.deviceEntry> mList = new ArrayList<>();
@@ -74,15 +82,28 @@ public class SelectAssociatedDevActivity extends BaseActivity {
         mViewBinding = ActivitySelectAssociatedDevBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
 
-        mIotId = getIntent().getStringExtra(IOT_ID);
+        mOriginIotId = getIntent().getStringExtra(IOT_ID);
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
-        mSrcEndId = getIntent().getIntExtra(SRC_ENDPOINT_ID, -1);
+        mOriginEndId = getIntent().getIntExtra(SRC_ENDPOINT_ID, -1);
         mSrcPK = getIntent().getStringExtra(SRC_PRODUCT_KEY);
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mHandler = new MyHandler(this);
 
-        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        mOriginMac = DeviceBuffer.getDeviceInformation(mOriginIotId).mac;
+        mCacheBindList = DeviceBuffer.getBindList(mOriginMac + "-" + mOriginEndId);
+        if (mCacheBindList != null) {
+            mCacheRelations.addAll(mCacheBindList.getBindList());
+        }
 
+        initStatusBar();
+        initAdapter();
+
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        new UserCenter(SelectAssociatedDevActivity.this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
+                mCommitFailureHandler, mResponseErrorHandler, mHandler);
+    }
+
+    private void initAdapter() {
         mAdapter = new BaseQuickAdapter<EDevice.deviceEntry, BaseViewHolder>(R.layout.item_dev, mList) {
             @Override
             protected void convert(@NotNull BaseViewHolder holder, EDevice.deviceEntry item) {
@@ -93,29 +114,37 @@ public class SelectAssociatedDevActivity extends BaseActivity {
                         .setVisible(R.id.divider, mList.indexOf(item) != 0);
                 ImageView imageView = holder.getView(R.id.dev_iv);
                 Glide.with(SelectAssociatedDevActivity.this).load(item.image).into(imageView);
+
+                ogTV.setTextColor(ContextCompat.getColor(SelectAssociatedDevActivity.this, R.color.black));
+                holder.setTextColor(R.id.dev_name_tv, ContextCompat.getColor(SelectAssociatedDevActivity.this, R.color.black));
             }
         };
-
-        EDevice.deviceEntry entry = DeviceBuffer.getDeviceInformation(mIotId);
-        mDevMac = entry.mac;
-
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
+                /*boolean isBinded = false;
+                for (ItemBindRelation relation : mCacheRelations) {
+                    if (relation.getMac().equals(mList.get(position).mac)) {
+                        isBinded = true;
+                        break;
+                    }
+                }
+                if (!isBinded) {
+                    EDevice.deviceEntry deviceEntry = mList.get(position);
+                    SelectAssociatedKeyActivity.start(SelectAssociatedDevActivity.this, mOriginIotId, String.valueOf(mOriginEndId),
+                            deviceEntry.iotId, mGatewayId, false);
+                } else {
+                    ToastUtils.showLongToast(SelectAssociatedDevActivity.this, R.string.dev_has_been_binded);
+                }*/
                 EDevice.deviceEntry deviceEntry = mList.get(position);
-                SelectAssociatedKeyActivity.start(SelectAssociatedDevActivity.this, deviceEntry.productKey,
-                        mIotId, mDevMac, deviceEntry.iotId, 0, mSrcEndId, mSrcPK, mGatewayId);
+                SelectAssociatedKeyActivity.start(SelectAssociatedDevActivity.this, mOriginIotId, String.valueOf(mOriginEndId),
+                        deviceEntry.iotId, mGatewayId, false);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         mViewBinding.devRv.setLayoutManager(layoutManager);
         mViewBinding.devRv.setAdapter(mAdapter);
-
-        initStatusBar();
-
-        new UserCenter(SelectAssociatedDevActivity.this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
-                mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }
 
     // 嵌入式状态栏
@@ -149,13 +178,14 @@ public class SelectAssociatedDevActivity extends BaseActivity {
             if (activity != null) {
                 if (msg.what == Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST) {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
+                    ViseLog.d("网关下子设备 = \n" + GsonUtil.toJson(list));
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
-                            if ((e.productKey.equals(CTSL.PK_ONEWAYSWITCH) ||
+                            if (e.productKey.equals(CTSL.PK_ONEWAYSWITCH) ||
                                     e.productKey.equals(CTSL.PK_TWOWAYSWITCH) ||
                                     e.productKey.equals(CTSL.PK_THREE_KEY_SWITCH) ||
                                     e.productKey.equals(CTSL.PK_FOURWAYSWITCH_2) ||
-                                    e.productKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) && !activity.mIotId.equals(e.iotId)) {
+                                    e.productKey.equals(CTSL.PK_SIX_TWO_SCENE_SWITCH)) {
                                 EDevice.deviceEntry entry = new EDevice.deviceEntry();
                                 entry.iotId = e.iotId;
                                 entry.nickName = e.nickName;
@@ -163,6 +193,7 @@ public class SelectAssociatedDevActivity extends BaseActivity {
                                 entry.status = e.status;
                                 entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
                                 entry.image = e.image;
+                                entry.mac = DeviceBuffer.getDeviceMac(e.iotId);
                                 activity.mList.add(entry);
                             }
                         }

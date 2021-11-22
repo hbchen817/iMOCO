@@ -1,5 +1,6 @@
 package com.laffey.smart.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ResponseMessageUtil;
@@ -56,6 +58,13 @@ public class BaseActivity extends FragmentActivity {
             return false;
         }
     });
+
+    protected void commitFailure(Activity activity, EAPIChannel.commitFailEntry failEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nfailEntry = \n" + GsonUtil.toJson(failEntry));
+        QMUITipDialogUtil.dismiss();
+        notifyFailureOrError(1);
+        ToastUtils.showLongToast(activity, failEntry.exception.getMessage());
+    }
 
     // 响应错误处理器
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
@@ -113,6 +122,18 @@ public class BaseActivity extends FragmentActivity {
             return false;
         }
     });
+
+    protected void responseError(Activity activity, EAPIChannel.responseErrorEntry errorEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nerrorEntry = \n" + GsonUtil.toJson(errorEntry));
+        QMUITipDialogUtil.dismiss();
+        if (errorEntry.code == 401 || errorEntry.code == 29003) {
+            //检查用户是否登录了其他App
+            logOut();
+        } else if (errorEntry.code != 6741) {
+            // 6741: 无扩展信息
+            ToastUtils.showLongToast(activity, errorEntry.localizedMsg);
+        }
+    }
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {

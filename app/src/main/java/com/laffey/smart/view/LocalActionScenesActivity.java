@@ -185,7 +185,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                         } else if (code == 404) {
                             ToastUtils.showLongToast(LocalActionScenesActivity.this, msg);
                         } else {
-                            ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.pls_try_again_later);
+                            RetrofitUtil.showErrorMsg(LocalActionScenesActivity.this, response);
                         }
                     }
 
@@ -224,7 +224,6 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                     @Override
                     public void onNext(@NonNull JSONObject response) {
                         int code = response.getInteger("code");
-                        String msg = response.getString("message");
                         JSONArray sceneList = response.getJSONArray("sceneList");
                         // ViseLog.d("场景动作 = " + GsonUtil.toJson(sceneList));
                         if (code == 200) {
@@ -276,7 +275,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                             }
                             mSceneAdapter.notifyDataSetChanged();
                         } else {
-                            ToastUtils.showLongToast(LocalActionScenesActivity.this, msg);
+                            RetrofitUtil.showErrorMsg(LocalActionScenesActivity.this, response);
                         }
                     }
 

@@ -17,6 +17,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityDeleteAccountBinding;
 import com.laffey.smart.presenter.AccountHelper;
 import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
@@ -91,18 +92,7 @@ public class DeleteAccountActivity extends BaseActivity {
                     finish();
                     overridePendingTransition(0, 0);
                 } else {
-                    String message = response.getString("message");
-                    String localizedMsg = response.getString("localizedMsg");
-                    String errorMess = response.getString("errorMess");
-                    if (message != null && message.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, message);
-                    } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, localizedMsg);
-                    } else if (errorMess != null && errorMess.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, errorMess);
-                    } else {
-                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                    }
+                    RetrofitUtil.showErrorMsg(DeleteAccountActivity.this, response);
                 }
             } else if (msg.what == Constant.MSG_QUEST_CANCELLATION) {
                 JSONObject response = (JSONObject) msg.obj;
@@ -111,18 +101,7 @@ public class DeleteAccountActivity extends BaseActivity {
                     AccountManager.cancellationIot(mActivity, Constant.MSG_QUEST_CANCELLATION_IOT,
                             Constant.MSG_QUEST_CANCELLATION_IOT_ERROR, mAPIDataHandler);
                 } else {
-                    String message = response.getString("message");
-                    String localizedMsg = response.getString("localizedMsg");
-                    String errorMess = response.getString("errorMess");
-                    if (message != null && message.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, message);
-                    } else if (localizedMsg != null && localizedMsg.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, localizedMsg);
-                    } else if (errorMess != null && errorMess.length() > 0) {
-                        ToastUtils.showLongToast(mActivity, errorMess);
-                    } else {
-                        ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                    }
+                    RetrofitUtil.showErrorMsg(DeleteAccountActivity.this, response);
                 }
             } else if (msg.what == Constant.MSG_QUEST_CANCELLATION_ERROR ||
                     msg.what == Constant.MSG_QUEST_CANCELLATION_IOT_ERROR) {

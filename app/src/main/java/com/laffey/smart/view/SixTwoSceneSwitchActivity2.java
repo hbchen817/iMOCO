@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -43,11 +44,13 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,6 +109,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     TextView mAssociatedTV;
     @BindView(R.id.associated_layout)
     RelativeLayout mAssociatedLayout;
+    @BindView(R.id.associated_root_layout)
+    RelativeLayout mAssociatedRootLayout;
     @BindView(R.id.root_layout)
     LinearLayout mRootLayout;
 
@@ -135,9 +140,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     private String mPressedKey = "1";
     private DelSceneHandler mDelSceneHandler;
     private Typeface mIconfont;
-    private PopupWindow mAssociatedPopupWindow;
 
-    private final List<ItemScene> mSceneList = new ArrayList<>();
     private String mGatewayId;
     private String mGatewayMac;
     private ItemSceneInGateway m5Scene;
@@ -208,15 +211,41 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         initStatusBar();
         // 双控
         mAssociatedLayout.setOnClickListener(this);
+
+        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            // 拥有者
+            mAssociatedRootLayout.setVisibility(View.VISIBLE);
+        } else {
+            // 分享者
+            mAssociatedRootLayout.setVisibility(View.GONE);
+        }
     }
 
     // 获取面板所属网关iotId
     private void getGatewayId(String iotId) {
-        if (Constant.IS_TEST_DATA) {
-            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
-        }
-        mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
-                Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
+        SceneManager.getGWIotIdBySubIotId(this, iotId, new SceneManager.Callback() {
+
+            @Override
+            public void onNext(JSONObject response) {
+                // 根据子设备iotId查询网关iotId
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    mGatewayId = response.getString("gwIotId");
+                    mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
+                    querySceneName();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(SixTwoSceneSwitchActivity2.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(SixTwoSceneSwitchActivity2.this, e.getMessage());
+            }
+        });
     }
 
     // 嵌入式状态栏
@@ -234,54 +263,34 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         EventBus.getDefault().unregister(this);
     }
 
-    private static final int TAG_GET_EXTENDED_PRO = 10000;
-
     private void initKeyNickName() {
-        MyResponseErrHandler errHandler = new MyResponseErrHandler(this);
-        mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mMyHandler);
-    }
+        /*mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mMyHandler);*/
+        SceneManager.getExtendedProperty(this, mIOTId, Constant.TAG_DEV_KEY_NICKNAME, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(SixTwoSceneSwitchActivity2.this, failEntry);
+            }
 
-    private static class MyResponseErrHandler extends Handler {
-        private final WeakReference<SixTwoSceneSwitchActivity2> ref;
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(SixTwoSceneSwitchActivity2.this, errorEntry);
+            }
 
-        public MyResponseErrHandler(SixTwoSceneSwitchActivity2 activity) {
-            ref = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            SixTwoSceneSwitchActivity2 activity = ref.get();
-            if (activity == null) return;
-            if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
-                EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("提交接口[%s]成功, 但是响应发生错误:", responseErrorEntry.path));
-                if (responseErrorEntry.parameters != null && responseErrorEntry.parameters.size() > 0) {
-                    for (Map.Entry<String, Object> entry : responseErrorEntry.parameters.entrySet()) {
-                        sb.append(String.format("\r\n    %s : %s", entry.getKey(), entry.getValue().toString()));
-                    }
-                }
-                sb.append(String.format("\r\n    exception code: %s", responseErrorEntry.code));
-                sb.append(String.format("\r\n    exception message: %s", responseErrorEntry.message));
-                sb.append(String.format("\r\n    exception local message: %s", responseErrorEntry.localizedMsg));
-                Logger.e(sb.toString());
-                if (responseErrorEntry.code == 401 || responseErrorEntry.code == 29003) {//检查用户是否登录了其他App
-                    Logger.e("401 identityId is null 检查用户是否登录了其他App");
-                    activity.logOut();
-                } else if (responseErrorEntry.code == 6741) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_1, activity.mKey1TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_2, activity.mKey2TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_3, activity.mKey3TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_P_POWER_4, activity.mKey4TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, activity.mKey5TV.getText().toString());
-                    jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, activity.mKey6TV.getText().toString());
-                    activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
-                            null, null, null);
+            @Override
+            public void onProcessData(String result) {
+                JSONObject object = JSONObject.parseObject(result);
+                // ViseLog.d("按键昵称 = \n" + GsonUtil.toJson(object));
+                if (object.toJSONString().length() > 2) {
+                    mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
+                    mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
+                    mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
+                    mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
+                    mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
+                    mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
+                    DeviceBuffer.addExtendedInfo(mIOTId, object);
                 }
             }
-        }
+        });
     }
 
     private void initView() {
@@ -351,7 +360,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2), m5Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId, m5Scene.getSceneDetail().getSceneId(), mCommitFailureHandler, mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId, m5Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mFirstManualSceneId != null) {
@@ -369,7 +378,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 } else {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2), m6Scene.getSceneDetail().getName());
                     ToastUtils.showLongToast(this, msg);
-                    mSceneManager.invokeLocalSceneService(mGatewayId, m6Scene.getSceneDetail().getSceneId(), mCommitFailureHandler, mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(this, mGatewayId, m6Scene.getSceneDetail().getSceneId(), null);
                 }
             } else {
                 if (mSecondManualSceneId != null) {
@@ -431,7 +440,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 nameTV.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (pos) {
+                        /*switch (pos) {
                             case 0: {
                                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
                                 break;
@@ -448,7 +457,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
                                 break;
                             }
-                        }
+                        }*/
                         AssociatedBindListActivity.start(SixTwoSceneSwitchActivity2.this, mIOTId, mProductKey, s, pos + 1);
                     }
                 });
@@ -462,16 +471,16 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         recyclerView.setAdapter(adapter);
 
         setBackgroundAlpha(0.4f);
-        mAssociatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
-        mAssociatedPopupWindow.setTouchable(true);
-        mAssociatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+        PopupWindow associatedPopupWindow = new PopupWindow(contentView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, true);
+        associatedPopupWindow.setTouchable(true);
+        associatedPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 setBackgroundAlpha(1.0f);
             }
         });
-        mAssociatedPopupWindow.setAnimationStyle(R.style.pop_anim);
-        mAssociatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
+        associatedPopupWindow.setAnimationStyle(R.style.pop_anim);
+        associatedPopupWindow.showAtLocation(mRootLayout, Gravity.BOTTOM, 0, 0);
     }
 
     private void setBackgroundAlpha(float f) {
@@ -645,7 +654,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mKeyName5);
                 jsonObject.put(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mKeyName6);
                 resultObj = jsonObject;
-                mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                setKeyName(resultObj);
                 dialog.dismiss();
             }
         });
@@ -657,13 +666,42 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         });
     }
 
+    // 设置按键昵称
+    private void setKeyName(JSONObject resultObj) {
+        SceneManager.setExtendedProperty(this, mIOTId, Constant.TAG_DEV_KEY_NICKNAME, resultObj.toJSONString(), new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(SixTwoSceneSwitchActivity2.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(SixTwoSceneSwitchActivity2.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 设置按键昵称
+                ViseLog.d("设置按键昵称 = \n" + GsonUtil.toJson(JSONObject.parseObject(result)));
+                QMUITipDialogUtil.dismiss();
+                mKey1TV.setText(mKeyName1);
+                mKey2TV.setText(mKeyName2);
+                mKey3TV.setText(mKeyName3);
+                mKey4TV.setText(mKeyName4);
+                mKey5TV.setText(mKeyName5);
+                mKey6TV.setText(mKeyName6);
+                // DeviceBuffer.addExtendedInfo(mIOTId, resultObj);
+                ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.set_success);
+            }
+        });
+    }
+
     private JSONObject resultObj;
 
     @Override
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.mSceneContentText2) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                // SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1);
                 if (m5Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac, m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -700,31 +738,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             SixTwoSceneSwitchActivity2 activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
-                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR: {
-                    // 根据子设备iotId查询网关iotId
-                    Throwable e = (Throwable) msg.obj;
-                    ViseLog.e(e);
-                    ToastUtils.showLongToast(activity, e.getMessage());
-                    break;
-                }
-                case Constant.MSG_QUEST_GW_ID_BY_SUB_ID: {
-                    // 根据子设备iotId查询网关iotId
-                    JSONObject response = (JSONObject) msg.obj;
-                    int code = response.getInteger("code");
-                    String gwId = response.getString("gwIotId");
-                    if (code == 200) {
-                        activity.mGatewayId = gwId;
-                        if (Constant.IS_TEST_DATA) {
-                            activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                        }
-                        activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
-                        activity.querySceneName();
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(activity, response);
-                    }
-                    break;
-                }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET: {
                     //处理获取拓展数据
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
@@ -762,19 +775,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                             sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName));
                     break;
                 }
-                case TAG_GET_EXTENDED_PRO: {
-                    JSONObject object = JSONObject.parseObject((String) msg.obj);
-                    if (object.toJSONString().length() > 2) {
-                        activity.mKey1TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
-                        activity.mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
-                        activity.mKey3TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_3));
-                        activity.mKey4TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_4));
-                        activity.mKey5TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_1));
-                        activity.mKey6TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_KEY_CODE_2));
-                        DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
-                    }
-                    break;
-                }
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET: {
                     // 设置按键昵称
                     QMUITipDialogUtil.dismiss();
@@ -790,30 +790,6 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 }
                 default:
                     break;
-            }
-        }
-    }
-
-    // 获取按键绑定场景的名称
-    private void querySceneName(JSONArray list) {
-        for (int i = 0; i < list.size(); i++) {
-            JSONObject object = list.getJSONObject(i);
-            ItemSceneInGateway scene = JSONObject.parseObject(object.toJSONString(), ItemSceneInGateway.class);
-            DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
-            if (scene.getAppParams() == null) continue;
-            String switchIotId = scene.getAppParams().getString("switchIotId");
-            if (switchIotId == null || switchIotId.length() == 0) {
-                continue;
-            } else if (!switchIotId.contains(mIOTId)) continue;
-            String key = scene.getAppParams().getString("key");
-            if (key == null) continue;
-            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_5) && "1".equals(scene.getSceneDetail().getType())) {
-                mSceneContentText2.setText(scene.getSceneDetail().getName());
-                m5Scene = scene;
-            }
-            if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_6) && "1".equals(scene.getSceneDetail().getType())) {
-                mSceneContentText5.setText(scene.getSceneDetail().getName());
-                m6Scene = scene;
             }
         }
     }

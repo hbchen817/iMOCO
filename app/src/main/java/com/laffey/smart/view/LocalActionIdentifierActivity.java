@@ -28,8 +28,10 @@ import com.laffey.smart.model.EAction;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.utility.AppUtils;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -564,7 +566,8 @@ public class LocalActionIdentifierActivity extends BaseActivity {
         obj.put("params", params);
 
         ERetrofit.getInstance().getService()
-                .getDataConversionRules(token, ERetrofit.convertToBody(obj.toJSONString()))
+                .getDataConversionRules(token, AppUtils.getPesudoUniqueID(),
+                        ERetrofit.convertToBody(obj.toJSONString()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -579,8 +582,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
                         if (code == 200) {
 
                         } else {
-                            String msg = response.getString("message");
-                            QMUITipDialogUtil.showFailDialog(LocalActionIdentifierActivity.this, msg);
+                            RetrofitUtil.showErrorMsg(LocalActionIdentifierActivity.this, response);
                         }
                     }
 

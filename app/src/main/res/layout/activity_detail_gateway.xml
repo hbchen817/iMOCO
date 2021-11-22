@@ -11,7 +11,7 @@
         android:id="@+id/fake_statusbar_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/statusbar_view_height"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <include layout="@layout/include_detail" />
 
@@ -71,8 +71,39 @@
             android:layout_height="wrap_content"
             android:src="@drawable/icon_gateway_fton"
             android:visibility="gone" />
-
     </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/dev_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/sub_dev_rb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:text="@string/sub_device"
+            android:textColor="@color/topic_color1" />
+
+        <RadioButton
+            android:id="@+id/sub_gw_rb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
+            android:text="@string/sub_gateway" />
+    </RadioGroup>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -95,15 +126,30 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/detailGatewayLstSubdevice"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/appbgcolor"
-        android:divider="@null"
-        android:dividerHeight="6dp"
-        android:horizontalSpacing="1dip" />
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/detailGatewayLstSubdevice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/appbgcolor"
+            android:divider="@null"
+            android:dividerHeight="6dp"
+            android:horizontalSpacing="1dip" />
+
+        <ListView
+            android:id="@+id/gw_dev_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/appbgcolor"
+            android:divider="@null"
+            android:dividerHeight="6dp"
+            android:horizontalSpacing="1dip"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -116,7 +162,8 @@
             android:layout_height="50dp"
             android:layout_gravity="center|bottom"
             android:layout_weight="1"
-            android:background="@color/appbgcolor">
+            android:background="@color/appbgcolor"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/detailGatewayImgAdd"
@@ -137,6 +184,35 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="@string/detailgateway_add"
+                android:textColor="#ffffff" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/add_dev_rl"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center|bottom"
+            android:layout_weight="1"
+            android:background="@color/appbgcolor">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/shape_button_2"
+                android:contentDescription="@string/contentDescription_null" />
+
+            <TextView
+                style="@style/NormalWhiteFontStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/add_device"
                 android:textColor="#ffffff" />
 
         </RelativeLayout>

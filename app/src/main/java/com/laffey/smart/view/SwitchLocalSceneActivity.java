@@ -95,6 +95,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
     private String mDevMac;
     private String mSceneId;
     private String mAutoSceneId;
+    private final List<String> mAutoSceneIds = new ArrayList<>();
     private JSONObject mAppParams;
 
     private Typeface mIconfont;
@@ -180,10 +181,19 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
         mSceneManager = new SceneManager(this);
         DeviceBuffer.addCacheInfo("LocalSceneTag", "SwitchLocalSceneActivity");
 
+        ViseLog.d("场景缓存 = \n" + GsonUtil.toJson(DeviceBuffer.getAllScene()));
         if (DeviceBuffer.getScene(mSceneId) != null &&
                 DeviceBuffer.getScene(mSceneId).getAppParams() != null) {
             mAutoSceneId = DeviceBuffer.getScene(mSceneId).getAppParams().getString("cId");
+            String[] tmp = mAutoSceneId.split(",");
+            if (tmp != null && tmp.length > 0) {
+                for (String id : tmp) {
+                    if (DeviceBuffer.getScene(id) != null)
+                        mAutoSceneIds.add(id);
+                }
+            }
         }
+        ViseLog.d("mAutoSceneId = " + mAutoSceneId);
     }
 
     private void initConditionAdapter() {
@@ -889,7 +899,6 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
         setIntent(intent);
         mGatewayId = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_ID, "");
         mGatewayMac = SpUtils.getStringValue(this, SpUtils.SP_DEVS_INFO, GATEWAY_MAC, "");
-        // ViseLog.d("mGatewayMac = " + mGatewayMac);
         DeviceBuffer.addCacheInfo("LocalSceneTag", "SwitchLocalSceneActivity");
     }
 
@@ -1032,7 +1041,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
             SwitchLocalSceneActivity activity = ref.get();
             if (activity != null) {
                 switch (msg.what) {
-                    case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                    /*case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
                         // 删除网关下的场景
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                         JSONObject value = jsonObject.getJSONObject("value");
@@ -1057,51 +1066,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                             }
                         }
                         break;
-                    }
-                    case Constant.MSG_QUEST_DELETE_SCENE: {
-                        // 删除本地场景
-                        JSONObject response = (JSONObject) msg.obj;
-                        int code = response.getInteger("code");
-                        String message = response.getString("message");
-                        if (code == 200) {
-                            boolean result = response.getBoolean("result");
-                            if (result) {
-                                String sceneId = response.getString("sceneId");
-                                if (activity.mSceneId != null && activity.mSceneId.equals(sceneId)) {
-                                    DeviceBuffer.removeScene(activity.mSceneId);
-                                    ViseLog.d("删除手动场景id = " + activity.mSceneId);
-                                    if (activity.mAutoSceneId != null && activity.mAutoSceneId.length() > 0)
-                                        SceneManager.manageSceneService(activity.mGatewayId, activity.mAutoSceneId, 3,
-                                                activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
-                                } else if (activity.mAutoSceneId != null && activity.mAutoSceneId.equals(sceneId)) {
-                                    ViseLog.d("删除自动场景id = " + activity.mAutoSceneId);
-                                    DeviceBuffer.removeScene(activity.mAutoSceneId);
-                                    QMUITipDialogUtil.dismiss();
-                                    RefreshData.refreshHomeSceneListData();
-                                    activity.setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
-                                    activity.finish();
-                                }
-                                if (activity.mAutoSceneId == null || activity.mAutoSceneId.length() == 0) {
-                                    DeviceBuffer.removeScene(activity.mSceneId);
-                                    QMUITipDialogUtil.dismiss();
-                                    RefreshData.refreshHomeSceneListData();
-                                    activity.setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
-                                    activity.finish();
-                                }
-                            } else {
-                                if (message == null || message.length() == 0) {
-                                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                                } else
-                                    ToastUtils.showLongToast(activity, message);
-                            }
-                        } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(activity, message);
-                        }
-                        break;
-                    }
+                    }*/
                     case Constant.MSG_QUEST_UPDATE_SCENE: {
                         // 更新本地场景
                         JSONObject response = (JSONObject) msg.obj;
@@ -1149,15 +1114,11 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                                     ToastUtils.showLongToast(activity, message);
                             }
                         } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(activity, message);
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
                     case Constant.MSG_QUEST_ADD_SCENE_ERROR:
-                    case Constant.MSG_QUEST_DELETE_SCENE_ERROR:
                     case Constant.MSG_QUEST_UPDATE_SCENE_ERROR: {
                         // 更新本地场景失败
                         QMUITipDialogUtil.dismiss();
@@ -1190,10 +1151,7 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                                     ToastUtils.showLongToast(activity, message);
                             }
                         } else {
-                            if (message == null || message.length() == 0) {
-                                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                            } else
-                                ToastUtils.showLongToast(activity, message);
+                            RetrofitUtil.showErrorMsg(activity, response);
                         }
                         break;
                     }
@@ -1203,64 +1161,72 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
     }
 
     private void showConfirmDialog(String title, String content, String cancel, String ok, String sceneId) {
-        /*View view = LayoutInflater.from(this).inflate(R.layout.dialog_confirm, null, false);
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
-
-        TextView titleTV = (TextView) view.findViewById(R.id.title_tv);
-        TextView contentTV = (TextView) view.findViewById(R.id.content_tv);
-        TextView disagreeTV = (TextView) view.findViewById(R.id.disagree_btn);
-        TextView agreeTV = (TextView) view.findViewById(R.id.agree_btn);
-
-        titleTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
-        disagreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
-        agreeTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
-        contentTV.setTextSize(getResources().getDimension(R.dimen.sp_6));
-
-        titleTV.setText(title);
-        contentTV.setText(content);
-        disagreeTV.setText(cancel);
-        agreeTV.setText(ok);
-
-        disagreeTV.setOnClickListener(new View.OnClickListener() {
+        DialogUtils.showConfirmDialog(this, title, content, ok, cancel, new DialogUtils.Callback() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+            public void positive() {
+                QMUITipDialogUtil.showLoadingDialg(SwitchLocalSceneActivity.this, R.string.is_submitted);
+                deleteScene(mSceneId);
+            }
+
+            @Override
+            public void negative() {
+
             }
         });
-        agreeTV.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void deleteScene(String sceneId) {
+        SceneManager.deleteScene(this, DeviceBuffer.getDeviceMac(mGatewayId), sceneId, new SceneManager.Callback() {
             @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                QMUITipDialogUtil.showLoadingDialg(SwitchLocalSceneActivity.this, R.string.is_submitted);
-                if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene(SwitchLocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE,
-                            Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String resultSceneId = response.getString("sceneId");
+                    if (mSceneId != null && mSceneId.equals(resultSceneId)) {
+                        DeviceBuffer.removeScene(resultSceneId);
+                        SceneManager.manageSceneService(mGatewayId, resultSceneId, 3,
+                                mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                        if (mAutoSceneIds != null && mAutoSceneIds.size() > 0) {
+                            deleteScene(mAutoSceneIds.get(0));
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            RefreshData.refreshHomeSceneListData();
+                            setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
+                            finish();
+                        }
+                    } else {
+                        int pos = -1;
+                        for (int i = 0; i < mAutoSceneIds.size(); i++) {
+                            if (resultSceneId.equals(mAutoSceneIds.get(i))) {
+                                pos = i + 1;
+                                break;
+                            }
+                        }
+                        DeviceBuffer.removeScene(resultSceneId);
+                        SceneManager.manageSceneService(mGatewayId, resultSceneId, 3,
+                                mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                        if (pos < mAutoSceneIds.size()) {
+                            deleteScene(mAutoSceneIds.get(pos));
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            RefreshData.refreshHomeSceneListData();
+                            setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
+                            finish();
+                        }
+                    }
                 } else {
-                    SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(SwitchLocalSceneActivity.this, response);
                 }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e.getMessage());
+                ToastUtils.showLongToast(SwitchLocalSceneActivity.this, e.getMessage());
             }
         });
-
-        Window window = dialog.getWindow();
-        int width = getResources().getDisplayMetrics().widthPixels;
-        int height = getResources().getDisplayMetrics().heightPixels;
-
-        dialog.show();
-        window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.shape_white_solid));
-        window.setLayout(width - 150, height / 5);*/
-
-        DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                QMUITipDialogUtil.showLoadingDialg(SwitchLocalSceneActivity.this, R.string.is_submitted);
-                if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene(SwitchLocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE,
-                            Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
-                } else {
-                    SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                }
-            }
-        }, content, title);
     }
 
     // 提交场景

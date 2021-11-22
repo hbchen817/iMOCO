@@ -1,5 +1,6 @@
 package com.laffey.smart.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
@@ -71,6 +72,18 @@ public class TSLHelper {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTSLPROPERTY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取属性
+    public static void getProperty(Activity activity, String iotId, APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETTSLPROPERTY;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTSLPROPERTY;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 获取属性时间线数据（消息记录）

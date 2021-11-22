@@ -41,6 +41,7 @@ import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.viewholder.CommonAdapter;
 import com.vise.log.ViseLog;
@@ -241,9 +242,8 @@ public class ColorLightDetailActivity extends DetailActivity {
                     String msg = String.format(getString(R.string.main_scene_execute_hint_2),
                             colorLightScene.getSceneName());
                     ToastUtils.showLongToast(ColorLightDetailActivity.this, msg);
-                    SceneManager.invokeLocalSceneService(mGatewayId,
-                            colorLightScene.getId(), mCommitFailureHandler,
-                            mResponseErrorHandler, null);
+                    SceneManager.invokeLocalSceneService(ColorLightDetailActivity.this, mGatewayId,
+                            colorLightScene.getId(), null);
                 }
             }
         });
@@ -280,10 +280,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(ColorLightDetailActivity.this, message);
-                        else
-                            ToastUtils.showLongToast(ColorLightDetailActivity.this, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
                     }
                     break;
                 }
@@ -303,10 +300,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        if (message != null && message.length() > 0)
-                            ToastUtils.showLongToast(ColorLightDetailActivity.this, message);
-                        else
-                            ToastUtils.showLongToast(ColorLightDetailActivity.this, R.string.pls_try_again_later);
+                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
                     }
                     break;
                 }

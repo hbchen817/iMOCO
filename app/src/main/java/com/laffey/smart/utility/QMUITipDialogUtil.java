@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
+import com.vise.log.ViseLog;
 
 public class QMUITipDialogUtil {
     public static QMUITipDialog mDailog;
@@ -116,6 +117,13 @@ public class QMUITipDialogUtil {
     }
 
     public static void dismiss() {
+        if (mDailog != null) {
+            mDailog.dismiss();
+        }
+    }
+
+    public static void dismiss(String line) {
+        ViseLog.d("line = " + line);
         if (mDailog != null) {
             mDailog.dismiss();
         }
