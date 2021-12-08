@@ -24,6 +24,7 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityDevListForCaBinding;
 import com.rexense.wholehouse.demoTest.ResponseDevListForCA;
@@ -103,12 +104,18 @@ public class DevListForActionActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                Intent intent = new Intent(DevListForActionActivity.this, IdentifierListForActionActivity.class);
-                intent.putExtra("nick_name", mList.get(position).getNickName());
-                intent.putExtra("dev_name", mList.get(position).getDeviceName());
-                intent.putExtra("dev_iot", mList.get(position).getIotId());
-                intent.putExtra("product_key", mList.get(position).getProductKey());
-                startActivity(intent);
+                ViseLog.d(mList.get(position).getIotId() + "\n" + mList.get(position).getNickName());
+                if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mList.get(position).getProductKey())) {
+                    VirtualAirConditionersForActionActivity.start(DevListForActionActivity.this,
+                            mList.get(position).getIotId());
+                } else {
+                    Intent intent = new Intent(DevListForActionActivity.this, IdentifierListForActionActivity.class);
+                    intent.putExtra("nick_name", mList.get(position).getNickName());
+                    intent.putExtra("dev_name", mList.get(position).getDeviceName());
+                    intent.putExtra("dev_iot", mList.get(position).getIotId());
+                    intent.putExtra("product_key", mList.get(position).getProductKey());
+                    startActivity(intent);
+                }
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

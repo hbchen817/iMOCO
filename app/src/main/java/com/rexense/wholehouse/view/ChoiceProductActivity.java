@@ -104,11 +104,13 @@ public class ChoiceProductActivity extends BaseActivity {
 
                 if (CTSL.PK_ONEWAYSWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_TWOWAYSWITCH_HY.equals(entry.productKey) ||
+                        CTSL.PK_TWOWAYSWITCH_MODULE_HY.equals(entry.productKey) ||
                         CTSL.PK_THREEWAYSWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_U_SIX_SCENE_SWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_FULL_SCREEN_SWITCH_HY.equals(entry.productKey) ||
                         CTSL.PK_10A_MEASURING_OUTLET_HY.equals(entry.productKey) ||
                         CTSL.PK_PM_TEMHUMSENSOR_HY.equals(entry.productKey) ||
+                        CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S.equals(entry.productKey) ||
                         CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1.equals(entry.productKey) ||
                         CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2.equals(entry.productKey) ||
                         CTSL.PK_OUTLET_10A_HY_U1.equals(entry.productKey) ||
@@ -159,7 +161,9 @@ public class ChoiceProductActivity extends BaseActivity {
                         CTSL.PK_10A_MEASURING_OUTLET_LF.equals(entry.productKey) ||
                         CTSL.PK_OUTLET_16A_LF.equals(entry.productKey) ||
                         CTSL.PK_16A_MEASURING_OUTLET_LF.equals(entry.productKey) ||
-                        CTSL.PK_FAU_LF.equals(entry.productKey)) {
+                        CTSL.PK_FAU_LF.equals(entry.productKey) ||
+                        CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF.equals(entry.productKey) ||
+                        CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF.equals(entry.productKey)) {
                     mLFTeam.getProductList().add(entry);
                 } else if (CTSL.PK_ONEWAY_DANHUO_RY.equals(entry.productKey) ||
                         CTSL.PK_TWOWAY_DANHUO_RY.equals(entry.productKey) ||

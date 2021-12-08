@@ -33,6 +33,16 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="@string/powerswitch_1" />
 
+                <!--<TextView
+                    android:id="@+id/key_3_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="@string/powerswitch_3" />-->
+
                 <TextView
                     android:id="@+id/key_3_tv"
                     android:layout_width="0dp"
@@ -42,20 +52,10 @@
                     android:paddingTop="@dimen/dp_5"
                     android:paddingBottom="@dimen/dp_5"
                     android:text="@string/key_3" />
-
-                <TextView
-                    android:id="@+id/key_5_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/dp_5"
-                    android:paddingBottom="@dimen/dp_5"
-                    android:text="@string/key_5" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="@dimen/dp_270"
+                android:layout_width="@dimen/dp_200"
                 android:layout_height="@dimen/dp_300"
                 android:layout_gravity="center_horizontal"
                 android:orientation="horizontal">
@@ -78,6 +78,25 @@
                         android:layout_height="@dimen/dp_150"
                         android:background="@drawable/selector_bottom_switch" />
                 </LinearLayout>
+
+                <!--<LinearLayout
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/switch3"
+                        android:layout_width="@dimen/dp_90"
+                        android:layout_height="@dimen/dp_150"
+                        android:background="@drawable/selector_top_switch" />
+
+                    <ImageView
+                        android:id="@+id/switch4"
+                        android:layout_width="@dimen/dp_90"
+                        android:layout_height="@dimen/dp_150"
+                        android:background="@drawable/selector_bottom_switch" />
+                </LinearLayout>-->
 
                 <RelativeLayout
                     android:layout_width="0dip"
@@ -108,36 +127,6 @@
                         android:textColor="#565353"
                         android:textSize="@dimen/sp_10" />
                 </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dip"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_switch_two_state">
-
-                    <TextView
-                        android:id="@+id/mSceneContentText5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:paddingTop="@dimen/dp_40"
-                        android:paddingBottom="@dimen/dp_20"
-                        android:text="@string/no_bind_scene"
-                        android:textColor="#565353"
-                        android:textSize="@dimen/sp_10" />
-
-                    <TextView
-                        android:id="@+id/mSceneContentText6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:gravity="center_horizontal"
-                        android:paddingTop="@dimen/dp_20"
-                        android:paddingBottom="@dimen/dp_40"
-                        android:text="@string/no_bind_scene"
-                        android:textColor="#565353"
-                        android:textSize="@dimen/sp_10" />
-                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -155,6 +144,16 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="@string/powerswitch_2" />
 
+                <!--<TextView
+                    android:id="@+id/key_4_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/dp_5"
+                    android:paddingBottom="@dimen/dp_5"
+                    android:text="@string/powerswitch_4" />-->
+
                 <TextView
                     android:id="@+id/key_4_tv"
                     android:layout_width="0dp"
@@ -164,16 +163,6 @@
                     android:paddingTop="@dimen/dp_5"
                     android:paddingBottom="@dimen/dp_5"
                     android:text="@string/key_4" />
-
-                <TextView
-                    android:id="@+id/key_6_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/dp_5"
-                    android:paddingBottom="@dimen/dp_5"
-                    android:text="@string/key_6" />
             </LinearLayout>
         </LinearLayout>
 

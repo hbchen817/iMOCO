@@ -51,6 +51,7 @@ public class ImageProvider {
                     return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -77,6 +78,7 @@ public class ImageProvider {
             case CTSL.PK_PIRSENSOR_MLK:
                 return R.drawable.icon_pirsensor;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
                 return R.drawable.icon_thsensor;
@@ -91,6 +93,7 @@ public class ImageProvider {
             case CTSL.PK_DY_ELE_DC:
             case CTSL.PK_WSD_ELE_DC:
             case CTSL.PK_WSD_ELE_AC:
+            case CTSL.PK_BS_ELE:
                 return R.drawable.icon_dianji;
             case CTSL.PK_CONTROL_LIGHT:
                 return R.drawable.icon_control_light;
@@ -150,6 +153,7 @@ public class ImageProvider {
             case CTSL.PK_AIRCOMDITION_TWO_LF:
             case CTSL.PK_AIRCOMDITION_TWO_HY_U1:
             case CTSL.PK_AIRCOMDITION_TWO_HY_U2:
+            case CTSL.PK_AIRCOMDITION_CONVERTER:
             case CTSL.PK_FAU:
             case CTSL.PK_FAU_HY_U1:
             case CTSL.PK_FAU_LF:
@@ -194,6 +198,8 @@ public class ImageProvider {
             case CTSL.PK_CONTROL_COLOR_BROAD: {
                 return R.drawable.icon_control_light;
             }
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF:
+            case CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF:
             case CTSL.PK_SIX_TWO_SCENE_SWITCH: {
                 return R.drawable.icon_six_scene_switch;
             }
@@ -245,6 +251,7 @@ public class ImageProvider {
             case CTSL.PK_WATERSENSOR_MLK:
                 return R.drawable.state_icon_water;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
                 if (propertyName.equalsIgnoreCase(CTSL.THS_P_CurrentHumidity)) {
@@ -293,9 +300,12 @@ public class ImageProvider {
                 }
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF:
+            case CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF:
             case CTSL.PK_TWOWAY_DANHUO_RY:
                 // 两键开关处理
                 if (property.equals(CTSL.TWS_P_PowerSwitch_1)) {

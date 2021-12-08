@@ -115,4 +115,24 @@
         <item>@string/air_conditioner</item>
         <item>@string/fan</item>
     </string-array>
+
+    <string-array name="work_modes_2">
+        <item>制冷</item>
+        <item>制热</item>
+        <item>新风</item>
+        <item>除湿</item>
+    </string-array>
+
+    <string-array name="work_mode_ics_2">
+        <item>@string/icon_refrigeration</item>
+        <item>@string/icon_heating</item>
+        <item>@string/icon_air_supply</item>
+        <item>@string/icon_dehumidification</item>
+    </string-array>
+
+    <string-array name="fan_modes_2">
+        <item>低档</item>
+        <item>中档</item>
+        <item>高档</item>
+    </string-array>
 </resources>

@@ -1,5 +1,6 @@
 package com.rexense.wholehouse.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.model.EAPIChannel;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.Logger;
 import com.rexense.wholehouse.utility.QMUITipDialogUtil;
 import com.rexense.wholehouse.utility.ResponseMessageUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import java.util.Map;
 
@@ -54,6 +57,13 @@ public class BaseActivity extends FragmentActivity {
             return false;
         }
     });
+
+    protected void commitFailure(Activity activity, EAPIChannel.commitFailEntry failEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nfailEntry = \n" + GsonUtil.toJson(failEntry));
+        QMUITipDialogUtil.dismiss();
+        notifyFailureOrError(1);
+        ToastUtils.showLongToast(activity, failEntry.exception.getMessage());
+    }
 
     // 响应错误处理器
     protected Handler mResponseErrorHandler = new Handler(new Handler.Callback() {
@@ -97,11 +107,13 @@ public class BaseActivity extends FragmentActivity {
                 }
                 //非OTA信息查询失败才作提示
                 if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)
-                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401) {
+                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401 &&
+                        responseErrorEntry.code != 6741) {
                     // 6401: 拓扑关系不存在
                     // 403：请求被禁止
                     // 28700: 设备未和用户绑定
                     // 10360: scene rule not exist
+                    // 6741: tag not found 扩展信息不存在
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                     Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 }
@@ -111,6 +123,18 @@ public class BaseActivity extends FragmentActivity {
             return false;
         }
     });
+
+    protected void responseError(Activity activity, EAPIChannel.responseErrorEntry errorEntry) {
+        ViseLog.e("activity = " + activity.getLocalClassName() + "\nerrorEntry = \n" + GsonUtil.toJson(errorEntry));
+        QMUITipDialogUtil.dismiss();
+        if (errorEntry.code == 401 || errorEntry.code == 29003) {
+            //检查用户是否登录了其他App
+            logOut();
+        } else if (errorEntry.code != 6741) {
+            // 6741: 无扩展信息
+            ToastUtils.showLongToast(activity, errorEntry.localizedMsg);
+        }
+    }
 
     // 通知提交失败或响应错误
     protected void notifyFailureOrError(int type) {

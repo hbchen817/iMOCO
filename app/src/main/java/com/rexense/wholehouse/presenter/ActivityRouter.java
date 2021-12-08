@@ -7,7 +7,9 @@ import android.os.Bundle;
 
 import com.aliyun.iot.aep.component.router.Router;
 import com.rexense.wholehouse.BuildConfig;
+import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CTSL;
+import com.rexense.wholehouse.view.AirConditionerConverterActivity;
 import com.rexense.wholehouse.view.ColorLightDetailActivity;
 import com.rexense.wholehouse.view.DetailFourSwitchActivity2;
 import com.rexense.wholehouse.view.DetailGatewayActivity;
@@ -16,10 +18,12 @@ import com.rexense.wholehouse.view.DetailSensorActivity;
 import com.rexense.wholehouse.view.DetailThreeSwitchActivity;
 import com.rexense.wholehouse.view.DetailTwoSwitchActivity2;
 import com.rexense.wholehouse.view.FourSceneSwitchActivity2;
+import com.rexense.wholehouse.view.FourTwoSceneSwitchActivity;
 import com.rexense.wholehouse.view.FullScreenSwitchActivity;
 import com.rexense.wholehouse.view.LockDetailActivity;
 import com.rexense.wholehouse.view.OneKeySceneDetailActivity2;
 import com.rexense.wholehouse.view.OneWayCurtainsDetailActivity;
+import com.rexense.wholehouse.view.SixFourSceneSwitchActivity;
 import com.rexense.wholehouse.view.SixSceneSwitchActivity2;
 import com.rexense.wholehouse.view.SixTwoSceneSwitchActivity2;
 import com.rexense.wholehouse.view.ThreeSceneSwitchActivity2;
@@ -61,6 +65,7 @@ public class ActivityRouter {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -93,6 +98,7 @@ public class ActivityRouter {
             case CTSL.PK_PIRSENSOR_MLK:
                 // 人体热释传感器处理
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
                 // 温湿度传感器处理
@@ -134,6 +140,15 @@ public class ActivityRouter {
             case CTSL.PK_TWO_SCENE_SWITCH:
                 intent = new Intent(context, TwoSceneSwitchActivity2.class);
                 break;
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF:
+                // 二开关+二场景开关-拉斐
+                intent = new Intent(context, FourTwoSceneSwitchActivity.class);
+                break;
+            case CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF: {
+                // 二开关+四场景开关-拉斐
+                intent = new Intent(context, SixFourSceneSwitchActivity.class);
+                break;
+            }
             case CTSL.PK_THREE_SCENE_SWITCH:
                 intent = new Intent(context, ThreeSceneSwitchActivity2.class);
                 break;
@@ -179,6 +194,11 @@ public class ActivityRouter {
                 // 双路窗帘
                 //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
+                break;
+            }
+            case CTSL.PK_AIRCOMDITION_CONVERTER: {
+                // 空调转换器-鸿雁
+                intent = new Intent(context, AirConditionerConverterActivity.class);
                 break;
             }
             default:

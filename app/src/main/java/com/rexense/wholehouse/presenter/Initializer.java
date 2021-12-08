@@ -19,7 +19,7 @@ public class Initializer {
         // REGION_ALL: 支持连接全球多个接入点，如果您只在中国内地出货，请设置为“REGION_CHINA_ONLY”，表示直连中国内地接入点。
         initConfig.setRegionType(IoTSmart.REGION_CHINA_ONLY);
         // 对应控制台上的测试版（PRODUCT_ENV_DEV）和正式版（PRODUCT_ENV_PROD）
-        if(Constant.APPKEY.equalsIgnoreCase("29162669")){
+        if (Constant.APPKEY.equalsIgnoreCase("29162669")) {
             // 对应控制台上的测试版（PRODUCT_ENV_DEV）
             initConfig.setProductEnv(IoTSmart.PRODUCT_ENV_DEV);
         } else {
@@ -56,8 +56,14 @@ public class Initializer {
         IoTSmart.setCountry(country, null);
 
         // 初始化（App须继承自AApplication，否则会报错）
-        IoTSmart.init((MocoApplication)context.getApplicationContext(), initConfig);
-        //IoTSmart.setProductScope(IoTSmart.PRODUCT_SCOPE_PUBLISHED);
+
+        /**
+         * 设置App配网列表的产品范围，PRODUCT_SCOPE_ALL表示当前项目中已发布和未发布的所有产品，
+         * PRODUCT_SCOPE_PUBLISHED表示只包含已发布产品，正式发布的App请选择PRODUCT_SCOPE_PUBLISHED
+         */
+        IoTSmart.setProductScope(IoTSmart.PRODUCT_SCOPE_PUBLISHED);
+
+        IoTSmart.init((MocoApplication) context.getApplicationContext(), initConfig);
         Logger.d("The SDK initialization completed.");
     }
 }

@@ -63,6 +63,7 @@ import com.rexense.wholehouse.presenter.TSLHelper;
 import com.rexense.wholehouse.presenter.UserCenter;
 import com.rexense.wholehouse.utility.Configure;
 import com.rexense.wholehouse.utility.Dialog;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.Logger;
 import com.rexense.wholehouse.utility.QMUITipDialogUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
@@ -739,7 +740,7 @@ public class IndexFragment1 extends BaseFragment {
         int online = 0;
         int total = mDeviceList == null ? 0 : mDeviceList.size();
         if (total > 0) {
-            ViseLog.d(new Gson().toJson(mDeviceList));
+            // ViseLog.d(new Gson().toJson(mDeviceList));
             for (EDevice.deviceEntry device : mDeviceList) {
                 if (Constant.KEY_NICK_NAME_PK.contains(device.productKey) && mRefreshExtendedBuffer) {
                     mSceneManager.getExtendedProperty(device.iotId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, null,
@@ -985,6 +986,7 @@ public class IndexFragment1 extends BaseFragment {
                     // 处理获取家设备列表数据
                     //ViseLog.d("------------" + (String) msg.obj);
                     EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList((String) msg.obj);
+                    ViseLog.d(GsonUtil.toJson(homeDeviceList));
                     if (homeDeviceList != null && homeDeviceList.data != null) {
                         // 向缓存追加家列表数据
                         DeviceBuffer.addHomeDeviceList(homeDeviceList);
@@ -1059,7 +1061,7 @@ public class IndexFragment1 extends BaseFragment {
                     for (int i = 0; i < mSceneList.size(); i++) {
                         EScene.sceneListItemEntry itemEntry = mSceneList.get(i);
                         if (itemEntry.id.equalsIgnoreCase(sceneId)) {
-                            ToastUtils.showLongToastCentrally(mActivity, String.format(getString(R.string.main_scene_execute_hint_2), itemEntry.name));
+                            ToastUtils.showLongToast(mActivity, String.format(getString(R.string.main_scene_execute_hint_2), itemEntry.name));
                             break;
                         }
                     }
@@ -1254,6 +1256,8 @@ public class IndexFragment1 extends BaseFragment {
             if (msg.what == TAG_GET_EXTENDED_PRO) {
                 JSONObject object = JSONObject.parseObject((String) msg.obj);
                 DeviceBuffer.addExtendedInfo(iotId, object);
+                ViseLog.d("iotId = " + iotId +
+                        "\nobject = \n" + GsonUtil.toJson(object));
             }
         }
     }

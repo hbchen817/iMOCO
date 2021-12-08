@@ -37,6 +37,7 @@ import com.rexense.wholehouse.presenter.CloudDataParser;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
 import com.rexense.wholehouse.presenter.SceneManager;
 import com.rexense.wholehouse.presenter.SystemParameter;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.Logger;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -127,6 +128,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_QUERYSCENELIST:
                     // 处理获取场景列表数据
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    ViseLog.d("sceneList = \n" + GsonUtil.toJson(sceneList));
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
                             if (item.description.contains(mIotId)) {
@@ -179,7 +181,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET:
-                    ToastUtils.showToastCentrally(mActivity, "绑定成功");
+                    ToastUtils.showLongToast(mActivity, "绑定成功");
                     EventBus.getDefault().post(new SceneBindEvent(mList.get(mBindPosition).name));
                     finish();
                     break;
@@ -190,6 +192,7 @@ public class SwitchSceneListActivity extends BaseActivity {
                     jsonObject.put("keyNo", mKeyCode);
                     jsonObject.put("name", mList.get(mBindPosition).name);
                     jsonObject.put("msId", mList.get(mBindPosition).id);
+                    ViseLog.d("更新场景 = " + mKeyCode);
                     mSceneManager.setExtendedProperty(mIotId, mKeyCode, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     break;
                 }

@@ -758,4 +758,16 @@
     <string name="pls_input_name">请输入名称</string>
 
     <string name="switch_home">切换家庭</string>
+    <string name="tmp_centigrade">--℃</string>
+    <string name="add_airconditioner">添加空调</string>
+    <string name="pls_input_airconditioner_name">请输入空调名称</string>
+    <string name="click_switch_button_and_confirm_aircondition_action">点击下方开关按钮\n然后确认空调设备是否正确响应</string>
+    <string name="trying_aircondition_control">正在尝试空调设备 第%1$d路（共16路）</string>
+    <string name="do_you_want_to_delete_virtual_air">确定要删除“%1$s”？</string>
+    <string name="unbind_dev_will_del_all_airconditioner">解绑此设备会删除所有空调，</string>
+    <string name="delete_device">删除设备</string>
+    <string name="update_name">修改名称</string>
+    <string name="is_submitted">正在提交数据</string>
+    <string name="virtual_airconditioner_not_exist">空调设备不存在</string>
+    <string name="work_mode">工作模式</string>
 </resources>

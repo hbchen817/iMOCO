@@ -23,12 +23,14 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityIdentifierListBinding;
 import com.rexense.wholehouse.demoTest.CaConditionEntry;
 import com.rexense.wholehouse.demoTest.IdentifierItemForCA;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
 import com.rexense.wholehouse.presenter.SceneManager;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.QMUITipDialogUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -54,6 +56,7 @@ public class IdentifierListActivity extends BaseActivity {
     private String mDevIot = "";
     private String mDevName = "";
     private String mProductKey = "";
+    private String mVirtualEndPoint = "";
 
     private SceneManager mSceneManager;
     private CallbackHandler mHandler;
@@ -87,6 +90,7 @@ public class IdentifierListActivity extends BaseActivity {
         mDevIot = getIntent().getStringExtra("dev_iot");
         mDevName = getIntent().getStringExtra("dev_name");
         mProductKey = getIntent().getStringExtra("product_key");
+        mVirtualEndPoint = getIntent().getStringExtra("virtual_end_point");
         mList = new ArrayList<>();
         mAdapter = new BaseQuickAdapter<IdentifierItemForCA, BaseViewHolder>(R.layout.item_identifier, mList) {
             @Override
@@ -125,7 +129,11 @@ public class IdentifierListActivity extends BaseActivity {
         mViewBinding.identifierRecycler.setLayoutManager(layoutManager);
         mViewBinding.identifierRecycler.setAdapter(mAdapter);
 
-        mViewBinding.includeToolbar.tvToolbarTitle.setText(mNickName);
+        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mProductKey)) {
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(DeviceBuffer.getAirConditioner(mDevIot + "_" + mVirtualEndPoint).getNickname());
+        } else {
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(mNickName);
+        }
 
         mSceneManager = new SceneManager(this);
         mHandler = new CallbackHandler(this);
@@ -150,7 +158,7 @@ public class IdentifierListActivity extends BaseActivity {
                 if (result.substring(0, 1).equals("[")) {
                     result = "{\"data\":" + result + "}";
                 }
-                ViseLog.d(new Gson().toJson(JSON.parseObject(result)));
+                ViseLog.d(GsonUtil.toJson(JSON.parseObject(result)));
                 JSONObject o = JSON.parseObject(result);
                 JSONArray a = o.getJSONArray("data");
                 for (int i = 0; i < a.size(); i++) {
@@ -174,6 +182,26 @@ public class IdentifierListActivity extends BaseActivity {
                         }
 
                         item.setObject(property);
+                        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(activity.mProductKey)) {
+                            if (identifier.contains("_")) {
+                                String[] identifiers = identifier.split("_");
+                                if (!identifiers[identifiers.length - 1].equals(activity.mVirtualEndPoint)) {
+                                    item.setObject(null);
+                                } else {
+                                    StringBuilder sb = new StringBuilder();
+                                    String name = item.getName();
+                                    if (name.contains("_")) {
+                                        String[] names = name.split("_");
+                                        for (int j = 0; j < names.length - 1; j++) {
+                                            sb.append(names[j]);
+                                        }
+                                    }
+                                    if (sb.toString().length() > 0) {
+                                        item.setName(sb.toString());
+                                    }
+                                }
+                            }
+                        }
                     } else if (item.getType() == 3) {
                         // 事件
                         CaConditionEntry.Event event = new CaConditionEntry.Event();
@@ -188,8 +216,10 @@ public class IdentifierListActivity extends BaseActivity {
                     }
                     item.setIotId(activity.mDevIot);
                     item.setNickName(activity.mNickName);
-                    activity.mList.add(item);
+                    if (item.getObject() != null)
+                        activity.mList.add(item);
                 }
+                ViseLog.d(GsonUtil.toJson(activity.mList));
                 activity.mAdapter.notifyDataSetChanged();
                 QMUITipDialogUtil.dismiss();
                 activity.mViewBinding.recyclerRl.finishLoadMore(true);

@@ -27,7 +27,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--<uses-permission android:name="android.permission.CAMERA" />-->
 
     <application
         android:name=".presenter.MocoApplication"
@@ -43,7 +42,29 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.ChoiceRemoteControlActivity"></activity>
+        <activity
+            android:name=".view.VirtualAirConditionersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.VirtualAirConditionersForActionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.FourTwoSceneSwitchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.MoreVirtualAirCActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AddAirConditionerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AirConditionerConverterActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AirConditionerForConverterActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".view.ChoiceRemoteControlActivity" />
         <activity android:name=".view.AirRemoteControlActivity" />
         <activity android:name=".view.TVRemoteControlActivity" />
         <activity
@@ -137,7 +158,7 @@
             android:name=".view.StartActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Launcher"><!--@style/AppTheme.NoActionBar-->
+            android:theme="@style/AppTheme.Launcher"> <!-- @style/AppTheme.NoActionBar -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

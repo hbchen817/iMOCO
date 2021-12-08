@@ -1,5 +1,6 @@
 package com.rexense.wholehouse.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
@@ -70,6 +71,18 @@ public class TSLHelper {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTSLPROPERTY;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取属性
+    public static void getProperty(Activity activity, String iotId, APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETTSLPROPERTY;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTSLPROPERTY;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 获取属性时间线数据（消息记录）
@@ -209,6 +222,7 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.OWS_P_PowerSwitch_1, this.mContext.getString(R.string.oneswitch_state), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -261,6 +275,7 @@ public class TSLHelper {
                 list.add(new ETSL.messageRecordContentEntry(CTSL.P_P_BatteryPercentage, this.mContext.getString(R.string.sensorstate_powername), Constant.CONTENTTYPE_PROPERTY));
                 break;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
                 // 温湿度传感器处理

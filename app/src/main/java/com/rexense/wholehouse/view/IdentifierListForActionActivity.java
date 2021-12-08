@@ -23,6 +23,7 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.gson.Gson;
 import com.rexense.wholehouse.R;
+import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityIdentifierListBinding;
 import com.rexense.wholehouse.demoTest.ActionEntry;
@@ -54,6 +55,7 @@ public class IdentifierListForActionActivity extends BaseActivity {
     private String mDevIot = "";
     private String mDevName = "";
     private String mProductKey = "";
+    private String mVirtualEndPoint;
 
     private SceneManager mSceneManager;
     private CallbackHandler mHandler;
@@ -87,6 +89,7 @@ public class IdentifierListForActionActivity extends BaseActivity {
         mDevIot = getIntent().getStringExtra("dev_iot");
         mDevName = getIntent().getStringExtra("dev_name");
         mProductKey = getIntent().getStringExtra("product_key");
+        mVirtualEndPoint = getIntent().getStringExtra("virtual_end_point");
         mList = new ArrayList<>();
         mAdapter = new BaseQuickAdapter<IdentifierItemForCA, BaseViewHolder>(R.layout.item_identifier, mList) {
             @Override
@@ -125,7 +128,11 @@ public class IdentifierListForActionActivity extends BaseActivity {
         mViewBinding.identifierRecycler.setLayoutManager(layoutManager);
         mViewBinding.identifierRecycler.setAdapter(mAdapter);
 
-        mViewBinding.includeToolbar.tvToolbarTitle.setText(mNickName);
+        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mProductKey)) {
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(DeviceBuffer.getAirConditioner(mDevIot + "_" + mVirtualEndPoint).getNickname());
+        } else {
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(mNickName);
+        }
 
         mSceneManager = new SceneManager(this);
         mHandler = new CallbackHandler(this);
@@ -172,6 +179,26 @@ public class IdentifierListForActionActivity extends BaseActivity {
                         }
 
                         item.setObject(property);
+                        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(actionActivity.mProductKey)) {
+                            if (identifier.contains("_")) {
+                                String[] identifiers = identifier.split("_");
+                                if (!identifiers[identifiers.length - 1].equals(actionActivity.mVirtualEndPoint)) {
+                                    item.setObject(null);
+                                } else {
+                                    StringBuilder sb = new StringBuilder();
+                                    String name = item.getName();
+                                    if (name.contains("_")) {
+                                        String[] names = name.split("_");
+                                        for (int j = 0; j < names.length - 1; j++) {
+                                            sb.append(names[j]);
+                                        }
+                                    }
+                                    if (sb.toString().length() > 0) {
+                                        item.setName(sb.toString());
+                                    }
+                                }
+                            }
+                        }
                     } else if (item.getType() == 2) {
                         // 服务
                         ActionEntry.InvokeService service = new ActionEntry.InvokeService();
@@ -181,7 +208,8 @@ public class IdentifierListForActionActivity extends BaseActivity {
                     }
                     item.setIotId(actionActivity.mDevIot);
                     item.setNickName(actionActivity.mNickName);
-                    actionActivity.mList.add(item);
+                    if (item.getObject() != null)
+                        actionActivity.mList.add(item);
                 }
                 actionActivity.mAdapter.notifyDataSetChanged();
                 QMUITipDialogUtil.dismiss();

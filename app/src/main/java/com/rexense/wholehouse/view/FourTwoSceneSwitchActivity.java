@@ -38,13 +38,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SixFourSceneSwitchActivity extends DetailActivity implements View.OnClickListener, View.OnLongClickListener {
+public class FourTwoSceneSwitchActivity extends DetailActivity implements View.OnClickListener, View.OnLongClickListener {
 
     @BindView(R.id.switch1)
     ImageView mSwitch1;
@@ -54,10 +53,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     TextView mSceneContentText3;//3
     @BindView(R.id.mSceneContentText4)
     TextView mSceneContentText4;//4
-    @BindView(R.id.mSceneContentText5)
-    TextView mSceneContentText5;//5
-    @BindView(R.id.mSceneContentText6)
-    TextView mSceneContentText6;//6
     @BindView(R.id.timer_layout)
     RelativeLayout mTimerLayout;
     @BindView(R.id.back_light_layout)
@@ -76,21 +71,13 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     TextView mKey3TV;
     @BindView(R.id.key_4_tv)
     TextView mKey4TV;
-    @BindView(R.id.key_5_tv)
-    TextView mKey5TV;
-    @BindView(R.id.key_6_tv)
-    TextView mKey6TV;
 
     private SceneManager mSceneManager;
     private MyHandler mMyHandler;
-    private String mKey3ManualSceneId;
-    private String mKey4ManualSceneId;
-    private String mKey5ManualSceneId;
-    private String mKey6ManualSceneId;
-    private String mKey3ManualSceneName;
-    private String mKey4ManualSceneName;
-    private String mKey5ManualSceneName;
-    private String mKey6ManualSceneName;
+    private String mFirstManualSceneId;
+    private String mSecondManualSceneId;
+    private String mFirstManualSceneName;
+    private String mSecondManualSceneName;
     private String mCurrentKey;
     private int mState1;
     private int mState2;
@@ -107,7 +94,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
 
     private String mPressedKey = "1";
     private DelSceneHandler mDelSceneHandler;
-    private final Map<String, String> mSceneMap = new HashMap<>();
 
     // 更新状态
     @Override
@@ -116,13 +102,13 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
             return false;
         }
         ViseLog.d("propertyEntry = \n" + GsonUtil.toJson(propertyEntry));
-        if (propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_1) != null && propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_1).length() > 0) {
-            mState1 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_1));
+        if (propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_1) != null && propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_1).length() > 0) {
+            mState1 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_1));
             //mSwitch1.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.SIX_SCENE_SWITCH_P_POWER_1, propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_1)));
             mSwitch1.setBackgroundResource(mState1 == 0 ? R.drawable.state_switch_top_off : R.drawable.state_switch_top_on);
         }
-        if (propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_2) != null && propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_2).length() > 0) {
-            mState2 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.SIX_FOUR_SCENE_SWITCH_POWER_2));
+        if (propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2) != null && propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2).length() > 0) {
+            mState2 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2));
             //mSwitch2.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.SIX_SCENE_SWITCH_P_POWER_2, propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_2)));
             mSwitch2.setBackgroundResource(mState2 == 0 ? R.drawable.state_switch_bottom_off : R.drawable.state_switch_bottom_on);
         }
@@ -186,16 +172,16 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     }
 
     private static class MyResponseErrHandler extends Handler {
-        private WeakReference<SixFourSceneSwitchActivity> ref;
+        private WeakReference<FourTwoSceneSwitchActivity> ref;
 
-        public MyResponseErrHandler(SixFourSceneSwitchActivity activity) {
+        public MyResponseErrHandler(FourTwoSceneSwitchActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            SixFourSceneSwitchActivity activity = ref.get();
+            FourTwoSceneSwitchActivity activity = ref.get();
             if (activity == null) return;
             if (Constant.MSG_CALLBACK_APIRESPONSEERROR == msg.what) {
                 EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
@@ -219,8 +205,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     jsonObject.put(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2, activity.mKey2TV.getText().toString());
                     jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_3, activity.mKey3TV.getText().toString());
                     jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_4, activity.mKey4TV.getText().toString());
-                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_5, activity.mKey5TV.getText().toString());
-                    jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_6, activity.mKey6TV.getText().toString());
                     activity.mSceneManager.setExtendedProperty(activity.mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
                             null, null, null);
                 }
@@ -233,13 +217,8 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
         mSwitch2.setOnClickListener(this);
         mSceneContentText3.setOnClickListener(this);
         mSceneContentText4.setOnClickListener(this);
-        mSceneContentText5.setOnClickListener(this);
-        mSceneContentText6.setOnClickListener(this);
-
         mSceneContentText3.setOnLongClickListener(this);
         mSceneContentText4.setOnLongClickListener(this);
-        mSceneContentText5.setOnLongClickListener(this);
-        mSceneContentText6.setOnLongClickListener(this);
 
         mTimerLayout.setOnClickListener(this);
         mBackLightLayout.setOnClickListener(this);
@@ -247,8 +226,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
         mKey2TV.setOnClickListener(this);
         mKey3TV.setOnClickListener(this);
         mKey4TV.setOnClickListener(this);
-        mKey5TV.setOnClickListener(this);
-        mKey6TV.setOnClickListener(this);
 
         mSceneManager = new SceneManager(this);
     }
@@ -267,53 +244,39 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     public void onClick(View view) {
         if (view.getId() == R.id.switch1) {
             if (mState1 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
             } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
             }
         } else if (view.getId() == R.id.switch2) {
             if (mState2 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
             } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
             }
         } else if (view.getId() == R.id.mSceneContentText3) {
-            if (mKey3ManualSceneId != null) {
+            if (mFirstManualSceneId != null) {
                 mPressedKey = "3";
-                mSceneManager.executeScene(mKey3ManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                mSceneManager.executeScene(mFirstManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
             } else {
                 SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3);
             }
         } else if (view.getId() == R.id.mSceneContentText4) {
-            if (mKey4ManualSceneId != null) {
+            if (mSecondManualSceneId != null) {
                 mPressedKey = "4";
-                mSceneManager.executeScene(mKey4ManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                mSceneManager.executeScene(mSecondManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
             } else {
                 SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4);
             }
-        } else if (view.getId() == R.id.mSceneContentText5) {
-            if (mKey5ManualSceneId != null) {
-                mPressedKey = "5";
-                mSceneManager.executeScene(mKey5ManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-            } else {
-                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_5);
-            }
-        } else if (view.getId() == R.id.mSceneContentText6) {
-            if (mKey6ManualSceneId != null) {
-                mPressedKey = "6";
-                mSceneManager.executeScene(mKey6ManualSceneId, mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
-            } else {
-                SwitchSceneListActivity.start(this, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_5);
-            }
         } else if (view.getId() == R.id.timer_layout) {
             // 定时
-            PluginHelper.cloudTimer(SixFourSceneSwitchActivity.this, mIOTId, mProductKey);
+            PluginHelper.cloudTimer(FourTwoSceneSwitchActivity.this, mIOTId, mProductKey);
         } else if (view.getId() == R.id.back_light_layout) {
             // 背光
             if (mBackLightState == CTSL.STATUS_OFF) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
             } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_FOUR_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FOUR_TWO_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
             }
         } else if (view.getId() == R.id.key_1_tv) {
             // 按键1
@@ -327,12 +290,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
         } else if (view.getId() == R.id.key_4_tv) {
             // 按键4
             showKeyNameDialogEdit(R.id.key_4_tv);
-        } else if (view.getId() == R.id.key_5_tv) {
-            // 按键5
-            showKeyNameDialogEdit(R.id.key_5_tv);
-        } else if (view.getId() == R.id.key_6_tv) {
-            // 按键6
-            showKeyNameDialogEdit(R.id.key_6_tv);
         }
     }
 
@@ -346,16 +303,16 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     }
 
     private static class DelSceneHandler extends Handler {
-        private WeakReference<SixFourSceneSwitchActivity> ref;
+        private WeakReference<FourTwoSceneSwitchActivity> ref;
 
-        public DelSceneHandler(SixFourSceneSwitchActivity activity) {
+        public DelSceneHandler(FourTwoSceneSwitchActivity activity) {
             ref = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            SixFourSceneSwitchActivity activity = ref.get();
+            FourTwoSceneSwitchActivity activity = ref.get();
             if (activity == null) return;
             if (msg.what == Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET) {
                 if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
@@ -399,12 +356,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
         } else if (resId == R.id.key_4_tv) {
             // 按键4
             nameEt.setText(mKey4TV.getText().toString());
-        } else if (resId == R.id.key_5_tv) {
-            // 按键5
-            nameEt.setText(mKey5TV.getText().toString());
-        } else if (resId == R.id.key_6_tv) {
-            // 按键6
-            nameEt.setText(mKey6TV.getText().toString());
         }
 
         nameEt.setSelection(nameEt.getText().toString().length());
@@ -426,71 +377,43 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                         || mKey1TV.getText().toString().length() > 10
                         || mKey2TV.getText().toString().length() > 10
                         || mKey3TV.getText().toString().length() > 10
-                        || mKey4TV.getText().toString().length() > 10
-                        || mKey5TV.getText().toString().length() > 10
-                        || mKey6TV.getText().toString().length() > 10) {
-                    ToastUtils.showShortToast(SixFourSceneSwitchActivity.this, R.string.length_of_key_name_cannot_be_greater_than_10);
+                        || mKey4TV.getText().toString().length() > 10) {
+                    ToastUtils.showShortToast(FourTwoSceneSwitchActivity.this, R.string.length_of_key_name_cannot_be_greater_than_10);
                     return;
                 } else if (nameEt.getText().toString().length() == 0
                         || mKey1TV.getText().toString().length() == 0
                         || mKey2TV.getText().toString().length() == 0
                         || mKey3TV.getText().toString().length() == 0
-                        || mKey4TV.getText().toString().length() == 0
-                        || mKey5TV.getText().toString().length() == 0
-                        || mKey6TV.getText().toString().length() == 0) {
-                    ToastUtils.showShortToast(SixFourSceneSwitchActivity.this, R.string.key_name_cannot_be_empty);
+                        || mKey4TV.getText().toString().length() == 0) {
+                    ToastUtils.showShortToast(FourTwoSceneSwitchActivity.this, R.string.key_name_cannot_be_empty);
                     return;
                 }
 
-                QMUITipDialogUtil.showLoadingDialg(SixFourSceneSwitchActivity.this, R.string.is_setting);
+                QMUITipDialogUtil.showLoadingDialg(FourTwoSceneSwitchActivity.this, R.string.is_setting);
                 if (resId == R.id.key_1_tv) {
                     // 按键1
                     mKeyName1 = nameEt.getText().toString();
                     mKeyName2 = mKey2TV.getText().toString();
                     mKeyName3 = mKey3TV.getText().toString();
                     mKeyName4 = mKey4TV.getText().toString();
-                    mKeyName5 = mKey5TV.getText().toString();
-                    mKeyName6 = mKey6TV.getText().toString();
                 } else if (resId == R.id.key_2_tv) {
                     // 按键2
                     mKeyName1 = mKey1TV.getText().toString();
                     mKeyName2 = nameEt.getText().toString();
                     mKeyName3 = mKey3TV.getText().toString();
                     mKeyName4 = mKey4TV.getText().toString();
-                    mKeyName5 = mKey5TV.getText().toString();
-                    mKeyName6 = mKey6TV.getText().toString();
                 } else if (resId == R.id.key_3_tv) {
                     // 按键3
                     mKeyName1 = mKey1TV.getText().toString();
                     mKeyName2 = mKey2TV.getText().toString();
                     mKeyName3 = nameEt.getText().toString();
                     mKeyName4 = mKey4TV.getText().toString();
-                    mKeyName5 = mKey5TV.getText().toString();
-                    mKeyName6 = mKey6TV.getText().toString();
                 } else if (resId == R.id.key_4_tv) {
                     // 按键4
                     mKeyName1 = mKey1TV.getText().toString();
                     mKeyName2 = mKey2TV.getText().toString();
                     mKeyName3 = mKey3TV.getText().toString();
                     mKeyName4 = nameEt.getText().toString();
-                    mKeyName5 = mKey5TV.getText().toString();
-                    mKeyName6 = mKey6TV.getText().toString();
-                } else if (resId == R.id.key_5_tv) {
-                    // 按键5
-                    mKeyName1 = mKey1TV.getText().toString();
-                    mKeyName2 = mKey2TV.getText().toString();
-                    mKeyName3 = mKey3TV.getText().toString();
-                    mKeyName4 = mKey4TV.getText().toString();
-                    mKeyName5 = nameEt.getText().toString();
-                    mKeyName6 = mKey6TV.getText().toString();
-                } else if (resId == R.id.key_6_tv) {
-                    // 按键6
-                    mKeyName1 = mKey1TV.getText().toString();
-                    mKeyName2 = mKey2TV.getText().toString();
-                    mKeyName3 = mKey3TV.getText().toString();
-                    mKeyName4 = mKey4TV.getText().toString();
-                    mKeyName5 = mKey5TV.getText().toString();
-                    mKeyName6 = nameEt.getText().toString();
                 }
 
                 JSONObject jsonObject = new JSONObject();
@@ -498,11 +421,8 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                 jsonObject.put(CTSL.FOUR_TWO_SCENE_SWITCH_POWER_2, mKeyName2);
                 jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_3, mKeyName3);
                 jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_4, mKeyName4);
-                jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_5, mKeyName5);
-                jsonObject.put(CTSL.SCENE_SWITCH_KEY_CODE_6, mKeyName6);
                 resultObj = jsonObject;
-                mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(),
-                        mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                mSceneManager.setExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, jsonObject.toJSONString(), mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
                 dialog.dismiss();
             }
         });
@@ -519,24 +439,12 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
     @Override
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.mSceneContentText3) {
-            if (mKey3ManualSceneId != null) {
-                EditSceneBindActivity.start(this, getString(R.string.key_3), mIOTId,
-                        CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
+            if (mFirstManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, mSceneContentText3.getText().toString());
             }
         } else if (view.getId() == R.id.mSceneContentText4) {
-            if (mKey4ManualSceneId != null) {
-                EditSceneBindActivity.start(this, getString(R.string.key_4), mIOTId,
-                        CTSL.SCENE_SWITCH_KEY_CODE_4, mSceneContentText4.getText().toString());
-            }
-        } else if (view.getId() == R.id.mSceneContentText5) {
-            if (mKey5ManualSceneId != null) {
-                EditSceneBindActivity.start(this, getString(R.string.key_5), mIOTId,
-                        CTSL.SCENE_SWITCH_KEY_CODE_5, mSceneContentText5.getText().toString());
-            }
-        } else if (view.getId() == R.id.mSceneContentText6) {
-            if (mKey6ManualSceneId != null) {
-                EditSceneBindActivity.start(this, getString(R.string.key_6), mIOTId,
-                        CTSL.SCENE_SWITCH_KEY_CODE_6, mSceneContentText6.getText().toString());
+            if (mSecondManualSceneId != null) {
+                EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4, mSceneContentText4.getText().toString());
             }
         }
         return true;
@@ -544,16 +452,16 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
 
 
     private static class MyHandler extends Handler {
-        final WeakReference<SixFourSceneSwitchActivity> mWeakReference;
+        final WeakReference<FourTwoSceneSwitchActivity> mWeakReference;
 
-        public MyHandler(SixFourSceneSwitchActivity activity) {
+        public MyHandler(FourTwoSceneSwitchActivity activity) {
             mWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            SixFourSceneSwitchActivity activity = mWeakReference.get();
+            FourTwoSceneSwitchActivity activity = mWeakReference.get();
             if (activity == null) return;
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET:
@@ -561,14 +469,36 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     if (msg.obj != null && !TextUtils.isEmpty((String) msg.obj)) {
                         JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                         ViseLog.d("场景 = \n" + GsonUtil.toJson(jsonObject));
-                        activity.initSceneIdAndName(jsonObject);
+                        if (activity.mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_3)) {
+                            if (!jsonObject.isEmpty() && !"{}".equals(jsonObject.toJSONString())) {
+                                activity.mSceneContentText3.setText(jsonObject.getString("name"));
+                                activity.mFirstManualSceneName = jsonObject.getString("name");
+                                activity.mFirstManualSceneId = jsonObject.getString("msId");
+                            } else {
+                                activity.mSceneContentText3.setText(R.string.no_bind_scene);
+                                activity.mFirstManualSceneId = null;
+                                activity.mFirstManualSceneName = null;
+                            }
+                            activity.mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_4;
+                            activity.mSceneManager.getExtendedProperty(activity.mIOTId, activity.mCurrentKey,
+                                    activity.mCommitFailureHandler, activity.mExtendedPropertyResponseErrorHandler, activity.mMyHandler);
+                        } else if (activity.mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_4)) {
+                            if (!jsonObject.isEmpty() && !"{}".equals(jsonObject.toJSONString())) {
+                                activity.mSceneContentText4.setText(jsonObject.getString("name"));
+                                activity.mSecondManualSceneName = jsonObject.getString("name");
+                                activity.mSecondManualSceneId = jsonObject.getString("msId");
+                            } else {
+                                activity.mSceneContentText4.setText(R.string.no_bind_scene);
+                                activity.mSecondManualSceneId = null;
+                                activity.mSecondManualSceneName = null;
+                            }
+                        }
                     }
                     break;
                 case Constant.MSG_CALLBACK_EXECUTESCENE:
                     String sceneId = (String) msg.obj;
-                    String sceneName = activity.mSceneMap.get(sceneId);
                     ToastUtils.showShortToast(activity, String.format(activity.getString(R.string.main_scene_execute_hint_2),
-                            sceneName));
+                            sceneId.equals(activity.mFirstManualSceneId) ? activity.mFirstManualSceneName : activity.mSecondManualSceneName));
                     break;
                 case TAG_GET_EXTENDED_PRO: {
                     JSONObject object = JSONObject.parseObject((String) msg.obj);
@@ -577,8 +507,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     activity.mKey2TV.setText(object.getString(CTSL.SIX_SCENE_SWITCH_P_POWER_2));
                     activity.mKey3TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_3));
                     activity.mKey4TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_4));
-                    activity.mKey5TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_5));
-                    activity.mKey6TV.setText(object.getString(CTSL.SCENE_SWITCH_KEY_CODE_6));
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, object);
                     break;
                 }
@@ -589,8 +517,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     activity.mKey2TV.setText(activity.mKeyName2);
                     activity.mKey3TV.setText(activity.mKeyName3);
                     activity.mKey4TV.setText(activity.mKeyName4);
-                    activity.mKey5TV.setText(activity.mKeyName5);
-                    activity.mKey6TV.setText(activity.mKeyName6);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.resultObj);
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
@@ -599,73 +525,6 @@ public class SixFourSceneSwitchActivity extends DetailActivity implements View.O
                     break;
             }
         }
-    }
-
-    private void initSceneIdAndName(JSONObject object) {
-        if (mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_3)) {
-            if (!object.isEmpty() && !"{}".equals(object.toJSONString())) {
-                mSceneContentText3.setText(object.getString("name"));
-                mKey3ManualSceneName = object.getString("name");
-                mKey3ManualSceneId = object.getString("msId");
-                mSceneMap.put(mKey3ManualSceneId, mKey3ManualSceneName);
-            } else {
-                mSceneContentText3.setText(R.string.no_bind_scene);
-                if (mKey3ManualSceneId != null &&
-                        mKey3ManualSceneId.length() > 0)
-                    mSceneMap.remove(mKey3ManualSceneId);
-                mKey3ManualSceneId = null;
-                mKey3ManualSceneName = null;
-            }
-            mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_4;
-        } else if (mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_4)) {
-            if (!object.isEmpty() && !"{}".equals(object.toJSONString())) {
-                mSceneContentText4.setText(object.getString("name"));
-                mKey4ManualSceneName = object.getString("name");
-                mKey4ManualSceneId = object.getString("msId");
-                mSceneMap.put(mKey4ManualSceneId, mKey4ManualSceneName);
-            } else {
-                mSceneContentText4.setText(R.string.no_bind_scene);
-                if (mKey4ManualSceneId != null &&
-                        mKey4ManualSceneId.length() > 0)
-                    mSceneMap.remove(mKey4ManualSceneId);
-                mKey4ManualSceneId = null;
-                mKey4ManualSceneName = null;
-            }
-            mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_5;
-        } else if (mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_5)) {
-            if (!object.isEmpty() && !"{}".equals(object.toJSONString())) {
-                mSceneContentText5.setText(object.getString("name"));
-                mKey5ManualSceneName = object.getString("name");
-                mKey5ManualSceneId = object.getString("msId");
-                mSceneMap.put(mKey5ManualSceneId, mKey5ManualSceneName);
-            } else {
-                mSceneContentText5.setText(R.string.no_bind_scene);
-                if (mKey5ManualSceneId != null &&
-                        mKey5ManualSceneId.length() > 0)
-                    mSceneMap.remove(mKey5ManualSceneId);
-                mKey5ManualSceneId = null;
-                mKey5ManualSceneName = null;
-            }
-            mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_6;
-        } else if (mCurrentKey.equals(CTSL.SCENE_SWITCH_KEY_CODE_6)) {
-            if (!object.isEmpty() && !"{}".equals(object.toJSONString())) {
-                mSceneContentText6.setText(object.getString("name"));
-                mKey6ManualSceneName = object.getString("name");
-                mKey6ManualSceneId = object.getString("msId");
-                mSceneMap.put(mKey6ManualSceneId, mKey6ManualSceneName);
-            } else {
-                mSceneContentText6.setText(R.string.no_bind_scene);
-                if (mKey6ManualSceneId != null &&
-                        mKey6ManualSceneId.length() > 0)
-                    mSceneMap.remove(mKey6ManualSceneId);
-                mKey6ManualSceneId = null;
-                mKey6ManualSceneName = null;
-            }
-            mCurrentKey = "-1";
-        }
-        if (!mCurrentKey.equals("-1"))
-            mSceneManager.getExtendedProperty(mIOTId, mCurrentKey,
-                    mCommitFailureHandler, mExtendedPropertyResponseErrorHandler, mMyHandler);
     }
 
     // 响应错误处理器

@@ -62,6 +62,8 @@ public class Constant {
     public static final int REQUESTCODE_CALLCHOICECONTENTACTIVITY = 3;
     public static final int REQUESTCODE_CALLCHOICEWIFIACTIVITY    = 4;
     public static final int REQUESTCODE_CALLSETTIMEACTIVITY       = 5;
+    public static final int REQUESTCODE_CALLADDAIRCONDITIONER     = 6;
+    public static final int REQUESTCODE_CALLDELAIRCONDITIONER     = 7;
 
     // 定义结果码
     public static final int RESULTCODE_CALLCHOICEACTIVITY_TIME   = 1000;
@@ -70,6 +72,8 @@ public class Constant {
     public static final int RESULTCODE_CALLCHOICECONTENTACTIVITY = 1003;
     public static final int RESULTCODE_CALLCHOICEWIFIACTIVITY    = 1004;
     public static final int RESULTCODE_CALLSETTIMEACTIVITY       = 1005;
+    public static final int RESULTCODE_CALLADDAIRCONDITIONER     = 1006;
+    public static final int RESULTCODE_CALLDELAIRCONDITIONER     = 1007;
 
     // 定义API PATH常量
     public static final String API_PATH_GETCONFIGPROCDUCTLIST      = "/thing/productInfo/getByAppKey";
@@ -86,6 +90,7 @@ public class Constant {
     public static final String API_PATH_GETTSLPROPERTYTIMELINEDATA = "/living/device/property/timeline/get";
     public static final String API_PATH_GETTSLEVENTTIMELINEDATA    = "/living/device/event/timeline/get";
     public static final String API_PATH_SETTSLPROPERTY             = "/thing/properties/set";
+    public static final String API_PATH_POSTTSLPROPERTY             = "/thing/event/property/post";
     public static final String API_PATH_GETGATEWAYSUBDEVICELIST    = "/subdevices/list";
     public static final String API_PATH_GETUSERDEVICELIST          = "/uc/listBindingByAccount";
     public static final String API_PATH_SETDEVICENICKNAME          = "/uc/setDeviceNickName";
@@ -161,6 +166,7 @@ public class Constant {
     public static final String API_FEEDBACK_ADD                    = "/feedback/add";
     // 删除设备扩展属性信息
     public static final String API_EXTENDED_PROPERTY_DEL           = "/thing/extended/property/delete";
+    // thing.event.property.post
 
     // 定义插件URL常量
     public static final String PLUGIN_URL_COUNDTIMER = "link://router/cloudtime";
@@ -344,7 +350,8 @@ public class Constant {
             + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U1 + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_HY_U2 + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_ZR
             + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_YQS_XB + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D8 + " , " + CTSL.PK_ONEWAYWINDOWCURTAINS_LF_D9
             + " , " + CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_ZR + " , " + CTSL.PK_TWOWAYWINDOWCURTAINS_YQS_XB + " , " + CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D8
-            + " , " + CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9;
+            + " , " + CTSL.PK_TWOWAYWINDOWCURTAINS_LF_D9 + " , " + CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF + " , " + CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF
+            + " , " + CTSL.PK_TWOWAYSWITCH_MODULE_HY;
 
     public static final String JD_APP_ID = "apidemo";
     public static final String JD_DEV_ID = "test_device1";
@@ -353,5 +360,8 @@ public class Constant {
     public static final int REMOTE_CONTROL_TV              = 2;// 电视
     public static final int REMOTE_CONTROL_AIR_CONDITIONER = 7;// 空调
     public static final int REMOTE_CONTROL_FAN             = 6;// 风扇
+
+    public static final String VIRTUAL_DEVICES_NICK_NAMES_EXTENDED_TAG = "virtual_device_nick_names";
+    public static final String ACTION_UPDATE_VIRTUAL_AIRC_NICKNAME = "action_update_virtual_airc_nickname";
 }
 

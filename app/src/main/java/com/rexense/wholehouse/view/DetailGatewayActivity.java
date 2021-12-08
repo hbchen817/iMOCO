@@ -41,7 +41,9 @@ import com.rexense.wholehouse.model.EDevice;
 import com.rexense.wholehouse.model.ERealtimeData;
 import com.rexense.wholehouse.model.ETSL;
 import com.rexense.wholehouse.model.EUser;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -125,6 +127,7 @@ public class DetailGatewayActivity extends DetailActivity {
         public boolean handleMessage(Message msg) {
             if (Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST == msg.what) {
                 EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
+                ViseLog.d(GsonUtil.toJson(list));
                 if (list != null && list.data != null) {
                     for (EUser.deviceEntry e : list.data) {
                         EDevice.deviceEntry entry = new EDevice.deviceEntry();

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.alink.apiclient.utils.GsonUtils;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
@@ -20,6 +21,7 @@ import com.rexense.wholehouse.presenter.TSLHelper;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.model.EDevice;
 import com.rexense.wholehouse.model.ETSL;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.StatusBarUtils;
 import com.vise.log.ViseLog;
 
@@ -59,6 +61,7 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_SMOKESENSOR_HM:
             case CTSL.PK_SMOKESENSOR_MLK:
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
             case CTSL.PK_REMOTECONTRILBUTTON:
@@ -75,6 +78,7 @@ public class DetailActivity extends BaseActivity {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -175,6 +179,21 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_FULL_SCREEN_SWITCH_HY: {
                 // 全面屏
                 setContentView(R.layout.activity_full_screen_switch);
+                break;
+            }
+            case CTSL.PK_AIRCOMDITION_CONVERTER: {
+                // 空调转换器-鸿雁-RH9000
+                setContentView(R.layout.activity_air_conditioner_converter);
+                break;
+            }
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF: {
+                // 二开关+二场景开关-拉斐
+                setContentView(R.layout.activity_four_two_scene);
+                break;
+            }
+            case CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF: {
+                // 二开关+四场景开关-拉斐
+                setContentView(R.layout.activity_six_four_scene);
                 break;
             }
             default:
@@ -279,14 +298,14 @@ public class DetailActivity extends BaseActivity {
     }
 
     // API属性数据处理器
-    private Handler mAPIProperyDataHandler = new Handler(new Handler.Callback() {
+    public Handler mAPIProperyDataHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_GETTSLPROPERTY:
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
-                    ViseLog.d("处理获取属性回调 = " + (String) msg.obj);
+                    // ViseLog.d("处理获取属性回调 = " + GsonUtil.toJson(JSONObject.parseObject((String) msg.obj)));
                     JSONObject items = JSON.parseObject((String) msg.obj);
                     if (items != null) {
                         TSLHelper.parseProperty(mProductKey, items, propertyEntry);
@@ -307,7 +326,7 @@ public class DetailActivity extends BaseActivity {
             switch (msg.what) {
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知回调
-                    ViseLog.d("实时 = " + (String) msg.obj);
+                    // ViseLog.d("实时 = " + GsonUtil.toJson(JSONObject.parseObject((String) msg.obj)));
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     updateState(propertyEntry);
                     break;

@@ -16,6 +16,7 @@ import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityPermitjoinBinding;
 import com.rexense.wholehouse.event.RefreshData;
+import com.rexense.wholehouse.model.EAPIChannel;
 import com.rexense.wholehouse.model.ERealtimeData;
 import com.rexense.wholehouse.model.EScene;
 import com.rexense.wholehouse.presenter.CloudDataParser;
@@ -24,6 +25,7 @@ import com.rexense.wholehouse.presenter.RealtimeDataParser;
 import com.rexense.wholehouse.presenter.RealtimeDataReceiver;
 import com.rexense.wholehouse.presenter.SceneManager;
 import com.rexense.wholehouse.presenter.SystemParameter;
+import com.rexense.wholehouse.sdk.APIChannel;
 import com.rexense.wholehouse.utility.Dialog;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.rexense.wholehouse.utility.Utility;
@@ -117,6 +119,11 @@ public class PermitJoinActivity extends BaseActivity {
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                 break;
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF: {
+                SceneManager.delExtendedProperty(this, mGatewayIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3, null);
+                SceneManager.delExtendedProperty(this, mGatewayIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4, null);
+                break;
+            }
             default:
                 break;
         }
@@ -144,7 +151,7 @@ public class PermitJoinActivity extends BaseActivity {
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
-                    deviceHandle(mSceneManager);
+                    //deviceHandle(mSceneManager);
                     BindSuccessActivity.start(PermitJoinActivity.this, mSubDeviceIotId, mSubDeviceName);
 
                     // 发送刷新设备列表事件
@@ -190,7 +197,7 @@ public class PermitJoinActivity extends BaseActivity {
                     ERealtimeData.subDeviceJoinResultEntry joinResultEntry = RealtimeDataParser.proessSubDeviceJoinResult((String) msg.obj);
                     mSubDeviceName = joinResultEntry.subDeviceName;
                     mSubDeviceIotId = joinResultEntry.subIotId;
-                    if (joinResultEntry != null && joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
+                    if (joinResultEntry.subDeviceName != null && joinResultEntry.subDeviceName.length() > 0 &&
                             joinResultEntry.subProductKey != null && joinResultEntry.subProductKey.length() > 0) {
                         ViseLog.d(String.format("Received subdevice join callback:\r\n    device name: %s\r\n    product key: %s",
                                 joinResultEntry.subDeviceName, joinResultEntry.subProductKey));

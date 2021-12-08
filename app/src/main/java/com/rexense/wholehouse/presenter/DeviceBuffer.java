@@ -1,12 +1,14 @@
 package com.rexense.wholehouse.presenter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.rexense.wholehouse.model.AirConditionerConverter;
 import com.rexense.wholehouse.model.EDevice;
 import com.rexense.wholehouse.model.EHomeSpace;
 import com.rexense.wholehouse.model.EUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,10 +22,47 @@ public class DeviceBuffer {
     private static Map<String, EDevice.deviceEntry> mBuffer = new HashMap<String, EDevice.deviceEntry>();
     private static Map<String, JSONObject> mExtendedBuffer = new HashMap<String, JSONObject>();
     private static Map<String, EHomeSpace.homeEntry> mHomeBuffer = new HashMap<>();
+    private static Map<String, AirConditionerConverter.AirConditioner> mAirCBuffer = new LinkedHashMap<>();
 
     // 初始化处理
     public static void initProcess() {
         mBuffer.clear();
+    }
+
+    // 添加空调
+    public static void addAirConditioner(String iotAndEP, AirConditionerConverter.AirConditioner conditioner) {
+        mAirCBuffer.put(iotAndEP, conditioner);
+    }
+
+    // 获取空调
+    public static AirConditionerConverter.AirConditioner getAirConditioner(String iotAndEP) {
+        if (mAirCBuffer.containsKey(iotAndEP)) {
+            return mAirCBuffer.get(iotAndEP);
+        }
+        return null;
+    }
+
+    // 获取所有空调
+    public static List<AirConditionerConverter.AirConditioner> getAllAirConditioner() {
+        List<AirConditionerConverter.AirConditioner> list = new ArrayList<>();
+        list.addAll(mAirCBuffer.values());
+        return list;
+    }
+
+    // 删除空调
+    public static void removeAirConditioner(String iotAndEP) {
+        if (mAirCBuffer.containsKey(iotAndEP))
+            mAirCBuffer.remove(iotAndEP);
+    }
+
+    // 获取空调是否添加
+    public static boolean containsAirCKey(String iotAndEP) {
+        return mAirCBuffer.containsKey(iotAndEP);
+    }
+
+    // 获取空调是否添加
+    public static void initAirConditioner() {
+        mAirCBuffer.clear();
     }
 
     // 添加家信息

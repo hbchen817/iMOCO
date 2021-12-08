@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.alink.apiclient.utils.GsonUtils;
 import com.rexense.wholehouse.R;
 import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityBindSuccessBinding;

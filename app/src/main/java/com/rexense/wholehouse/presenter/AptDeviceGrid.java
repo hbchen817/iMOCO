@@ -227,6 +227,7 @@ public class AptDeviceGrid extends BaseAdapter {
                         viewHolder.state2.setText(devItem.stateTimes.get(1).value + " / " + devItem.stateTimes.get(1).time);
                         if (CTSL.PK_TWOWAYSWITCH.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_HY.equals(deviceEntry.productKey)
+                                || CTSL.PK_TWOWAYSWITCH_MODULE_HY.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_YQS_XB.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_YQS_ZR.equals(deviceEntry.productKey)
                                 || CTSL.PK_TWOWAYSWITCH_LF.equals(deviceEntry.productKey)

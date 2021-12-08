@@ -238,6 +238,7 @@ public class AptSceneParameter extends BaseAdapter {
                             }
                         } else if (CTSL.PK_TWOWAYSWITCH.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_HY.equals(pk)
+                                || CTSL.PK_TWOWAYSWITCH_MODULE_HY.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_YQS_XB.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_YQS_ZR.equals(pk)
                                 || CTSL.PK_TWOWAYSWITCH_LF.equals(pk)

@@ -136,6 +136,7 @@ public class CodeMapper {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -251,6 +252,7 @@ public class CodeMapper {
                 }
                 break;
             case CTSL.PK_PM_TEMHUMSENSOR_HY:
+            case CTSL.PK_PM_TEMHUMSENSOR_HY_PTM1005S:
             case CTSL.PK_TEMHUMSENSOR_MLK:
             case CTSL.PK_TEMHUMSENSOR_HM:
                 // 处理温湿度状态
@@ -385,6 +387,7 @@ public class CodeMapper {
                 break;
             case CTSL.PK_TWOWAYSWITCH:
             case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
             case CTSL.PK_TWOWAYSWITCH_YQS_XB:
             case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
             case CTSL.PK_TWOWAYSWITCH_LF:
@@ -580,20 +583,21 @@ public class CodeMapper {
             case CScene.SMC_ALARM_ON:
             case CScene.SMC_REMOTE_CONTROL_ON:
             case CScene.SMC_OPEN_DOOR_ON:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
+                if (productKey.equals(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_YQS_XB)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_LF)
+                        || productKey.equals(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
+                } else if (productKey.equals(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_MODULE_HY)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_YQS_XB)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_LF)
+                        || productKey.equals(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
                             context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -601,7 +605,7 @@ public class CodeMapper {
                             context.getString(R.string.twoswitch_state_2_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry1);
                     list.add(stateEntry2);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_FOURWAYSWITCH)) {
+                } else if (productKey.equals(CTSL.PK_FOURWAYSWITCH)) {
                     // 处理四键开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1),
                             CTSL.FWS_P_PowerSwitch_1, context.getString(R.string.twoswitch_state_1_on), CTSL.S_P_PowerSwitch_On);
@@ -619,19 +623,20 @@ public class CodeMapper {
                 break;
             // 无人关灯处理
             case CScene.SMC_UNMANNED_OFF:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
-                        || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
+                if (productKey.equals(CTSL.PK_ONEWAYSWITCH)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_HY)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_YQS_XB)
+                        || productKey.equals(CTSL.PK_ONEWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAY_DANHUO_RY)) {
                     // 处理一键单火开关
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_off), CTSL.S_P_PowerSwitch_Off);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
-                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
+                } else if (productKey.equals(CTSL.PK_TWOWAYSWITCH)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_MODULE_HY)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_YQS_XB)
+                        || productKey.equals(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
                     // 处理两键单火开关
                     ETSL.stateEntry stateEntry1 = new ETSL.stateEntry(context.getString(R.string.twoswitch_state_1), CTSL.TWS_P_PowerSwitch_1,
@@ -658,7 +663,7 @@ public class CodeMapper {
                 break;
             // 回家模式处理
             case CScene.SMC_GO_HOME_PATTERN:
-                if (productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH)
+                if (productKey.equals(CTSL.PK_ONEWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_HY)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_ONEWAYSWITCH_LF)
@@ -667,8 +672,9 @@ public class CodeMapper {
                     ETSL.stateEntry stateEntry = new ETSL.stateEntry(context.getString(R.string.oneswitch_state), CTSL.OWS_P_PowerSwitch_1,
                             context.getString(R.string.oneswitch_state_on), CTSL.S_P_PowerSwitch_On);
                     list.add(stateEntry);
-                } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
+                } else if (productKey.equals(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_MODULE_HY)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {
@@ -714,6 +720,7 @@ public class CodeMapper {
                     list.add(stateEntry);
                 } else if (productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_HY)
+                        || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_MODULE_HY)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_YQS_XB)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAYSWITCH_LF)
                         || productKey.equalsIgnoreCase(CTSL.PK_TWOWAY_DANHUO_RY)) {

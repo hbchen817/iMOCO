@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -805,6 +806,25 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    //设置设备扩展信息
+    public static void setExtendedProperty(Activity activity, String iotId,
+                                           String dataKey,
+                                           String dataValue,
+                                           APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_SET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.addParameter("dataValue", dataValue);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_SET;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     //获取设备扩展信息
     public void getExtendedProperty(String iotId,
                                     String dataKey,
@@ -822,6 +842,23 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    //获取设备扩展信息
+    public static void getExtendedProperty(Activity activity, String iotId,
+                                           String dataKey,
+                                           APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_GET;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_GET;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     //获取设备扩展信息
@@ -860,6 +897,22 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 删除设备扩展属性信息
+    public static void delExtendedProperty(Activity activity, String iotId, String dataKey,
+                                    APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_DEL;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 更新模板CA场景
@@ -1310,7 +1363,7 @@ public class SceneManager {
 
         // 触发设备处理
         List<EScene.triggerEntry> triggerEntries = this.getTrigger(sceneModelCode, productList);
-        if (triggerEntries != null && triggerEntries.size() > 0) {
+        if (triggerEntries.size() > 0) {
             // 触发标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_TRIGGER_TITLE;
@@ -1329,7 +1382,7 @@ public class SceneManager {
         EScene.conditionTimeEntry conditionTimeEntry = this.getConditionTime(sceneModelCode);
         // 状态条件处理
         List<EScene.conditionStateEntry> conditionStateEntries = this.getConditionState(sceneModelCode, productList);
-        if (conditionTimeEntry != null || (conditionStateEntries != null && conditionStateEntries.size() > 0)) {
+        if (conditionTimeEntry != null || conditionStateEntries.size() > 0) {
             // 条件标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_CONDITION_TITLE;
@@ -1343,7 +1396,7 @@ public class SceneManager {
                 list.add(parameterTime);
             }
             // 状态条件处理
-            if (conditionStateEntries != null && conditionStateEntries.size() > 0) {
+            if (conditionStateEntries.size() > 0) {
                 // 响应设备处理
                 for (EScene.conditionStateEntry conditionStateEntry : conditionStateEntries) {
                     EScene.parameterEntry parameter = new EScene.parameterEntry();
@@ -1356,7 +1409,7 @@ public class SceneManager {
 
         // 响应设备处理
         List<EScene.responseEntry> responseEntries = this.getResponse(sceneModelCode, productList);
-        if (responseEntries != null && responseEntries.size() > 0) {
+        if (responseEntries.size() > 0) {
             // 响应标题处理
             EScene.parameterEntry parameterTitle = new EScene.parameterEntry();
             parameterTitle.type = CScene.SPT_RESPONSE_TITLE;

@@ -27,8 +27,10 @@ import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.databinding.ActivityEditPropertyValueBinding;
 import com.rexense.wholehouse.demoTest.CaConditionEntry;
 import com.rexense.wholehouse.demoTest.IdentifierItemForCA;
+import com.rexense.wholehouse.model.AirConditionerConverter;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
 import com.rexense.wholehouse.presenter.SceneManager;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.QMUITipDialogUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.vise.log.ViseLog;
@@ -44,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EditPropertyValueActivity extends BaseActivity {
+public class EditPropertyValueActivity extends BaseActivity implements View.OnClickListener {
     private ActivityEditPropertyValueBinding mViewBinding;
 
     private IdentifierItemForCA mIdentifier;
@@ -76,17 +78,21 @@ public class EditPropertyValueActivity extends BaseActivity {
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         initStatusBar();
-        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
-        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         mSceneManager = new SceneManager(this);
         mHandler = new CallbackHandler(this);
 
+        initAdapter();
+
+        EventBus.getDefault().register(this);
+
+        mViewBinding.includeToolbar.tvToolbarRight.setText(getString(R.string.nick_name_save));
+        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this);
+
+        // ViseLog.d("aaa = \n" + GsonUtil.toJson(DeviceBuffer.getAllAirConditioner()));
+    }
+
+    private void initAdapter() {
         mList = new ArrayList<>();
         mAdapter = new BaseQuickAdapter<PropertyValue, BaseViewHolder>(R.layout.item_simple_checked, mList) {
             @Override
@@ -113,149 +119,6 @@ public class EditPropertyValueActivity extends BaseActivity {
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         mViewBinding.valueRv.setLayoutManager(layoutManager);
         mViewBinding.valueRv.setAdapter(mAdapter);
-
-        EventBus.getDefault().register(this);
-
-        mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIdentifier.getType() == 1) {
-                    // 属性
-                    if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
-                        String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
-                        Object result = 0;
-                        if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
-                        else result = Integer.parseInt(compareValue);
-
-                        CaConditionEntry.Property property = (CaConditionEntry.Property) mIdentifier.getObject();
-                        property.setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
-                        property.setCompareValue(result);
-                        mIdentifier.setObject(property);
-                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(property.getCompareType()) + compareValue + mViewBinding.unitTv.getText().toString());
-
-                        isUpate = false;
-                        EventBus.getDefault().postSticky(mIdentifier);
-
-                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                        startActivity(intent);
-                    } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
-                        CaConditionEntry.Property property = (CaConditionEntry.Property) mIdentifier.getObject();
-                        PropertyValue value = new PropertyValue();
-                        for (int i = 0; i < mList.size(); i++) {
-                            if (mList.get(i).isChecked()) {
-                                value = mList.get(i);
-                                break;
-                            }
-                        }
-                        String compareValue = value.getValue();
-                        Object result = 0;
-                        if (value.getValue() == null) {
-                            ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
-                            return;
-                        }
-                        if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
-                        else result = Integer.parseInt(compareValue);
-
-                        property.setProductKey(property.getProductKey());
-                        property.setDeviceName(property.getDeviceName());
-                        property.setPropertyName(property.getPropertyName());
-                        property.setCompareType("==");
-                        property.setCompareValue(result);
-
-                        mIdentifier.setValueName(value.getKey());
-                        mIdentifier.setObject(property);
-
-                        isUpate = false;
-                        EventBus.getDefault().postSticky(mIdentifier);
-
-                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                        startActivity(intent);
-                    }
-                } else if (mIdentifier.getType() == 3) {
-                    // 事件
-                    if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
-                        String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
-                        Object result = 0;
-                        if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
-                        else result = Integer.parseInt(compareValue);
-
-                        CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
-                        event.setProductKey(event.getProductKey());
-                        event.setDeviceName(event.getDeviceName());
-                        event.setEventCode(event.getEventCode());
-                        event.setPropertyName(mEventValue.getIdentifier());
-                        event.setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
-                        event.setCompareValue(result);
-
-                        mIdentifier.setValueName(mEventValue.getName());
-                        mIdentifier.setObject(event);
-                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mViewBinding.unitTv.getText().toString());
-
-                        isUpate = false;
-                        EventBus.getDefault().postSticky(mIdentifier);
-
-                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                        startActivity(intent);
-                    } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
-                        CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
-                        if (Constant.KEY_NICK_NAME_PK.contains(event.getProductKey())) {
-                            PropertyValue value = new PropertyValue();
-                            for (int i = 0; i < mList.size(); i++) {
-                                if (mList.get(i).isChecked()) {
-                                    value = mList.get(i);
-                                    break;
-                                }
-                            }
-                            Object compareValue = Integer.parseInt(value.getValue());
-
-                            event.setProductKey(event.getProductKey());
-                            event.setDeviceName(event.getDeviceName());
-                            event.setEventCode(event.getEventCode());
-                            event.setCompareType("==");
-                            event.setCompareValue(compareValue);
-
-                            mIdentifier.setObject(event);
-                            // mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mUnitTV.getText().toString());
-                            mIdentifier.setDesc(getString(R.string.trigger_buttons) + value.getKey());
-
-                            isUpate = false;
-                            EventBus.getDefault().postSticky(mIdentifier);
-
-                            Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                            startActivity(intent);
-                        } else {
-                            PropertyValue value = new PropertyValue();
-                            for (int i = 0; i < mList.size(); i++) {
-                                if (mList.get(i).isChecked()) {
-                                    value = mList.get(i);
-                                    break;
-                                }
-                            }
-
-                            String compareValue = value.getValue();
-                            Object result = 0;
-                            if (value.getValue() == null) {
-                                ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
-                                return;
-                            }
-                            if (compareValue.contains("."))
-                                result = Double.parseDouble(compareValue);
-                            else result = Integer.parseInt(compareValue);
-
-                            event.setCompareValue(result);
-                            mIdentifier.setValueName(value.getKey());
-                            mIdentifier.setObject(event);
-
-                            isUpate = false;
-                            EventBus.getDefault().postSticky(mIdentifier);
-
-                            Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                }
-            }
-        });
     }
 
     private String getCompareTypeString(String compareType) {
@@ -293,7 +156,19 @@ public class EditPropertyValueActivity extends BaseActivity {
     public void update(IdentifierItemForCA item) {
         if (!isUpate) return;
         mIdentifier = item;
-        mViewBinding.includeToolbar.tvToolbarTitle.setText(mIdentifier.getName().trim());
+        ViseLog.d("update = \n" + GsonUtil.toJson(mIdentifier));
+        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(DeviceBuffer.getDeviceInformation(mIdentifier.getIotId()).productKey)) {
+            String identifierJson = GsonUtil.toJson(mIdentifier);
+            if (identifierJson.contains(CTSL.AIRC_Converter_CurrentTemperature_)) {
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.current_temperature);
+            } else if (identifierJson.contains(CTSL.AIRC_Converter_PowerSwitch_)) {
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(R.string.power_switch);
+            } else {
+                mViewBinding.includeToolbar.tvToolbarTitle.setText(mIdentifier.getName().trim());
+            }
+        } else {
+            mViewBinding.includeToolbar.tvToolbarTitle.setText(mIdentifier.getName().trim());
+        }
 
         if (mIdentifier.getObject() instanceof CaConditionEntry.Event) {
             CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
@@ -306,6 +181,175 @@ public class EditPropertyValueActivity extends BaseActivity {
         mSceneManager.queryTSLListForCA(item.getIotId(), 0, mCommitFailureHandler, mResponseErrorHandler, mHandler);
 
         EventBus.getDefault().removeStickyEvent(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mViewBinding.includeToolbar.tvToolbarRight.getId()) {
+            if (mIdentifier.getType() == 1) {
+                // 属性
+                if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
+                    // 温度，滚轮选择
+                    String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
+                    Object result = 0;
+                    if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
+                    else result = Integer.parseInt(compareValue);
+
+                    CaConditionEntry.Property property = (CaConditionEntry.Property) mIdentifier.getObject();
+                    property.setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
+                    property.setCompareValue(result);
+                    mIdentifier.setObject(property);
+                    ViseLog.d("滚轮 = \n" + GsonUtil.toJson(mIdentifier));
+                    if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(property.getProductKey())) {
+                        String propertyName = property.getPropertyName();
+                        if (propertyName.contains("_")) {
+                            String[] propertyNames = propertyName.split("_");
+                            String endPoint = propertyNames[propertyNames.length - 1];
+                            mIdentifier.setDesc(DeviceBuffer.getAirConditioner(mIdentifier.getIotId() + "_" + endPoint).getNickname() + "：" +
+                                    mIdentifier.getName().replace("_" + endPoint, "") + getCompareTypeString(property.getCompareType()) +
+                                    compareValue + mViewBinding.unitTv.getText().toString());
+                        }
+                    } else {
+                        mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(property.getCompareType())
+                                + compareValue + mViewBinding.unitTv.getText().toString());
+                    }
+
+                    isUpate = false;
+                    EventBus.getDefault().postSticky(mIdentifier);
+
+                    Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                    startActivity(intent);
+                } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
+                    // 条目选择
+                    CaConditionEntry.Property property = (CaConditionEntry.Property) mIdentifier.getObject();
+                    PropertyValue value = new PropertyValue();
+                    for (int i = 0; i < mList.size(); i++) {
+                        if (mList.get(i).isChecked()) {
+                            value = mList.get(i);
+                            break;
+                        }
+                    }
+                    String compareValue = value.getValue();
+                    Object result = 0;
+                    if (value.getValue() == null) {
+                        ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
+                        return;
+                    }
+                    if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
+                    else result = Integer.parseInt(compareValue);
+
+                    property.setProductKey(property.getProductKey());
+                    property.setDeviceName(property.getDeviceName());
+                    property.setPropertyName(property.getPropertyName());
+                    property.setCompareType("==");
+                    property.setCompareValue(result);
+
+                    mIdentifier.setValueName(value.getKey());
+                    mIdentifier.setObject(property);
+
+                    isUpate = false;
+                    ViseLog.d("mIdentifier = \n" + GsonUtil.toJson(mIdentifier));
+                    String productKey = DeviceBuffer.getDeviceInformation(mIdentifier.getIotId()).productKey;
+                    if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(productKey)) {
+                        String identifierName = property.getPropertyName();
+                        String[] names = identifierName.split("_");
+                        String endPoint = names[names.length - 1];
+                        AirConditionerConverter.AirConditioner conditioner = DeviceBuffer.getAirConditioner(mIdentifier.getIotId() + "_" + endPoint);
+                        mIdentifier.setDesc(conditioner.getNickname() + "：" + mViewBinding.includeToolbar.tvToolbarTitle.getText().toString() + mIdentifier.getValueName());
+                    } else {
+                        ViseLog.d("mIdentifier = \n" + GsonUtil.toJson(mIdentifier));
+                        if (mIdentifier.getValueName() != null && mIdentifier.getValueName().equals(String.valueOf(property.getCompareValue())))
+                            mIdentifier.setDesc(mIdentifier.getName() + getString(R.string.equal_to) + result + mViewBinding.unitTv.getText().toString());
+                    }
+                    EventBus.getDefault().postSticky(mIdentifier);
+
+                    Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                    startActivity(intent);
+                }
+            } else if (mIdentifier.getType() == 3) {
+                // 事件
+                if (mViewBinding.eventLayout.getVisibility() == View.VISIBLE) {
+                    String compareValue = mEventValueList.get(mViewBinding.compareValueWv.getCurrentIndex());
+                    Object result = 0;
+                    if (compareValue.contains(".")) result = Double.parseDouble(compareValue);
+                    else result = Integer.parseInt(compareValue);
+
+                    CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
+                    event.setProductKey(event.getProductKey());
+                    event.setDeviceName(event.getDeviceName());
+                    event.setEventCode(event.getEventCode());
+                    event.setPropertyName(mEventValue.getIdentifier());
+                    event.setCompareType(mCompareTypes[mViewBinding.compareTypeWv.getCurrentIndex()]);
+                    event.setCompareValue(result);
+
+                    mIdentifier.setValueName(mEventValue.getName());
+                    mIdentifier.setObject(event);
+                    mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mViewBinding.unitTv.getText().toString());
+
+                    isUpate = false;
+                    EventBus.getDefault().postSticky(mIdentifier);
+
+                    Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                    startActivity(intent);
+                } else if (mViewBinding.valueRv.getVisibility() == View.VISIBLE) {
+                    CaConditionEntry.Event event = (CaConditionEntry.Event) mIdentifier.getObject();
+                    if (Constant.KEY_NICK_NAME_PK.contains(event.getProductKey())) {
+                        PropertyValue value = new PropertyValue();
+                        for (int i = 0; i < mList.size(); i++) {
+                            if (mList.get(i).isChecked()) {
+                                value = mList.get(i);
+                                break;
+                            }
+                        }
+                        Object compareValue = Integer.parseInt(value.getValue());
+
+                        event.setProductKey(event.getProductKey());
+                        event.setDeviceName(event.getDeviceName());
+                        event.setEventCode(event.getEventCode());
+                        event.setCompareType("==");
+                        event.setCompareValue(compareValue);
+
+                        mIdentifier.setObject(event);
+                        // mIdentifier.setDesc(mIdentifier.getName() + getCompareTypeString(event.getCompareType()) + compareValue + mUnitTV.getText().toString());
+                        mIdentifier.setDesc(getString(R.string.trigger_buttons) + value.getKey());
+
+                        isUpate = false;
+                        EventBus.getDefault().postSticky(mIdentifier);
+
+                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                        startActivity(intent);
+                    } else {
+                        PropertyValue value = new PropertyValue();
+                        for (int i = 0; i < mList.size(); i++) {
+                            if (mList.get(i).isChecked()) {
+                                value = mList.get(i);
+                                break;
+                            }
+                        }
+
+                        String compareValue = value.getValue();
+                        Object result = 0;
+                        if (value.getValue() == null) {
+                            ToastUtils.showLongToast(EditPropertyValueActivity.this, R.string.pls_select_an_condition);
+                            return;
+                        }
+                        if (compareValue.contains("."))
+                            result = Double.parseDouble(compareValue);
+                        else result = Integer.parseInt(compareValue);
+
+                        event.setCompareValue(result);
+                        mIdentifier.setValueName(value.getKey());
+                        mIdentifier.setObject(event);
+
+                        isUpate = false;
+                        EventBus.getDefault().postSticky(mIdentifier);
+
+                        Intent intent = new Intent(EditPropertyValueActivity.this, NewSceneActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+        }
     }
 
     private static class CallbackHandler extends Handler {
@@ -323,7 +367,7 @@ public class EditPropertyValueActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_TSL_LIST: {
                     JSONObject o = JSON.parseObject((String) msg.obj);
                     JSONObject abilityDsl = o.getJSONObject("abilityDsl");
-                    ViseLog.d(new Gson().toJson(abilityDsl));
+                    ViseLog.d(GsonUtil.toJson(abilityDsl));
                     switch (activity.mIdentifier.getType()) {
                         case 1: {
                             // 属性
@@ -350,7 +394,19 @@ public class EditPropertyValueActivity extends BaseActivity {
                                         activity.mViewBinding.valueRv.setVisibility(View.GONE);
                                         activity.mViewBinding.eventLayout.setVisibility(View.VISIBLE);
                                         activity.mEventValue = new EventValue();
-                                        activity.mViewBinding.nameTv.setText(activity.mIdentifier.getName());
+                                        String productKey = DeviceBuffer.getDeviceInformation(activity.mIdentifier.getIotId()).productKey;
+                                        if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(productKey)) {
+                                            String json = GsonUtil.toJson(activity.mIdentifier);
+                                            if (json.contains(CTSL.AIRC_Converter_PowerSwitch_)) {
+                                                activity.mViewBinding.nameTv.setText(R.string.power_switch);
+                                            } else if (json.contains(CTSL.AIRC_Converter_CurrentTemperature_)) {
+                                                activity.mViewBinding.nameTv.setText(R.string.current_temperature);
+                                            } else {
+                                                activity.mViewBinding.nameTv.setText(activity.mIdentifier.getName());
+                                            }
+                                        } else {
+                                            activity.mViewBinding.nameTv.setText(activity.mIdentifier.getName());
+                                        }
                                         for (Map.Entry<String, Object> map : dataType.getJSONObject("specs").entrySet()) {
                                             if ("max".equals(map.getKey()))
                                                 activity.mEventValue.setMax((String) map.getValue());
@@ -432,6 +488,7 @@ public class EditPropertyValueActivity extends BaseActivity {
                         case 3: {
                             // 事件
                             JSONArray array = abilityDsl.getJSONArray("events");
+                            ViseLog.d("事件 = \n" + GsonUtil.toJson(array));
                             for (int i = 0; i < array.size(); i++) {
                                 JSONObject o1 = array.getJSONObject(i);
                                 CaConditionEntry.Event event = (CaConditionEntry.Event) activity.mIdentifier.getObject();
@@ -598,6 +655,54 @@ public class EditPropertyValueActivity extends BaseActivity {
                                             value2.setKey(object != null ? object.getString("2") : activity.getString(R.string.key_2));
                                             value2.setValue("2");
                                             activity.mList.add(value2);
+                                        } else if (CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF.equals(event.getProductKey())) {
+                                            PropertyValue value1 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 3) {
+                                                value1.setChecked(true);
+                                            }
+                                            value1.setKey(object != null ? object.getString("3") : activity.getString(R.string.key_3));
+                                            value1.setValue("3");
+                                            activity.mList.add(value1);
+
+                                            PropertyValue value2 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 4) {
+                                                value2.setChecked(true);
+                                            }
+                                            value2.setKey(object != null ? object.getString("4") : activity.getString(R.string.key_4));
+                                            value2.setValue("4");
+                                            activity.mList.add(value2);
+                                        } else if (CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF.equals(event.getProductKey())) {
+                                            PropertyValue value3 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 3) {
+                                                value3.setChecked(true);
+                                            }
+                                            value3.setKey(object != null ? object.getString("3") : activity.getString(R.string.key_3));
+                                            value3.setValue("3");
+                                            activity.mList.add(value3);
+
+                                            PropertyValue value4 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 4) {
+                                                value4.setChecked(true);
+                                            }
+                                            value4.setKey(object != null ? object.getString("4") : activity.getString(R.string.key_4));
+                                            value4.setValue("4");
+                                            activity.mList.add(value4);
+
+                                            PropertyValue value5 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 5) {
+                                                value5.setChecked(true);
+                                            }
+                                            value5.setKey(object != null ? object.getString("4") : activity.getString(R.string.key_5));
+                                            value5.setValue("5");
+                                            activity.mList.add(value5);
+
+                                            PropertyValue value6 = new PropertyValue();
+                                            if (event.getCompareValue() != null && (int) event.getCompareValue() == 6) {
+                                                value6.setChecked(true);
+                                            }
+                                            value6.setKey(object != null ? object.getString("6") : activity.getString(R.string.key_6));
+                                            value6.setValue("6");
+                                            activity.mList.add(value6);
                                         }
 
                                         activity.mAdapter.notifyDataSetChanged();

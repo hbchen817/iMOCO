@@ -233,6 +233,11 @@ public class MoreGatewayActivity extends BaseActivity {
                                     mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
                                     mDeviceMap.put(e.iotId, e.iotId);
                                     break;
+                                case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF:
+                                    SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, null);
+                                    SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, null);
+                                    mDeviceMap.put(e.iotId, e.iotId);
+                                    break;
                                 default:
                                     break;
                             }

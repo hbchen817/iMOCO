@@ -25,6 +25,7 @@ import com.rexense.wholehouse.contract.CScene;
 import com.rexense.wholehouse.contract.CTSL;
 import com.rexense.wholehouse.databinding.ActivityMoreSubdeviceBinding;
 import com.rexense.wholehouse.event.RefreshData;
+import com.rexense.wholehouse.model.EAPIChannel;
 import com.rexense.wholehouse.model.EScene;
 import com.rexense.wholehouse.presenter.CloudDataParser;
 import com.rexense.wholehouse.presenter.DeviceBuffer;
@@ -37,7 +38,9 @@ import com.rexense.wholehouse.contract.Constant;
 import com.rexense.wholehouse.model.EDevice;
 import com.rexense.wholehouse.model.EHomeSpace;
 import com.rexense.wholehouse.model.ETSL;
+import com.rexense.wholehouse.sdk.APIChannel;
 import com.rexense.wholehouse.utility.Dialog;
+import com.rexense.wholehouse.utility.GsonUtil;
 import com.rexense.wholehouse.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
@@ -115,15 +118,15 @@ public class MoreSubdeviceActivity extends BaseActivity {
                             // 如果自动场景获取结束则开始获取手动场景
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 mSceneType = CScene.TYPE_MANUAL;
-                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                            }
-                            if (mSceneType.equals(CScene.TYPE_MANUAL)) {
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            } else if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据
                                 //mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
                                 EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
                                 if (deviceEntry != null)
-                                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName,
+                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                                 else
                                     ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
                             }
@@ -333,10 +336,16 @@ public class MoreSubdeviceActivity extends BaseActivity {
         OnClickListener unBindListener = new OnClickListener() {
             @Override
             public void onClick(View v) {
+                StringBuilder sb = new StringBuilder();
+                if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mProductKey) &&
+                        DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                    sb.append(getString(R.string.unbind_dev_will_del_all_airconditioner));
+                }
+                sb.append(getString(R.string.dialog_unbind));
                 AlertDialog.Builder builder = new AlertDialog.Builder(MoreSubdeviceActivity.this);
                 builder.setIcon(R.drawable.dialog_quest);
                 builder.setTitle(R.string.dialog_title);
-                builder.setMessage(R.string.dialog_unbind);
+                builder.setMessage(sb.toString());
                 builder.setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -383,31 +392,103 @@ public class MoreSubdeviceActivity extends BaseActivity {
 
     private void unbindDevice() {
         DeviceBuffer.removeExtendedInfo(mIOTId);
-        mSceneManager.delExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, null, null, null);
         switch (mProductKey) {
-            case CTSL.PK_LIGHT:
-            case CTSL.PK_ONE_SCENE_SWITCH:
-            case CTSL.PK_TWO_SCENE_SWITCH:
-            case CTSL.PK_THREE_SCENE_SWITCH:
-            case CTSL.PK_FOUR_SCENE_SWITCH:
-            case CTSL.PK_FOUR_SCENE_SWITCH_LF:
-            case CTSL.PK_SIX_SCENE_SWITCH:
+            case CTSL.PK_FOURWAYSWITCH:
+            case CTSL.PK_FOURWAYSWITCH_LF:
+            case CTSL.PK_FOURWAYSWITCH_2:
+            case CTSL.PK_TWOWAYSWITCH:
+            case CTSL.PK_TWOWAYSWITCH_HY:
+            case CTSL.PK_TWOWAYSWITCH_MODULE_HY:
+            case CTSL.PK_TWOWAYSWITCH_YQS_XB:
+            case CTSL.PK_TWOWAYSWITCH_YQS_ZR:
+            case CTSL.PK_TWOWAYSWITCH_LF:
+            case CTSL.PK_TWOWAY_DANHUO_RY:
+            case CTSL.PK_ONEWAYSWITCH_HY:
+            case CTSL.PK_ONEWAYSWITCH_YQS_XB:
+            case CTSL.PK_ONEWAYSWITCH_YQS_ZR:
+            case CTSL.PK_ONEWAYSWITCH_LF:
+            case CTSL.PK_ONEWAY_DANHUO_RY:
+            case CTSL.PK_ONEWAYSWITCH:
+            case CTSL.PK_LIGHT: {
+                // 按键开关处理
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME};
+                delExtendedProperty(keys, 0);
+                break;
+            }
+            case CTSL.PK_ONE_SCENE_SWITCH: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_1};
+                delExtendedProperty(keys, 0);
+                break;
+            }
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
+            case CTSL.PK_TWO_SCENE_SWITCH: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_1, CTSL.SCENE_SWITCH_KEY_CODE_2};
+                delExtendedProperty(keys, 0);
+                break;
+            }
+            case CTSL.PK_THREE_SCENE_SWITCH: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_1,
+                        CTSL.SCENE_SWITCH_KEY_CODE_2, CTSL.SCENE_SWITCH_KEY_CODE_3};
+                delExtendedProperty(keys, 0);
+                break;
+            }
             case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
+            case CTSL.PK_FOUR_SCENE_SWITCH_LF:
+            case CTSL.PK_FOUR_SCENE_SWITCH: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_1,
+                        CTSL.SCENE_SWITCH_KEY_CODE_2, CTSL.SCENE_SWITCH_KEY_CODE_3, CTSL.SCENE_SWITCH_KEY_CODE_4};
+                delExtendedProperty(keys, 0);
+                break;
+            }
             case CTSL.PK_U_SIX_SCENE_SWITCH:
             case CTSL.PK_U_SIX_SCENE_SWITCH_HY:
             case CTSL.PK_SIX_SCENE_SWITCH_YQS_XB:
             case CTSL.PK_SIX_SCENE_SWITCH_YQS_ZR:
-            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                mSceneType = CScene.TYPE_AUTOMATIC;
-                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50, mCommitFailureHandler, mResponseErrorHandler, this.mAPIDataHandler);
+            case CTSL.PK_SIX_SCENE_SWITCH: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_1,
+                        CTSL.SCENE_SWITCH_KEY_CODE_2, CTSL.SCENE_SWITCH_KEY_CODE_3, CTSL.SCENE_SWITCH_KEY_CODE_4,
+                        CTSL.SCENE_SWITCH_KEY_CODE_5, CTSL.SCENE_SWITCH_KEY_CODE_6};
+                delExtendedProperty(keys, 0);
                 break;
+            }
+            case CTSL.PK_FOUR_TWO_SCENE_SWITCH_LF: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_3, CTSL.SCENE_SWITCH_KEY_CODE_4};
+                delExtendedProperty(keys, 0);
+                break;
+            }
+            case CTSL.PK_SIX_FOUR_SCENE_SWITCH_LF: {
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_3, CTSL.SCENE_SWITCH_KEY_CODE_4,
+                        CTSL.SCENE_SWITCH_KEY_CODE_5, CTSL.SCENE_SWITCH_KEY_CODE_6};
+                delExtendedProperty(keys, 0);
+                break;
+            }
+            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
+                String[] keys = new String[]{Constant.TAG_DEV_KEY_NICKNAME, CTSL.SCENE_SWITCH_KEY_CODE_5, CTSL.SCENE_SWITCH_KEY_CODE_6};
+                delExtendedProperty(keys, 0);
+                break;
+            case CTSL.PK_AIRCOMDITION_CONVERTER: {
+                // 鸿雁协议转换器
+                if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                    String key = "virtual_device_nick_names";
+                    delExtendedPropertyForAirCConverter(key);
+                } else {
+                    EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                    if (deviceEntry != null) {
+                        mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        ToastUtils.showShortToast(this, R.string.pls_try_again_later);
+                    }
+                }
+                break;
+            }
             default:
                 //mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
                 EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
                 if (deviceEntry != null) {
-                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName,
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 } else {
                     ToastUtils.showShortToast(this, R.string.pls_try_again_later);
                 }
@@ -415,6 +496,76 @@ public class MoreSubdeviceActivity extends BaseActivity {
         }
     }
 
+    // 清除设备所有扩展信息
+    private void delExtendedProperty(String[] keys, int pos) {
+        SceneManager.delExtendedProperty(this, mIOTId, keys[pos], new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(MoreSubdeviceActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                if (errorEntry.code == 6741) {
+                    if (pos < keys.length - 1) {
+                        delExtendedProperty(keys, pos + 1);
+                    } else {
+                        mSceneType = CScene.TYPE_AUTOMATIC;
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
+                } else
+                    responseError(MoreSubdeviceActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                if (pos < keys.length - 1) {
+                    delExtendedProperty(keys, pos + 1);
+                } else {
+                    mSceneType = CScene.TYPE_AUTOMATIC;
+                    mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_AUTOMATIC, 1, 50,
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                }
+            }
+        });
+    }
+
+    private void delExtendedPropertyForAirCConverter(String key) {
+        SceneManager.delExtendedProperty(this, mIOTId, key, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(MoreSubdeviceActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                if (errorEntry.code == 6741) {
+                    if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mProductKey))
+                        DeviceBuffer.initAirConditioner();
+                    EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                    if (deviceEntry != null) {
+                        mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    } else {
+                        ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                    }
+                } else
+                    responseError(MoreSubdeviceActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                if (CTSL.PK_AIRCOMDITION_CONVERTER.equals(mProductKey))
+                    DeviceBuffer.initAirConditioner();
+                EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
+                if (deviceEntry != null) {
+                    mUserCenter.unbindSubDevice(deviceEntry.productKey, deviceEntry.deviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                } else {
+                    ToastUtils.showShortToast(MoreSubdeviceActivity.this, R.string.pls_try_again_later);
+                }
+            }
+        });
+    }
 
     // 嵌入式状态栏
     private void initStatusBar() {
