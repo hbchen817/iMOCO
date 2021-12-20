@@ -339,7 +339,7 @@ public class LocalActionIdentifierActivity extends BaseActivity {
             JSONObject command1 = new JSONObject();
             command1.put("FanMode", "");
             mList.add(initStateEAction(mDevIot, getString(R.string.power_switch), DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                    "1", "011F", command1));
+                    "1", "011E", command1));
             // 风速
             JSONObject command2 = new JSONObject();
             command2.put("FanMode", "");

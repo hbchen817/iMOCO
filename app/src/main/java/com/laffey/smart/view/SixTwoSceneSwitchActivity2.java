@@ -42,6 +42,7 @@ import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.PluginHelper;
+import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.sdk.APIChannel;
@@ -114,6 +115,7 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @BindView(R.id.root_layout)
     LinearLayout mRootLayout;
 
+    private final String LOCAL_SCENE_CALL_BACK = "SixTwoSceneSwitchActivity2LocalSceneCallback";
     private final int BIND_SCENE_REQUEST_CODE = 10000;
     private final int EDIT_LOCAL_SCENE = 10001;
 
@@ -146,13 +148,15 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     private ItemSceneInGateway m5Scene;
     private ItemSceneInGateway m6Scene;
 
+    private long mDoubleClickedTime = 0;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
         if (!super.updateState(propertyEntry)) {
             return false;
         }
-
+        QMUITipDialogUtil.dismiss();
         if (propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_1) != null && propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_1).length() > 0) {
             mState1 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_1));
             //mSwitch1.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.SIX_SCENE_SWITCH_P_POWER_1, propertyEntry.getPropertyValue(CTSL.SIX_SCENE_SWITCH_P_POWER_1)));
@@ -305,12 +309,12 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
 
         mTimerLayout.setOnClickListener(this);
         mBackLightLayout.setOnClickListener(this);
-        mKey1TV.setOnClickListener(this);
-        mKey2TV.setOnClickListener(this);
-        mKey3TV.setOnClickListener(this);
-        mKey4TV.setOnClickListener(this);
-        mKey5TV.setOnClickListener(this);
-        mKey6TV.setOnClickListener(this);
+        mKey1TV.setOnLongClickListener(this);
+        mKey2TV.setOnLongClickListener(this);
+        mKey3TV.setOnLongClickListener(this);
+        mKey4TV.setOnLongClickListener(this);
+        mKey5TV.setOnLongClickListener(this);
+        mKey6TV.setOnLongClickListener(this);
 
         mSceneManager = new SceneManager(this);
     }
@@ -329,39 +333,55 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.switch1) {
-            if (mState1 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
-            } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState1 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_1}, new String[]{"" + CTSL.STATUS_ON});
+                }
             }
+            mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.switch2) {
-            if (mState2 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
-            } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState2 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_2}, new String[]{"" + CTSL.STATUS_ON});
+                }
             }
+            mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.switch3) {
-            if (mState3 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
-            } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState3 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_3}, new String[]{"" + CTSL.STATUS_ON});
+                }
             }
+            mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.switch4) {
-            if (mState4 == CTSL.STATUS_ON) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
-            } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState4 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_P_POWER_4}, new String[]{"" + CTSL.STATUS_ON});
+                }
             }
+            mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.mSceneContentText2) {
             // 场景按键5
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m5Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
-                } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2), m5Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId, m5Scene.getSceneDetail().getSceneId(), null);
+                if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                    if (m5Scene != null) {
+                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId, m5Scene.getSceneDetail().getSceneId(), null);
+                    }
                 }
+                mDoubleClickedTime = System.currentTimeMillis();
             } else {
                 if (mFirstManualSceneId != null) {
                     mPressedKey = "5";
@@ -373,13 +393,13 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
         } else if (view.getId() == R.id.mSceneContentText5) {
             // 场景按键6
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m6Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
-                } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2), m6Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId, m6Scene.getSceneDetail().getSceneId(), null);
+                if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                    if (m6Scene != null) {
+                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId, m6Scene.getSceneDetail().getSceneId(), null);
+                    }
                 }
+                mDoubleClickedTime = System.currentTimeMillis();
             } else {
                 if (mSecondManualSceneId != null) {
                     mPressedKey = "6";
@@ -393,29 +413,15 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             PluginHelper.cloudTimer(SixTwoSceneSwitchActivity2.this, mIOTId, mProductKey);
         } else if (view.getId() == R.id.back_light_layout) {
             // 背光
-            if (mBackLightState == CTSL.STATUS_OFF) {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
-            } else {
-                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_backlight);
+                if (mBackLightState == CTSL.STATUS_OFF) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_ON});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.SIX_SCENE_SWITCH_BackLight}, new String[]{"" + CTSL.STATUS_OFF});
+                }
             }
-        } else if (view.getId() == R.id.key_1_tv) {
-            // 按键1
-            showKeyNameDialogEdit(R.id.key_1_tv);
-        } else if (view.getId() == R.id.key_2_tv) {
-            // 按键2
-            showKeyNameDialogEdit(R.id.key_2_tv);
-        } else if (view.getId() == R.id.key_3_tv) {
-            // 按键3
-            showKeyNameDialogEdit(R.id.key_3_tv);
-        } else if (view.getId() == R.id.key_4_tv) {
-            // 按键4
-            showKeyNameDialogEdit(R.id.key_4_tv);
-        } else if (view.getId() == R.id.key_5_tv) {
-            // 按键5
-            showKeyNameDialogEdit(R.id.key_5_tv);
-        } else if (view.getId() == R.id.key_6_tv) {
-            // 按键6
-            showKeyNameDialogEdit(R.id.key_6_tv);
+            mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.associated_layout) {
             // 双控
             showAssociatedPopupWindow();
@@ -705,9 +711,12 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 if (m5Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac, m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                else {
+                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SCENE_SWITCH_KEY_CODE_5, BIND_SCENE_REQUEST_CODE);
+                }
             } else {
                 if (mFirstManualSceneId != null) {
-                    EditSceneBindActivity.start(this, mKeyName5, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, mSceneContentText2.getText().toString());
+                    EditSceneBindActivity.start(this, mKeyName5, mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_5, mSceneContentText2.getText().toString());
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
@@ -715,11 +724,32 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 if (m6Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac, m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                else {
+                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SCENE_SWITCH_KEY_CODE_6, BIND_SCENE_REQUEST_CODE);
+                }
             } else {
                 if (mSecondManualSceneId != null) {
                     EditSceneBindActivity.start(this, mKeyName6, mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, mSceneContentText5.getText().toString());
                 }
             }
+        } else if (view.getId() == R.id.key_1_tv) {
+            // 按键1
+            showKeyNameDialogEdit(R.id.key_1_tv);
+        } else if (view.getId() == R.id.key_2_tv) {
+            // 按键2
+            showKeyNameDialogEdit(R.id.key_2_tv);
+        } else if (view.getId() == R.id.key_3_tv) {
+            // 按键3
+            showKeyNameDialogEdit(R.id.key_3_tv);
+        } else if (view.getId() == R.id.key_4_tv) {
+            // 按键4
+            showKeyNameDialogEdit(R.id.key_4_tv);
+        } else if (view.getId() == R.id.key_5_tv) {
+            // 按键5
+            showKeyNameDialogEdit(R.id.key_5_tv);
+        } else if (view.getId() == R.id.key_6_tv) {
+            // 按键6
+            showKeyNameDialogEdit(R.id.key_6_tv);
         }
         return true;
     }
@@ -854,11 +884,43 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @Override
     protected void onResume() {
         super.onResume();
+        addEventCallbackHandler();
         if (mGatewayMac == null || mGatewayMac.length() == 0)
             getGatewayId(mIOTId);
         else {
             querySceneName();
         }
+    }
+
+    private void addEventCallbackHandler() {
+        RealtimeDataReceiver.addEventCallbackHandler(LOCAL_SCENE_CALL_BACK, new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == Constant.MSG_CALLBACK_LNEVENTNOTIFY) {
+                    // 处理触发手动场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("InvokeLocalSceneNotification".equals(identifier)) {
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        QMUITipDialogUtil.dismiss();
+                        if ("0".equals(status)) {
+                            String name = DeviceBuffer.getScene(value.getString("SceneId")).getSceneDetail().getName();
+                            if (name != null && name.length() > 0) {
+                                String tip = String.format(getString(R.string.main_scene_execute_hint_2), name);
+                                ToastUtils.showLongToast(SixTwoSceneSwitchActivity2.this, tip);
+                            } else {
+                                ToastUtils.showLongToast(SixTwoSceneSwitchActivity2.this, R.string.perform_scene);
+                            }
+                        } else {
+                            ToastUtils.showLongToast(SixTwoSceneSwitchActivity2.this, R.string.scene_do_fail);
+                        }
+                    }
+                }
+                return false;
+            }
+        }));
     }
 
     @Override
@@ -874,6 +936,13 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 ToastUtils.showLongToast(this, R.string.bind_scene_success);
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
+        RealtimeDataReceiver.deleteCallbackHandler(LOCAL_SCENE_CALL_BACK);
     }
 }
 

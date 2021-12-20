@@ -20,6 +20,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.view.LoginActivity;
 import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
@@ -75,6 +76,24 @@ public class APIChannel {
         // 获取Client实例并发送请求
         this.printfRequestInfo(request, "Started to call the method[send] of API channel, the request information", 1);
         IoTAPIClient ioTAPIClient = new IoTAPIClientFactory().getClient();
+        if (ioTAPIClient == null) {
+            if (mResponseErrorHandler != null) {
+                EAPIChannel.responseErrorEntry responseErrorEntry = new EAPIChannel.responseErrorEntry();
+                responseErrorEntry.path = entry.path;
+                responseErrorEntry.version = entry.version;
+                responseErrorEntry.authType = entry.authType;
+                responseErrorEntry.scheme = entry.scheme;
+                responseErrorEntry.parameters = new HashMap<>();
+                responseErrorEntry.message = "ioTAPIClient == null，请重试！";
+                responseErrorEntry.localizedMsg = "ioTAPIClient == null，请重试！";
+                Message msg = new Message();
+                msg.what = Constant.MSG_CALLBACK_APIRESPONSEERROR;
+                msg.arg1 = mCallbackMessageType;
+                msg.obj = responseErrorEntry;
+                mResponseErrorHandler.sendMessage(msg);
+            }
+            return;
+        }
         ioTAPIClient.send(request, new IoTCallback() {
             @Override
             public void onFailure(IoTRequest request, Exception e) {
@@ -185,6 +204,25 @@ public class APIChannel {
         // 获取Client实例并发送请求
         this.printfRequestInfo(request, "Started to call the method[send] of API channel, the request information", 1);
         IoTAPIClient ioTAPIClient = new IoTAPIClientFactory().getClient();
+        if (ioTAPIClient == null) {
+            if (callback != null) {
+                EAPIChannel.responseErrorEntry responseErrorEntry = new EAPIChannel.responseErrorEntry();
+                responseErrorEntry.path = entry.path;
+                responseErrorEntry.version = entry.version;
+                responseErrorEntry.authType = entry.authType;
+                responseErrorEntry.scheme = entry.scheme;
+                responseErrorEntry.parameters = new HashMap<>();
+                responseErrorEntry.message = "ioTAPIClient == null，请重试！";
+                responseErrorEntry.localizedMsg = "ioTAPIClient == null，请重试！";
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onResponseError(responseErrorEntry);
+                    }
+                });
+            }
+            return;
+        }
         ioTAPIClient.send(request, new IoTCallback() {
             @Override
             public void onFailure(IoTRequest request, Exception e) {

@@ -86,12 +86,50 @@ public class SubGwInfoActivity extends BaseActivity implements View.OnClickListe
         mViewBinding.subGwNameTv.setText(mSubGwEntry.getNickname());
         mViewBinding.subGwStateTv.setText(mStateMap.get(mSubGwEntry.getState()));
         mViewBinding.subGwMacTv.setText(mSubGwEntry.getMac());
-        mViewBinding.subGwBindtimeTv.setText(mSubGwEntry.getCreateTime());
         mViewBinding.subGwVerTv.setText(mSubGwEntry.getFirmwareVersion());
+
+        if (mSubGwEntry.getActivateTime() == null ||
+                mSubGwEntry.getActivateTime().length() == 0) {
+            mViewBinding.bindTimeTitleTv.setText(R.string.create_time);
+            mViewBinding.subGwBindtimeTv.setText(mSubGwEntry.getCreateTime());
+        } else {
+            mViewBinding.bindTimeTitleTv.setText(R.string.activate_time);
+            mViewBinding.subGwBindtimeTv.setText(mSubGwEntry.getActivateTime());
+        }
 
         mViewBinding.subGwNameTv.setOnClickListener(this);
         mViewBinding.subGwNameIv.setOnClickListener(this);
         mViewBinding.unbindLayout.setOnClickListener(this);
+
+        RealtimeDataReceiver.addEventCallbackHandler("DetailGatewayCallback", new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == Constant.MSG_CALLBACK_LNEVENTNOTIFY) {
+                    // 处理触发手动场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    ViseLog.d("jsonObject = \n" + GsonUtil.toJson(jsonObject));
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("SubGatewayStatusNotification".equals(identifier)) {
+                        String status = value.getString("Status");
+                        String mac = value.getString("Mac");
+                        // status  1: 在线  3: 离线
+                        synchronized (DetailGatewayActivity.class) {
+                            if (mac.equals(mSubGwEntry.getMac())) {
+                                if ("1".equals(status)) {
+                                    mViewBinding.subGwStateTv.setText(R.string.connection_status_online);
+                                } else if ("3".equals(status)) {
+                                    mViewBinding.subGwStateTv.setText(R.string.connection_status_offline);
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        }));
+        SceneManager.querySubGatewayStatusService(this, mGwId,
+                mSubGwEntry.getMac(), null);
     }
 
     // 嵌入式状态栏
@@ -117,18 +155,21 @@ public class SubGwInfoActivity extends BaseActivity implements View.OnClickListe
             showSubGwNameDialogEdit();
         } else if (v.getId() == mViewBinding.unbindLayout.getId()) {
             // 解绑子网关
-            DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //deleteSubGw();
-                    JSONObject object = new JSONObject();
-                    object.put("Mac", mSubGwEntry.getMac());
-                    object.put("Operate", "D");
-                    /*SceneManager.invokeService(mGwId, "OperateSubGatewayService", object, 1,
-                            mCommitFailureHandler, mResponseErrorHandler, new Handler());*/
-                    deleteSubGw();
-                }
-            }, getString(R.string.whether_to_del_sub_gw), getString(R.string.dialog_title));
+            DialogUtils.showConfirmDialog(this, R.string.dialog_title, R.string.whether_to_del_sub_gw,
+                    R.string.dialog_confirm, R.string.dialog_cancel, new DialogUtils.Callback() {
+                        @Override
+                        public void positive() {
+                            JSONObject object = new JSONObject();
+                            object.put("Mac", mSubGwEntry.getMac());
+                            object.put("Operate", "D");
+                            deleteSubGw();
+                        }
+
+                        @Override
+                        public void negative() {
+
+                        }
+                    });
         }
     }
 
@@ -279,5 +320,11 @@ public class SubGwInfoActivity extends BaseActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         RealtimeDataReceiver.deleteCallbackHandler("SubGwCallback");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayCallback");
     }
 }

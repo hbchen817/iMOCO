@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -84,6 +85,10 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
     TextView mKey5TV;
     @BindView(R.id.key_6_tv)
     TextView mKey6TV;
+    @BindView(R.id.battery_layout)
+    LinearLayout mBatteryLayout;
+    @BindView(R.id.battery_value_tv)
+    TextView mBatteryValueTV;
 
     private final int EDIT_LOCAL_SCENE = 10001;
     private final int BIND_SCENE_REQUEST_CODE = 10000;
@@ -143,6 +148,11 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                     break;
                 }
             }
+        }
+
+        if (propertyEntry.getPropertyValue(CTSL.BATTERY) != null && propertyEntry.getPropertyValue(CTSL.BATTERY).length() > 0) {
+            int battery = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.BATTERY));
+            mBatteryValueTV.setText(String.valueOf(battery));
         }
         return true;
     }
@@ -648,7 +658,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         if (view.getId() == R.id.mSceneContentText1) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName5, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_1,
                             mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
                             m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -661,7 +671,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         } else if (view.getId() == R.id.mSceneContentText2) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m2Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName6, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
                             m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -674,7 +684,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         } else if (view.getId() == R.id.mSceneContentText3) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m3Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName3, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey3TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_3,
                             mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
                             m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -687,7 +697,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         } else if (view.getId() == R.id.mSceneContentText4) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m4Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName4, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey4TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_4,
                             mSceneContentText4.getText().toString(), mGatewayId, mGatewayMac,
                             m4Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -700,7 +710,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         } else if (view.getId() == R.id.mSceneContentText5) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m5Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName5, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_5,
                             mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac,
                             m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -714,7 +724,7 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         } else if (view.getId() == R.id.mSceneContentText6) {
             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
                 if (m6Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName6, mIOTId,
+                    EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_6,
                             mSceneContentText6.getText().toString(), mGatewayId, mGatewayMac,
                             m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
@@ -970,6 +980,10 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
         mSceneContentText6.setText(R.string.no_bind_scene);
         for (ItemSceneInGateway scene : map.values()) {
             if (scene.getAppParams() == null) continue;
+            String switchIotId = scene.getAppParams().getString("switchIotId");
+            if (switchIotId == null || switchIotId.length() == 0) {
+                continue;
+            } else if (!switchIotId.contains(mIOTId)) continue;
             String key = scene.getAppParams().getString("key");
             if (key == null) continue;
             if (key.contains(CTSL.SCENE_SWITCH_KEY_CODE_1)) {

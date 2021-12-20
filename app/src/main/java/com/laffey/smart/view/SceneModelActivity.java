@@ -246,49 +246,43 @@ public class SceneModelActivity extends BaseActivity {
         scene.setSceneDetail(createItemScene(mParameterList, mSceneModelCode));
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
-        RetrofitUtil.getInstance().addScene(this, scene)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
+        ViseLog.d("开门亮灯 = \n" + GsonUtil.toJson(scene));
 
+        addScene(scene);
+    }
+
+    private void addScene(ItemSceneInGateway scene) {
+        SceneManager.addScene(this, scene, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                QMUITipDialogUtil.dismiss();
+                int code = response.getInteger("code");
+                String msg = response.getString("message");
+                boolean result = response.getBoolean("result");
+                String sceneId = response.getString("sceneId");
+                if (code == 200) {
+                    if (result) {
+                        SceneManager.manageSceneService(SceneModelActivity.this, mGatewayEntry.iotId, sceneId, 1, null);
+                        setResult(Constant.ADD_LOCAL_SCENE_FOR_SCENE_MODEL);
+                        finish();
+                    } else {
+                        if (msg == null || msg.length() == 0) {
+                            ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
+                        } else
+                            ToastUtils.showLongToast(mActivity, msg);
                     }
+                } else {
+                    RetrofitUtil.showErrorMsg(SceneModelActivity.this, response);
+                }
+            }
 
-                    @Override
-                    public void onNext(@NonNull JSONObject response) {
-                        QMUITipDialogUtil.dismiss();
-                        int code = response.getInteger("code");
-                        String msg = response.getString("message");
-                        boolean result = response.getBoolean("result");
-                        String sceneId = response.getString("sceneId");
-                        if (code == 200) {
-                            if (result) {
-                                if (!Constant.IS_TEST_DATA)
-                                    mSceneManager.manageSceneService(mGatewayEntry.iotId, sceneId, 1, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
-                                setResult(Constant.ADD_LOCAL_SCENE_FOR_SCENE_MODEL);
-                                finish();
-                            } else {
-                                if (msg == null || msg.length() == 0) {
-                                    ToastUtils.showLongToast(mActivity, R.string.pls_try_again_later);
-                                } else
-                                    ToastUtils.showLongToast(mActivity, msg);
-                            }
-                        } else {
-                            RetrofitUtil.showErrorMsg(SceneModelActivity.this, response);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(SceneModelActivity.this, e.getMessage());
+            }
+        });
     }
 
     // 将信息整理生成ItemScene对象
@@ -324,6 +318,7 @@ public class SceneModelActivity extends BaseActivity {
                     case CTSL.PK_GASSENSOR:// 燃气感应器
                     case CTSL.PK_WATERSENSOR:// 水浸传感器
                     case CTSL.PK_SMOKESENSOR:// 烟雾传感器
+                    case CTSL.PK_DOORSENSOR:// 门磁传感器
                     case CTSL.PK_PIRSENSOR: {
                         // 人体红外感应器
                         conditionParameter.setCompareType("==");
@@ -387,10 +382,11 @@ public class SceneModelActivity extends BaseActivity {
                     }
                 }
                 timer.setCron(cron.toString());
-            } else if (parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && !parameter.responseEntry.isSelected) {
+            } else if (parameter.type == CScene.SPT_RESPONSE && parameter.responseEntry != null && parameter.responseEntry.isSelected) {
                 // 响应
                 ItemScene.Action action = new ItemScene.Action();
                 action.setType("Command");
+                ViseLog.d("响应 = \n" + GsonUtil.toJson(parameter));
                 switch (parameter.responseEntry.productKey) {
                     case CTSL.PK_ONEWAYSWITCH: {
                         // 一键面板
@@ -516,13 +512,13 @@ public class SceneModelActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST:
                     // 处理获取支持配网产品列表数据
                     List<EProduct.configListEntry> mConfigProductList = CloudDataParser.processConfigProcductList((String) msg.obj);
-                    ViseLog.d("处理获取支持配网产品列表数据 = " + GsonUtil.toJson(mConfigProductList));
+                    // ViseLog.d("处理获取支持配网产品列表数据 = " + GsonUtil.toJson(mConfigProductList));
 
                     // 生成场景参数
                     genSceneParameterList(mConfigProductList);
                     if (mOperateType == CScene.OPERATE_UPDATE) {
                         // 获取场景详细信息
-                        ViseLog.d("mSceneModelCode = " + mSceneModelCode);
+                        // ViseLog.d("mSceneModelCode = " + mSceneModelCode);
                         mSceneManager.querySceneDetail(mSceneId, mSceneModelCode > CScene.SMC_AUTOMATIC_MAX ? CScene.TYPE_MANUAL : CScene.TYPE_AUTOMATIC, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
@@ -534,7 +530,7 @@ public class SceneModelActivity extends BaseActivity {
                     ViseLog.d((String) msg.obj);
                     ViseLog.d(new Gson().toJson(detailEntry));
                     ViseLog.d(new Gson().toJson(mParameterList));
-                    Log.i("lzm", "Detail" + (String) msg.obj);
+                    // Log.i("lzm", "Detail" + (String) msg.obj);
                     mEnable = detailEntry.rawDetail.isEnable();
                     if (mEnable) {
                         mViewBinding.sceneMaintainLblEnable.setText(getString(R.string.scene_maintain_startusing));
@@ -592,7 +588,7 @@ public class SceneModelActivity extends BaseActivity {
                 }
                 case Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST: {
                     EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
-                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(list) + "\n网关 = " + GsonUtil.toJson(mGatewayEntry));
+                    // ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(list) + "\n网关 = " + GsonUtil.toJson(mGatewayEntry));
                     if (list != null && list.data != null) {
                         for (EUser.deviceEntry e : list.data) {
                             DeviceBuffer.setGatewayId(e.iotId, mGatewayEntry.iotId);
@@ -604,8 +600,9 @@ public class SceneModelActivity extends BaseActivity {
                                     mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         } else {
                             // 数据获取完后
-                            ViseLog.d(GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
-                            new ProductHelper(SceneModelActivity.this).getConfigureList(Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST, mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+                            // ViseLog.d("所有设备缓存 = \n" + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
+                            new ProductHelper(SceneModelActivity.this).getConfigureList(Constant.MSG_CALLBACK_GETCONFIGPRODUCTLIST,
+                                    mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
                         }
                     }
                     break;

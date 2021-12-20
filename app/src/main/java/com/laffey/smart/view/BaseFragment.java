@@ -130,8 +130,9 @@ public abstract class BaseFragment extends Fragment {
         if (errorEntry.code == 401 || errorEntry.code == 29003) {
             //检查用户是否登录了其他App
             logOut();
-        } else if (errorEntry.code != 6741) {
+        } else if (errorEntry.code != 6741 && errorEntry.code != 429) {
             // 6741: 无扩展信息
+            // 429: 请求频繁
             String msg = mErrorMap.get(errorEntry.code);
             if (msg != null && msg.length() > 0) {
                 ToastUtils.showLongToast(activity, msg);

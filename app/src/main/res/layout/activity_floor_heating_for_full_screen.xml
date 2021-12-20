@@ -7,7 +7,9 @@
     android:orientation="vertical"
     tools:context=".view.FloorHeatingForFSSActivity">
 
-    <include layout="@layout/include_detail_black" />
+    <include
+        android:id="@+id/topbar"
+        layout="@layout/include_detail_black" />
 
     <LinearLayout
         android:layout_width="match_parent"

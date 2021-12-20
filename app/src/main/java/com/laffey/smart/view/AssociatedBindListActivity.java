@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -17,7 +16,6 @@ import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONArray;
 import com.bumptech.glide.Glide;
@@ -30,20 +28,15 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityAssociatedBindListBinding;
-import com.laffey.smart.demoTest.CaConditionEntry;
-import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.ItemBindList;
 import com.laffey.smart.model.ItemBindRelation;
-import com.laffey.smart.model.ItemBinding;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.RealtimeDataParser;
-import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.TSLHelper;
-import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -78,14 +71,10 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
     private String mDevMac;
     private String mGatewayId;
     private String mProductKey;
-    private int mResult;
 
-    private Typeface mIconfont;
-    private SceneManager mSceneManager;
     private TSLHelper mTSLHelper;
 
     private MyHandler mHandler;
-    private ItemBindRelation mDelBindRelation;
 
     private final List<ItemBindRelation> mList = new ArrayList<>();
     private BaseQuickAdapter<ItemBindRelation, BaseViewHolder> mAdapter;
@@ -95,13 +84,13 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
     private final JSONArray mBindingArray = new JSONArray();
     private ItemBindList mControlGroup;
 
-    public static void start(Context context, String iotId, String productKey, String keyName, int key) {
-        Intent intent = new Intent(context, AssociatedBindListActivity.class);
+    public static void start(Activity activity, String iotId, String productKey, String keyName, int key) {
+        Intent intent = new Intent(activity, AssociatedBindListActivity.class);
         intent.putExtra(IOT_ID, iotId);// A->
         intent.putExtra(KEY_NAME, keyName);
         intent.putExtra(KEY_VALUE, key);
         intent.putExtra(PRODUCT_KEY, productKey);// A->
-        context.startActivity(intent);
+        activity.startActivity(intent);
     }
 
     public static void start(Context context, String iotId, String productKey, String keyName, int key, int result) {
@@ -146,6 +135,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
 
         initStatusBar();
         mViewBinding.nameEditTv.setOnClickListener(this);
+        mViewBinding.groupNameTv.setOnClickListener(this);
         initData();
 
         mTSLHelper = new TSLHelper(this);
@@ -223,7 +213,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                 if (mDevMac.equals(relation.getSubDevMac()) && String.valueOf(mKeyValue).equals(relation.getEndpoint()))
                     return;
                 SelectAssociatedKeyActivity.start(AssociatedBindListActivity.this, mIotId, String.valueOf(mKeyValue),
-                        DeviceBuffer.getDevByMac(relation.getSubDevMac()).iotId, mGatewayId, true);
+                        DeviceBuffer.getDevByMac(relation.getSubDevMac()).iotId, relation.getEndpoint(), mGatewayId, true);
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -263,7 +253,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             public void onNext(JSONObject response) {
                 QMUITipDialogUtil.dismiss();
                 int code = response.getInteger("code");
-                // ViseLog.d("绑定关系 = \n" + GsonUtil.toJson(response));
+                ViseLog.d("绑定关系 = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     mList.clear();
                     JSONArray bindList = response.getJSONArray("bindList");
@@ -338,6 +328,8 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
         ItemBindList control = DeviceBuffer.getBindList(mDevMac + "-" + mKeyValue);
         if (mList.size() == 2) {
             // 如果最后还剩一条多控关系，直接删除绑定组
+            ViseLog.d("control = \n" + GsonUtil.toJson(control) +
+                    "\nDeviceBuffer.getDeviceMac(mGatewayId) = " + DeviceBuffer.getDeviceMac(mGatewayId));
             delMultiControlGroup(control.getGroupId(), control.getMac());
         } else {
             mList.remove(pos);
@@ -352,6 +344,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             @Override
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
+                ViseLog.d("删除多控组关系 = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     SceneManager.invokeManageControlGroupService(AssociatedBindListActivity.this, mGatewayId,
                             mControlGroup.getGroupId(), 3, null);
@@ -416,7 +409,8 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     ToastUtils.showLongToast(AssociatedBindListActivity.this, R.string.max_of_four_keys_can_be_temporarily_bound_to_one_key);
                 }
             }
-        } else if (v.getId() == mViewBinding.nameEditTv.getId()) {
+        } else if (v.getId() == mViewBinding.nameEditTv.getId() ||
+                v.getId() == mViewBinding.groupNameTv.getId()) {
             // 编辑多控组名称
             DialogUtils.showInputDialog(this, getString(R.string.binding_group_name_edit),
                     getString(R.string.pls_input_binding_group_name), mViewBinding.groupNameTv.getText().toString(), new DialogUtils.InputCallback() {
@@ -565,13 +559,13 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
 
         mViewBinding.includeToolbar.tvToolbarTitle.setText(String.format(getString(R.string.control_group_list), mKeyName));
         mViewBinding.includeToolbar.ivToolbarLeft.setOnClickListener(this);
-        mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mViewBinding.includeToolbar.tvToolbarRight.setText(R.string.icon_add_2);
         mViewBinding.includeToolbar.tvToolbarRight.setTextSize(30);
         mViewBinding.includeToolbar.tvToolbarRight.setTextColor(ContextCompat.getColor(this, R.color.appcolor));
-        mViewBinding.includeToolbar.tvToolbarRight.setTypeface(mIconfont);
+        mViewBinding.includeToolbar.tvToolbarRight.setTypeface(iconfont);
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this);
-        mViewBinding.nameEditTv.setTypeface(mIconfont);
+        mViewBinding.nameEditTv.setTypeface(iconfont);
     }
 
     @Override

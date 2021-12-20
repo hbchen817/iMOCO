@@ -25,8 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
@@ -42,7 +40,6 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +56,7 @@ import butterknife.ButterKnife;
  * creat time: 2020-12-07 17:14
  * Description: 四键开关详细界面
  */
-public class DetailFourSwitchActivity2 extends DetailActivity {
+public class DetailFourSwitchActivity2 extends DetailActivity implements View.OnLongClickListener, OnClickListener {
     private int mState1 = 0;
     private int mState2 = 0;
     private int mState3 = 0;
@@ -107,13 +104,15 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     private PopupWindow mAssociatedPopupWindow;
     private Typeface mIconface;
 
+    private long mDoubleClickedTime = 0;
+
     // 更新状态
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
         if (!super.updateState(propertyEntry)) {
             return false;
         }
-
+        QMUITipDialogUtil.dismiss();
         if (propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_1) != null && propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_1).length() > 0) {
             mState1 = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_1));
             mImgOperate1.setImageResource(ImageProvider.genDeviceStateIcon(mProductKey, CTSL.FWS_P_PowerSwitch_1, propertyEntry.getPropertyValue(CTSL.FWS_P_PowerSwitch_1)));
@@ -181,130 +180,50 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
         mIconface = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
         // 键1操作事件处理
-        OnClickListener operateOnClickListener1 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState1 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate1 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate1);
-        mImgOperate1.setOnClickListener(operateOnClickListener1);
+        mImgOperate1 = findViewById(R.id.detailTwoSwitchImgOperate1);
+        mImgOperate1.setOnClickListener(this);
 
-        mStateName1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateName1);
-        mStateName1.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName1);
-            }
-        });
-        mStateValue1 = (TextView) findViewById(R.id.detailTwoSwitchLblStateValue1);
+        mStateName1 = findViewById(R.id.detailTwoSwitchLblStateName1);
+        mStateName1.setOnLongClickListener(this);
+        mStateValue1 = findViewById(R.id.detailTwoSwitchLblStateValue1);
 
-        mStateName2 = (TextView) findViewById(R.id.detailTwoSwitchLblStateName2);
-        mStateName2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName2);
-            }
-        });
-        mStateValue2 = (TextView) findViewById(R.id.detailTwoSwitchLblStateValue2);
+        mStateName2 = findViewById(R.id.detailTwoSwitchLblStateName2);
+        mStateName2.setOnLongClickListener(this);
+        mStateValue2 = findViewById(R.id.detailTwoSwitchLblStateValue2);
 
-        mStateName3 = (TextView) findViewById(R.id.detailFourSwitchLblStateName3);
-        mStateName3.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailFourSwitchLblStateName3);
-            }
-        });
-        mStateValue3 = (TextView) findViewById(R.id.detailFourSwitchLblStateValue3);
+        mStateName3 = findViewById(R.id.detailFourSwitchLblStateName3);
+        mStateName3.setOnLongClickListener(this);
+        mStateValue3 = findViewById(R.id.detailFourSwitchLblStateValue3);
 
-        mStateName4 = (TextView) findViewById(R.id.detailFourSwitchLblStateName4);
-        mStateName4.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showKeyNameDialogEdit(R.id.detailFourSwitchLblStateName4);
-            }
-        });
-        mStateValue4 = (TextView) findViewById(R.id.detailFourSwitchLblStateValue4);
+        mStateName4 = findViewById(R.id.detailFourSwitchLblStateName4);
+        mStateName4.setOnLongClickListener(this);
+        mStateValue4 = findViewById(R.id.detailFourSwitchLblStateValue4);
 
         // 键2操作事件处理
-        OnClickListener operateOnClickListener2 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState2 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate2 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate2);
-        mImgOperate2.setOnClickListener(operateOnClickListener2);
+        mImgOperate2 = findViewById(R.id.detailFourSwitchImgOperate2);
+        mImgOperate2.setOnClickListener(this);
 
         // 键3操作事件处理
-        OnClickListener operateOnClickListener3 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState3 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate3 = (ImageView) findViewById(R.id.detailTwoSwitchImgOperate3);
-        mImgOperate3.setOnClickListener(operateOnClickListener3);
+        mImgOperate3 = findViewById(R.id.detailTwoSwitchImgOperate3);
+        mImgOperate3.setOnClickListener(this);
 
         // 键4操作事件处理
-        OnClickListener operateOnClickListener4 = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mState4 == CTSL.STATUS_ON) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_4}, new String[]{"" + CTSL.STATUS_OFF});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_4}, new String[]{"" + CTSL.STATUS_ON});
-                }
-            }
-        };
-        mImgOperate4 = (ImageView) findViewById(R.id.detailFourSwitchImgOperate4);
-        mImgOperate4.setOnClickListener(operateOnClickListener4);
+        mImgOperate4 = findViewById(R.id.detailFourSwitchImgOperate4);
+        mImgOperate4.setOnClickListener(this);
 
         // 云端定时处理
-        RelativeLayout timer = (RelativeLayout) findViewById(R.id.detailTwoSwitchRLTimer);
-        timer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PluginHelper.cloudTimer(DetailFourSwitchActivity2.this, mIOTId, mProductKey);
-            }
-        });
+        RelativeLayout timer = findViewById(R.id.detailTwoSwitchRLTimer);
+        timer.setOnClickListener(this);
 
-        mTimerIcTV = (TextView) findViewById(R.id.timer_ic_tv);
+        mTimerIcTV = findViewById(R.id.timer_ic_tv);
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
         mTimerIcTV.setTypeface(iconfont);
         mBackLightIc.setTypeface(iconfont);
         mAssociatedTV.setTypeface(iconfont);
 
-        mBackLightLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 背光
-                if (mBackLightState == CTSL.STATUS_OFF) {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
-                } else {
-                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
-                }
-            }
-        });
+        mBackLightLayout.setOnClickListener(this);
         // 双控
-        mAssociatedLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAssociatedPopupWindow();
-            }
-        });
+        mAssociatedLayout.setOnClickListener(this);
 
         initStatusBar();
         initKeyNickName();
@@ -337,24 +256,6 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
                 nameTV.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        switch (pos) {
-                            case 0: {
-                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_1}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                                break;
-                            }
-                            case 1: {
-                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_2}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                                break;
-                            }
-                            case 2: {
-                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_3}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                                break;
-                            }
-                            case 3: {
-                                mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_LOCALCONFIG_4}, new String[]{"" + CTSL.AUXILIARY_CONTROL});
-                                break;
-                            }
-                        }
                         AssociatedBindListActivity.start(DetailFourSwitchActivity2.this, mIOTId, mProductKey, s, pos + 1);
                     }
                 });
@@ -389,6 +290,85 @@ public class DetailFourSwitchActivity2 extends DetailActivity {
     private void initKeyNickName() {
         MyResponseErrHandler errHandler = new MyResponseErrHandler(getMainLooper(), this);
         mSceneManager.getExtendedProperty(mIOTId, Constant.TAG_DEV_KEY_NICKNAME, TAG_GET_EXTENDED_PRO, null, errHandler, mHandler);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v.getId() == mStateName1.getId()) {
+            // 按键1昵称
+            showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName1);
+        } else if (v.getId() == mStateName2.getId()) {
+            // 按键2昵称
+            showKeyNameDialogEdit(R.id.detailTwoSwitchLblStateName2);
+        } else if (v.getId() == mStateName3.getId()) {
+            // 按键3昵称
+            showKeyNameDialogEdit(R.id.detailFourSwitchLblStateName3);
+        } else if (v.getId() == mStateName4.getId()) {
+            // 按键4昵称
+            showKeyNameDialogEdit(R.id.detailFourSwitchLblStateName4);
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mImgOperate1.getId()) {
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState1 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_1}, new String[]{"" + CTSL.STATUS_ON});
+                }
+            }
+            mDoubleClickedTime = System.currentTimeMillis();
+        } else if (v.getId() == mImgOperate2.getId()) {
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState2 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_2}, new String[]{"" + CTSL.STATUS_ON});
+                }
+            }
+            mDoubleClickedTime = System.currentTimeMillis();
+        } else if (v.getId() == mImgOperate3.getId()) {
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState3 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_3}, new String[]{"" + CTSL.STATUS_ON});
+                }
+            }
+            mDoubleClickedTime = System.currentTimeMillis();
+        } else if (v.getId() == mImgOperate4.getId()) {
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mState4 == CTSL.STATUS_ON) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_4}, new String[]{"" + CTSL.STATUS_OFF});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_PowerSwitch_4}, new String[]{"" + CTSL.STATUS_ON});
+                }
+            }
+            mDoubleClickedTime = System.currentTimeMillis();
+        } else if (v.getId() == R.id.detailTwoSwitchRLTimer) {
+            PluginHelper.cloudTimer(this, mIOTId, mProductKey);
+        } else if (v.getId() == mBackLightLayout.getId()) {
+            // 背光
+            if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
+                if (mBackLightState == CTSL.STATUS_OFF) {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_ON});
+                } else {
+                    mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.FWS_P_BackLightMode}, new String[]{"" + CTSL.STATUS_OFF});
+                }
+            }
+            mDoubleClickedTime = System.currentTimeMillis();
+        } else if (v.getId() == mAssociatedLayout.getId()) {
+            // 多控
+            showAssociatedPopupWindow();
+        }
     }
 
     private static class MyResponseErrHandler extends Handler {

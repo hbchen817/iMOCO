@@ -108,11 +108,13 @@ public class BaseActivity extends FragmentActivity {
                 }
                 //非OTA信息查询失败才作提示
                 if (!responseErrorEntry.path.equalsIgnoreCase(Constant.API_PATH_GETOTAFIRMWAREINFO)
-                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401) {
+                        && responseErrorEntry.code != 403 && responseErrorEntry.code != 6401 &&
+                        responseErrorEntry.code != 429) {
                     // 6401: 拓扑关系不存在
                     // 403：请求被禁止
                     // 28700: 设备未和用户绑定
                     // 10360: scene rule not exist
+                    // 429: 请求频繁
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                     Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
                 }
@@ -129,8 +131,9 @@ public class BaseActivity extends FragmentActivity {
         if (errorEntry.code == 401 || errorEntry.code == 29003) {
             //检查用户是否登录了其他App
             logOut();
-        } else if (errorEntry.code != 6741) {
+        } else if (errorEntry.code != 6741 && errorEntry.code != 429) {
             // 6741: 无扩展信息
+            // 429: 请求频繁
             ToastUtils.showLongToast(activity, errorEntry.localizedMsg);
         }
     }

@@ -56,7 +56,8 @@
             android:ellipsize="end"
             android:gravity="right"
             android:maxLines="1"
-            android:text="@string/devicelist_status" />
+            android:text="@string/devicelist_status"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/deviceGridLblState"
@@ -71,7 +72,8 @@
             android:ellipsize="end"
             android:gravity="right"
             android:maxLines="1"
-            android:text="@string/devicelist_status" />
+            android:text="@string/devicelist_status"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/deviceGridLblTime"
@@ -88,7 +90,8 @@
             android:gravity="right"
             android:maxLines="1"
             android:text="13:56"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/deviceGridLblState1"
@@ -103,7 +106,8 @@
             android:ellipsize="end"
             android:gravity="right"
             android:maxLines="1"
-            android:text="@string/devicelist_status" />
+            android:text="@string/devicelist_status"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/deviceGridLblState2"
@@ -118,7 +122,8 @@
             android:ellipsize="end"
             android:gravity="right"
             android:maxLines="1"
-            android:text="13:56" />
+            android:text="13:56"
+            android:visibility="gone" />
 
         <Space
             android:id="@+id/deviceGridSpaSpace"

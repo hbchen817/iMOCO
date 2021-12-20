@@ -29,6 +29,7 @@ import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
@@ -141,14 +142,12 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         mGatewayId = getIntent().getStringExtra(GATEWAY_ID);
         mIconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
 
-        if (Constant.IS_TEST_DATA) {
-            mGatewayId = "i1cU8RQDuaUsaNvw4ScgeND83D";
-        }
-        queryMacByIotId(this, Constant.QUERY_MAC_BY_IOTID_VER, "xxxxxx", mGatewayId);
+        mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
+        querySceneList(this, mGatewayMac, "1");
     }
 
     // 根据IotId查询Mac
-    private void queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
+    /*private void queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
@@ -177,9 +176,6 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                             if (mac == null || mac.length() == 0) {
                                 ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.MAC_does_not_exist);
                             }
-                            if (Constant.IS_TEST_DATA) {
-                                mac = "LUXE_TEST";
-                            }
                             mGatewayMac = mac;
                             querySceneList(context, mac, "1");
                         } else if (code == 404) {
@@ -200,7 +196,8 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
 
                     }
                 });
-    }
+
+    }*/
 
     // 查询本地场景列表
     private void querySceneList(Context context, String mac, String type) {
@@ -225,7 +222,6 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                     public void onNext(@NonNull JSONObject response) {
                         int code = response.getInteger("code");
                         JSONArray sceneList = response.getJSONArray("sceneList");
-                        // ViseLog.d("场景动作 = " + GsonUtil.toJson(sceneList));
                         if (code == 200) {
                             if (sceneList != null) {
                                 for (int i = 0; i < sceneList.size(); i++) {
@@ -247,7 +243,6 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
                                             continue;
                                         }
                                     }
-                                    // ViseLog.d("sceneInGateway = "+GsonUtil.toJson(sceneInGateway));
                                     ItemScene scene = new ItemScene();
                                     scene.setName(sceneInGateway.getSceneDetail().getName());
                                     scene.setSceneId(sceneInGateway.getSceneDetail().getSceneId());

@@ -15,6 +15,8 @@ import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.utility.GsonUtil;
+import com.vise.log.ViseLog;
 
 /**
  * Creator: xieshaobing
@@ -41,6 +43,7 @@ public class DetailSensorActivity extends DetailActivity {
             return false;
         }
 
+        // ViseLog.d("propertyEntry = \n" + GsonUtil.toJson(propertyEntry));
         // 电池电量处理
         if (mIsHasPowerSource) {
             if (propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage) != null && propertyEntry.getPropertyValue(CTSL.P_P_BatteryPercentage).length() > 0) {

@@ -41,6 +41,7 @@ public class AptSubGwList extends BaseAdapter {
     private Context mContext;
     private List<EDevice.subGwEntry> mDeviceList;
     private final Map<String, String> mStateMap = new HashMap<>();
+    private final Map<String, String> mStatusMap = new HashMap<>();
 
     // 构造
     public AptSubGwList(Context context) {
@@ -49,6 +50,9 @@ public class AptSubGwList extends BaseAdapter {
         mDeviceList = new ArrayList<EDevice.subGwEntry>();
         mStateMap.put("0", context.getString(R.string.connection_status_unable));
         mStateMap.put("1", context.getString(R.string.activated));
+
+        mStatusMap.put("1", context.getString(R.string.connection_status_online));
+        mStatusMap.put("3", context.getString(R.string.connection_status_offline));
     }
 
     // 设置数据
@@ -107,6 +111,9 @@ public class AptSubGwList extends BaseAdapter {
 
         viewHolder.name.setText(entry.getNickname());
         viewHolder.status.setText(mStateMap.get(entry.getState()));
+        if (!"-1".equals(entry.getStatus())) {
+            viewHolder.status.setText(mStatusMap.get(entry.getStatus()));
+        }
         viewHolder.room.setVisibility(View.GONE);
 
         return convertView;

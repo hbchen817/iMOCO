@@ -70,6 +70,8 @@ public class AddSubGwActivity extends BaseActivity implements View.OnClickListen
         mViewBinding.subGwMacTv.setText(mSubGwMac);
         mViewBinding.subGwNameTv.setOnClickListener(this);
         mViewBinding.subGwNameIv.setOnClickListener(this);
+
+        mViewBinding.subGwNameTv.setText(getString(R.string.sub_gateway) + " *" + mSubGwMac.substring(mSubGwMac.length() - 4, mSubGwMac.length()));
     }
 
     // 嵌入式状态栏

@@ -539,7 +539,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     + "\n小图片宽度 = " + mFloatBitmap.getWidth());*/
             float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
             result = result - 10;
-            // ViseLog.d("真实值 = " + result);
+            ViseLog.d("真实值 = " + result);
             QMUITipDialogUtil.showLoadingDialg(LoginActivity.this, R.string.is_security_verification);
             sendSMSVerifyCode(String.valueOf(result));
         }

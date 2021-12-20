@@ -19,6 +19,7 @@ import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
 import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.aliyun.iot.aep.sdk.threadpool.ThreadPool;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.MocoApplication;
@@ -75,6 +76,19 @@ public class StartActivity extends BaseActivity {
         } else {
             LogcatFileManager.getInstance().stop();
         }
+
+        StringBuffer noDevPropertyPKs = new StringBuffer();
+        noDevPropertyPKs.append(CTSL.PK_GATEWAY_RG4100);
+        noDevPropertyPKs.append(CTSL.PK_MULTI_FH_AND_FA + ",");
+        noDevPropertyPKs.append(CTSL.PK_MULTI_AC_AND_FA + ",");
+        noDevPropertyPKs.append(CTSL.PK_MULTI_AC_AND_FH + ",");
+        noDevPropertyPKs.append(CTSL.PK_MULTI_THREE_IN_ONE + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_SIX_SCENE_SWITCH + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_FOUR_SCENE_SWITCH + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_THREE_SCENE_SWITCH + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_TWO_SCENE_SWITCH + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_ONE_SCENE_SWITCH + ",");
+        noDevPropertyPKs.append(CTSL.PK_SYT_ONE_SCENE_SWITCH + ",");
     }
 
     private void showPrivacyPolicyDialog() {

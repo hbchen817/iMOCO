@@ -1,5 +1,6 @@
 package com.laffey.smart.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 
@@ -49,6 +50,18 @@ public class HomeSpaceManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 创建家
+    public static void createHome(Activity activity, String name, APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_CREATEHOME;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("name", name);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_CREATEHOME;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 获取家列表
     public void getHomeList(int pageNo, int pageSize,
                             Handler commitFailureHandler,
@@ -68,6 +81,20 @@ public class HomeSpaceManager {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMELIST;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取家列表
+    public static void getHomeList(Activity activity, int pageNo, int pageSize,
+                                   APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETHOMELIST;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 20 ? 20 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMELIST;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 获取家房间列表
@@ -90,6 +117,21 @@ public class HomeSpaceManager {
         requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMEROOMLIST;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取家房间列表
+    public static void getHomeRoomList(Activity activity, String homeId, int pageNo, int pageSize,
+                                       APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETHOMEROOMLIST;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("homeId", homeId);
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 20 ? 20 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMEROOMLIST;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 获取家设备列表
@@ -142,6 +184,26 @@ public class HomeSpaceManager {
         requestParameterEntry.callbackMessageType = tag;
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 获取家设备列表
+    public static void getHomeDeviceList(Activity activity, String homeId, String roomId, int pageNo, int pageSize, int tag,
+                                         APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETHOMEDEVICELIST;
+        requestParameterEntry.version = "1.0.0";
+        if (homeId != null && homeId.length() > 0) {
+            requestParameterEntry.addParameter("homeId", homeId);
+        }
+        if (roomId != null && roomId.length() > 0) {
+            requestParameterEntry.addParameter("roomId", roomId);
+        }
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
+        requestParameterEntry.callbackMessageType = tag;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 获取家网关列表

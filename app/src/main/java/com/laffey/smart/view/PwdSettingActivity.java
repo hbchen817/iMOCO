@@ -3,13 +3,11 @@ package com.laffey.smart.view;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
@@ -22,11 +20,10 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityPwdSettingBinding;
 import com.laffey.smart.presenter.AccountManager;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
-
-import java.lang.ref.WeakReference;
 
 public class PwdSettingActivity extends AppCompatActivity implements View.OnClickListener {
     private ActivityPwdSettingBinding mViewBinding;
@@ -40,14 +37,12 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
     // 01：注册02：短信登录03：密码找回
     private String mCodeType;
 
-    private MyHandler mHandler;
-
-    public static void start(Context context, String telNum, String verifyCode, String codeType) {
-        Intent intent = new Intent(context, PwdSettingActivity.class);
+    public static void start(Activity activity, String telNum, String verifyCode, String codeType, int requestCode) {
+        Intent intent = new Intent(activity, PwdSettingActivity.class);
         intent.putExtra(TEL_NUM, telNum);
         intent.putExtra(VERIFY_CODE, verifyCode);
         intent.putExtra(CODE_TYPE, codeType);
-        context.startActivity(intent);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -78,8 +73,6 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
         mTelNum = getIntent().getStringExtra(TEL_NUM);
         mVerifyCode = getIntent().getStringExtra(VERIFY_CODE);
         mCodeType = getIntent().getStringExtra(CODE_TYPE);
-
-        mHandler = new MyHandler(this);
     }
 
     private final CompoundButton.OnCheckedChangeListener mCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
@@ -149,6 +142,7 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
             }
             mViewBinding.pwdEt.setSelection(mViewBinding.pwdEt.getText().toString().length());
         } else if (v.getId() == mViewBinding.nextStepBtn.getId()) {
+            if (!mViewBinding.checkbox.isChecked()) return;
             // 下一步
             // 密码复杂度，长度8-16位，至少含字母和数字，不能包含空格
             String pwd = mViewBinding.pwdEt.getText().toString();
@@ -158,11 +152,9 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
                 if (isDigitAndLetter(pwd)) {
                     // 01:注册账号 03:找回密码
                     if ("01".equals(mCodeType)) {
-                        AccountManager.accountsReg(mTelNum, mViewBinding.pwdEt.getText().toString(), mVerifyCode,
-                                Constant.MSG_QUEST_ACCOUNTS_REG, Constant.MSG_QUEST_ACCOUNTS_REG_ERROR, mHandler);
+                        accountsReg();
                     } else if ("03".equals(mCodeType)) {
-                        AccountManager.pwdReset(mTelNum, mViewBinding.pwdEt.getText().toString(), mVerifyCode,
-                                Constant.MSG_QUEST_PWD_RESET, Constant.MSG_QUEST_PWD_RESET_ERROR, mHandler);
+                        pwdReset(mTelNum, mViewBinding.pwdEt.getText().toString(), mVerifyCode);
                     }
                 } else {
                     ToastUtils.showLongToast(this, R.string.pwd_must_contain_digit_and_letter);
@@ -187,6 +179,63 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    // 密码重置（无token）
+    private void pwdReset(String telNum, String pwd, String verifyCode) {
+        AccountManager.pwdReset(this, telNum, pwd, verifyCode, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 密码重置
+                // ViseLog.d("密码重置 = " + response.toJSONString());
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    LoginActivity.start(PwdSettingActivity.this, mTelNum);
+                } else {
+                    RetrofitUtil.showErrorMsg(PwdSettingActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // 帐号注册失败
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e.getMessage());
+                ToastUtils.showLongToast(PwdSettingActivity.this, e.getMessage());
+            }
+        });
+    }
+
+    // 账号注册
+    private void accountsReg() {
+        AccountManager.accountsReg(this, mTelNum, mViewBinding.pwdEt.getText().toString(), mVerifyCode,
+                new AccountManager.Callback() {
+                    @Override
+                    public void onNext(JSONObject response) {
+                        // 帐号注册
+                        ViseLog.d("帐号注册 = " + response.toJSONString());
+                        int code = response.getInteger("code");
+                        if (code == 200) {
+                            LoginActivity.start(PwdSettingActivity.this, mTelNum);
+                        } else {
+                            String errorCode = response.getString("errorCode");
+                            QMUITipDialogUtil.dismiss();
+                            RetrofitUtil.showErrorMsg(PwdSettingActivity.this, response);
+                            if ("03".equals(errorCode)) {
+                                // 请先获取验证码!
+                                setResult(Constant.RESULTCODE_CALLPWDSETTINGACTIVITY);
+                                finish();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        QMUITipDialogUtil.dismiss();
+                        ViseLog.e(e);
+                        ToastUtils.showLongToast(PwdSettingActivity.this, e.getMessage());
+                    }
+                });
+    }
+
     // 密码含字母和数字
     private boolean isDigitAndLetter(String pwd) {
         boolean isDigit = false;
@@ -202,54 +251,5 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
             }
         }
         return false;
-    }
-
-    private static class MyHandler extends Handler {
-        private WeakReference<PwdSettingActivity> ref;
-
-        public MyHandler(PwdSettingActivity activity) {
-            this.ref = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            PwdSettingActivity activity = ref.get();
-            if (activity == null) return;
-            switch (msg.what) {
-                case Constant.MSG_QUEST_PWD_RESET: {
-                    // 密码重置
-                    JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("密码重置 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    if (code == 200) {
-                        LoginActivity.start(activity, activity.mTelNum);
-                    } else {
-                        RetrofitUtil.showErrorMsg(activity, response);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_ACCOUNTS_REG: {
-                    // 帐号注册
-                    JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("帐号注册 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    if (code == 200) {
-                        LoginActivity.start(activity, activity.mTelNum);
-                    } else {
-                        RetrofitUtil.showErrorMsg(activity, response);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_PWD_RESET_ERROR:// 密码重置失败
-                case Constant.MSG_QUEST_ACCOUNTS_REG_ERROR: {
-                    // 帐号注册失败
-                    Throwable e = (Throwable) msg.obj;
-                    ViseLog.e(e.getMessage());
-                    ToastUtils.showLongToast(activity, e.getMessage());
-                    break;
-                }
-            }
-        }
     }
 }

@@ -73,6 +73,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
     private static final String ORIGIN_IOT_ID = "origin_iot_id";
     private static final String ORIGIN_END_ID = "origin_end_id";
     private static final String DESTINATION_IOT_ID = "destination_iot_id";
+    private static final String DESTINATION_END_ID = "destination_end_id";
     private static final String IS_EDIT = "is_edit";
 
     private String mPk;
@@ -104,6 +105,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
     private String mOriginEndId;
     private String mOriginPK;
     private String mDestinationIotId;
+    private String mDestinationEndId;
     private String mDestinationMac;
     private String mDestinationPK;
     private final Map<String, String> mLocalConfigMap = new HashMap<>();
@@ -114,6 +116,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
     private String mCacheGroupId;
 
     private ItemBindList mTmpBindList;
+    private ItemBindList mSourceBindList;// 原始绑定组信息
     private final List<ItemBindRelation> mDelBufferList = new ArrayList<>();
     private final List<ItemBindRelation> mAddBufferList = new ArrayList<>();
 
@@ -154,6 +157,17 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
         activity.startActivity(intent);
     }
 
+    public static void start(Activity activity, String originIotId, String originEndId, String destinationIotId, String destinationEndId, String gwId, boolean isEdit) {
+        Intent intent = new Intent(activity, SelectAssociatedKeyActivity.class);
+        intent.putExtra(ORIGIN_IOT_ID, originIotId);
+        intent.putExtra(ORIGIN_END_ID, originEndId);
+        intent.putExtra(DESTINATION_IOT_ID, destinationIotId);
+        intent.putExtra(DESTINATION_END_ID, destinationEndId);
+        intent.putExtra(GW_ID, gwId);
+        intent.putExtra(IS_EDIT, isEdit);
+        activity.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,6 +191,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
         mOriginEndId = getIntent().getStringExtra(ORIGIN_END_ID);
         mOriginPK = DeviceBuffer.getDeviceInformation(mOriginIotId).productKey;
         mDestinationIotId = getIntent().getStringExtra(DESTINATION_IOT_ID);
+        mDestinationEndId = getIntent().getStringExtra(DESTINATION_END_ID);
         mDestinationMac = DeviceBuffer.getDeviceMac(mDestinationIotId);
         mDestinationPK = DeviceBuffer.getDeviceInformation(mDestinationIotId).productKey;
         mIsEdit = getIntent().getBooleanExtra(IS_EDIT, false);
@@ -210,6 +225,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
         ViseLog.d("绑定关系缓存 = \n" + GsonUtil.toJson(bindList));
         if (bindList != null) {
             mTmpBindList = JSONObject.parseObject(GsonUtil.toJson(bindList), ItemBindList.class);
+            mSourceBindList = JSONObject.parseObject(GsonUtil.toJson(bindList), ItemBindList.class);
             mCacheGroupId = bindList.getBindList().get(0).getGroupId();
             mBindListName = mTmpBindList.getName();
         }
@@ -217,6 +233,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
         // 查询该设备的绑定状态
         queryInvalidKey();
         // initData();
+        // ViseLog.d(GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
     }
 
     private void initAdapter() {
@@ -227,6 +244,11 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
                         .setBackgroundColor(R.id.root_layout, ContextCompat.getColor(SelectAssociatedKeyActivity.this, R.color.white));
                 TextView nameTV = holder.getView(R.id.name_tv);
 
+                TextView goTV = holder.getView(R.id.go_iv);
+                goTV.setText(R.string.icon_checked);
+                goTV.setTypeface(mIconFace);
+                goTV.setTextColor(ContextCompat.getColor(SelectAssociatedKeyActivity.this, R.color.appcolor));
+                goTV.setTextSize(getResources().getDimension(R.dimen.sp_8));
                 if (!mIsEdit) {
                     // 添加多控组
                     if (mOriginMac.equals(mDestinationMac) && mOriginEndId.equals(String.valueOf(item.endPointId))) {
@@ -234,17 +256,11 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
                     } else {
                         nameTV.setTextColor(ContextCompat.getColor(SelectAssociatedKeyActivity.this, item.isBind ? R.color.gray3 : R.color.black));
                     }
-
+                    goTV.setVisibility(item.isChecked ? View.VISIBLE : View.GONE);
                 } else {
-                    ViseLog.d("item = \n" + GsonUtil.toJson(item));
+                    nameTV.setTextColor(ContextCompat.getColor(SelectAssociatedKeyActivity.this, item.isBind ? R.color.gray3 : R.color.black));
+                    goTV.setVisibility(item.isChecked ? View.VISIBLE : View.GONE);
                 }
-
-                TextView goTV = holder.getView(R.id.go_iv);
-                goTV.setText(R.string.icon_checked);
-                goTV.setTypeface(mIconFace);
-                goTV.setTextColor(ContextCompat.getColor(SelectAssociatedKeyActivity.this, R.color.appcolor));
-                goTV.setTextSize(getResources().getDimension(R.dimen.sp_8));
-                goTV.setVisibility(item.isChecked ? View.VISIBLE : View.GONE);
             }
         };
         mAdapter.setOnItemClickListener(new OnItemClickListener() {
@@ -298,31 +314,68 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
     }
 
     private void editBindList(KeyItem item, int pos) {
-        if (item.isChecked) {
-            // 选中状态
-            if (mTmpBindList != null && mTmpBindList.getBindList().size() == 6) {
-                ToastUtils.showLongToast(this, R.string.max_of_four_keys_can_be_temporarily_bound_to_one_key);
-            } else {
-                ItemBindRelation relation = new ItemBindRelation();
-                // relation.setGroupId(mCacheGroupId);
-                // relation.setMainBind(false);
-                relation.setEndpoint(String.valueOf(pos + 1));
-                //relation.setMac(mDestinationMac);
-                relation.setSubDevMac(mDestinationMac);
+        if (!mIsEdit) {
+            if (item.isChecked) {
+                ViseLog.d("mTmpBindList = \n" + GsonUtil.toJson(mTmpBindList));
+                // 选中状态
+                if (mTmpBindList != null && mTmpBindList.getBindList().size() == 6) {
+                    ToastUtils.showLongToast(this, R.string.max_of_four_keys_can_be_temporarily_bound_to_one_key);
+                } else {
+                    if (mTmpBindList.getBindList().size() == 0) {
+                        ItemBindRelation r = new ItemBindRelation();
+                        r.setEndpoint(String.valueOf(pos + 1));
+                        r.setSubDevMac(mDestinationMac);
 
-                mTmpBindList.getBindList().add(relation);
+                        mTmpBindList.getBindList().add(r);
+                    } else {
+                        boolean isContains = false;
+                        for (ItemBindRelation relation : mTmpBindList.getBindList()) {
+                            if (String.valueOf(pos + 1).equals(relation.getEndpoint()) &&
+                                    mDestinationMac.equals(relation.getSubDevMac())) {
+                                isContains = true;
+                                break;
+                            }
+                        }
+                        if (!isContains) {
+                            ItemBindRelation r = new ItemBindRelation();
+                            r.setEndpoint(String.valueOf(pos + 1));
+                            r.setSubDevMac(mDestinationMac);
+
+                            mTmpBindList.getBindList().add(r);
+                        }
+                    }
+                }
+            } else {
+                // 取消选中
+                List<ItemBindRelation> relations = mTmpBindList.getBindList();
+                for (int i = 0; i < relations.size(); i++) {
+                    ItemBindRelation relation = relations.get(i);
+                    if (mDestinationMac.equals(relation.getSubDevMac()) && String.valueOf(pos + 1).equals(relation.getEndpoint())) {
+                        relations.remove(i);
+                        break;
+                    }
+                }
+                mTmpBindList.setBindList(relations);
             }
         } else {
-            // 取消选中
-            List<ItemBindRelation> relations = mTmpBindList.getBindList();
-            for (int i = 0; i < relations.size(); i++) {
-                ItemBindRelation relation = relations.get(i);
-                if (mDestinationMac.equals(relation.getSubDevMac()) && String.valueOf(pos + 1).equals(relation.getEndpoint())) {
-                    relations.remove(i);
+            // 编辑模式
+            List<ItemBindRelation> list = new ArrayList<>();
+            list.addAll(mSourceBindList.getBindList());
+            for (ItemBindRelation relation : list) {
+                if (mDestinationMac.equals(relation.getSubDevMac()) &&
+                        mDestinationEndId.equals(relation.getEndpoint())) {
+                    list.remove(relation);
                     break;
                 }
             }
-            mTmpBindList.setBindList(relations);
+            if (item.isChecked) {
+                ItemBindRelation r = new ItemBindRelation();
+                r.setEndpoint(String.valueOf(pos + 1));
+                r.setSubDevMac(mDestinationMac);
+
+                list.add(r);
+                mTmpBindList.setBindList(list);
+            }
         }
         ViseLog.d("编辑后 = \n" + GsonUtil.toJson(mTmpBindList));
     }
@@ -374,6 +427,7 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
                 KeyItem item;
                 if (object != null && object.toJSONString().length() > 2) {
                     item = new KeyItem(object.getString(CTSL.TWS_P3_PowerSwitch_1), 1);
+
                     checkKeyInvalidkey(list, mDestinationMac, "1", item);
                     mList.add(item);
 
@@ -537,9 +591,16 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
             for (ItemBindRelation bind : list) {
                 if (destinationMac.equals(bind.getSubDevMac()) && endPointId.equals(bind.getEndpoint())) {
                     item.isBind = true;
-                    if (mIsEdit && bind.getSubDevMac().equals(mDestinationMac)) {
-                        item.isBind = false;
-                        item.isChecked = true;
+                    if (mIsEdit) {
+                        if (bind.getSubDevMac().equals(mDestinationMac)) {
+                            if (endPointId.equals(mDestinationEndId)) {
+                                item.isBind = false;
+                                item.isChecked = true;
+                            } else {
+                                item.isBind = true;
+                                item.isChecked = false;
+                            }
+                        }
                     }
                     break;
                 }
@@ -751,7 +812,8 @@ public class SelectAssociatedKeyActivity extends BaseActivity implements View.On
                 if (code == 200) {
                     ToastUtils.showLongToast(SelectAssociatedKeyActivity.this, R.string.binding_group_complete);
 
-                    SceneManager.invokeManageControlGroupService(SelectAssociatedKeyActivity.this, mGwId, control.getGroupId(),
+                    String groupId = response.getString("groupId");
+                    SceneManager.invokeManageControlGroupService(SelectAssociatedKeyActivity.this, mGwId, groupId,
                             DeviceBuffer.getBindList(mOriginMac + "-" + mOriginEndId) == null ? 1 : 2,
                             null);
 

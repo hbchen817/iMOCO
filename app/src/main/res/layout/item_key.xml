@@ -24,7 +24,6 @@
         android:layout_marginEnd="@dimen/dp_10"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onViewClicked"
         android:text="@string/icon_right_arrow"
         android:textColor="@color/normal_font_color"
         android:textSize="@dimen/sp_15" />

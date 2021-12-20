@@ -29,6 +29,15 @@ public class DeviceBuffer {
     private static Map<String, ItemSceneInGateway> mSceneBuffer = new LinkedHashMap<>();
     private static Map<String, ItemBindList> mBindRelationBuffer = new HashMap<>();
     private static Map<String, EDevice.subGwEntry> mSubGwBuffer = new HashMap<>();
+    private static String mNoDevPropertyPKs = "";
+
+    public static String getNoDevPropertyPKs() {
+        return mNoDevPropertyPKs;
+    }
+
+    public static void setNoDevPropertyPKs(String mDevPropertyPKs) {
+        DeviceBuffer.mNoDevPropertyPKs = mDevPropertyPKs;
+    }
 
     // 初始化处理
     public static void initProcess() {
@@ -347,6 +356,18 @@ public class DeviceBuffer {
         List<EDevice.deviceEntry> list = new ArrayList<>();
         for (EDevice.deviceEntry entry : mBuffer.values()) {
             if ("GATEWAY".equals(entry.nodeType)) {
+                list.add(entry);
+            }
+        }
+        return list;
+    }
+
+    // 获取网关设备信息
+    // 0（表示分享者），1（表示拥有者）
+    public static List<EDevice.deviceEntry> getGatewayDevs(String owned) {
+        List<EDevice.deviceEntry> list = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            if ("GATEWAY".equals(entry.nodeType) && owned.equals(String.valueOf(entry.owned))) {
                 list.add(entry);
             }
         }

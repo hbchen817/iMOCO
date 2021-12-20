@@ -178,7 +178,8 @@ public class LocalActionValueActivity extends BaseActivity {
             }
             mList.add(p1);
             mList.add(p2);
-        } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey)) {
+        } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey) ||
+                CTSL.PK_AIRCOMDITION_FOUR.equals(mProductKey)) {
             // 空调二管制
             if (getString(R.string.power_switch).equals(mIdentifierName)) {
                 // 电源开关
@@ -312,6 +313,11 @@ public class LocalActionValueActivity extends BaseActivity {
                 if (value == null || value.length() == 0) {
                     value = 9 + MIN_TEMP + "";
                 }
+
+                mViewBinding.compareTypeWv.setVisibility(View.GONE);
+                mViewBinding.nameTv.setText(R.string.equal_to);
+                mViewBinding.unitTv.setText(R.string.centigrade);
+
                 mViewBinding.compareValueWv.setEntries(mEventValueList);
                 mViewBinding.compareValueWv.setCurrentIndex(Integer.parseInt(value) - MIN_TEMP);
             }

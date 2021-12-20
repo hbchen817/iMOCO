@@ -150,7 +150,10 @@ public class ChoiceProductActivity extends BaseActivity {
             } else {
                 List<EDevice.deviceEntry> deviceEntries = DeviceBuffer.getGatewayDevs();
                 if (deviceEntries.size() == 1) {
-                    showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+                    // showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+
+                    Intent intent = new Intent(mActivity, ScanActivity.class);
+                    startActivityForResult(intent, 1);
                 } else if (deviceEntries.size() > 1) {
                     SubGwGatewayListActivity.start(ChoiceProductActivity.this);
                 } else {
@@ -384,8 +387,11 @@ public class ChoiceProductActivity extends BaseActivity {
             else {
                 // 添加子网关
                 List<EDevice.deviceEntry> entries = DeviceBuffer.getGatewayDevs();
-                if (entries.size() > 0)
+                if (entries.size() == 1)
                     AddSubGwActivity.start(this, entries.get(0).iotId, qrKey, Constant.REQUESTCODE_CALLADDSUBGWACTIVITY);
+                else if (entries.size() > 1) {
+                    LocalGWListForSubGWActivity.start(this, qrKey);
+                }
             }
         }
     }

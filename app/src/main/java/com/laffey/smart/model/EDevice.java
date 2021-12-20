@@ -95,11 +95,28 @@ public class EDevice {
         private String position;// 位置
         private String firmwareVersion;
         private String createTime;
+        private String activateTime;// 激活时间
         private String image;
-        private String state;
-
+        private String state;// 0-未激活，1-已激活
+        private String status = "-1";//1-在线 3-离线
 
         public subGwEntry() {
+        }
+
+        public String getActivateTime() {
+            return activateTime;
+        }
+
+        public void setActivateTime(String activateTime) {
+            this.activateTime = activateTime;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
 
         public String getMac() {

@@ -80,7 +80,9 @@ public class SubGwGatewayListActivity extends AppCompatActivity implements View.
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 mSelectDeviceEntry = mList.get(position);
-                showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+                // showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+                Intent intent = new Intent(SubGwGatewayListActivity.this, ScanActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

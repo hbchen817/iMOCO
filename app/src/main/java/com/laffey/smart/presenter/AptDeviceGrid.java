@@ -89,6 +89,32 @@ public class AptDeviceGrid extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    // 更新状态数据
+    public void updateStateData(List<ETSL.propertyEntry> propertyEntryList) {
+        for (ETSL.propertyEntry propertyEntry : propertyEntryList) {
+            boolean isExist = false;
+            EDevice.deviceEntry deviceEntry = null;
+            if (mDeviceList.size() > 0) {
+                for (EDevice.deviceEntry entry : mDeviceList) {
+                    if (entry.iotId.equalsIgnoreCase(propertyEntry.iotId)) {
+                        isExist = true;
+                        deviceEntry = entry;
+                        break;
+                    }
+                }
+            }
+            if (!isExist) {
+                continue;
+            }
+            for (String name : propertyEntry.properties.keySet()) {
+                if (propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)) {
+                    deviceEntry.processStateTime(mContext, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     // 更新房间数据
     public void updateRoomData(String iotId) {
         if (mDeviceList.size() > 0) {
@@ -178,12 +204,14 @@ public class AptDeviceGrid extends BaseAdapter {
         viewHolder.time.setVisibility(View.GONE);
         // ViseLog.d("刷新数据表");
         if (mDeviceList.get(position).status == Constant.CONNECTION_STATUS_OFFLINE) {
+            // 离线
             //viewHolder.name.setTextColor(Color.parseColor("#AAAAAA"));
             viewHolder.name.setTextColor(mContext.getResources().getColor(R.color.white3));
             viewHolder.room.setTextColor(mContext.getResources().getColor(R.color.white3));
             viewHolder.status.setVisibility(View.VISIBLE);
             viewHolder.status.setTextColor(mContext.getResources().getColor(R.color.white3));
         } else {
+            // 在线
             // viewHolder.name.setTextColor(Color.parseColor("#464645"));
             viewHolder.name.setTextColor(mContext.getResources().getColor(R.color.normal_font_color));
             viewHolder.room.setTextColor(mContext.getResources().getColor(R.color.normal_font_color));
@@ -191,15 +219,18 @@ public class AptDeviceGrid extends BaseAdapter {
             viewHolder.status.setTextColor(mContext.getResources().getColor(R.color.normal_font_color));
             // ViseLog.d("pk = " + mDeviceList.get(position).productKey + " , " + mDeviceList.get(position).stateTimes.size());
             // 如果有属性状态则显示属性状态
-            if (mDeviceList.get(position).stateTimes != null && mDeviceList.get(position).stateTimes.size() > 0
-                    && !mDeviceList.get(position).productKey.equals(CTSL.PK_GATEWAY_RG4100)) {
+            EDevice.deviceEntry devItem = mDeviceList.get(position);
+            if (devItem.stateTimes != null && devItem.stateTimes.size() > 0
+                    && !devItem.productKey.equals(CTSL.PK_GATEWAY_RG4100)) {
+                int stateTimesCount = devItem.stateTimes.size();
                 viewHolder.status.setVisibility(View.GONE);
-                // 只有一种状态的处理
-                if (mDeviceList.get(position).stateTimes.size() == 1) {
+                if (stateTimesCount == 1) {
+                    // 只有一种状态的处理
                     viewHolder.state.setVisibility(View.VISIBLE);
                     viewHolder.time.setVisibility(View.VISIBLE);
-                    viewHolder.state.setText(mDeviceList.get(position).stateTimes.get(0).value);
+                    viewHolder.state.setText(devItem.stateTimes.get(0).value);
                     if (CTSL.PK_ONEWAYSWITCH.equals(deviceEntry.productKey)) {
+                        // 一路开关
                         JSONObject jsonObject = DeviceBuffer.getExtendedInfo(deviceEntry.iotId);
                         if (jsonObject != null) {
                             String name = jsonObject.getString(CTSL.OWS_P_PowerSwitch_1);
@@ -217,13 +248,9 @@ public class AptDeviceGrid extends BaseAdapter {
                         // 单调光面板
                         viewHolder.state.setText("亮度：" + mDeviceList.get(position).stateTimes.get(0).value + "%");
                     }
-                    viewHolder.time.setText(mDeviceList.get(position).stateTimes.get(0).time);
-                }
-                // 有多种状态的处理
-                // 目前只显示前两种状态
-                EDevice.deviceEntry devItem = mDeviceList.get(position);
-                int stateTimesCount = devItem.stateTimes.size();
-                if (stateTimesCount >= 2) {
+                    viewHolder.time.setText(devItem.stateTimes.get(0).time);
+                } else if (stateTimesCount >= 2) {
+                    // 2种或更多状态的处理
                     viewHolder.state1.setVisibility(View.VISIBLE);
                     viewHolder.state2.setVisibility(View.VISIBLE);
                     if (stateTimesCount == 2) {

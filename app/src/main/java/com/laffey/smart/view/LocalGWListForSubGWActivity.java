@@ -1,11 +1,5 @@
 package com.laffey.smart.view;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,33 +8,43 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalGatewayListBinding;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.utility.QMUITipDialogUtil;
-import com.laffey.smart.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalGatewayListActivity extends AppCompatActivity implements View.OnClickListener {
+public class LocalGWListForSubGWActivity extends AppCompatActivity implements View.OnClickListener {
     private ActivityLocalGatewayListBinding mViewBinding;
+
+    private static final String QR_KEY = "qr_key";
 
     private final int SCENE_LIST_REQUEST_CODE = 10000;
 
     private final List<EDevice.deviceEntry> mList = new ArrayList<>();
     private BaseQuickAdapter<EDevice.deviceEntry, BaseViewHolder> mAdapter;
 
-    public static void start(Context context) {
-        Intent intent = new Intent(context, LocalGatewayListActivity.class);
+    private String mQrKey;
+
+    public static void start(Context context, String qrKey) {
+        Intent intent = new Intent(context, LocalGWListForSubGWActivity.class);
+        intent.putExtra(QR_KEY, qrKey);
         context.startActivity(intent);
     }
 
@@ -58,6 +62,7 @@ public class LocalGatewayListActivity extends AppCompatActivity implements View.
     private void initData() {
         mList.addAll(DeviceBuffer.getGatewayDevs("1"));
         mAdapter.notifyDataSetChanged();
+        mQrKey = getIntent().getStringExtra(QR_KEY);
     }
 
     private void initAdapter() {
@@ -68,7 +73,7 @@ public class LocalGatewayListActivity extends AppCompatActivity implements View.
                     holder.setVisible(R.id.divider, false);
                 } else holder.setVisible(R.id.divider, true);
                 ImageView imageView = holder.getView(R.id.icon);
-                Glide.with(LocalGatewayListActivity.this).load(entry.image).into(imageView);
+                Glide.with(LocalGWListForSubGWActivity.this).load(entry.image).into(imageView);
                 holder.setText(R.id.name, entry.nickName)
                         .setText(R.id.mac, getString(R.string.moredevice_id_2) + entry.deviceName);
             }
@@ -77,9 +82,9 @@ public class LocalGatewayListActivity extends AppCompatActivity implements View.
             @Override
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 EDevice.deviceEntry dev = mList.get(position);
-                LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, dev.mac, SCENE_LIST_REQUEST_CODE);
-                finish();
+                // LocalSceneActivity.start(LocalGWListForSubGWActivity.this, dev.iotId, dev.mac, SCENE_LIST_REQUEST_CODE);
                 // LocalSceneActivity.start(LocalGatewayListActivity.this, dev.iotId, "00-68-EB-C5-66-23", SCENE_LIST_REQUEST_CODE);
+                AddSubGwActivity.start(LocalGWListForSubGWActivity.this, dev.iotId, mQrKey, Constant.REQUESTCODE_CALLADDSUBGWACTIVITY);
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);

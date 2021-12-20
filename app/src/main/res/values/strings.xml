@@ -737,8 +737,8 @@
     <string name="pls_input_brand">请输入品牌</string>
 
     <string name="service_has_no_parameters">此服务无参数。</string>
-    <string name="associated_switch">双控</string>
-    <string name="choice_associated_switch">选择双控按键</string>
+    <string name="associated_switch">多控</string>
+    <string name="choice_associated_switch">选择多控按键</string>
     <string name="bind_list">%1$s绑定列表</string>
     <string name="control_group_list">%1$s多控组</string>
     <string name="select_dev">选择设备</string>
@@ -847,8 +847,8 @@
     <string name="new_pwd_must_contain_8_to_16_characters">新密码长度需要在8-16位</string>
     <string name="modify_success">修改成功</string>
     <string name="no_scene_data">无场景数据</string>
-    <string name="max_of_three_keys_can_be_temporarily_bound_to_one_key">一个按键最多可绑定三个按键</string>
-    <string name="max_of_four_keys_can_be_temporarily_bound_to_one_key">一个按键最多可绑定四个按键</string>
+    <string name="max_of_three_keys_can_be_temporarily_bound_to_one_key">一个按键最多可绑定另外三个按键</string>
+    <string name="max_of_four_keys_can_be_temporarily_bound_to_one_key">一个按键最多可绑定另外四个按键</string>
     <string name="gw_is_offline_cannot_unbind_scene">网关离线，无法解绑场景</string>
     <string name="gw_is_offline_cannot_add_bind">网关离线，无法创建绑定关系</string>
     <string name="dev_is_offline_cannot_add_bind">设备离线，无法创建绑定关系</string>
@@ -879,4 +879,11 @@
     <string name="other_login_methods">其它登录方式</string>
     <string name="msg_login_methods">短信登录</string>
     <string name="pwd_login_methods">账号登录</string>
+    <string name="create_time">创建时间:</string>
+    <string name="activate_time">激活时间:</string>
+    <string name="frequently_send_and_pls_later">发送过于频繁，请稍后再试！</string>
+    <string name="scene_is_invaild">场景已禁用</string>
+    <string name="click_btn">触发按键</string>
+    <string name="click_scene">触发场景</string>
+    <string name="click_backlight">触发背光</string>
 </resources>

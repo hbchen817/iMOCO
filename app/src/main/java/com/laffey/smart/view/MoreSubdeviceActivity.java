@@ -464,7 +464,7 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
                 if (code == 200) {
-                    String sceneId = response.getString("sceneId");
+                    String sceneId = mSceneList.get(pos).getSceneDetail().getSceneId();
                     DeviceBuffer.removeScene(sceneId);
                     SceneManager.manageSceneService(mGwId, sceneId, 3,
                             mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);

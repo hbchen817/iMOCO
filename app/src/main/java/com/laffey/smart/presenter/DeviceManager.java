@@ -676,6 +676,94 @@ public class DeviceManager {
                 });
     }
 
+    // 网关绑定到项目
+    public static void gwBindToProject(Activity activity, String productKey, String deviceName, Callback callback) {
+        RetrofitUtil.getInstance()
+                .gwBindToProject(activity, productKey, deviceName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    gwBindToProject(activity, productKey, deviceName, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 获取数据转换规则
+    public static void getDataConversionRules(Activity activity, String productKey, Callback callback) {
+        RetrofitUtil.getInstance()
+                .getDataConversionRules(activity, productKey)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    getDataConversionRules(activity, productKey, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public interface Callback {
         void onNext(JSONObject response);
 

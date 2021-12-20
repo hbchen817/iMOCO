@@ -1,9 +1,12 @@
 package com.laffey.smart.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,11 +15,16 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.databinding.ActivityFloorHeatingForFullScreenBinding;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
+import com.laffey.smart.presenter.RealtimeDataParser;
+import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
 import com.vise.log.ViseLog;
@@ -25,37 +33,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FloorHeatingForMultiDevActivity extends DetailActivity {
-    @BindView(R.id.topbar)
-    RelativeLayout mTopbarRoot;
-    @BindView(R.id.includeDetailImgMore)
-    ImageView mTopbarMore;
-    @BindView(R.id.includeDetailImgBack)
-    ImageView mTopbarBack;
-    @BindView(R.id.includeDetailLblTitle)
-    TextView mTopbarTitle;
-    @BindView(R.id.icon_switch)
-    TextView mSwitchIC;
-    @BindView(R.id.timing_ic)
-    TextView mTimingIC;
-    @BindView(R.id.temperature_value)
-    AlignTextView mTemValue;
-    @BindView(R.id.temperatureSeekBar)
-    SeekBar mTemSeekBar;
-    @BindView(R.id.temperature)
-    TextView mTemValue1TV;
-    @BindView(R.id.tem_unit_1)
-    TextView mTemUnit1TV;
-    @BindView(R.id.tem_unit_2)
-    TextView mTemUnit2TV;
-    @BindView(R.id.temperature2)
-    TextView mTemValue2TV;
-    @BindView(R.id.auto_work_mode_tv)
-    TextView mAutoWorkModeTV;
-    @BindView(R.id.switch_layout)
-    RelativeLayout mSwitchLayout;
-    @BindView(R.id.timing_layout)
-    RelativeLayout mTimingLayout;
+public class FloorHeatingActivity extends DetailActivity {
+    ActivityFloorHeatingForFullScreenBinding mViewBinding;
 
     private int mPowerSwitch = 0;// 0: 关闭  1: 打开
     private int mTargetTem = 0;
@@ -72,6 +51,7 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
         }
 
         // 开关
+        ViseLog.d("更新状态 = \n" + GsonUtil.toJson(propertyEntry));
         if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating) != null && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating).length() > 0) {
             String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating);
             mPowerSwitch = Integer.parseInt(powerSwitch);
@@ -83,25 +63,25 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
                 && propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating).length() > 0) {
             String targetTem = propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating);
             mTargetTem = Integer.parseInt(targetTem);
-            mTemValue.setText(String.valueOf(mTargetTem));
-            mTemValue2TV.setText(String.valueOf(mTargetTem));
+            mViewBinding.temperatureValue.setText(String.valueOf(mTargetTem));
+            mViewBinding.temperature2.setText(String.valueOf(mTargetTem));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                mTemSeekBar.setProgress(mTargetTem - 16, true);
-            else mTemSeekBar.setProgress(mTargetTem - 16);
+                mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16, true);
+            else mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16);
         }
 
         // 当前温度
         if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating).length() > 0) {
             String currentTem = propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating);
-            mTemValue1TV.setText(currentTem);
+            mViewBinding.temperature.setText(currentTem);
         }
 
         // 加热状态
         if (propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating).length() > 0) {
             String autoWorkMode = propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating);
-            mAutoWorkModeTV.setText("0".equals(autoWorkMode) ? R.string.close : R.string.open);
+            mViewBinding.autoWorkModeTv.setText("0".equals(autoWorkMode) ? R.string.close : R.string.open);
         }
         return true;
     }
@@ -109,8 +89,8 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_floor_heating_for_full_screen);
-        ButterKnife.bind(this);
+        mViewBinding = ActivityFloorHeatingForFullScreenBinding.inflate(getLayoutInflater());
+        setContentView(mViewBinding.getRoot());
 
         mTSLHelper = new TSLHelper(this);
 
@@ -121,26 +101,25 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mTopbarBack.setOnClickListener(new View.OnClickListener() {
+        mViewBinding.topbar.includeDetailImgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mTopbarTitle.setText(R.string.floor_heating);
     }
 
     private void initView() {
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
-        mSwitchIC.setTypeface(iconfont);
-        mTimingIC.setTypeface(iconfont);
+        mViewBinding.iconSwitch.setTypeface(iconfont);
+        mViewBinding.timingIc.setTypeface(iconfont);
 
-        mTemSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mViewBinding.temperatureSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 String tem = String.valueOf(16 + progress);
-                mTemValue.setText(tem);
-                mTemValue2TV.setText(tem);
+                mViewBinding.temperatureValue.setText(tem);
+                mViewBinding.temperature2.setText(tem);
             }
 
             @Override
@@ -154,10 +133,49 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
                         new String[]{"" + (16 + seekBar.getProgress())});
             }
         });
-        mTemValue.setText("--");
+        mViewBinding.temperatureValue.setText("--");
 
         mOrange3 = ContextCompat.getColor(this, R.color.orange3);
         mOrange2 = ContextCompat.getColor(this, R.color.orange2);
+
+        mViewBinding.switchLayout.setOnClickListener(this::onViewClicked);
+        mViewBinding.timingLayout.setOnClickListener(this::onViewClicked);
+
+        // 主动获取设备属性
+        new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == Constant.MSG_CALLBACK_GETTSLPROPERTY) {
+                    // 处理获取属性回调
+                    ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                    JSONObject items = JSON.parseObject((String) msg.obj);
+                    if (items != null) {
+                        TSLHelper.parseProperty(mProductKey, items, propertyEntry);
+                        updateState(propertyEntry);
+                    }
+                }
+                return false;
+            }
+        }));
+
+        // 添加实时数据属性回调处理器
+        RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == Constant.MSG_CALLBACK_LNPROPERTYNOTIFY) {
+                    // 处理属性通知回调
+                    ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
+                    updateState(propertyEntry);
+                }
+                return false;
+            }
+        }));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RealtimeDataReceiver.deleteCallbackHandler(this.toString() + "Property");
     }
 
     // 嵌入式状态栏
@@ -167,11 +185,12 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.WHITE);
         }
-        mTopbarRoot.setBackgroundColor(Color.WHITE);
-        mTopbarMore.setVisibility(View.GONE);
+        mViewBinding.topbar.includeDetailLblTitle.setText(mName);
+        mViewBinding.topbar.includeDetailRl.setBackgroundColor(Color.WHITE);//includeDetailRl
+        mViewBinding.topbar.includeDetailImgMore.setVisibility(View.VISIBLE);
+        mViewBinding.topbar.includeDetailImgMore.setOnClickListener(this::onViewClicked);
     }
 
-    @OnClick({R.id.switch_layout, R.id.timing_layout})
     protected void onViewClicked(View view) {
         int viewId = view.getId();
         if (viewId == R.id.switch_layout) {
@@ -188,6 +207,15 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
             if (mPowerSwitch == 1) {
                 PluginHelper.cloudTimer(this, mIOTId, mProductKey);
             }
+        } else if (viewId == mViewBinding.topbar.includeDetailImgMore.getId()) {
+            // 设备详情
+            Intent intent;
+            intent = new Intent(this, MoreSubdeviceActivity.class);
+            intent.putExtra("iotId", mIOTId);
+            intent.putExtra("productKey", mProductKey);
+            intent.putExtra("name", mName);
+            intent.putExtra("owned", mOwned);
+            startActivityForResult(intent, Constant.REQUESTCODE_CALLMOREACTIVITY);
         }
     }
 
@@ -200,28 +228,28 @@ public class FloorHeatingForMultiDevActivity extends DetailActivity {
         switch (flag) {
             case 0: {
                 // 关闭
-                mSwitchIC.setTextColor(mOrange3);
-                mTemValue.setTextColor(mOrange3);
-                mTemValue1TV.setTextColor(mOrange3);
-                mTemValue2TV.setTextColor(mOrange3);
-                mAutoWorkModeTV.setTextColor(mOrange3);
-                mTemUnit1TV.setTextColor(mOrange3);
-                mTemUnit2TV.setTextColor(mOrange3);
-                mTimingIC.setTextColor(mOrange3);
-                mTemSeekBar.setEnabled(false);
+                mViewBinding.iconSwitch.setTextColor(mOrange3);
+                mViewBinding.temperatureValue.setTextColor(mOrange3);
+                mViewBinding.temperature.setTextColor(mOrange3);
+                mViewBinding.temperature2.setTextColor(mOrange3);
+                mViewBinding.autoWorkModeTv.setTextColor(mOrange3);
+                mViewBinding.temUnit1.setTextColor(mOrange3);
+                mViewBinding.temUnit2.setTextColor(mOrange3);
+                mViewBinding.timingIc.setTextColor(mOrange3);
+                mViewBinding.temperatureSeekBar.setEnabled(false);
                 break;
             }
             case 1: {
                 // 打开
-                mSwitchIC.setTextColor(mOrange2);
-                mTemValue.setTextColor(mOrange2);
-                mTemValue1TV.setTextColor(mOrange2);
-                mTemValue2TV.setTextColor(mOrange2);
-                mAutoWorkModeTV.setTextColor(mOrange2);
-                mTemUnit1TV.setTextColor(mOrange2);
-                mTemUnit2TV.setTextColor(mOrange2);
-                mTimingIC.setTextColor(mOrange2);
-                mTemSeekBar.setEnabled(true);
+                mViewBinding.iconSwitch.setTextColor(mOrange2);
+                mViewBinding.temperatureValue.setTextColor(mOrange2);
+                mViewBinding.temperature.setTextColor(mOrange2);
+                mViewBinding.temperature2.setTextColor(mOrange2);
+                mViewBinding.autoWorkModeTv.setTextColor(mOrange2);
+                mViewBinding.temUnit1.setTextColor(mOrange2);
+                mViewBinding.temUnit2.setTextColor(mOrange2);
+                mViewBinding.timingIc.setTextColor(mOrange2);
+                mViewBinding.temperatureSeekBar.setEnabled(true);
                 break;
             }
         }

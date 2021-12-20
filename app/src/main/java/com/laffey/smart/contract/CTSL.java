@@ -147,19 +147,25 @@ public class CTSL {
         }
     };
 
+
+
     // 定义三开六场景开关属性常量
     public static final String PSS_BackLightMode             = "backLight";
     public static final Map<String, PTYPE> PSS_Properties    = new HashMap<String, PTYPE>() {
         {
             put(PSS_BackLightMode, PTYPE.t_enum);
+            put(BATTERY, PTYPE.t_int32);
         }
     };
+
+    public static final String BATTERY                    = "Battery";
 
     // 定义一场景开关属性常量
     public static final String POS_BackLight              = "backLight";
     public static final Map<String, PTYPE> POS_Properties = new HashMap<String, PTYPE>() {
         {
             put(POS_BackLight, PTYPE.t_enum);
+            put(BATTERY,PTYPE.t_int32);
         }
     };
 
@@ -168,6 +174,7 @@ public class CTSL {
     public static final Map<String, PTYPE> PTS_Properties = new HashMap<String, PTYPE>() {
         {
             put(PTS_BackLight, PTYPE.t_enum);
+            put(BATTERY, PTYPE.t_int32);
         }
     };
 
@@ -184,6 +191,7 @@ public class CTSL {
     public static final Map<String, PTYPE> PFS_Properties = new HashMap<String, PTYPE>() {
         {
             put(PFS_BackLight, PTYPE.t_enum);
+            put(BATTERY, PTYPE.t_int32);
         }
     };
 
@@ -592,7 +600,8 @@ public class CTSL {
             put(PK_SIX_TWO_SCENE_SWITCH, SIX_SCENE_SWITCH_Properties);
             put(PK_AIRCOMDITION_TWO, AIRC_T_Properties);
             put(PK_AIRCOMDITION_FOUR, AIRC_F_Properties);
-            put(PK_FLOORHEATING001, FLOORH_001_Properties);
+            // put(PK_FLOORHEATING001, FLOORH_001_Properties);
+            put(PK_FLOORHEATING001, M3I1_Properties);
             put(PK_THREE_KEY_SWITCH, TWS_3_Properties);
             put(PK_SMART_LOCK_A7, SL_Properties);
             put(TEST_PK_ONEWAYWINDOWCURTAINS, WC_Properties);
@@ -610,6 +619,7 @@ public class CTSL {
             put(PK_SYT_TWO_SCENE_SWITCH, P2S_Properties);
             put(TEST_PK_FULL_SCREEN_SWITCH, FSS_Properties);
             put(PK_MULTI_THREE_IN_ONE, M3I1_Properties);
+            put(PK_FAU, M3I1_Properties);
             put(PK_MULTI_AC_AND_FH, M3I1_Properties);
             put(PK_MULTI_AC_AND_FA, M3I1_Properties);
             put(PK_MULTI_FH_AND_FA, M3I1_Properties);

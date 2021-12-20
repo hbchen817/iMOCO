@@ -10,6 +10,7 @@ import android.os.Bundle;
 import com.aliyun.iot.aep.component.router.Router;
 import com.google.gson.Gson;
 import com.laffey.smart.BuildConfig;
+import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.view.AirConditionerActivity;
 import com.laffey.smart.view.ColorLightDetailActivity;
@@ -22,8 +23,10 @@ import com.laffey.smart.view.DetailSensorActivity;
 import com.laffey.smart.view.DetailThreeSwitchActivity;
 import com.laffey.smart.view.DetailTwoSwitchActivity;
 import com.laffey.smart.view.DetailTwoSwitchActivity2;
+import com.laffey.smart.view.FloorHeatingActivity;
 import com.laffey.smart.view.FourSceneSwitchActivity;
 import com.laffey.smart.view.FourSceneSwitchActivity2;
+import com.laffey.smart.view.FreshAirActivity;
 import com.laffey.smart.view.LightDetailActivity;
 import com.laffey.smart.view.LockDetailActivity;
 import com.laffey.smart.view.MultiDevActivity;
@@ -166,9 +169,20 @@ public class ActivityRouter {
                 intent = new Intent(context, MultiDevActivity.class);
                 break;
             }
+            case CTSL.PK_AIRCOMDITION_FOUR:// 空调四管制
             case CTSL.PK_AIRCOMDITION_TWO: {
                 // 空调二管制
                 intent = new Intent(context, AirConditionerActivity.class);
+                break;
+            }
+            case CTSL.PK_FLOORHEATING001: {
+                // 地暖
+                intent = new Intent(context, FloorHeatingActivity.class);
+                break;
+            }
+            case CTSL.PK_FAU: {
+                // 新风
+                intent = new Intent(context, FreshAirActivity.class);
                 break;
             }
             default:

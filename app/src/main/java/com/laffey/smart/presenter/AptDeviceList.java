@@ -80,6 +80,33 @@ public class AptDeviceList extends BaseAdapter {
         RefreshData.refreshDeviceNumberData();
     }
 
+    // 更新状态数据
+    public void updateStateData(List<ETSL.propertyEntry> propertyEntryList) {
+        for (ETSL.propertyEntry propertyEntry : propertyEntryList) {
+            boolean isExist = false;
+            EDevice.deviceEntry deviceEntry = null;
+            if (mDeviceList.size() > 0) {
+                for (EDevice.deviceEntry entry : mDeviceList) {
+                    if (entry.iotId.equalsIgnoreCase(propertyEntry.iotId)) {
+                        isExist = true;
+                        deviceEntry = entry;
+                        break;
+                    }
+                }
+            }
+            if (!isExist) {
+                continue;
+            }
+            for (String name : propertyEntry.properties.keySet()) {
+                if (propertyEntry.properties.containsKey(name) && propertyEntry.times.containsKey(name)) {
+                    deviceEntry.processStateTime(mContext, name, propertyEntry.properties.get(name), propertyEntry.times.get(name));
+                }
+            }
+        }
+        notifyDataSetChanged();
+        RefreshData.refreshDeviceNumberData();
+    }
+
     // 更新房间数据
     public void updateRoomData(String iotId) {
         if (mDeviceList.size() > 0) {

@@ -12,6 +12,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/button_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -186,6 +187,35 @@
                     android:paddingBottom="@dimen/dp_5"
                     android:text="@string/key_6" />
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/battery_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_layout"
+            android:layout_marginHorizontal="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_30"
+            android:background="@drawable/key_status_background"
+            android:paddingLeft="@dimen/dp_20">
+
+            <TextView
+                android:id="@+id/battery_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingVertical="@dimen/dp_15"
+                android:text="@string/power"
+                android:textColor="#565353" />
+
+            <TextView
+                android:id="@+id/battery_value_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/dp_15"
+                android:paddingRight="@dimen/dp_20"
+                android:text="--"
+                android:textColor="#565353" />
         </LinearLayout>
 
         <LinearLayout

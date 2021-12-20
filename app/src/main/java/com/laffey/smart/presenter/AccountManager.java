@@ -216,6 +216,51 @@ public class AccountManager {
                 });
     }
 
+    // 帐号注册（无token）
+    public static void accountsReg(Activity activity, String telNum, String pwd, String verifyCode,
+                                   Callback callback) {
+        RetrofitUtil.getInstance().accountsReg(telNum, pwd, verifyCode)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    accountsReg(activity, telNum, pwd, verifyCode, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    LoginActivity.start(activity, null);
+                                    activity.finish();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     // 帐号密码认证、登录（无token）
     public static void authAccountsPwd(String accounts, String pwd,
                                        int resultTag, int errorTag, Handler resulthandler) {
@@ -365,6 +410,51 @@ public class AccountManager {
                         msg.what = errorTag;
                         msg.obj = e;
                         msg.sendToTarget();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    // 密码重置（无token）
+    public static void pwdReset(Activity activity, String telNum, String pwd, String verifyCode,
+                                Callback callback) {
+        RetrofitUtil.getInstance().pwdReset(telNum, pwd, verifyCode)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    pwdReset(activity, telNum, pwd, verifyCode, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    LoginActivity.start(activity, null);
+                                    activity.finish();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        callback.onError(e);
                     }
 
                     @Override

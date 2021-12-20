@@ -16,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -181,15 +182,17 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
         mSceneManager = new SceneManager(this);
         DeviceBuffer.addCacheInfo("LocalSceneTag", "SwitchLocalSceneActivity");
 
-        ViseLog.d("场景缓存 = \n" + GsonUtil.toJson(DeviceBuffer.getAllScene()));
-        if (DeviceBuffer.getScene(mSceneId) != null &&
+        ViseLog.d("mSceneId = " + mSceneId + "\n场景缓存 = \n" + GsonUtil.toJson(DeviceBuffer.getAllScene()));
+        if (mSceneId != null && mSceneId.length() > 0 && DeviceBuffer.getScene(mSceneId) != null &&
                 DeviceBuffer.getScene(mSceneId).getAppParams() != null) {
             mAutoSceneId = DeviceBuffer.getScene(mSceneId).getAppParams().getString("cId");
-            String[] tmp = mAutoSceneId.split(",");
-            if (tmp != null && tmp.length > 0) {
-                for (String id : tmp) {
-                    if (DeviceBuffer.getScene(id) != null)
-                        mAutoSceneIds.add(id);
+            if (mAutoSceneId != null && mAutoSceneId.length() > 0) {
+                String[] tmp = mAutoSceneId.split(",");
+                if (tmp != null && tmp.length > 0) {
+                    for (String id : tmp) {
+                        if (DeviceBuffer.getScene(id) != null)
+                            mAutoSceneIds.add(id);
+                    }
                 }
             }
         }
@@ -275,10 +278,14 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                         holder.setTextColor(R.id.detail, ContextCompat.getColor(SwitchLocalSceneActivity.this, R.color.red));
                     }
                 } else if ("Scene".equals(type)) {
-                    String keyNickName = eAction.getKeyNickName();
+                    String keyNickName = null;
+                    ItemSceneInGateway scene = DeviceBuffer.getScene(eAction.getAction().getParameters().getSceneId());
+                    if (scene != null) {
+                        keyNickName = scene.getSceneDetail().getName();
+                    }
                     icon.setText(R.string.icon_scene);
                     if (keyNickName != null && keyNickName.length() > 0) {
-                        holder.setText(R.id.title, eAction.getKeyNickName())
+                        holder.setText(R.id.title, keyNickName)
                                 .setText(R.id.detail, getString(R.string.rb_tab_two_desc));
                     } else {
                         holder.setText(R.id.title, getString(R.string.scene_does_not_exist))
@@ -305,11 +312,17 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                         ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.dev_does_not_exist);
                     }
                 } else if ("Scene".equals(eAction.getAction().getType())) {
-                    mTmpEAction = JSONObject.parseObject(GsonUtil.toJson(eAction), EAction.class);
-                    eAction.setTarget("LocalActionScenesActivity");
-                    EventBus.getDefault().postSticky(eAction);
+                    TextView title = view.findViewById(R.id.title);
+                    if (getString(R.string.scene_does_not_exist).equals(title.getText().toString())) {
+                        ToastUtils.showLongToast(SwitchLocalSceneActivity.this, R.string.scene_does_not_exist);
+                    } else {
+                        mTmpEAction = JSONObject.parseObject(GsonUtil.toJson(eAction), EAction.class);
+                        eAction.setTarget("LocalActionScenesActivity");
+                        EventBus.getDefault().postSticky(eAction);
 
-                    LocalActionScenesActivity.start(SwitchLocalSceneActivity.this, mGatewayId, mIotId, mSceneId, "SwitchLocalSceneActivity");
+                        LocalActionScenesActivity.start(SwitchLocalSceneActivity.this,
+                                mGatewayId, mIotId, mSceneId, "SwitchLocalSceneActivity");
+                    }
                 }
             }
         });
@@ -1181,10 +1194,9 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
                 if (code == 200) {
-                    String resultSceneId = response.getString("sceneId");
-                    if (mSceneId != null && mSceneId.equals(resultSceneId)) {
-                        DeviceBuffer.removeScene(resultSceneId);
-                        SceneManager.manageSceneService(mGatewayId, resultSceneId, 3,
+                    if (mSceneId != null && mSceneId.equals(sceneId)) {
+                        DeviceBuffer.removeScene(sceneId);
+                        SceneManager.manageSceneService(mGatewayId, sceneId, 3,
                                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
                         if (mAutoSceneIds != null && mAutoSceneIds.size() > 0) {
                             deleteScene(mAutoSceneIds.get(0));
@@ -1195,18 +1207,25 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
                             finish();
                         }
                     } else {
-                        int pos = -1;
-                        for (int i = 0; i < mAutoSceneIds.size(); i++) {
-                            if (resultSceneId.equals(mAutoSceneIds.get(i))) {
-                                pos = i + 1;
-                                break;
+                        if (sceneId != null) {
+                            int pos = -1;
+                            for (int i = 0; i < mAutoSceneIds.size(); i++) {
+                                if (sceneId.equals(mAutoSceneIds.get(i))) {
+                                    pos = i + 1;
+                                    break;
+                                }
                             }
-                        }
-                        DeviceBuffer.removeScene(resultSceneId);
-                        SceneManager.manageSceneService(mGatewayId, resultSceneId, 3,
-                                mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                        if (pos < mAutoSceneIds.size()) {
-                            deleteScene(mAutoSceneIds.get(pos));
+                            DeviceBuffer.removeScene(sceneId);
+                            SceneManager.manageSceneService(mGatewayId, sceneId, 3,
+                                    mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                            if (pos >= 0 && pos < mAutoSceneIds.size()) {
+                                deleteScene(mAutoSceneIds.get(pos));
+                            } else {
+                                QMUITipDialogUtil.dismiss();
+                                RefreshData.refreshHomeSceneListData();
+                                setResult(Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY);
+                                finish();
+                            }
                         } else {
                             QMUITipDialogUtil.dismiss();
                             RefreshData.refreshHomeSceneListData();
@@ -1658,12 +1677,13 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
         for (ItemScene.Action action : scene.getActions()) {
             EAction eAction = new EAction();
             eAction.setAction(action);
+            ViseLog.d("eAction = \n" + GsonUtil.toJson(eAction));
             if ("Scene".equals(action.getType())) {
                 hasScene = true;
             }
             mActionList.add(eAction);
         }
-        // ViseLog.d("动作 ：" + GsonUtil.toJson(mActionList));
+        ViseLog.d("动作 ：" + GsonUtil.toJson(mActionList));
         if (mConditionList.size() > 0) {
             if (hasScene)
                 querySceneList();
@@ -1737,10 +1757,10 @@ public class SwitchLocalSceneActivity extends BaseActivity implements View.OnCli
             }
         } else if ("Scene".equals(action.getType())) {
             // 场景
-            mActionList.get(pos).setKeyNickName(mSceneInfo.get(action.getParameters().getSceneId()));
             if (pos < mActionList.size() - 1) {
                 queryActionIotIdByMac(token, pos + 1);
             } else {
+                ViseLog.d("mActionList ==== \n" + GsonUtil.toJson(mActionList));
                 mActionAdapter.notifyDataSetChanged();
                 mViewBinding.addActionLayout.setVisibility(View.GONE);
                 mViewBinding.actionRv.setVisibility(View.VISIBLE);

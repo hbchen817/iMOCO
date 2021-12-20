@@ -30,9 +30,11 @@ import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.Logger;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.utility.Utility;
 import com.laffey.smart.widget.ComCircularProgress;
+import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import butterknife.BindView;
@@ -79,61 +81,23 @@ public class PermitJoinActivity extends BaseActivity {
                 }
             } else if (Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
                 // 超时处理
-                Dialog.confirm(PermitJoinActivity.this, R.string.dialog_title, getString(R.string.permitjoin_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, true);
+                if (mJoinThread != null)
+                    DialogUtils.showConfirmDialog(PermitJoinActivity.this, R.string.dialog_title, R.string.permitjoin_timeout,
+                            R.string.dialog_confirm, new DialogUtils.Callback() {
+                                @Override
+                                public void positive() {
+                                    finish();
+                                }
+
+                                @Override
+                                public void negative() {
+
+                                }
+                            });
             }
             return false;
         }
     });
-
-    private void deviceHandle(SceneManager mSceneManager) {
-        switch (mProductKey) {
-            case CTSL.PK_LIGHT:
-            case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
-                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_ONE_SCENE_SWITCH:
-            case CTSL.PK_SYT_ONE_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_ANY_TWO_SCENE_SWITCH:
-            case CTSL.PK_TWO_SCENE_SWITCH:
-            case CTSL.PK_SYT_TWO_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_THREE_SCENE_SWITCH:
-            case CTSL.PK_SYT_THREE_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
-            case CTSL.PK_FOUR_SCENE_SWITCH:
-            case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
-            case CTSL.PK_U_SIX_SCENE_SWITCH:
-            case CTSL.PK_SIX_SCENE_SWITCH:
-            case CTSL.PK_SYT_SIX_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                mSceneManager.setExtendedProperty(mSubDeviceIotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
-                break;
-            default:
-                break;
-        }
-    }
 
     // API数据处理器
     private final Handler mAPIProcessDataHandler = new Handler(new Handler.Callback() {
@@ -157,8 +121,8 @@ public class PermitJoinActivity extends BaseActivity {
                     mIsJoinSuccess = true;
                     // 发送刷新设备状态事件
                     RefreshData.refreshDeviceStateData();
-                    deviceHandle(mSceneManager);
-                    BindSuccessActivity.start(PermitJoinActivity.this, mGatewayIOTId, mSubDeviceIotId, mSubDeviceName);
+                    // deviceHandle(mSceneManager);
+                    BindSuccessActivity.start(PermitJoinActivity.this, mGatewayIOTId, mSubDeviceIotId, mSubDeviceName, mProductKey);
 
                     // 发送刷新设备列表事件
                     RefreshData.refreshDeviceListData();
@@ -184,7 +148,8 @@ public class PermitJoinActivity extends BaseActivity {
                     }
                     if (sceneList.scenes.size() >= sceneList.pageSize) {
                         // 数据没有获取完则获取下一页数据
-                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                        mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, sceneList.pageNo + 1, 20,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                     }
                 }
             }
@@ -212,7 +177,8 @@ public class PermitJoinActivity extends BaseActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey, joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+                                    mConfigNetwork.bindSubDevice(SystemParameter.getInstance().getHomeId(), mProductKey,
+                                            joinResultEntry.subDeviceName, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
                                 }
                             }, 2000);
                         }
@@ -291,7 +257,8 @@ public class PermitJoinActivity extends BaseActivity {
     // 发送允许入网命令
     private void sendPermitJoinCommand(int duration) {
         // 发送命令
-        this.mConfigNetwork.permitJoinSubDevice(mGatewayIOTId, mProductKey, duration, mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
+        this.mConfigNetwork.permitJoinSubDevice(mGatewayIOTId, mProductKey, duration,
+                mCommitFailureHandler, mResponseErrorHandler, mAPIProcessDataHandler);
         if (duration == 1) {
             return;
         }

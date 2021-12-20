@@ -4,8 +4,17 @@ import com.alibaba.fastjson.JSONObject;
 
 public class ItemSceneInGateway {
     private String gwMac;
+    private String homeId;
     private JSONObject appParams;
     private ItemScene sceneDetail;
+
+    public String getHomeId() {
+        return homeId;
+    }
+
+    public void setHomeId(String homeId) {
+        this.homeId = homeId;
+    }
 
     public String getGwMac() {
         return gwMac;

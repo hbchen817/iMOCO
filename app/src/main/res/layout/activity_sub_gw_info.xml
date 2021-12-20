@@ -110,13 +110,14 @@
             android:layout_marginTop="@dimen/dp_10">
 
             <TextView
+                android:id="@+id/bind_time_title_tv"
                 style="@style/NormalFontStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
-                android:text="@string/moredevice_bindtime" />
+                android:text="@string/create_time" />
 
             <TextView
                 android:id="@+id/sub_gw_bindtime_tv"

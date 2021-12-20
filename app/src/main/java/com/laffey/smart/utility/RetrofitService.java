@@ -25,10 +25,6 @@ public interface RetrofitService {
     @POST(Constant.QUERY_MAC_BY_IOTID)
     Observable<JSONObject> queryMacByIotId(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
 
-    // 获取数据转换规则
-    @POST(Constant.GET_DATA_CONVERSION_RULES)
-    Observable<JSONObject> getDataConversionRules(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
-
     // 增加本地场景
     @POST(Constant.ADD_SCENE)
     Observable<JSONObject> addScene(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
@@ -164,6 +160,14 @@ public interface RetrofitService {
     // 清空主网关下的多控组
     @POST(Constant.DEL_MAC_CONTROL_GROUP)
     Observable<JSONObject> deleteMacControlGroup(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody Body);
+
+    // 网关绑定到项目
+    @POST(Constant.GW_BIND_TO_PROJECT)
+    Observable<JSONObject> gwBindToProject(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody Body);
+
+    // 获取数据转换规则
+    @POST(Constant.GET_DATA_CONVERSION_RULES)
+    Observable<JSONObject> getDataConversionRules(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
 
     @FormUrlEncoded
     @POST("/query")

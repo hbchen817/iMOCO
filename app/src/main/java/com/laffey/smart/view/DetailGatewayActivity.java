@@ -29,6 +29,7 @@ import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.ilop.page.scan.ScanActivity;
@@ -357,8 +358,8 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         mSubGwLV.setAdapter(mGwDeviceList);
         mSubGwLV.setOnItemClickListener(mSubGwListOnItemClickListener);
 
-        RelativeLayout armView = (RelativeLayout) findViewById(R.id.mArmViw);
-        ImageView gateway4100 = (ImageView) findViewById(R.id.mGateway4100);
+        RelativeLayout armView = findViewById(R.id.mArmViw);
+        ImageView gateway4100 = findViewById(R.id.mGateway4100);
         if (mProductKey.equals(CTSL.PK_GATEWAY_RG4100)) {
             gateway4100.setVisibility(View.VISIBLE);
             armView.setVisibility(View.GONE);
@@ -375,19 +376,29 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
 
         // 共享网关不能添加子设备
         if (mOwned == 0) {
-            RelativeLayout rlAdd = (RelativeLayout) findViewById(R.id.detailGatewayRlAdd);
+            RelativeLayout rlAdd = findViewById(R.id.detailGatewayRlAdd);
             rlAdd.setVisibility(View.GONE);
         }
 
-        ImageView imgAdd = (ImageView) findViewById(R.id.detailGatewayImgAdd);
-        TextView lblAdd = (TextView) findViewById(R.id.detailGatewayLblAdd);
+        ImageView imgAdd = findViewById(R.id.detailGatewayImgAdd);
+        TextView lblAdd = findViewById(R.id.detailGatewayLblAdd);
         imgAdd.setOnClickListener(mOnAddClickListener);
         lblAdd.setOnClickListener(mOnAddClickListener);
 
-        RelativeLayout addDevRL = (RelativeLayout) findViewById(R.id.add_dev_rl);
+        RelativeLayout addDevRL = findViewById(R.id.add_dev_rl);
         addDevRL.setOnClickListener(this);
+        RelativeLayout addSceneRL = findViewById(R.id.scene_add_layout);
+        if (mOwned == 0) {
+            // 分享者
+            addDevRL.setVisibility(View.GONE);
+            addSceneRL.setVisibility(View.GONE);
+        } else {
+            // 拥有者
+            addDevRL.setVisibility(View.VISIBLE);
+            addSceneRL.setVisibility(View.VISIBLE);
+        }
 
-        ImageView sceneAdd = (ImageView) findViewById(R.id.scene_add_img);
+        ImageView sceneAdd = findViewById(R.id.scene_add_img);
         sceneAdd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -416,6 +427,34 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
 
         mIsShowSubGwList = getIntent().getBooleanExtra(SHOW_SUB_GW_LIST, false);
         if (mIsShowSubGwList) mSubGwRB.setChecked(true);
+
+        RealtimeDataReceiver.addEventCallbackHandler("DetailGatewayCallback", new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == Constant.MSG_CALLBACK_LNEVENTNOTIFY) {
+                    // 处理触发手动场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    ViseLog.d("jsonObject = \n" + GsonUtil.toJson(jsonObject));
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("SubGatewayStatusNotification".equals(identifier)) {
+                        String status = value.getString("Status");
+                        String mac = value.getString("Mac");
+                        // status  1: 在线  3: 离线
+                        synchronized (DetailGatewayActivity.class) {
+                            for (EDevice.subGwEntry entry : mGwList) {
+                                if (mac.equals(entry.getMac())) {
+                                    entry.setStatus(status);
+                                    mGwDeviceList.notifyDataSetChanged();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        }));
     }
 
     // 添加子设备处理
@@ -478,7 +517,6 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
             }
             mAptDeviceList.notifyDataSetChanged();
         }
-        // deleteSceneInGW();
         if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
             // 拥有者
             for (EDevice.subGwEntry entry : mGwList) {
@@ -491,28 +529,6 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         onlineCount();
     }
 
-    private void deleteSceneInGW() {
-        try {
-
-            SceneManager.manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "157", 3,
-                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
-            Thread.sleep(2000);
-            SceneManager.manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "158", 3,
-                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
-            /*Thread.sleep(2000);
-            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "98", 3,
-                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
-            Thread.sleep(2000);
-            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "99", 3,
-                    mCommitFailureHandler, mResponseErrorHandler, new Handler());
-            Thread.sleep(2000);
-            new SceneManager(this).manageSceneService("yfsGov6Dv7Xw1NsdqTWo000000", "100", 3,
-                    mCommitFailureHandler, mResponseErrorHandler, new Handler());*/
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onDestroy() {
         // 注销事件总线
@@ -520,6 +536,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         // 删除实时数据属性回调处理器
         RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayStatusCallback");
         RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayJoinCallback");
+        RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayCallback");
         super.onDestroy();
     }
 
@@ -611,7 +628,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                         public void onNext(JSONObject response) {
                             // 获取网关下的子网关列表
                             int code = response.getInteger("code");
-                            // ViseLog.d("子网关列表 = \n" + GsonUtil.toJson(response));
+                            ViseLog.d("子网关列表 = \n" + GsonUtil.toJson(response));
                             if (code == 200) {
                                 JSONArray subGwList = response.getJSONArray("subGwList");
                                 mGwList.clear();
@@ -625,6 +642,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                                         entry.setNickname(object.getString("nickname"));
                                         entry.setPosition(object.getString("position"));
                                         entry.setCreateTime(object.getString("createTime"));
+                                        entry.setActivateTime(object.getString("activateTime"));
                                         entry.setState(object.getString("state"));
                                         entry.setImage(DeviceBuffer.getDeviceInformation(mIOTId).image);
                                         mGwList.add(entry);
@@ -632,6 +650,10 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                                     }
                                 }
                                 mGwDeviceList.notifyDataSetChanged();
+                                for (EDevice.subGwEntry entry : mGwList) {
+                                    SceneManager.querySubGatewayStatusService(DetailGatewayActivity.this, mIOTId,
+                                            entry.getMac(), null);
+                                }
                                 onlineCount();
                             } else {
                                 RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response);
@@ -665,7 +687,9 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
             /*ViseLog.d("flag = " + ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA));*/
         } else {
             // 已经获取权限
-            showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+            // showConfirmDialog(getString(R.string.dialog_title), getString(R.string.scan_bar_code_on_back_of_gw));
+            Intent intent = new Intent(mActivity, ScanActivity.class);
+            startActivityForResult(intent, 1);
         }
     }
 

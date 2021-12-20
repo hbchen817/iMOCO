@@ -661,6 +661,21 @@ public class SceneManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // wyy 获取设备上支持trigger/condition/action配置的功能属性列表
+    public static void queryIdentifierListForCA(Activity activity, String iotId, int flowType, APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_LIST;
+        requestParameterEntry.version = "1.0.4";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_IDENTIFIER_LIST;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // wyy 获取设备的trigger或condition或action功能列表与TSL定义
     public void queryTSLListForCA(String iotId, int flowType,
                                   Handler commitFailureHandler,
@@ -677,6 +692,22 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // wyy 获取设备的trigger或condition或action功能列表与TSL定义
+    public static void queryTSLListForCA(Activity activity, String iotId, int flowType,
+                                         APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_IOTID_SCENE_ABILITY_TSL_LIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("flowType", flowType);// 流程类型 0-trigger；1-condition；2-action
+
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_TSL_LIST;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // wyy 根据设备ID获取物的模板
@@ -916,6 +947,23 @@ public class SceneManager {
 
         //提交
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
+    }
+
+    // 删除设备扩展属性信息
+    public static void delExtendedProperty(Activity activity, String iotId,
+                                           String dataKey,
+                                           APIChannel.Callback callback) {
+
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_EXTENDED_PROPERTY_DEL;
+        requestParameterEntry.version = "1.0.0";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("dataKey", dataKey);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_EXTENDED_PROPERTY_DEL;
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
     // 更新模板CA场景
@@ -2337,6 +2385,23 @@ public class SceneManager {
         new APIChannel().commit(activity, requestParameterEntry, callback);
     }
 
+    // 获取子网关状态
+    public static void querySubGatewayStatusService(Activity activity, String iotId, String subMac,
+                                                    APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_TEMPORARY_KEY;
+        requestParameterEntry.version = "1.0.5";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.addParameter("identifier", "QuerySubGatewayStatusService");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("subMac", subMac);
+        requestParameterEntry.addParameter("args", jsonObject);
+
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 查询本地场景列表
     public void querySceneList(Activity activity, String mac, String type, int resultTag, int errorTag, Handler resulthandler) {
         Observable.just(new JSONObject())
@@ -2396,6 +2461,7 @@ public class SceneManager {
 
     // 增加本地场景
     public void addScene(Activity activity, ItemSceneInGateway scene, int resultTag, int errorTag, Handler resulthandler) {
+        scene.setHomeId(SystemParameter.getInstance().getHomeId());
         Observable.just(new JSONObject())
                 .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
                     @Override
@@ -2453,6 +2519,7 @@ public class SceneManager {
 
     // 增加本地场景
     public static void addScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
+        scene.setHomeId(SystemParameter.getInstance().getHomeId());
         RetrofitUtil.getInstance().addScene(activity, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -2553,6 +2620,7 @@ public class SceneManager {
 
     // 更新本地场景
     public static void updateScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
+        scene.setHomeId(SystemParameter.getInstance().getHomeId());
         RetrofitUtil.getInstance().updateScene(activity, scene)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -2759,7 +2827,7 @@ public class SceneManager {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
                         return RetrofitUtil.getInstance()
-                                .deleteScene(activity, scene.getGwMac(), scene.getSceneDetail().getSceneId());
+                                .deleteScene(activity, SystemParameter.getInstance().getHomeId(), scene.getGwMac(), scene.getSceneDetail().getSceneId());
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -2813,7 +2881,8 @@ public class SceneManager {
     // 删除本地场景
     public static void deleteScene(Activity activity, ItemSceneInGateway scene, Callback callback) {
         RetrofitUtil.getInstance()
-                .deleteScene(activity, scene.getGwMac(), scene.getSceneDetail().getSceneId())
+                .deleteScene(activity, SystemParameter.getInstance().getHomeId(), scene.getGwMac(),
+                        scene.getSceneDetail().getSceneId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JSONObject>() {
@@ -2861,7 +2930,8 @@ public class SceneManager {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
                         return RetrofitUtil.getInstance()
-                                .deleteScene(activity, gwMac, sceneId);
+                                .deleteScene(activity, SystemParameter.getInstance().getHomeId(),
+                                        gwMac, sceneId);
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -2919,7 +2989,8 @@ public class SceneManager {
                     @Override
                     public ObservableSource<JSONObject> apply(@io.reactivex.annotations.NonNull JSONObject jsonObject) throws Exception {
                         return RetrofitUtil.getInstance()
-                                .deleteScene(activity, gwMac, sceneId);
+                                .deleteScene(activity, SystemParameter.getInstance().getHomeId(),
+                                        gwMac, sceneId);
                     }
                 })
                 .subscribeOn(Schedulers.io())

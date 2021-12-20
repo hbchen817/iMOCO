@@ -50,9 +50,16 @@
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
         tools:replace="android:allowBackup,android:label,android:icon,android:roundIcon,android:theme,android:appComponentFactory">
-        <activity android:name=".view.SubGwInfoActivity"></activity>
-        <activity android:name=".view.AddSubGwActivity" />
-        <activity android:name=".view.PwdChangeActivity" />
+        <activity android:name=".view.TestActivity"></activity>
+        <activity
+            android:name=".view.SubGwInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.AddSubGwActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.PwdChangeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.PwdSettingActivity"
             android:screenOrientation="portrait" />
@@ -115,6 +122,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.FloorHeatingForFSSActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.FloorHeatingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.FreshAirActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.NewAirForFSSActivity"

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -21,9 +22,13 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityEditPropertyValueBinding;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ECondition;
+import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.AppUtils;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
@@ -108,6 +113,140 @@ public class LocalConditionValueActivity extends BaseActivity {
         initStatusBar();
         initRecyclerView();
         initData();
+        //getConditionIdentifier();
+        queryTSLListForCA();
+    }
+
+    private JSONObject mIdentifiersJson;
+
+    private void getConditionIdentifier() {
+        SceneManager.queryIdentifierListForCA(this, mDevIotId, 0, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(LocalConditionValueActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(LocalConditionValueActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                if (result.substring(0, 1).equals("[")) {
+                    result = "{\"data\":" + result + "}";
+                }
+                mIdentifiersJson = JSONObject.parseObject(result);
+                ViseLog.d("条件 = \n" + GsonUtil.toJson(mIdentifiersJson));
+                queryTSLListForCA();
+            }
+        });
+    }
+
+    private void queryTSLListForCA() {
+        SceneManager.queryTSLListForCA(this, mDevIotId, 0, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(LocalConditionValueActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(LocalConditionValueActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                JSONObject abilityDsl = JSONObject.parseObject(result).getJSONObject("abilityDsl");
+                initIdentifierObject(abilityDsl);
+            }
+        });
+    }
+
+    private void initIdentifierObject(JSONObject abilityDsl) {
+        JSONArray properties = abilityDsl.getJSONArray("properties");
+        JSONArray events = abilityDsl.getJSONArray("events");
+        // ViseLog.d("properties = \n" + GsonUtil.toJson(properties));
+        // ViseLog.d("events = \n" + GsonUtil.toJson(events));
+
+        JSONArray propertiesDetail = new JSONArray();
+        JSONArray eventsDetail = new JSONArray();
+        JSONObject item = DeviceBuffer.getExtendedInfo("tmp");
+        String identifier = item.getString("identifier");
+        if (item.getInteger("type") == 1) {
+            for (int j = 0; j < properties.size(); j++) {
+                JSONObject property = properties.getJSONObject(j);
+                if (identifier.equals(property.getString("identifier"))) {
+                    propertiesDetail.add(property);
+                    break;
+                }
+            }
+        } else if (item.getInteger("type") == 3) {
+            for (int j = 0; j < properties.size(); j++) {
+                JSONObject event = events.getJSONObject(j);
+                if (identifier.equals(event.getString("identifier"))) {
+                    eventsDetail.add(event);
+                    break;
+                }
+            }
+        }
+        ViseLog.d("propertiesDetail = \n" + GsonUtil.toJson(propertiesDetail));
+        ViseLog.d("eventsDetail = \n" + GsonUtil.toJson(eventsDetail));
+        getDataConversionRules(propertiesDetail, eventsDetail);
+    }
+
+    // 获取数据转换规则
+    private void getDataConversionRules(JSONArray propertiesDetail, JSONArray eventsDetail) {
+        DeviceManager.getDataConversionRules(this, mProductKey, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    JSONObject ruleJson = JSONObject.parseObject(response.getString("ruleJson"));
+                    ViseLog.d("rule规则 = \n" + GsonUtil.toJson(ruleJson));
+                    JSONArray reportStateRules = ruleJson.getJSONArray("report_state_rules");
+                    JSONArray reportEventRules = ruleJson.getJSONArray("report_event_rules");
+                    List<ItemScene.Condition> conditions = new ArrayList<>();
+                    for (int i = 0; i < propertiesDetail.size(); i++) {
+                        JSONObject property = propertiesDetail.getJSONObject(i);
+                        for (int j = 0; j < reportStateRules.size(); j++) {
+                            JSONObject reportStateRule = reportStateRules.getJSONObject(j);
+                            if (property.getString("identifier").equals(reportStateRule.getString("to_id"))) {
+                                property.put("rex_endpoint_id", reportStateRule.getString("rex_endpoint_id"));
+                                property.put("rex_state_type", reportStateRule.getString("rex_state_type"));
+                                property.put("rex_id", reportStateRule.getString("rex_id"));
+                                propertiesDetail.set(i, property);
+
+                                ItemScene.Condition condition = new ItemScene.Condition();
+                                condition.setType("State");
+                                ItemScene.ConditionParameter parameters = new ItemScene.ConditionParameter();
+                                parameters.setDeviceId(DeviceBuffer.getDeviceMac(mDevIotId));
+                                parameters.setEndpointId(reportStateRule.getString("rex_endpoint_id"));
+                                parameters.setName(reportStateRule.getString("rex_id"));
+                                if ("enum".equals(property.getJSONObject("dataType").getString("type")) ||
+                                        "bool".equals(property.getJSONObject("dataType").getString("type"))) {
+                                    parameters.setCompareType("==");
+                                }
+                                parameters.setCompareValue("0");
+                                condition.setParameters(parameters);
+                                conditions.add(condition);
+                            }
+                        }
+                    }
+                    ViseLog.d("conditions = \n" + GsonUtil.toJson(conditions));
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(LocalConditionValueActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(LocalConditionValueActivity.this, e.getMessage());
+            }
+        });
     }
 
     private void initData() {
@@ -371,8 +510,9 @@ public class LocalConditionValueActivity extends BaseActivity {
             }
             mList.add(p1);
             mList.add(p2);
-        } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey)) {
-            // 空调二管制
+        } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey) ||
+                CTSL.PK_AIRCOMDITION_FOUR.equals(mProductKey)) {
+            // 空调二管制、空调四管制
             if ("WorkMode".equals(mKeyName)) {
                 // 开关
                 mViewBinding.valueRv.setVisibility(View.VISIBLE);
@@ -1052,8 +1192,10 @@ public class LocalConditionValueActivity extends BaseActivity {
                     CTSL.PK_DOORSENSOR.equals(mProductKey)) {
                 mECondition.getCondition().getParameters().setCompareValue(value.getValue());
             } else if (CTSL.PK_AIRCOMDITION_TWO.equals(mProductKey) ||
+                    CTSL.PK_AIRCOMDITION_FOUR.equals(mProductKey) ||
                     CTSL.PK_FAU.equals(mProductKey) ||
-                    CTSL.PK_TEMHUMSENSOR.equals(mProductKey)) {
+                    CTSL.PK_TEMHUMSENSOR.equals(mProductKey) ||
+                    CTSL.PK_FLOORHEATING001.equals(mProductKey)) {
                 // 空调二管制、新风、温湿度传感器
                 if ("WorkMode".equals(mKeyName) || "FanMode".equals(mKeyName)) {
                     // 开关

@@ -352,17 +352,20 @@ public class LocalSceneListActivity extends BaseActivity implements View.OnClick
                 // 新增场景
                 mSceneType = "0";
                 ToastUtils.showLongToast(this, R.string.scenario_created_successfully);
-                loadAllScene();
+                //loadAllScene();
+                querySceneList();
             } else if (resultCode == Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY) {
                 // 删除场景
                 ToastUtils.showLongToast(mActivity, R.string.scene_delete_successfully);
                 mSceneType = "0";
-                loadAllScene();
+                //loadAllScene();
+                querySceneList();
             } else if (resultCode == Constant.RESULT_CODE_UPDATE_SCENE) {
                 // 编辑场景
                 mSceneType = "0";
                 ToastUtils.showLongToast(this, R.string.scene_updated_successfully);
-                loadAllScene();
+                // loadAllScene();
+                querySceneList();
             }
         }
     }

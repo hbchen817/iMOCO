@@ -23,6 +23,7 @@ public class Constant {
     // 本地服务appkey
     public static final String APP_KEY                              = "npRyific";
     public static final String CLIENT_ID                            = "rwN8MmzL";
+    public static final String PROJECT_ID                           = "a123xOYK0CCYpkaS";//拉斐-飞燕项目ID
     public static final String ACCOUNT_URL                          = "https://iot.rexense.cn:5443";// 123.56.94.209:5443
 
     // 产品类型
@@ -73,6 +74,7 @@ public class Constant {
     public static final int REQUESTCODE_CALLSETTIMEACTIVITY         = 5;
     public static final int REQUESTCODE_CALLADDSUBGWACTIVITY        = 6;
     public static final int REQUESTCODE_CALLSUBGWINFOACTIVITY       = 7;
+    public static final int REQUESTCODE_CALLPWDSETTINGACTIVITY      = 8;
 
     // 定义结果码
     public static final int RESULTCODE_CALLCHOICEACTIVITY_TIME      = 1000;
@@ -83,6 +85,7 @@ public class Constant {
     public static final int RESULTCODE_CALLSETTIMEACTIVITY          = 1005;
     public static final int RESULTCODE_CALLADDSUBGWACTIVITY         = 1006;
     public static final int RESULTCODE_CALLSUBGWINFOACTIVITY        = 1007;
+    public static final int RESULTCODE_CALLPWDSETTINGACTIVITY       = 1008;
 
     // 定义API PATH常量
     public static final String API_PATH_GETCONFIGPROCDUCTLIST       = "/thing/productInfo/getByAppKey";
@@ -432,7 +435,7 @@ public class Constant {
     public static final String QUERY_MAC_BY_IOTID_VER               = "1.0";
 
     // 获取数据转换规则
-    public static final String GET_DATA_CONVERSION_RULES            = "/gw/product/getDataConversionRules";
+    public static final String GET_DATA_CONVERSION_RULES            = "/app/gwRule/getDataConversionRules";
     public static final String GET_DATA_CONVERSION_RULES_VER        = "1.0";
 
     // 增加本地场景
@@ -570,5 +573,9 @@ public class Constant {
     // 清空主网关下的多控组
     public static final String DEL_MAC_CONTROL_GROUP                = "/app/multiControl/mac/delete";
     public static final String DEL_MAC_CONTROL_GROUP_VER            = "1.0";
+
+    // 网关绑定到项目
+    public static final String GW_BIND_TO_PROJECT                   = "/app/device/gwBindToProject";
+    public static final String GW_BIND_TO_PROJECT_VER               = "1.0";
 }
 

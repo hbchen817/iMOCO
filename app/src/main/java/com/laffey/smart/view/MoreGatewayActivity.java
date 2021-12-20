@@ -102,11 +102,11 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     private String mNewNickName, mNewRoomId, mNewRoomName;
     private TSLHelper mTSLHelper;
     private int mOwned;
-    private HashMap<String, String> mDeviceMap = new HashMap<>();
+    private final HashMap<String, String> mDeviceMap = new HashMap<>();
     private SceneManager mSceneManager;
     private String mSceneType;
 
-    private List<ItemSceneInGateway> mSceneList = new ArrayList<>();
+    private final List<ItemSceneInGateway> mSceneList = new ArrayList<>();
     private final List<EUser.deviceEntry> mSubDevList = new ArrayList<>();
     private UnBindingHandler mUnBindingHandler;
 
@@ -281,38 +281,37 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                         mSubDevList.addAll(list.data);
                         for (EUser.deviceEntry e : list.data) {
                             if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                                mSceneManager.setExtendedProperty(e.iotId, Constant.TAG_DEV_KEY_NICKNAME, "{}",
-                                        null, null, null);
+                                SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, Constant.TAG_DEV_KEY_NICKNAME, null);
                             } else {
                                 switch (e.productKey) {
                                     case CTSL.PK_LIGHT:
                                     case CTSL.PK_ONE_WAY_DIMMABLE_LIGHT:
                                     case CTSL.PK_SYT_ONE_SCENE_SWITCH:
                                     case CTSL.PK_ONE_SCENE_SWITCH:
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, null);
                                         mDeviceMap.put(e.iotId, e.iotId);
                                         break;
                                     case CTSL.PK_ANY_TWO_SCENE_SWITCH:
                                     case CTSL.PK_TWO_SCENE_SWITCH:
                                     case CTSL.PK_SYT_TWO_SCENE_SWITCH:
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, null);
                                         mDeviceMap.put(e.iotId, e.iotId);
                                         break;
                                     case CTSL.PK_THREE_SCENE_SWITCH:
                                     case CTSL.PK_SYT_THREE_SCENE_SWITCH:
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, null);
                                         mDeviceMap.put(e.iotId, e.iotId);
                                         break;
                                     case CTSL.PK_ANY_FOUR_SCENE_SWITCH:
                                     case CTSL.PK_FOUR_SCENE_SWITCH:
                                     case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, null);
                                         mDeviceMap.put(e.iotId, e.iotId);
                                         break;
                                     case CTSL.PK_SIX_SCENE_SWITCH_YQSXB:
@@ -321,23 +320,14 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                                     case CTSL.PK_SYT_SIX_SCENE_SWITCH:
                                     case CTSL.PK_SIX_TWO_SCENE_SWITCH:
                                         ViseLog.d("CTSL.PK_SIX_TWO_SCENE_SWITCH = " + CTSL.PK_SIX_TWO_SCENE_SWITCH);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                        mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_5, null);
+                                        SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_6, null);
                                         mDeviceMap.put(e.iotId, e.iotId);
                                         break;
-                                /*case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_3, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SCENE_SWITCH_KEY_CODE_4, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1, "{}", null, null, mAPIDataHandler);
-                                    mSceneManager.setExtendedProperty(e.iotId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2, "{}", null, null, mAPIDataHandler);
-                                    mDeviceMap.put(e.iotId, e.iotId);
-                                    break;*/
                                     default:
                                         break;
                                 }
@@ -409,7 +399,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     }
 
     private void unBindingDev(int pos) {
-        if (pos <= mSubDevList.size() - 1)
+        if (/*pos <= mSubDevList.size() - 1*/false)
             mUserCenter.unbindSubDevice(mSubDevList.get(pos).productKey, mSubDevList.get(pos).deviceName,
                     mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
                         @Override
@@ -760,7 +750,9 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                 ViseLog.d("删除网关下的多控组结果 = \n" + GsonUtil.toJson(response));
                 int code = response.getInteger("code");
                 if (code == 200) {
-                    querySceneList(DeviceBuffer.getDeviceMac(mIOTId), "");
+                    // querySceneList(DeviceBuffer.getDeviceMac(mIOTId), "");
+                    mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50,
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 } else {
                     QMUITipDialogUtil.dismiss();
                     RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
@@ -863,6 +855,35 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                 ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage());
             }
         });
+
+        /*SceneManager.deleteScene(this, mSceneList.get(pos).getGwMac(), null, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("删除场景结果 = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    if (pos < mSceneList.size()) {
+                        SceneManager.manageSceneService(MoreGatewayActivity.this, mIOTId, "-1",
+                                3, null);
+                        mSceneList.clear();
+                        DeviceBuffer.initSceneBuffer();
+                        RefreshData.refreshHomeSceneListData();
+                        mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage());
+            }
+        });*/
     }
 
     // 嵌入式状态栏

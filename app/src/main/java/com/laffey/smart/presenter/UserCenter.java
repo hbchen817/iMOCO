@@ -60,6 +60,21 @@ public class UserCenter {
     }
 
     // 获取用户绑定网关绑定子设备列表
+    public static void getGatewaySubdeviceList(Activity activity, String gatewayIOTId, int pageNo, int pageSize,
+                                        APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETGATEWAYSUBDEVICELIST;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", gatewayIOTId);
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
+    // 获取用户绑定网关绑定子设备列表
     public void getGatewaySubdeviceList(String gatewayIOTId, int pageNo, int pageSize, int tag,
                                         Handler commitFailureHandler,
                                         Handler responseErrorHandler,
@@ -103,7 +118,7 @@ public class UserCenter {
     }
 
     // 获取用户绑定的设备列表
-    public void getDeviceList(Activity activity, int pageNo, int pageSize, APIChannel.Callback callback) {
+    public static void getDeviceList(Activity activity, int pageNo, int pageSize, APIChannel.Callback callback) {
         //设置请求参数
         EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
         requestParameterEntry.path = Constant.API_PATH_GETUSERDEVICELIST;

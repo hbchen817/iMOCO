@@ -146,6 +146,34 @@
             android:text=">>" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/battery_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/key_status_background"
+        android:paddingLeft="@dimen/dp_20">
+
+        <TextView
+            android:id="@+id/battery_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="@dimen/dp_15"
+            android:text="@string/power"
+            android:textColor="#565353" />
+
+        <TextView
+            android:id="@+id/battery_value_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="@dimen/dp_15"
+            android:paddingRight="@dimen/dp_20"
+            android:text="--"
+            android:textColor="#565353" />
+    </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -23,11 +24,14 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityIdentifierListBinding;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ECondition;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.AppUtils;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -60,7 +64,6 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
     private String mProductKey = "";
 
     private SceneManager mSceneManager;
-    //private CallbackHandler mHandler;
 
     private List<ECondition> mList;
     private BaseQuickAdapter<ECondition, BaseViewHolder> mAdapter;
@@ -85,6 +88,32 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
         initStatusBar();
         initRecyclerView();
         initData();
+
+        getConditionIdentifier();
+    }
+
+    private JSONObject mIdentifierJSONObject;
+
+    private void getConditionIdentifier() {
+        SceneManager.queryIdentifierListForCA(this, mDevIot, 0, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(LocalConditionIdentifierActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(LocalConditionIdentifierActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                if (result.substring(0, 1).equals("[")) {
+                    result = "{\"data\":" + result + "}";
+                }
+                mIdentifierJSONObject = JSONObject.parseObject(result);
+            }
+        });
     }
 
     // 嵌入式状态栏
@@ -123,6 +152,10 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
             public void onItemClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 mList.get(position).setTarget("LocalConditionValueActivity");
                 EventBus.getDefault().postSticky(mList.get(position));
+
+                JSONObject o = mIdentifierJSONObject.getJSONArray("data").getJSONObject(position);
+                DeviceBuffer.addExtendedInfo("tmp", o);
+
                 Intent intent = new Intent(LocalConditionIdentifierActivity.this, LocalConditionValueActivity.class);
                 startActivity(intent);
             }

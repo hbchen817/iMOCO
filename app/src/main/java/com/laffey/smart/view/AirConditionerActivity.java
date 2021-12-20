@@ -183,7 +183,7 @@ public class AirConditionerActivity extends DetailActivity {
         }
 
         mViewBinding.includeToolbar.includeDetailLblTitle.setText(mName);
-        mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.air_conditioner);
+        //mViewBinding.includeToolbar.includeDetailLblTitle.setText(R.string.air_conditioner);
         mViewBinding.includeToolbar.includeDetailImgBack.setOnClickListener(this::onViewClicked);
         mViewBinding.includeToolbar.includeDetailImgMore.setOnClickListener(this::onViewClicked);
     }

@@ -11,6 +11,7 @@ import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.ItemBindList;
 import com.laffey.smart.model.ItemBindRelation;
 import com.laffey.smart.model.ItemSceneInGateway;
+import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.view.LoginActivity;
 import com.vise.log.ViseLog;
@@ -108,6 +109,7 @@ public class RetrofitUtil {
             params.put("mac", mac);
         if (type != null && type.length() > 0)
             params.put("type", type);
+        params.put("homeId", SystemParameter.getInstance().getHomeId());
 
         object.put("params", params);
 
@@ -137,13 +139,18 @@ public class RetrofitUtil {
     }
 
     // 删除场景
-    public Observable<JSONObject> deleteScene(Context context, String gatewayMac, String sceneId) {
+    public Observable<JSONObject> deleteScene(Context context, String homeId, String gatewayMac, String sceneId) {
         JSONObject object = new JSONObject();
         object.put("apiVer", Constant.DELETE_SCENE_VER);
 
         JSONObject params = new JSONObject();
-        params.put("mac", gatewayMac);
-        params.put("sceneId", sceneId);
+        if (homeId != null && homeId.length() > 0) {
+            params.put("homeId", homeId);
+        }
+        if (gatewayMac != null && gatewayMac.length() > 0)
+            params.put("mac", gatewayMac);
+        if (sceneId != null && sceneId.length() > 0)
+            params.put("sceneId", sceneId);
         object.put("params", params);
 
         // ViseLog.d("删除场景ssss sceneId = " + sceneId + " , context = " + context.getClass().toString());
@@ -178,7 +185,7 @@ public class RetrofitUtil {
     // 根据子设备iotId查询网关iotId
     public Observable<JSONObject> getGWIotIdBySubIotId(Context context, String subId) {
         JSONObject object = new JSONObject();
-        object.put("apiVer", Constant.ADD_SCENE_VER);
+        object.put("apiVer", Constant.QUERY_GW_ID_BY_SUB_ID_VER);
         JSONObject params = new JSONObject();
         params.put("plantForm", Constant.PLANT_FORM);
         params.put("subIotId", subId);
@@ -571,6 +578,32 @@ public class RetrofitUtil {
         object.put("params", params);
 
         return getRetrofitService().deleteMacControlGroup(SpUtils.getAccessToken(activity), AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 网关绑定到项目
+    public Observable<JSONObject> gwBindToProject(Activity activity, String productKey, String deviceName) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.GW_BIND_TO_PROJECT_VER);
+        JSONObject params = new JSONObject();
+        params.put("productKey", productKey);
+        params.put("deviceName", deviceName);
+        params.put("projectId", Constant.PROJECT_ID);
+        object.put("params", params);
+
+        return getRetrofitService().gwBindToProject(SpUtils.getAccessToken(activity), AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    // 获取数据转换规则
+    public Observable<JSONObject> getDataConversionRules(Activity activity, String productKey) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.GET_DATA_CONVERSION_RULES_VER);
+        JSONObject params = new JSONObject();
+        params.put("productKey", productKey);
+        object.put("params", params);
+
+        return getRetrofitService().getDataConversionRules(SpUtils.getAccessToken(activity), AppUtils.getPesudoUniqueID(),
                 ERetrofit.convertToBody(object.toJSONString()));
     }
 

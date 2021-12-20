@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityLocalConditionDevsBinding;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EUser;
 import com.laffey.smart.presenter.CloudDataParser;
@@ -35,6 +36,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -120,8 +122,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 mList.clear();
                 mGatewayPageNo = 1;
-                new UserCenter(LocalConditionDevsActivity.this).getGatewaySubdeviceList(mGatewayId, mGatewayPageNo, PAGE_SIZE,
-                        mCommitFailureHandler, mResponseErrorHandler, mHandler);
+                getGatewaySubdeviceList(mGatewayPageNo);
             }
         });
         mViewBinding.devRl.setEnableLoadMore(false);
@@ -132,12 +133,61 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
         mUserCenter = new UserCenter(this);
         mSceneManager = new SceneManager(this);
 
-        if (Constant.IS_TEST_DATA) {
-            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-        }
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
-                mCommitFailureHandler, mResponseErrorHandler, mHandler);
+        getGatewaySubdeviceList(1);
+    }
+
+    // 获取网关子设备列表
+    private void getGatewaySubdeviceList(int pageNo) {
+        UserCenter.getGatewaySubdeviceList(this, mGatewayId, pageNo, PAGE_SIZE,
+                new APIChannel.Callback() {
+                    @Override
+                    public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                        commitFailure(LocalConditionDevsActivity.this, failEntry);
+                    }
+
+                    @Override
+                    public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                        responseError(LocalConditionDevsActivity.this, errorEntry);
+                    }
+
+                    @Override
+                    public void onProcessData(String result) {
+                        ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(JSONObject.parseObject(result)));
+                        EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList(result);
+                        if (list != null && list.data != null) {
+                            for (EUser.deviceEntry e : list.data) {
+                                if (Constant.CONDITION_DEVS_PK.contains(e.productKey)) {
+                                    EDevice.deviceEntry entry = new EDevice.deviceEntry();
+                                    entry.iotId = e.iotId;
+                                    entry.nickName = e.nickName;
+                                    entry.productKey = e.productKey;
+                                    entry.status = e.status;
+                                    entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
+                                    entry.image = e.image;
+                                    mList.add(entry);
+                                }
+                            }
+
+                            if (list.data.size() >= list.pageSize) {
+                                // 数据没有获取完则获取下一页数据
+                                getGatewaySubdeviceList(list.pageNo + 1);
+                            } else {
+                                // 数据获取完则加载显示
+                                mAdapter.notifyDataSetChanged();
+                                if (mList.size() > 0) {
+                                    mViewBinding.nodataView.setVisibility(View.GONE);
+                                    mViewBinding.devRl.setVisibility(View.VISIBLE);
+                                } else {
+                                    mViewBinding.nodataView.setVisibility(View.VISIBLE);
+                                    mViewBinding.devRl.setVisibility(View.GONE);
+                                }
+                                mViewBinding.devRl.finishRefresh(true);
+                                QMUITipDialogUtil.dismiss();
+                            }
+                        }
+                    }
+                });
     }
 
     private static class MyHandler extends Handler {
@@ -152,44 +202,7 @@ public class LocalConditionDevsActivity extends BaseActivity implements View.OnC
             super.handleMessage(msg);
             LocalConditionDevsActivity activity = ref.get();
             if (activity != null) {
-                if (msg.what == Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST) {
-                    ViseLog.d("网关子设备列表 = " + GsonUtil.toJson(msg.obj));
-                    EUser.gatewaySubdeviceListEntry list = CloudDataParser.processGatewaySubdeviceList((String) msg.obj);
-                    if (list != null && list.data != null) {
-                        for (EUser.deviceEntry e : list.data) {
-                            if (Constant.CONDITION_DEVS_PK.contains(e.productKey)) {
-                                EDevice.deviceEntry entry = new EDevice.deviceEntry();
-                                entry.iotId = e.iotId;
-                                entry.nickName = e.nickName;
-                                entry.productKey = e.productKey;
-                                entry.status = e.status;
-                                entry.owned = DeviceBuffer.getDeviceOwned(e.iotId);
-                                entry.image = e.image;
-                                activity.mList.add(entry);
-                            }
-                        }
-
-                        if (list.data.size() >= list.pageSize) {
-                            // 数据没有获取完则获取下一页数据
-                            activity.mUserCenter.getGatewaySubdeviceList(activity.mGatewayId, list.pageNo + 1, activity.PAGE_SIZE, activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
-                        } else {
-                            // 数据获取完则加载显示
-                            /*activity.mSceneManager.queryDevListInHomeForCA(1, SystemParameter.getInstance().getHomeId(), 1, activity.PAGE_SIZE,
-                                    activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);*/
-
-                            activity.mAdapter.notifyDataSetChanged();
-                            if (activity.mList.size() > 0) {
-                                activity.mViewBinding.nodataView.setVisibility(View.GONE);
-                                activity.mViewBinding.devRl.setVisibility(View.VISIBLE);
-                            } else {
-                                activity.mViewBinding.nodataView.setVisibility(View.VISIBLE);
-                                activity.mViewBinding.devRl.setVisibility(View.GONE);
-                            }
-                            activity.mViewBinding.devRl.finishRefresh(true);
-                            QMUITipDialogUtil.dismiss();
-                        }
-                    }
-                } else if (msg.what == Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA) {
+                if (msg.what == Constant.MSG_CALLBACK_QUERY_DEV_LIST_FOR_CA) {
                     // 可以作为条件的设备列表
                     JSONObject resultObj = JSON.parseObject((String) msg.obj);
                     ViseLog.d(new Gson().toJson(resultObj));

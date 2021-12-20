@@ -210,8 +210,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
             String phoneNum = mViewBinding.phoneNumEt.getText().toString();
             if (phoneNum.length() > 0) {
                 // 短信类型。01：注册02：短信登录03：密码找回 04: 修改密码
-                AccountManager.sendSMSVerifyCode(phoneNum, mCodeType, null,
-                        Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE, Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE_ERROR, mHandler);
+                sendSMSVerifyCode(phoneNum, mCodeType, null);
             } else ToastUtils.showLongToast(this, R.string.pls_input_phone_num);
         } else if (v.getId() == mViewBinding.verificationCodeClearIc.getId()) {
             mViewBinding.verificationCodeEt.setText("");
@@ -221,9 +220,128 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                     mViewBinding.verificationCodeEt.getText().toString().length() > 0 &&
                     mViewBinding.checkbox.isChecked()) {
                 PwdSettingActivity.start(this, mViewBinding.phoneNumEt.getText().toString(),
-                        mViewBinding.verificationCodeEt.getText().toString(), mCodeType);
+                        mViewBinding.verificationCodeEt.getText().toString(), mCodeType, Constant.REQUESTCODE_CALLPWDSETTINGACTIVITY);
             }
         }
+    }
+
+    // 短信发送
+    private void sendSMSVerifyCode(String phoneNum, String codeType, String pvCode) {
+        AccountManager.sendSMSVerifyCode(this, phoneNum, codeType, pvCode, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 获取验证码
+                QMUITipDialogUtil.dismiss();
+                ViseLog.d("验证码请求 = " + response.toJSONString());
+                int code = response.getInteger("code");
+                String message = response.getString("message");
+                if (code == 200) {
+                    mVerifyViewDialog.dismiss();
+
+                    if (!"Success!".equals(message)) {
+                        ToastUtils.showLongToast(VerifyCodeActivity.this,R.string.frequently_send_and_pls_later);
+                    } else {
+                        mCountdownTime = 60;
+                        mViewBinding.sendVerifiCodeTv.setText(mCountdownTime + "秒");
+                        mViewBinding.sendVerifiCodeTv.setClickable(false);
+
+                        Message messageObj = mHandler.obtainMessage();
+                        messageObj.what = COUNT_DOWN_TAG;
+
+                        mHandler.sendMessageDelayed(messageObj, 1000);
+                    }
+                } else {
+                    String resultCode = response.getString("errorCode");
+                    if (resultCode == null) {
+                        mVerifyViewDialog.dismiss();
+                        String localizedMsg = response.getString("localizedMsg");
+                        if (localizedMsg != null && localizedMsg.length() > 0) {
+                            ToastUtils.showLongToast(VerifyCodeActivity.this, localizedMsg);
+                        } else if (message != null && message.length() > 0) {
+                            ToastUtils.showLongToast(VerifyCodeActivity.this, message);
+                        }
+                        return;
+                    }
+                    String resultMess = response.getString("errorMess");
+                    switch (resultCode) {
+                        case "03": {
+                            // 请先获取图片验证码！
+                            QMUITipDialogUtil.showLoadingDialg(VerifyCodeActivity.this, R.string.is_loading_pic);
+                            getPVCode();
+                            break;
+                        }
+                        case "04": {// 图片验证码错误！
+                            getPVCode();
+                            break;
+                        }
+                        case "01":// 单日短信发送总量超限制！
+                        case "02":// 单日单ip短信发送总量超限制！
+                        case "05":// 频繁发送！
+                        case "06": {
+                            // 短信发送失败！
+                            mVerifyViewDialog.dismiss();
+                            ToastUtils.showLongToast(VerifyCodeActivity.this, resultMess);
+                            break;
+                        }
+                        default: {
+                            if (message == null || message.length() == 0) {
+                                ToastUtils.showLongToast(VerifyCodeActivity.this, R.string.pls_try_again_later);
+                            } else ToastUtils.showLongToast(VerifyCodeActivity.this, message);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e.getMessage());
+                ToastUtils.showLongToast(VerifyCodeActivity.this, e.getMessage());
+            }
+        });
+    }
+
+    // 滑动图片获取（无token）
+    private void getPVCode() {
+        AccountManager.getPVCode(this, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 验证图片获取
+                QMUITipDialogUtil.dismiss();
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String floatImage = response.getString("floatImage");
+                    String backgroundImage = response.getString("backgroundImage");
+
+                    floatImage = floatImage.replace("data:image/png;base64,", "");
+                    backgroundImage = backgroundImage.replace("data:image/png;base64,", "");
+                    mBackgroundBitmap = base64ToBitmap(backgroundImage);
+                    Bitmap floatBitmap = base64ToBitmap(floatImage);
+
+                    float scaleValue = (float) (QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this) - 120) / mBackgroundBitmap.getWidth();
+                    mVerifyView.setWidthAndHeightAndScaleView(QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this),
+                            QMUIDisplayHelper.getScreenHeight(VerifyCodeActivity.this), scaleValue);
+
+                    mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    mVerifyViewSb.setProgress(0);
+
+                    mVerifyView.setDrawBitmap(mBackgroundBitmap);
+                    mVerifyView.setVerifyBitmap(floatBitmap);
+                    mVerifyViewDialog.show();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(VerifyCodeActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // 获取验证码失败
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e.getMessage());
+                ToastUtils.showLongToast(VerifyCodeActivity.this, e.getMessage());
+            }
+        });
     }
 
     private static class MyHandler extends Handler {
@@ -238,121 +356,19 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
             super.handleMessage(msg);
             VerifyCodeActivity activity = ref.get();
             if (activity == null) return;
-            switch (msg.what) {
-                case Constant.MSG_QUEST_GET_PV_CODE: {
-                    // 验证图片获取
-                    QMUITipDialogUtil.dismiss();
-                    JSONObject response = (JSONObject) msg.obj;
-                    int code = response.getInteger("code");
-                    if (code == 200) {
-                        String floatImage = response.getString("floatImage");
-                        String backgroundImage = response.getString("backgroundImage");
+            if (msg.what == COUNT_DOWN_TAG) {
+                if (activity.mCountdownTime > 0) {
+                    activity.mCountdownTime--;
+                    activity.mViewBinding.sendVerifiCodeTv.setText(activity.mCountdownTime + "秒");
+                    activity.mViewBinding.sendVerifiCodeTv.setClickable(false);
 
-                        floatImage = floatImage.replace("data:image/png;base64,", "");
-                        backgroundImage = backgroundImage.replace("data:image/png;base64,", "");
-                        activity.mBackgroundBitmap = activity.base64ToBitmap(backgroundImage);
-                        Bitmap floatBitmap = activity.base64ToBitmap(floatImage);
+                    Message messageObj = activity.mHandler.obtainMessage();
+                    messageObj.what = COUNT_DOWN_TAG;
 
-                        float scaleValue = (float) (QMUIDisplayHelper.getScreenWidth(activity) - 120) / activity.mBackgroundBitmap.getWidth();
-                        activity.mVerifyView.setWidthAndHeightAndScaleView(QMUIDisplayHelper.getScreenWidth(activity),
-                                QMUIDisplayHelper.getScreenHeight(activity), scaleValue);
-
-                        activity.mVerifyViewSb.setMax((int) (scaleValue * activity.mBackgroundBitmap.getWidth()));
-                        activity.mVerifyViewSb.setProgress(0);
-
-                        activity.mVerifyView.setDrawBitmap(activity.mBackgroundBitmap);
-                        activity.mVerifyView.setVerifyBitmap(floatBitmap);
-                        activity.mVerifyViewDialog.show();
-                    } else {
-                        QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(activity, response);
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE: {
-                    // 获取验证码
-                    QMUITipDialogUtil.dismiss();
-                    JSONObject response = (JSONObject) msg.obj;
-                    ViseLog.d("验证码请求 = " + response.toJSONString());
-                    int code = response.getInteger("code");
-                    String message = response.getString("message");
-                    if (code == 200) {
-                        activity.mVerifyViewDialog.dismiss();
-
-                        activity.mCountdownTime = 60;
-                        activity.mViewBinding.sendVerifiCodeTv.setText(activity.mCountdownTime + "秒");
-                        activity.mViewBinding.sendVerifiCodeTv.setClickable(false);
-
-                        Message messageObj = activity.mHandler.obtainMessage();
-                        messageObj.what = COUNT_DOWN_TAG;
-
-                        activity.mHandler.sendMessageDelayed(messageObj, 1000);
-                    } else {
-                        String resultCode = response.getString("errorCode");
-                        if (resultCode == null) {
-                            String localizedMsg = response.getString("localizedMsg");
-                            if (localizedMsg != null && localizedMsg.length() > 0) {
-                                ToastUtils.showLongToast(activity, localizedMsg);
-                            } else if (message != null && message.length() > 0) {
-                                ToastUtils.showLongToast(activity, message);
-                            }
-                            break;
-                        }
-                        String resultMess = response.getString("errorMess");
-                        switch (resultCode) {
-                            case "03": {
-                                // 请先获取图片验证码！
-                                /*SlidingValidationActivity.start(activity, activity.mViewBinding.phoneNumEt.getText().toString(),
-                                        "01", Constant.REQUEST_SMS_VERIFY_CODE);*/
-                                QMUITipDialogUtil.showLoadingDialg(activity, R.string.is_loading_pic);
-                                AccountManager.getPVCode(Constant.MSG_QUEST_GET_PV_CODE, Constant.MSG_QUEST_GET_PV_CODE_ERROR, activity.mHandler);
-                                break;
-                            }
-                            case "04": {// 图片验证码错误！
-                                AccountManager.getPVCode(Constant.MSG_QUEST_GET_PV_CODE, Constant.MSG_QUEST_GET_PV_CODE_ERROR, activity.mHandler);
-                                break;
-                            }
-                            case "01":// 单日短信发送总量超限制！
-                            case "02":// 单日单ip短信发送总量超限制！
-                            case "05":// 频繁发送！
-                            case "06": {
-                                // 短信发送失败！
-                                ToastUtils.showLongToast(activity, resultMess);
-                                break;
-                            }
-                            default: {
-                                if (message == null || message.length() == 0) {
-                                    ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
-                                } else ToastUtils.showLongToast(activity, message);
-                            }
-                        }
-                    }
-                    break;
-                }
-                case Constant.MSG_QUEST_GET_PV_CODE_ERROR:
-                case Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE_ERROR: {
-                    // 获取验证码失败
-                    QMUITipDialogUtil.dismiss();
-                    Throwable e = (Throwable) msg.obj;
-                    ViseLog.e(e.getMessage());
-                    ToastUtils.showLongToast(activity, e.getMessage());
-                    break;
-                }
-                case COUNT_DOWN_TAG: {
-                    if (activity.mCountdownTime > 0) {
-                        activity.mCountdownTime--;
-                        activity.mViewBinding.sendVerifiCodeTv.setText(activity.mCountdownTime + "秒");
-                        activity.mViewBinding.sendVerifiCodeTv.setClickable(false);
-
-                        Message messageObj = activity.mHandler.obtainMessage();
-                        messageObj.what = COUNT_DOWN_TAG;
-
-                        activity.mHandler.sendMessageDelayed(messageObj, 1000);
-                    } else {
-                        activity.mViewBinding.sendVerifiCodeTv.setText(R.string.send_sms_verification_code);
-                        activity.mViewBinding.sendVerifiCodeTv.setClickable(true);
-                    }
-                    break;
+                    activity.mHandler.sendMessageDelayed(messageObj, 1000);
+                } else {
+                    activity.mViewBinding.sendVerifiCodeTv.setText(R.string.send_sms_verification_code);
+                    activity.mViewBinding.sendVerifiCodeTv.setClickable(true);
                 }
             }
 
@@ -372,16 +388,15 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             // 真实滑动值 = 滑动值 * 图片宽度 / 滑动最大值
-            /*ViseLog.d("滑动最大值 = " + mViewBinding.verifyViewSb.getMax()
-                    + "\n图片宽度 = " + mBackgroundBitmap.getWidth()
-                    + "\n滑动值 = " + mViewBinding.verifyViewSb.getProgress()
-                    + "\n小图片宽度 = " + mFloatBitmap.getWidth());*/
+            // 滑动最大值 = mViewBinding.verifyViewSb.getMax()
+            // 图片宽度 = mBackgroundBitmap.getWidth()
+            // 滑动值 = mViewBinding.verifyViewSb.getProgress()
+            // 小图片宽度 = mFloatBitmap.getWidth()
+            // 真实值 = result
             float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
             result = result - 10;
-            // ViseLog.d("真实值 = " + result);
             QMUITipDialogUtil.showLoadingDialg(VerifyCodeActivity.this, R.string.is_security_verification);
-            AccountManager.sendSMSVerifyCode(mViewBinding.phoneNumEt.getText().toString(), mCodeType, String.valueOf(result),
-                    Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE, Constant.MSG_QUEST_SEND_SMS_VERIFY_CODE_ERROR, mHandler);
+            sendSMSVerifyCode(mViewBinding.phoneNumEt.getText().toString(), mCodeType, String.valueOf(result));
         }
     };
 
@@ -418,6 +433,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
         super.onActivityResult(requestCode, resultCode, data);
         ViseLog.d("requestCode = " + requestCode + " , resultCode = " + resultCode);
         if (requestCode == Constant.REQUEST_SMS_VERIFY_CODE) {
+            // 跳转到图片验证码界面（已取消）
             if (resultCode == 2) {
                 // 短信已发送
                 mCountdownTime = 60;
@@ -428,6 +444,11 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                 message.what = COUNT_DOWN_TAG;
 
                 mHandler.sendMessageDelayed(message, 1000);
+            }
+        } else if (requestCode == Constant.REQUESTCODE_CALLPWDSETTINGACTIVITY) {
+            // 跳转到设置密码界面
+            if (resultCode == Constant.RESULTCODE_CALLPWDSETTINGACTIVITY) {
+                mViewBinding.verificationCodeEt.setText("");
             }
         }
     }

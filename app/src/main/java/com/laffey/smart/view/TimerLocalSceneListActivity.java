@@ -126,9 +126,6 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                         String gwId = response.getString("gwIotId");
                         if (code == 200) {
                             activity.mGatewayId = gwId;
-                            if (Constant.IS_TEST_DATA) {
-                                activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                            }
                             activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
                             /*activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, "0",
                                     Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mHandler);*/

@@ -302,7 +302,7 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                     }
                     activity.mProgressDialog.dismiss();
                     String iotId = JSON.parseObject((String) msg.obj).getString("iotId");
-                    BindSuccessActivity.start(activity, iotId, iotId, activity.mBindName);
+                    BindSuccessActivity.start(activity, iotId, iotId, activity.mBindName, CTSL.PK_GATEWAY_RG4100);
                     activity.finish();
                     break;
                 default:

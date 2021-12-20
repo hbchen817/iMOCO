@@ -48,13 +48,19 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/group_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/dp_10"
-                android:text="多控组名称" />
+                android:text="@string/name" />
+
+            <TextView
+                android:id="@+id/group_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/name_edit_tv" />
 
             <TextView
                 android:id="@+id/name_edit_tv"
@@ -62,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_margin="@dimen/dp_10"
-                android:text="@string/icon_edit"
+                android:text="@string/icon_right_arrow"
                 android:textColor="@color/appcolor"
                 android:textSize="@dimen/sp_22" />
         </RelativeLayout>

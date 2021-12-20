@@ -20,6 +20,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.StatusBarUtils;
 import com.vise.log.ViseLog;
 
@@ -161,10 +162,21 @@ public class DetailActivity extends BaseActivity {
                 setContentView(R.layout.activity_multi_dev_for_fh_and_af);
                 break;
             }
+            case CTSL.PK_AIRCOMDITION_FOUR:// 空调四管制
             case CTSL.PK_AIRCOMDITION_TWO: {
                 // 空调二管制
                 setContentView(R.layout.activity_air_conditioner_for_full_screen);
                 break;
+            }
+            case CTSL.PK_FLOORHEATING001: {
+                // 地暖
+                setContentView(R.layout.activity_floor_heating_for_full_screen);
+                return;
+            }
+            case CTSL.PK_FAU: {
+                // 新风
+                setContentView(R.layout.activity_new_air_for_full_screen);
+                return;
             }
             default:
                 //todo 换回gateway
@@ -212,6 +224,7 @@ public class DetailActivity extends BaseActivity {
         new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIProperyDataHandler);
 
         // 添加实时数据属性回调处理器
+        ViseLog.d("this.toString() = " + this.toString());
         RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", this.mRealtimeDataPropertyHandler);
     }
 
@@ -275,6 +288,7 @@ public class DetailActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_GETTSLPROPERTY:
                     // 处理获取属性回调
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
+                    // ViseLog.d("处理获取属性回调 = \n" + GsonUtil.toJson(propertyEntry));
                     JSONObject items = JSON.parseObject((String) msg.obj);
                     if (items != null) {
                         TSLHelper.parseProperty(mProductKey, items, propertyEntry);
@@ -297,7 +311,7 @@ public class DetailActivity extends BaseActivity {
                     // 处理属性通知回调
                     // ViseLog.d("实时 = " + (String) msg.obj);
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
-                    // ViseLog.d("实时处理 = " + new Gson().toJson(propertyEntry));
+                    // ViseLog.d("实时处理 = \n" + GsonUtil.toJson(propertyEntry));
                     updateState(propertyEntry);
                     break;
                 default:

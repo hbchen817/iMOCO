@@ -91,7 +91,10 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                 if (appParams != null &&
                         appParams.getString("switchIotId") != null &&
                         appParams.getString("switchIotId").contains(mIotId)) {
+                    ViseLog.d("mIotId = " + mIotId +
+                            "\nscene = \n" + GsonUtil.toJson(scene));
                     String key = appParams.getString("key");
+                    ViseLog.d("key = " + key + "\nmKeyCode = " + mKeyCode);
                     if (key != null && key.contains(mKeyCode)) {
                         mScene = JSONObject.parseObject(GsonUtil.toJson(scene), ItemSceneInGateway.class);
                         mSceneId = mScene.getSceneDetail().getSceneId();
@@ -126,6 +129,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
     private void initView() {
         String title = getIntent().getStringExtra("title");
         mViewBinding.includeToolbar.tvToolbarTitle.setText(title + "绑定场景");
+        ViseLog.d("mScene = \n" + GsonUtil.toJson(mScene));
         if (mScene != null && mScene.getSceneDetail() != null && mScene.getSceneDetail().getName() != null &&
                 mScene.getSceneDetail().getName().length() > 0) {
             mViewBinding.mSceneContentText.setText(mScene.getSceneDetail().getName());
@@ -242,9 +246,90 @@ public class EditLocalSceneBindActivity extends BaseActivity {
 
         mUpdateScene = JSONObject.parseObject(GsonUtil.toJson(scene), ItemSceneInGateway.class);
         scene.getSceneDetail().setConditions(new ArrayList<>());
-        mSceneManager.updateScene(this, scene, Constant.MSG_QUEST_UPDATE_SCENE,
-                Constant.MSG_QUEST_UPDATE_SCENE_ERROR, mMyHandler);
+        updateScene(scene);
         ViseLog.d("需要更新的场景后 = " + GsonUtil.toJson(scene));
+    }
+
+    private void updateScene(ItemSceneInGateway scene) {
+        SceneManager.updateScene(this, scene, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 更新本地场景
+                ViseLog.d("更新本地场景 = " + response.toJSONString());
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    boolean result = response.getBoolean("result");
+                    if (result) {
+                        String sceneId = response.getString("sceneId");
+                        SceneManager.manageSceneService(mGwId, sceneId, 2,
+                                mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                        DeviceBuffer.addScene(sceneId, scene);
+
+                        // 获取自动场景
+                        ItemSceneInGateway scene = DeviceBuffer.getSceneByCid(sceneId, mKeyCode);
+                        if (scene != null) {
+                            ViseLog.d("网关上报后删除云端场景 sceneId = " + scene.getSceneDetail().getSceneId());
+                            // 删除自动场景
+                            deleteScene(scene.getGwMac(), scene.getSceneDetail().getSceneId());
+                        } else {
+                            ToastUtils.showLongToast(EditLocalSceneBindActivity.this, R.string.unbind_scene_success);
+                            setResult(2);
+                            finish();
+                        }
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                    }
+                } else {
+                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e.getMessage());
+                ToastUtils.showLongToast(EditLocalSceneBindActivity.this, e.getMessage());
+            }
+        });
+    }
+
+    private void deleteScene(String gwMac, String sceneId) {
+        SceneManager.deleteScene(this, gwMac, sceneId, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 删除本地场景
+                QMUITipDialogUtil.dismiss();
+                ViseLog.d("删除自动场景 = " + response.toJSONString());
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    boolean result = response.getBoolean("result");
+                    if (result) {
+                        DeviceBuffer.addScene(mUpdateScene.getSceneDetail().getSceneId(), mUpdateScene);
+
+                        ViseLog.d("需要删除的自动场景id = " + sceneId);
+                        SceneManager.manageSceneService(mGwId, sceneId, 3,
+                                mCommitFailureHandler, mResponseErrorHandler, mMyHandler);
+                        DeviceBuffer.removeScene(sceneId);
+
+                        ToastUtils.showLongToast(EditLocalSceneBindActivity.this, R.string.unbind_scene_success);
+                        setResult(2);
+                        finish();
+                    } else {
+                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                    }
+                } else {
+                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(EditLocalSceneBindActivity.this, e.getMessage());
+            }
+        });
     }
 
     private static class MyHandler extends Handler {
@@ -288,7 +373,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                     // 删除本地场景
                     QMUITipDialogUtil.dismiss();
                     JSONObject response = (JSONObject) msg.obj;
-                    // ViseLog.d("删除自动场景 = " + response.toJSONString());
+                    ViseLog.d("删除自动场景 = " + response.toJSONString());
                     int code = response.getInteger("code");
                     if (code == 200) {
                         boolean result = response.getBoolean("result");
@@ -296,7 +381,7 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                             String sceneId = response.getString("sceneId");
                             DeviceBuffer.addScene(activity.mUpdateScene.getSceneDetail().getSceneId(), activity.mUpdateScene);
 
-                            // ViseLog.d("需要删除的自动场景id = " + DeviceBuffer.getScene(sceneId));
+                            ViseLog.d("需要删除的自动场景id = " + sceneId);
                             SceneManager.manageSceneService(activity.mGwId, sceneId, 3,
                                     activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mMyHandler);
                             DeviceBuffer.removeScene(sceneId);

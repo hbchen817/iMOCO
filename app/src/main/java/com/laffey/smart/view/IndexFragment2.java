@@ -197,7 +197,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
             @Override
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
-                // ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
+                ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     QMUITipDialogUtil.dismiss();
                     JSONArray sceneList = response.getJSONArray("sceneList");
@@ -229,10 +229,12 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     mAptSceneList.setData(mSceneList);
                     mListMyRL.finishRefresh(true);
                     if (mSceneList.size() > 0) {
+                        mListMyRL.setVisibility(View.VISIBLE);
                         mListMy.setVisibility(View.VISIBLE);
                         mSceneNodataView.setVisibility(View.GONE);
                     } else {
                         mListMy.setVisibility(View.GONE);
+                        mListMyRL.setVisibility(View.VISIBLE);
                         mSceneNodataView.setVisibility(View.VISIBLE);
                     }
                 } else {
@@ -272,9 +274,11 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
 
         mAptSceneList.setData(mSceneList);
         if (mSceneList.size() > 0) {
+            mListMyRL.setVisibility(View.VISIBLE);
             mListMy.setVisibility(View.VISIBLE);
             mSceneNodataView.setVisibility(View.GONE);
         } else {
+            mListMyRL.setVisibility(View.GONE);
             mListMy.setVisibility(View.GONE);
             mSceneNodataView.setVisibility(View.VISIBLE);
         }
@@ -311,15 +315,13 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                                     break;
                                 }
                             }
-                            if (DeviceBuffer.getDevByMac(gatewayMac) == null) {
+                            /*if (DeviceBuffer.getDevByMac(gatewayMac) == null) {
                                 QMUITipDialogUtil.dismiss();
                                 ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
                             } else {
-                                /*String gwId = DeviceBuffer.getDevByMac(gatewayMac).iotId;
-                                    mSceneManager.manageSceneService(gwId, sceneId, 3,
-                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);*/
                                 deleteScene(gatewayMac, sceneId);
-                            }
+                            }*/
+                            deleteScene(gatewayMac, sceneId);
                         } else {
                             if (mSceneList != null) {
                                 for (int i = 0; i < mSceneList.size(); i++) {
@@ -333,13 +335,16 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                                 if (mSceneList.size() == 0) {
                                     mSceneNodataView.setVisibility(View.VISIBLE);
                                     mListMy.setVisibility(View.GONE);
+                                    mListMyRL.setVisibility(View.GONE);
                                 } else {
                                     mSceneNodataView.setVisibility(View.GONE);
                                     mListMy.setVisibility(View.VISIBLE);
+                                    mListMyRL.setVisibility(View.VISIBLE);
                                 }
                             } else {
                                 mSceneNodataView.setVisibility(View.VISIBLE);
                                 mListMy.setVisibility(View.GONE);
+                                mListMyRL.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -396,10 +401,10 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     mSceneList.clear();
                     EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
                     if (dev != null) {
-                        DeviceBuffer.removeScene(sceneId);
+                        SceneManager.manageSceneService(dev.iotId, sceneId, 3,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                     }
-                    SceneManager.manageSceneService(dev.iotId, sceneId, 3,
-                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    DeviceBuffer.removeScene(sceneId);
                     RefreshData.refreshHomeSceneListData();
                 } else {
                     QMUITipDialogUtil.dismiss();
@@ -473,6 +478,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
 
                     mListSceneModel.setVisibility(View.GONE);
                     mListMy.setVisibility(View.VISIBLE);
+                    mListMyRL.setVisibility(View.VISIBLE);
                     ToastUtils.showLongToast(mActivity, R.string.scenario_created_successfully);
                     RefreshData.refreshHomeSceneListData();
                     break;
@@ -648,9 +654,11 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     if (mSceneList.size() == 0) {
                         mSceneNodataView.setVisibility(View.VISIBLE);
                         mListMy.setVisibility(View.GONE);
+                        mListMyRL.setVisibility(View.GONE);
                     } else {
                         mSceneNodataView.setVisibility(View.GONE);
                         mListMy.setVisibility(View.VISIBLE);
+                        mListMyRL.setVisibility(View.VISIBLE);
                     }
                     break;
                 case Constant.MSG_CALLBACK_DELETESCENE:
@@ -709,6 +717,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 Intent intent = new Intent(mActivity, NewSceneActivity.class);
                 startActivity(intent);
             }
+            // deleteScene("5C0272FFFE720594", "3");
         } else if (v.getId() == mLblScene.getId()) {
             mLblScene.setTextColor(getResources().getColor(R.color.topic_color1));
             mLblSceneDL.setVisibility(View.VISIBLE);
