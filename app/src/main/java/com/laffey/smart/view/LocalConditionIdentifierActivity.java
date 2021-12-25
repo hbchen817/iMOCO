@@ -28,6 +28,7 @@ import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ECondition;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.AppUtils;
@@ -35,6 +36,7 @@ import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.RetrofitUtil;
+import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -92,10 +94,64 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
         getConditionIdentifier();
     }
 
+    private void getDataConversionRules() {
+        DeviceManager.getDataConversionRules(this, mProductKey, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    ViseLog.d("response = \n" + GsonUtil.toJson(response));
+                    String ruleJson = response.getString("ruleJson");
+                    JSONObject object = JSONObject.parseObject(ruleJson);
+                    ViseLog.d("object = \n" + GsonUtil.toJson(object));
+
+                    JSONArray array = mIdentifierJSONObject.getJSONArray("data");
+                    for (int i = 0; i < array.size(); i++) {
+                        JSONObject data = array.getJSONObject(i);
+                        int type = data.getInteger("type");
+                        String identifier = data.getString("identifier");
+                        String name = data.getString("name");
+                        if (type == 1) {
+                            // 属性
+                            /*JSONArray reportStateRules = object.getJSONArray("report_state_rules");
+                            for (int j = 0; j < reportStateRules.size(); j++) {
+                                JSONObject rule = reportStateRules.getJSONObject(j);
+                                String toId = rule.getString("to_id");
+                                if (toId.equals(identifier)) {
+                                    ViseLog.d("rule = \n" + GsonUtil.toJson(rule));
+                                    String rexEndpointId = rule.getString("rex_endpoint_id");
+                                    String rexId = rule.getString("rex_id");
+                                    if (mProductKey.equals(CTSL.PK_ONEWAYSWITCH) ||
+                                            mProductKey.equals(CTSL.PK_TWOWAYSWITCH) ||
+                                            mProductKey.equals(CTSL.PK_THREE_KEY_SWITCH) ||
+                                            mProductKey.equals(CTSL.PK_FOURWAYSWITCH_2))
+                                        initSwitchData(identifier, name, rexEndpointId, rexId);
+                                }
+                            }*/
+                        } else if (type == 3) {
+                            // 事件
+                        }
+                        //mAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(LocalConditionIdentifierActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(LocalConditionIdentifierActivity.this, e.getMessage());
+            }
+        });
+    }
+
     private JSONObject mIdentifierJSONObject;
 
     private void getConditionIdentifier() {
-        SceneManager.queryIdentifierListForCA(this, mDevIot, 0, new APIChannel.Callback() {
+        SceneManager.queryIdentifierListForCA(this, mDevIot, 1, new APIChannel.Callback() {
             @Override
             public void onFailure(EAPIChannel.commitFailEntry failEntry) {
                 commitFailure(LocalConditionIdentifierActivity.this, failEntry);
@@ -108,10 +164,12 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
 
             @Override
             public void onProcessData(String result) {
-                if (result.substring(0, 1).equals("[")) {
+                if (result.startsWith("[")) {
                     result = "{\"data\":" + result + "}";
                 }
                 mIdentifierJSONObject = JSONObject.parseObject(result);
+                ViseLog.d("mIdentifierJSONObject = \n" + GsonUtil.toJson(mIdentifierJSONObject));
+                // getDataConversionRules();
             }
         });
     }
@@ -300,6 +358,16 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
         }
         mList.add(initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
                 "1", "State", "=="));
+    }
+
+    // 开关面板
+    private void initSwitchData(String keyNickNameTag, String keyNickName, String endId, String rexId) {
+        String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(keyNickNameTag);
+        if (keyName == null || keyName.length() == 0) {
+            keyName = keyNickName;
+        }
+        mList.add(initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
+                endId, rexId, "=="));
     }
 
     // 二键面板
@@ -613,47 +681,6 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
         ItemScene.Condition condition = new ItemScene.Condition("State", parameter);
         eCondition.setCondition(condition);
         return eCondition;
-    }
-
-    private void getDataConversionRules(String token, String pk) {
-        JSONObject obj = new JSONObject();
-        obj.put("apiVer", "1.0");
-        JSONObject params = new JSONObject();
-        params.put("productKey", pk);
-        obj.put("params", params);
-
-        ERetrofit.getInstance().getService()
-                .getDataConversionRules(token, AppUtils.getPesudoUniqueID(),
-                        ERetrofit.convertToBody(obj.toJSONString()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
-                        int code = response.getInteger("code");
-                        if (code == 200) {
-
-                        } else {
-                            RetrofitUtil.showErrorMsg(LocalConditionIdentifierActivity.this, response);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-                        ViseLog.e(e);
-                        QMUITipDialogUtil.showFailDialog(LocalConditionIdentifierActivity.this, R.string.pls_try_again_later);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
     }
 
     public static class Identifier implements Parcelable {

@@ -62,7 +62,7 @@ import com.vise.log.ViseLog;
 public class MoreSubdeviceActivity extends BaseActivity implements OnClickListener {
     private ActivityMoreSubdeviceBinding mViewBinding;
 
-    private String mIOTId, mProductKey;
+    private String mIOTId, mProductKey, mMac;
     private int mSetType = 0;
     private HomeSpaceManager mHomeSpaceManager;
     private UserCenter mUserCenter;
@@ -329,6 +329,7 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
         mIOTId = intent.getStringExtra("iotId");
         String name = intent.getStringExtra("name");
         mProductKey = intent.getStringExtra("productKey");
+        mMac = DeviceBuffer.getDeviceMac(mIOTId);
 
         mViewBinding.includeToolbar.includeTitleLblTitle.setText(name);
 

@@ -6,6 +6,7 @@ import android.os.Build;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
+import com.laffey.smart.contract.Constant;
 
 /**
  * Creator: xieshaobing
@@ -41,12 +42,12 @@ public class ImageProvider {
             case CTSL.PK_GATEWAY_RG4100:
                 return R.drawable.icon_gateway_fton;
             case CTSL.PK_ONEWAYSWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_one_key_switch;
                 else
                     return R.drawable.icon_oneswitch;
             case CTSL.PK_TWOWAYSWITCH:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_two_key_switch;
                 else
                     return R.drawable.icon_twoswitch;
@@ -104,7 +105,7 @@ public class ImageProvider {
             case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
                 return R.drawable.icon_four_scene_switch;
             case CTSL.PK_FOURWAYSWITCH_2:
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                     return R.drawable.icon_four_way_switch;
                 else return R.drawable.icon_four_switch_white;
             case CTSL.PK_SYT_TWO_SCENE_SWITCH:

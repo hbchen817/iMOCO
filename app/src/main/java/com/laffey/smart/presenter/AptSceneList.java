@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CScene;
+import com.laffey.smart.contract.Constant;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.utility.GsonUtil;
@@ -181,7 +182,7 @@ public class AptSceneList extends BaseAdapter {
             return convertView;
         }
         viewHolder.name.setText(mSceneList.get(position).name);
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             viewHolder.type.setText(mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_automatic) : this.mContext.getString(R.string.scenetype_manual));
         else
             viewHolder.type.setText(this.mSceneList.get(position).catalogId.equals(CScene.TYPE_MANUAL) ? this.mContext.getString(R.string.scenetype_manual) : this.mContext.getString(R.string.scenetype_automatic));
@@ -196,7 +197,7 @@ public class AptSceneList extends BaseAdapter {
                                 @Override
                                 public void positive() {
                                     //new SceneManager(mContext).deleteScene(mSceneList.get(index).id, mCommitFailureHandler, mResponseErrorHandler, mProcessDataHandler);
-                                    if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                                    if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                                         new SceneManager(mContext).deleteScene(mSceneList.get(index).id,
                                                 null, null, new Myhandler(mContext));
                                     }

@@ -296,12 +296,24 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
         if (id == R.id.one_go_ic ||
                 id == R.id.mSceneContentText1 ||
                 id == R.id.mSwitch1) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m1Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m1Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m1Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m1Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+                        else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -317,15 +329,27 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (id == R.id.two_go_ic || id == R.id.mSceneContentText2 ||
                 id == R.id.mSwitch2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m2Scene != null) {
                         if (m2Scene.getSceneDetail() != null) {
-                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                            SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                    m2Scene.getSceneDetail().getSceneId(), null);
+                            if ("1".equals(m2Scene.getSceneDetail().getEnable())) {
+                                QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                                SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                        m2Scene.getSceneDetail().getSceneId(), null);
+                            } else {
+                                // 禁用
+                                ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                            }
                         } else {
                             ToastUtils.showLongToast(this, R.string.pls_try_again_later);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
+                        else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
                         }
                     }
                 }
@@ -487,26 +511,21 @@ public class TwoSceneSwitchActivity2 extends DetailActivity {
             R.id.key_1_tv, R.id.key_2_tv})
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.one_go_ic || view.getId() == R.id.mSceneContentText1) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName1TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1,
-                            mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m1Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKeyName1TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_1,
+                                mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
+                                m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
                 }
             } else if (mManualIDs[0] != null) {
                 EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1,
                         mSceneContentText1.getText().toString());
             }
         } else if (view.getId() == R.id.two_go_ic || view.getId() == R.id.mSceneContentText2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m2Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
-                } else {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m2Scene != null) {
                     EditLocalSceneBindActivity.start(this, mKeyName2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,

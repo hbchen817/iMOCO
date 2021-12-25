@@ -293,7 +293,7 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
 
     private void getScenes() {
         mCurrentKey = CTSL.SCENE_SWITCH_KEY_CODE_1;
-        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             mSceneManager.getExtendedProperty(mIOTId, mCurrentKey, mCommitFailureHandler,
                     mExtendedPropertyResponseErrorHandler, mMyHandler);
     }
@@ -312,12 +312,24 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 view.getId() == R.id.mSceneContentText1 ||
                 view.getId() == R.id.mSwitch1) {
             // 场景按键1
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m1Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m1Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m1Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m1Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+                        else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -335,12 +347,24 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 view.getId() == R.id.mSceneContentText2 ||
                 view.getId() == R.id.mSwitch2) {
             // 场景按键2
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m2Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m2Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m2Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m2Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
+                        else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -358,12 +382,24 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 view.getId() == R.id.mSceneContentText3 ||
                 view.getId() == R.id.mSwitch3) {
             // 场景按键3
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m3Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m3Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m3Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m3Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
+                        else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -535,15 +571,13 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
             R.id.one_go_ic, R.id.two_go_ic, R.id.three_go_ic, R.id.key_1_tv, R.id.key_2_tv, R.id.key_3_tv})
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.one_go_ic || view.getId() == R.id.mSceneContentText1) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKeyName1TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1,
-                            mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m1Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKeyName1TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_1,
+                                mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
+                                m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -552,15 +586,12 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.two_go_ic || view.getId() == R.id.mSceneContentText2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m2Scene != null)
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m2Scene != null) {
                     EditLocalSceneBindActivity.start(this, mKeyName2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
                             m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
                 }
             } else {
                 if (mManualIDs[1] != null) {
@@ -569,15 +600,12 @@ public class ThreeSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.three_go_ic || view.getId() == R.id.mSceneContentText3) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m3Scene != null)
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m3Scene != null) {
                     EditLocalSceneBindActivity.start(this, mKeyName2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_3,
                             mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
                             m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
                 }
             } else {
                 if (mManualIDs[2] != null) {

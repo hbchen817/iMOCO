@@ -301,16 +301,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
     public void onClickView(View view) {
         if (view.getId() == R.id.mSceneContentText1) {
             // 场景按键1
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m1Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m1Scene != null) {
+                    if ("1".equals(m1Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m1Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m1Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m1Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m1Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -324,16 +333,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText2) {
             // 场景按键2
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m2Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m2Scene != null) {
+                    if ("1".equals(m2Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m2Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m2Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m2Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m2Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[1] != null) {
@@ -347,16 +365,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText3) {
             // 场景按键3
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m3Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m3Scene != null) {
+                    if ("1".equals(m3Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m3Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m3Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m3Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m3Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[2] != null) {
@@ -370,16 +397,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText4) {
             // 场景按键4
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m4Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_4, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m4Scene != null) {
+                    if ("1".equals(m4Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m4Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m4Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m4Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m4Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_4, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[3] != null) {
@@ -393,16 +429,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
             // 场景按键5
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m5Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_5, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m5Scene != null) {
+                    if ("1".equals(m5Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m5Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m5Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m5Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m5Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_5, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[4] != null) {
@@ -416,16 +461,25 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText6) {
             // 场景按键6
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m6Scene == null) {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_6, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m6Scene != null) {
+                    if ("1".equals(m6Scene.getSceneDetail().getEnable())) {
+                        String msg = String.format(getString(R.string.main_scene_execute_hint_2),
+                                m6Scene.getSceneDetail().getName());
+                        ToastUtils.showLongToast(this, msg);
+                        SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                m6Scene.getSceneDetail().getSceneId(), null);
+                    } else {
+                        // 禁用
+                        ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                    }
                 } else {
-                    String msg = String.format(getString(R.string.main_scene_execute_hint_2),
-                            m6Scene.getSceneDetail().getName());
-                    ToastUtils.showLongToast(this, msg);
-                    SceneManager.invokeLocalSceneService(this, mGatewayId,
-                            m6Scene.getSceneDetail().getSceneId(), null);
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                CTSL.SCENE_SWITCH_KEY_CODE_6, BIND_SCENE_REQUEST_CODE);
+                    else {
+                        ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                    }
                 }
             } else {
                 if (mManualIDs[5] != null) {
@@ -656,12 +710,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
             R.id.mSceneContentText4, R.id.mSceneContentText5, R.id.mSceneContentText6})
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.mSceneContentText1) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1,
-                            mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m1Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_1,
+                                mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
+                                m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[0] != null) {
                     EditSceneBindActivity.start(this, "按键一", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_1,
@@ -669,12 +725,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m2Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey2TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2,
-                            mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
-                            m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m2Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey2TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_2,
+                                mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
+                                m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[1] != null) {
                     EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2,
@@ -682,12 +740,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText3) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m3Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey3TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_3,
-                            mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
-                            m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m3Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey3TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_3,
+                                mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
+                                m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[2] != null) {
                     EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3,
@@ -695,12 +755,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText4) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m4Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey4TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_4,
-                            mSceneContentText4.getText().toString(), mGatewayId, mGatewayMac,
-                            m4Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m4Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey4TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_4,
+                                mSceneContentText4.getText().toString(), mGatewayId, mGatewayMac,
+                                m4Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[3] != null) {
                     EditSceneBindActivity.start(this, "按键四", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4,
@@ -708,12 +770,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m5Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_5,
-                            mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac,
-                            m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m5Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_5,
+                                mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac,
+                                m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[4] != null) {
                     EditSceneBindActivity.start(this, "按键五", mIOTId,
@@ -722,12 +786,14 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText6) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m6Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_6,
-                            mSceneContentText6.getText().toString(), mGatewayId, mGatewayMac,
-                            m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m6Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_6,
+                                mSceneContentText6.getText().toString(), mGatewayId, mGatewayMac,
+                                m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                }
             } else {
                 if (mManualIDs[5] != null) {
                     EditSceneBindActivity.start(this, "按键六", mIOTId,

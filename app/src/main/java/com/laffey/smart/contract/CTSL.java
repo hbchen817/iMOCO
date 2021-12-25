@@ -72,7 +72,7 @@ public class CTSL {
     public static final String TEST_PK_TWOWAYWINDOWCURTAINS = "a1UnLiHBScD";// 双路窗帘
 
     public static final String TEST_PK_FULL_SCREEN_SWITCH   = "a1EnbCHcEHj";// 全面屏开关
-    public static final String PK_MULTI_THREE_IN_ONE        = "a1HgkrQN3QH";// 三合一设备 a1FSqDW2oMb
+    public static final String PK_MULTI_THREE_IN_ONE        = "a1FSqDW2oMb";// 三合一设备 a1FSqDW2oMb
     public static final String PK_MULTI_AC_AND_FH           = "a1VMREvnLBo";// 二合一设备（空调+地暖） a13Jtj64Qw8
     public static final String PK_MULTI_AC_AND_FA           = "a1RrcMQxHeu";// 二合一设备（空调+新风） a1uoYw7k9JY
     public static final String PK_MULTI_FH_AND_FA           = "a1Srgbtm3vO";// 二合一设备（空调+地暖） a1ROVRWwzQu
@@ -150,7 +150,7 @@ public class CTSL {
 
 
     // 定义三开六场景开关属性常量
-    public static final String PSS_BackLightMode             = "backLight";
+    public static final String PSS_BackLightMode             = "BackLightMode";
     public static final Map<String, PTYPE> PSS_Properties    = new HashMap<String, PTYPE>() {
         {
             put(PSS_BackLightMode, PTYPE.t_enum);
@@ -158,10 +158,10 @@ public class CTSL {
         }
     };
 
-    public static final String BATTERY                    = "Battery";
+    public static final String BATTERY                    = "BatteryPercentage";
 
     // 定义一场景开关属性常量
-    public static final String POS_BackLight              = "backLight";
+    public static final String POS_BackLight              = "BackLightMode";
     public static final Map<String, PTYPE> POS_Properties = new HashMap<String, PTYPE>() {
         {
             put(POS_BackLight, PTYPE.t_enum);
@@ -170,7 +170,7 @@ public class CTSL {
     };
 
     // 定义大三开场景开关属性常量
-    public static final String PTS_BackLight              = "backLight";
+    public static final String PTS_BackLight              = "BackLightMode";
     public static final Map<String, PTYPE> PTS_Properties = new HashMap<String, PTYPE>() {
         {
             put(PTS_BackLight, PTYPE.t_enum);
@@ -179,7 +179,7 @@ public class CTSL {
     };
 
     // 定义大二开场景开关属性常量
-    public static final String P2S_BackLight              = "backLight";
+    public static final String P2S_BackLight              = "BackLightMode";
     public static final Map<String, PTYPE> P2S_Properties = new HashMap<String, PTYPE>() {
         {
             put(P2S_BackLight, PTYPE.t_bool);
@@ -187,7 +187,7 @@ public class CTSL {
     };
 
     // 定义二开四场景开关属性常量
-    public static final String PFS_BackLight              = "backLight";
+    public static final String PFS_BackLight              = "BackLightMode";
     public static final Map<String, PTYPE> PFS_Properties = new HashMap<String, PTYPE>() {
         {
             put(PFS_BackLight, PTYPE.t_enum);
@@ -211,7 +211,7 @@ public class CTSL {
     };
 
     // 定义二三极插座属性常量
-    public static final String PK_OUTLET_Backlight              = "backlight";
+    public static final String PK_OUTLET_Backlight              = "BackLightMode";
     public static final Map<String, PTYPE> PK_OUTLET_Properties = new HashMap<String, PTYPE>() {
         {
             put(PK_OUTLET_Backlight, PTYPE.t_enum);
@@ -220,8 +220,8 @@ public class CTSL {
 
     //定义调光调色属性常量
     public static final String LIGHT_P_POWER                         = "PowerSwitch";
-    public static final String LIGHT_P_BRIGHTNESS                    = "brightness";
-    public static final String LIGHT_P_COLOR_TEMPERATURE             = "colorTemperature";
+    public static final String LIGHT_P_BRIGHTNESS                    = "Brightness";
+    public static final String LIGHT_P_COLOR_TEMPERATURE             = "ColorTemperature";
     public static final Map<String, PTYPE> LIGHT_Properties          = new HashMap<String, PTYPE>() {
         {
             put(LIGHT_P_POWER, PTYPE.t_int32);
@@ -246,7 +246,7 @@ public class CTSL {
     public static final String SIX_SCENE_SWITCH_P_POWER_4              = "PowerSwitch_4";
     public static final String SIX_SCENE_SWITCH_KEY_CODE_1             = "5";
     public static final String SIX_SCENE_SWITCH_KEY_CODE_2             = "6";
-    public static final String SIX_SCENE_SWITCH_BackLight              = "backLight";
+    public static final String SIX_SCENE_SWITCH_BackLight              = "BackLightMode";
     public static final Map<String, PTYPE> SIX_SCENE_SWITCH_Properties = new HashMap<String, PTYPE>() {
         {
             put(SIX_SCENE_SWITCH_P_POWER_1, PTYPE.t_int32);
@@ -342,8 +342,8 @@ public class CTSL {
     };
 
     // 单路窗帘
-    public static final String WC_CurtainConrtol             = "curtainConrtol";
-    public static final String WC_BackLight                  = "backLight";
+    public static final String WC_CurtainConrtol             = "CurtainControl_1";
+    public static final String WC_BackLight                  = "BackLightMode";
     public static final Map<String, PTYPE> WC_Properties     = new HashMap<String, PTYPE>() {
         {
             put(WC_CurtainConrtol, PTYPE.t_enum);
@@ -352,9 +352,9 @@ public class CTSL {
     };
 
     // 双路窗帘
-    public static final String TWC_CurtainConrtol                    = "curtainConrtol";
-    public static final String TWC_InnerCurtainOperation             = "InnerCurtainOperation";
-    public static final String TWC_BackLight                         = "backLight";
+    public static final String TWC_CurtainConrtol                    = "CurtainControl_1";
+    public static final String TWC_InnerCurtainOperation             = "CurtainControl_2";
+    public static final String TWC_BackLight                         = "BackLightMode";
     public static final Map<String, PTYPE> TWC_Properties            = new HashMap<String, PTYPE>() {
         {
             put(TWC_CurtainConrtol, PTYPE.t_enum);
@@ -509,7 +509,7 @@ public class CTSL {
     public static final String M3I1_TargetTemperature_FloorHeating    = "TargetTemp_FloorHeating";
     public static final String M3I1_CurrentTemperature_FloorHeating   = "CurrentTemp_FloorHeating";
     public static final String M3I1_AutoWorkMode_FloorHeating         = "AutoWorkMode_FloorHeating";
-    public static final String M3I1_CurrentTemp_FreshAir         = "CurrentTemp_FreshAir";
+    public static final String M3I1_CurrentTemp_FreshAir              = "CurrentTemp_FreshAir";
     public static final String M3I1_WindSpeed_FreshAir                = "WindSpeed_FreshAir";
     public static final String M3I1_PowerSwitch_FreshAir              = "PowerSwitch_FreshAir";
     public static final Map<String, PTYPE> M3I1_Properties           = new HashMap<String, PTYPE>() {

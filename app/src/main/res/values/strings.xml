@@ -117,6 +117,7 @@
 
     <string name="api_commitfailure">调用接口[%s]失败! %s</string>
     <string name="api_commitfailure_hint">调用接口失败!</string>
+    <string name="api_commitfailure_hint_2">调用接口失败：%1$s</string>
     <string name="api_responseerror">调用接口[%s]成功, 但是响应发生错误! %s</string>
     <string name="api_responseerror_hint">获取数据失败！请重新登录或确保当前账号没有在其它地方登录。</string>
 
@@ -886,4 +887,5 @@
     <string name="click_btn">触发按键</string>
     <string name="click_scene">触发场景</string>
     <string name="click_backlight">触发背光</string>
+    <string name="sharing_dev_does_not_support_edit_scene">分享设备不支持编辑场景</string>
 </resources>

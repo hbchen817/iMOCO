@@ -121,7 +121,7 @@ public class LightLocalSceneListActivity extends BaseActivity {
             }
         };
         mAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
 
                 LightLocalSceneActivity.start(this, null, mIotId, mGwId, mGwMac, mActivityTag, mList.get(position).id, LIGHT_LOCAL_SCENE_REQUEST_CODE);
             } else

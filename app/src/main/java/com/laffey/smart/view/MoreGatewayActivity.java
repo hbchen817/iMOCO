@@ -280,7 +280,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     if (list != null && list.data != null) {
                         mSubDevList.addAll(list.data);
                         for (EUser.deviceEntry e : list.data) {
-                            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                                 SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, Constant.TAG_DEV_KEY_NICKNAME, null);
                             } else {
                                 switch (e.productKey) {

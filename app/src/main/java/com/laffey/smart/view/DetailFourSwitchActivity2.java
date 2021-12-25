@@ -40,6 +40,7 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
+import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,6 +48,8 @@ public class IndexFragment3 extends BaseFragment {
     TextView userAccount;
     @BindView(R.id.head_img)
     ImageView headImg;
+    @BindView(R.id.scene_log_view)
+    RelativeLayout mSceneLogView;
 
     private Intent mIntent;
     private MyHandler mHandler;
@@ -79,6 +82,8 @@ public class IndexFragment3 extends BaseFragment {
         QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
         AccountManager.getCaccountsInfo(mActivity, Constant.MSG_QUEST_GET_CACCOUNTS_INFO,
                 Constant.MSG_QUEST_GET_CACCOUNTS_INFO_ERROR, mHandler);
+
+        mSceneLogView.setVisibility(View.GONE);
     }
 
     // 点击事件处理

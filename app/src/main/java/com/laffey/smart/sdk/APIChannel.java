@@ -8,6 +8,7 @@ import android.os.Message;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aliyun.alink.linksdk.tools.ThreadTools;
 import com.aliyun.iot.aep.sdk.apiclient.IoTAPIClient;
 import com.aliyun.iot.aep.sdk.apiclient.IoTAPIClientFactory;
 import com.aliyun.iot.aep.sdk.apiclient.callback.IoTCallback;
@@ -41,6 +42,10 @@ public class APIChannel {
                        Handler processDataHandler) {
         if (entry.path == null || entry.path.length() == 0) {
             Logger.e("The parameter[path] of APIChannel is not null!");
+            return;
+        }
+        String packageName = MocoApplication.getInstance().getPackageName();
+        if (!packageName.equals(ThreadTools.getProcessName(MocoApplication.sContext, android.os.Process.myPid()))) {
             return;
         }
         DialogUtils.showLoadingDialog(MocoApplication.sContext);
@@ -174,6 +179,10 @@ public class APIChannel {
     public void commit(Activity activity, EAPIChannel.requestParameterEntry entry, Callback callback) {
         if (entry.path == null || entry.path.length() == 0) {
             Logger.e("The parameter[path] of APIChannel is not null!");
+            return;
+        }
+        String packageName = MocoApplication.getInstance().getPackageName();
+        if (!packageName.equals(ThreadTools.getProcessName(MocoApplication.sContext, android.os.Process.myPid()))) {
             return;
         }
         DialogUtils.showLoadingDialog(MocoApplication.sContext);

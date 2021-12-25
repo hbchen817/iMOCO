@@ -736,7 +736,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mSceneList != null && mSceneList.size() > 0) {
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     EScene.sceneListItemEntry scene = mSceneList.get(position);
                     // ViseLog.d("一键场景列表点击监听器 = \n" + GsonUtil.toJson(scene));
 
@@ -808,7 +808,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
         } else {
             mSceneList.clear();
         }
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
             querySceneList();
             // 数据获取完则开始获取设备列表数据
             // startGetDeviceList();
@@ -824,7 +824,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
         } else {
             mSceneList.clear();
         }
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
             querySceneList();
             // 数据获取完则开始获取设备列表数据
         } else
@@ -1567,11 +1567,23 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                         deviceCount();
                     }
                     break;
-                case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
-                case Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY:
+                // case Constant.MSG_CALLBACK_LNSUBDEVICEJOINNOTIFY:
+                case Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY: {
                     // 开始获取设备列表
-                    // startGetDeviceList(1);
+                    ViseLog.d("开始获取设备列表 = \n" + GsonUtil.toJson(msg.obj));
+                    JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
+                    String identifier = jsonObject.getString("identifier");
+                    if ("awss.BindNotify".equals(identifier)) {
+                        JSONObject value = jsonObject.getJSONObject("value");
+                        if (value != null) {
+                            String operation = value.getString("operation");
+                            if ("Unbind".equalsIgnoreCase(operation)) {
+                                startGetDeviceList(1);
+                            }
+                        }
+                    }
                     break;
+                }
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
                     // 处理属性通知
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);

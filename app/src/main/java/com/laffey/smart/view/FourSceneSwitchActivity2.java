@@ -254,12 +254,24 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
     public void onClickView(View view) {
         if (view.getId() == R.id.mSceneContentText1) {
             // 场景按键1
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m1Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m1Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m1Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m1Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -275,12 +287,24 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText2) {
             // 场景按键2
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m2Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m2Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m2Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m2Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -296,12 +320,24 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText3) {
             // 场景按键3
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m3Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m3Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m3Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m3Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -317,12 +353,24 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
             }
         } else if (view.getId() == R.id.mSceneContentText4) {
             // 场景按键4
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m4Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId,
-                                m4Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m4Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m4Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_4, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -357,7 +405,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
         super.notifyResponseError(type);
         if (type == 10360) {
             // scene rule not exist
-            if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+            if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 mSceneManager.getExtendedProperty(mIOTId, mPressedKey, null, null, mDelSceneHandler);
         }
     }
@@ -405,15 +453,13 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
     public boolean onLongClick(View view) {
         int id = view.getId();
         if (id == R.id.mSceneContentText1) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m1Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1,
-                            mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
-                            m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_1, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (m1Scene != null) {
+                    if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1)
+                        EditLocalSceneBindActivity.start(this, mKey1TV.getText().toString(), mIOTId,
+                                CTSL.SCENE_SWITCH_KEY_CODE_1,
+                                mSceneContentText1.getText().toString(), mGatewayId, mGatewayMac,
+                                m1Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
                 }
             } else {
                 if (mManualIDs[0] != null) {
@@ -422,16 +468,12 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (id == R.id.mSceneContentText2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (m2Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey2TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_2,
                             mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac,
                             m2Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_2, BIND_SCENE_REQUEST_CODE);
-                }
             } else {
                 if (mManualIDs[1] != null) {
                     EditSceneBindActivity.start(this, "按键二", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_2,
@@ -439,16 +481,12 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (id == R.id.mSceneContentText3) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (m3Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey3TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_3,
                             mSceneContentText3.getText().toString(), mGatewayId, mGatewayMac,
                             m3Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_3, BIND_SCENE_REQUEST_CODE);
-                }
             } else {
                 if (mManualIDs[2] != null) {
                     EditSceneBindActivity.start(this, "按键三", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_3,
@@ -456,16 +494,12 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                 }
             }
         } else if (id == R.id.mSceneContentText4) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (m4Scene != null)
                     EditLocalSceneBindActivity.start(this, mKey4TV.getText().toString(), mIOTId,
                             CTSL.SCENE_SWITCH_KEY_CODE_4,
                             mSceneContentText4.getText().toString(), mGatewayId, mGatewayMac,
                             m4Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
-                            CTSL.SCENE_SWITCH_KEY_CODE_4, BIND_SCENE_REQUEST_CODE);
-                }
             } else {
                 if (mManualIDs[3] != null) {
                     EditSceneBindActivity.start(this, "按键四", mIOTId, CTSL.SCENE_SWITCH_KEY_CODE_4,

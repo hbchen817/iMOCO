@@ -118,7 +118,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         super.onDestroyView();
         // 注销刷新场景数据事件
         EventBus.getDefault().unregister(this);
-        mUnbinder.unbind();
+        // mUnbinder.unbind();
     }
 
     @Override
@@ -170,7 +170,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         mListMyRL.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     querySceneList();
                 } else {
                     RefreshData.refreshHomeSceneListData();
@@ -184,7 +184,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         mListMy.setOnItemClickListener(sceneListOnItemClickListener);
         initView();
         // 开始获取场景列表
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
             loadAllScene();
         } else {
             startGetSceneList(CScene.TYPE_AUTOMATIC);
@@ -305,7 +305,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                 new AptSceneList.AptSceneListCallback() {
                     @Override
                     public void onDelItem(String sceneId) {
-                        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                             QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
                             String gatewayMac = "";
                             for (ItemSceneInGateway scene : mItemSceneList) {
@@ -369,7 +369,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     return;
                 }
 
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     Intent intent = new Intent(mActivity, SceneModelActivity.class);
                     intent.putExtra("operateType", CScene.OPERATE_CREATE);
                     intent.putExtra("sceneModelCode", mModelList.get(position).code);
@@ -514,7 +514,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
             // 将删除隐藏掉
             mAptSceneList.hideDeleteButton();
 
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 ItemScene itemScene = mItemSceneList.get(i).getSceneDetail();
                 EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(mItemSceneList.get(i).getGwMac());
                 // dev = DeviceBuffer.getDevByMac("LUXE_TEST");
@@ -702,13 +702,20 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
         if (v.getId() == mImgAdd.getId()) {
             //SystemParameter.getInstance().setIsRefreshSceneListData(true);
             //PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 List<EDevice.deviceEntry> list = DeviceBuffer.getGatewayDevs();
-                if (list.size() == 0) {
+                List<EDevice.deviceEntry> myGWList = new ArrayList<>();
+                for (EDevice.deviceEntry entry : list) {
+                    if (entry.owned == 1) {
+                        myGWList.add(entry);
+                    }
+                }
+                if (myGWList.size() == 0) {
                     ToastUtils.showLongToast(mActivity, R.string.add_gateway_dev_first);
                 } else {
-                    if (list.size() == 1) {
-                        LocalSceneListActivity.start(mActivity, list.get(0).iotId);
+                    if (myGWList.size() == 1) {
+                        String gwMac = DeviceBuffer.getDeviceMac(myGWList.get(0).iotId);
+                        LocalSceneActivity.start(mActivity, myGWList.get(0).iotId, gwMac, 10000);
                     } else {
                         LocalGatewayListActivity.start(mActivity);
                     }

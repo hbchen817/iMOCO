@@ -21,8 +21,8 @@ public class Constant {
     public static final String APPSECRET                            = "bd4be36c5d3341bb1335f6b440bf6363";
 
     // 本地服务appkey
-    public static final String APP_KEY                              = "npRyific";
-    public static final String CLIENT_ID                            = "rwN8MmzL";
+    public static final String APP_KEY                              = "npRyific";// qerTUkdd
+    public static final String CLIENT_ID                            = "rwN8MmzL";// 自有账号体系-飞燕设置
     public static final String PROJECT_ID                           = "a123xOYK0CCYpkaS";//拉斐-飞燕项目ID
     public static final String ACCOUNT_URL                          = "https://iot.rexense.cn:5443";// 123.56.94.209:5443
 

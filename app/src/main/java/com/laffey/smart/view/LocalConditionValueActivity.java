@@ -144,7 +144,7 @@ public class LocalConditionValueActivity extends BaseActivity {
     }
 
     private void queryTSLListForCA() {
-        SceneManager.queryTSLListForCA(this, mDevIotId, 0, new APIChannel.Callback() {
+        SceneManager.queryTSLListForCA(this, mDevIotId, 1, new APIChannel.Callback() {
             @Override
             public void onFailure(EAPIChannel.commitFailEntry failEntry) {
                 commitFailure(LocalConditionValueActivity.this, failEntry);
@@ -192,7 +192,7 @@ public class LocalConditionValueActivity extends BaseActivity {
         }
         ViseLog.d("propertiesDetail = \n" + GsonUtil.toJson(propertiesDetail));
         ViseLog.d("eventsDetail = \n" + GsonUtil.toJson(eventsDetail));
-        getDataConversionRules(propertiesDetail, eventsDetail);
+        // getDataConversionRules(propertiesDetail, eventsDetail);
     }
 
     // 获取数据转换规则

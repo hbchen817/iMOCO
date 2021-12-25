@@ -154,13 +154,11 @@ public class ActivityRouter {
             }
             case CTSL.TEST_PK_ONEWAYWINDOWCURTAINS: {
                 // 单路窗帘
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, OneWayCurtainsDetailActivity.class);
                 break;
             }
             case CTSL.TEST_PK_TWOWAYWINDOWCURTAINS: {
                 // 双路窗帘
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
                 intent = new Intent(context, TwoWayCurtainsDetailActivity.class);
                 break;
             }

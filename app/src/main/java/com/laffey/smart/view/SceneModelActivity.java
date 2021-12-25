@@ -464,7 +464,7 @@ public class SceneModelActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
-        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
             mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
         } else {
             mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList, mGatewayEntry.iotId);

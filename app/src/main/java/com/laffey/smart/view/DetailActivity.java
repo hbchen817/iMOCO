@@ -97,12 +97,12 @@ public class DetailActivity extends BaseActivity {
                 break;
             case CTSL.PK_SYT_ONE_SCENE_SWITCH:
             case CTSL.PK_ONE_SCENE_SWITCH:
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                // if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_one_key_scene_2);
-                //else setContentView(R.layout.activity_one_key_scene);
+                // else setContentView(R.layout.activity_one_key_scene);
                 break;
             case CTSL.PK_SIX_TWO_SCENE_SWITCH:
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                //if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_six_two_scene_2);
                 break;
             case CTSL.PK_U_SIX_SCENE_SWITCH:
@@ -118,13 +118,13 @@ public class DetailActivity extends BaseActivity {
             case CTSL.PK_ANY_TWO_SCENE_SWITCH:
             case CTSL.PK_TWO_SCENE_SWITCH:
             case CTSL.PK_SYT_TWO_SCENE_SWITCH:
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                //if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_two_key_scene_2);
                 //else setContentView(R.layout.activity_two_key_scene);
                 break;
             case CTSL.PK_THREE_SCENE_SWITCH:
             case CTSL.PK_SYT_THREE_SCENE_SWITCH:
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                //if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_three_key_scene_2);
                 //else setContentView(R.layout.activity_three_key_scene);
                 break;
@@ -133,7 +133,7 @@ public class DetailActivity extends BaseActivity {
                 break;
             case CTSL.PK_FOUR_SCENE_SWITCH:
             case CTSL.PK_SYT_FOUR_SCENE_SWITCH:
-                //if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+                //if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
                 setContentView(R.layout.activity_four_key_scene_2);
                 //else setContentView(R.layout.activity_four_key_scene);
                 break;

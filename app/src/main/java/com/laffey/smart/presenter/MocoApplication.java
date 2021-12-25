@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import androidx.multidex.MultiDex;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyun.alink.linksdk.tools.ThreadTools;
 import com.aliyun.iot.aep.sdk.IoTSmart;
 import com.aliyun.iot.aep.sdk.apiclient.IoTAPIClientImpl;
 import com.aliyun.iot.aep.sdk.apiclient.callback.IoTResponse;
@@ -29,7 +30,6 @@ import com.laffey.smart.utility.CrashHandler;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.view.OALoginActivity;
 import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.vise.log.ViseLog;
 import com.vise.log.inner.LogcatTree;
 
@@ -160,6 +160,11 @@ public class MocoApplication extends AApplication {
     }
 
     public static void initAliSDK() {
+        String packageName = sContext.getPackageName();
+        if (!packageName.equals(ThreadTools.getProcessName(sContext, android.os.Process.myPid()))) {
+            return;
+        }
+
         // 初始化SDK
         Initializer.sdkProcess(sContext);
 

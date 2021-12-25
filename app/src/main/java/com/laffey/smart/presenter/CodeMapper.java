@@ -256,7 +256,7 @@ public class CodeMapper {
                 break;
             case CTSL.PK_AIRCOMDITION_TWO: {
                 // 处理空调二管制状态
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     if (propertyName.equals(CTSL.M3I1_PowerSwitch_AirConditioner)) {
                         mapName = context.getString(R.string.sensorstate_buttonstate);
                         if (CTSL.S_P_PowerSwitch_On.equals(propertyValue))

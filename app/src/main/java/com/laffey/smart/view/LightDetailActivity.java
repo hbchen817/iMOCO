@@ -88,6 +88,8 @@ public class LightDetailActivity extends DetailActivity {
     TextView mColorTempIc;
     @BindView(R.id.temp_value_layout)
     LinearLayout mTempValueLayout;
+    @BindView(R.id.scene_view)
+    LinearLayout mSceneViewLayout;
 
     private List<Visitable> mList = new ArrayList<>();
     private List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
@@ -176,7 +178,7 @@ public class LightDetailActivity extends DetailActivity {
         mTemperatureLayout.setVisibility(View.GONE);
         mTempValueLayout.setVisibility(View.GONE);
 
-        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20,
                     mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
@@ -184,7 +186,7 @@ public class LightDetailActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             getGatewayId(mIOTId);
     }
 
@@ -252,7 +254,7 @@ public class LightDetailActivity extends DetailActivity {
                     return;
                 }
                 int index = (int) view.getTag();
-                if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     mSceneManager.executeScene(((ItemColorLightScene) mList.get(index)).getId(),
                             mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 } else {
@@ -265,6 +267,13 @@ public class LightDetailActivity extends DetailActivity {
                 }
             }
         });
+
+        // 分享设备无法添加、编辑场景
+        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 0) {
+            mSceneViewLayout.setVisibility(View.GONE);
+        } else {
+            mSceneViewLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     // API数据处理器
@@ -412,7 +421,7 @@ public class LightDetailActivity extends DetailActivity {
                 PluginHelper.cloudTimer(LightDetailActivity.this, mIOTId, CTSL.PK_ONE_WAY_DIMMABLE_LIGHT);
         } else if (view.getId() == R.id.scene_view) {
             if (mState == CTSL.STATUS_ON) {
-                if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     LightSceneListActivity.start(mActivity, mIOTId, "LightDetailActivity");
                 } else {
                     LightLocalSceneListActivity.start(mActivity, mIOTId, mGatewayId, mGatewayMac, "LightDetailActivity");

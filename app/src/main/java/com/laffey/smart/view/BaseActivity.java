@@ -51,8 +51,8 @@ public class BaseActivity extends FragmentActivity {
                 }
                 Logger.e(sb.toString());
                 String exceptionInfo = commitFailEntry.exception != null ? commitFailEntry.exception.getMessage() : "";
-                //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
-                Toast.makeText(BaseActivity.this, getString(R.string.api_commitfailure_hint), Toast.LENGTH_LONG).show();
+                // Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_commitfailure), commitFailEntry.path, exceptionInfo), Toast.LENGTH_LONG).show();
+                ToastUtils.showLongToast(BaseActivity.this, String.format(getString(R.string.api_commitfailure_hint_2), commitFailEntry.path));
                 notifyFailureOrError(1);
             }
             return false;
@@ -63,7 +63,8 @@ public class BaseActivity extends FragmentActivity {
         ViseLog.e("activity = " + activity.getLocalClassName() + "\nfailEntry = \n" + GsonUtil.toJson(failEntry));
         QMUITipDialogUtil.dismiss();
         notifyFailureOrError(1);
-        ToastUtils.showLongToast(activity, failEntry.exception.getMessage());
+        ToastUtils.showLongToast(activity, getString(R.string.api_commitfailure_hint_2) + "\n"
+                + failEntry.exception.getMessage() + "\n" + failEntry.path);
     }
 
     // 响应错误处理器
@@ -116,7 +117,14 @@ public class BaseActivity extends FragmentActivity {
                     // 10360: scene rule not exist
                     // 429: 请求频繁
                     //Toast.makeText(BaseActivity.this, String.format(getString(R.string.api_responseerror), responseErrorEntry.path, responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
-                    Toast.makeText(BaseActivity.this, TextUtils.isEmpty(responseErrorEntry.localizedMsg) ? getString(R.string.api_responseerror_hint) : ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg), Toast.LENGTH_LONG).show();
+
+                    if (TextUtils.isEmpty(responseErrorEntry.localizedMsg)) {
+                        Toast.makeText(BaseActivity.this, getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(BaseActivity.this,
+                                ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg) + "\n"
+                                        + responseErrorEntry.path, Toast.LENGTH_LONG).show();
+                    }
                 }
                 notifyResponseError(responseErrorEntry.code);
                 notifyFailureOrError(2);
@@ -134,7 +142,7 @@ public class BaseActivity extends FragmentActivity {
         } else if (errorEntry.code != 6741 && errorEntry.code != 429) {
             // 6741: 无扩展信息
             // 429: 请求频繁
-            ToastUtils.showLongToast(activity, errorEntry.localizedMsg);
+            ToastUtils.showLongToast(activity, errorEntry.localizedMsg + "\n" + errorEntry.path);
         }
     }
 

@@ -162,13 +162,13 @@ public class EditLocalSceneBindActivity extends BaseActivity {
             finish();
         } else if (id == R.id.mSceneContentText ||
                 id == R.id.go_tv) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 SwitchLocalSceneListActivity.start(this, mIotId, mGwId, mGwMac, mKeyCode, mSceneId, BIND_SCENE_REQUEST_CODE);
             } else {
                 SwitchSceneListActivity.start(this, mIotId, mKeyCode);
             }
         } else if (id == R.id.unbind) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 EDevice.deviceEntry gwDev = DeviceBuffer.getDeviceInformation(mGwId);
                 if (gwDev.status == Constant.CONNECTION_STATUS_OFFLINE) {
                     // 网关离线

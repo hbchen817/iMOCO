@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.model.Visitable;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.SystemParameter;
@@ -86,6 +88,8 @@ public class ColorLightDetailActivity extends DetailActivity {
     SeekBar mLightnessProgressBar;
     @BindView(R.id.recycle_view)
     RecyclerView mRecycleView;
+    @BindView(R.id.scene_view)
+    LinearLayout mSceneViewLayout;
 
     private List<Visitable> mList = new ArrayList<>();
     private CommonAdapter mAdapter;
@@ -172,7 +176,7 @@ public class ColorLightDetailActivity extends DetailActivity {
         mTitleText.setTextColor(getResources().getColor(R.color.all_3));
         initView();
         initStatusBar();
-        if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), CScene.TYPE_MANUAL, 1, 20, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
     }
 
@@ -234,7 +238,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     return;
                 }
                 int index = (int) view.getTag();
-                if (!"com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     mSceneManager.executeScene(((ItemColorLightScene) mList.get(index)).getId(),
                             mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 } else {
@@ -247,6 +251,13 @@ public class ColorLightDetailActivity extends DetailActivity {
                 }
             }
         });
+
+        // 分享设备无法添加、编辑场景
+        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 0) {
+            mSceneViewLayout.setVisibility(View.GONE);
+        } else {
+            mSceneViewLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     // API数据处理器
@@ -397,7 +408,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                 break;
             case R.id.scene_view:
                 if (mState == CTSL.STATUS_ON) {
-                    if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                    if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                         LightLocalSceneListActivity.start(mActivity, mIOTId, mGatewayId, mGatewayMac, "ColorLightDetailActivity");
                     } else
                         LightSceneListActivity.start(mActivity, mIOTId, "ColorLightDetailActivity");
@@ -432,16 +443,75 @@ public class ColorLightDetailActivity extends DetailActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID))
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID))
             getGatewayId(mIOTId);
     }
 
     // 获取面板所属网关iotId
     private void getGatewayId(String iotId) {
-        if (Constant.IS_TEST_DATA) {
-            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
-        }
-        mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
-                Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mAPIDataHandler);
+        SceneManager.getGWIotIdBySubIotId(this, iotId, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                // 根据子设备iotId查询网关iotId
+                int code = response.getInteger("code");
+                String gwId = response.getString("gwIotId");
+                if (code == 200) {
+                    mGatewayId = gwId;
+                    if (DeviceBuffer.getDeviceInformation(iotId).owned == 1) {
+                        mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
+                        mSceneManager.querySceneList(ColorLightDetailActivity.this, mGatewayMac, "1",
+                                Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
+                    } else {
+                        queryMacByIotId(mGatewayId);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage());
+            }
+        });
+    }
+
+    private void queryMacByIotId(String iotId) {
+        List<String> ids = new ArrayList<>();
+        ids.add(iotId);
+        DeviceManager.queryMacByIotId(this, ids, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                // ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String id = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        if (id.equals(iotId)) {
+                            mGatewayMac = mac;
+                            break;
+                        }
+                    }
+                    mSceneManager.querySceneList(ColorLightDetailActivity.this, mGatewayMac, "1",
+                            Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage());
+            }
+        });
     }
 }

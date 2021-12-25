@@ -238,7 +238,7 @@ public class BindSuccessActivity extends BaseActivity {
                 JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
                 activity.mProductKey = jsonObject.getString("productKey");
                 activity.mStatus = jsonObject.getIntValue("status");
-                if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                     // activity.queryBindingTable();
                     if (CTSL.PK_GATEWAY_RG4100.equals(activity.mProductKey))
                         activity.gwBindToProject();

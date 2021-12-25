@@ -114,7 +114,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             intent = new Intent(mActivity, NickNameActivity.class);
             startActivity(intent);
         } else if (v.getId() == R.id.change_password) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 PwdChangeActivity.start(this);
             } else {
                 OpenAccountUIService openAccountUIService = (OpenAccountUIService) OpenAccountSDK.getService(OpenAccountUIService.class);

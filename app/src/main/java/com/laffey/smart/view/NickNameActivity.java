@@ -74,7 +74,7 @@ public class NickNameActivity extends BaseActivity {
                 return;
             }
             QMUITipDialogUtil.showLoadingDialg(this, R.string.is_submitted);
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 AccountManager.updateCaccountsInfo(this, null, mViewBinding.nickNameEt.getText().toString(),
                         null, null, null, null,
                         Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO, Constant.MSG_QUEST_UPDATE_CACCOUNTS_INFO_ERROR, mHandler);

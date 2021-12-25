@@ -374,11 +374,24 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             mDoubleClickedTime = System.currentTimeMillis();
         } else if (view.getId() == R.id.mSceneContentText2) {
             // 场景按键5
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m5Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId, m5Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m5Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m5Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_5, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -392,11 +405,24 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
             // 场景按键6
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                 if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                     if (m6Scene != null) {
-                        QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
-                        SceneManager.invokeLocalSceneService(this, mGatewayId, m6Scene.getSceneDetail().getSceneId(), null);
+                        if ("1".equals(m6Scene.getSceneDetail().getEnable())) {
+                            QMUITipDialogUtil.showLoadingDialg(this, R.string.click_scene);
+                            SceneManager.invokeLocalSceneService(this, mGatewayId,
+                                    m6Scene.getSceneDetail().getSceneId(), null);
+                        } else {
+                            // 禁用
+                            ToastUtils.showLongToast(this, R.string.scene_is_invaild);
+                        }
+                    } else {
+                        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                            SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac,
+                                    CTSL.SCENE_SWITCH_KEY_CODE_6, BIND_SCENE_REQUEST_CODE);
+                        } else {
+                            ToastUtils.showLongToast(this, R.string.sharing_dev_does_not_support_edit_scene);
+                        }
                     }
                 }
                 mDoubleClickedTime = System.currentTimeMillis();
@@ -707,12 +733,12 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
     @Override
     public boolean onLongClick(View view) {
         if (view.getId() == R.id.mSceneContentText2) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m5Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1,
-                            mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac, m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SCENE_SWITCH_KEY_CODE_5, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                    if (m5Scene != null) {
+                        EditLocalSceneBindActivity.start(this, mKey5TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_1,
+                                mSceneContentText2.getText().toString(), mGatewayId, mGatewayMac, m5Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
+                    }
                 }
             } else {
                 if (mFirstManualSceneId != null) {
@@ -720,12 +746,11 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 }
             }
         } else if (view.getId() == R.id.mSceneContentText5) {
-            if ("com.laffey.smart".equals(BuildConfig.APPLICATION_ID)) {
-                if (m6Scene != null)
-                    EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2,
-                            mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac, m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
-                else {
-                    SwitchLocalSceneListActivity.start(this, mIOTId, mGatewayId, mGatewayMac, CTSL.SCENE_SWITCH_KEY_CODE_6, BIND_SCENE_REQUEST_CODE);
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                    if (m6Scene != null)
+                        EditLocalSceneBindActivity.start(this, mKey6TV.getText().toString(), mIOTId, CTSL.SIX_SCENE_SWITCH_KEY_CODE_2,
+                                mSceneContentText5.getText().toString(), mGatewayId, mGatewayMac, m6Scene.getSceneDetail().getSceneId(), EDIT_LOCAL_SCENE);
                 }
             } else {
                 if (mSecondManualSceneId != null) {
