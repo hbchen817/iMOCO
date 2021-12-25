@@ -12,7 +12,7 @@
         android:id="@+id/include_toolbar"
         layout="@layout/include_title" />
 
-    <com.laffey.smart.widget.ComRoundCornerImageView
+    <com.rexense.smart.widget.ComRoundCornerImageView
         android:id="@+id/sceneMaintainImgIcon"
         android:layout_width="match_parent"
         android:layout_height="130dp"

@@ -33,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.laffey.smart"
+        applicationId "com.rexense.smart"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
@@ -54,10 +54,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-	        buildConfigField "String", "BUILD_COUNTRY", "\"CHINA\""
+            buildConfigField "String", "BUILD_COUNTRY", "\"CHINA\""
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BRAND", "\"laffey\"")
+            buildConfigField("String", "BRAND", "\"rexense-smart\"")
             buildConfigField("String", "APK_TIME", "\"${releaseTime()}\"")
         }
         release {
@@ -65,7 +65,7 @@ android {
             buildConfigField "String", "BUILD_COUNTRY", "\"CHINA\""
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BRAND", "\"laffey\"")
+            buildConfigField("String", "BRAND", "\"rexense-smart\"")
             buildConfigField("String", "APK_TIME", "\"${releaseTime()}\"")
         }
     }

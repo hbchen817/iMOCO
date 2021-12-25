@@ -61,7 +61,7 @@
         android:paddingStart="20dp"
         android:paddingTop="15dp">
 
-        <com.laffey.smart.datepicker.PickerView
+        <com.rexense.smart.datepicker.PickerView
             android:id="@+id/dpv_year"
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_120"
@@ -76,7 +76,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
 
-        <com.laffey.smart.datepicker.PickerView
+        <com.rexense.smart.datepicker.PickerView
             android:id="@+id/dpv_month"
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_120"
@@ -91,7 +91,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
 
-        <com.laffey.smart.datepicker.PickerView
+        <com.rexense.smart.datepicker.PickerView
             android:id="@+id/dpv_day"
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_120"
@@ -106,7 +106,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
 
-        <com.laffey.smart.datepicker.PickerView
+        <com.rexense.smart.datepicker.PickerView
             android:id="@+id/dpv_hour"
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_120"
@@ -122,7 +122,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/sp_14" />
 
-        <com.laffey.smart.datepicker.PickerView
+        <com.rexense.smart.datepicker.PickerView
             android:id="@+id/dpv_minute"
             android:layout_width="0dp"
             android:layout_height="@dimen/dp_120"

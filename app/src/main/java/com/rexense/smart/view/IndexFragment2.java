@@ -1,0 +1,737 @@
+package com.rexense.smart.view;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.rexense.smart.BuildConfig;
+import com.rexense.smart.R;
+import com.rexense.smart.contract.CScene;
+import com.rexense.smart.contract.Constant;
+import com.rexense.smart.demoTest.SceneCatalogIdCache;
+import com.rexense.smart.event.CEvent;
+import com.rexense.smart.event.EEvent;
+import com.rexense.smart.event.RefreshData;
+import com.rexense.smart.model.EDevice;
+import com.rexense.smart.model.EEventScene;
+import com.rexense.smart.model.EScene;
+import com.rexense.smart.model.ItemScene;
+import com.rexense.smart.model.ItemSceneInGateway;
+import com.rexense.smart.presenter.AptSceneList;
+import com.rexense.smart.presenter.AptSceneModel;
+import com.rexense.smart.presenter.CloudDataParser;
+import com.rexense.smart.presenter.DeviceBuffer;
+import com.rexense.smart.presenter.ImageProvider;
+import com.rexense.smart.presenter.RealtimeDataReceiver;
+import com.rexense.smart.presenter.SceneManager;
+import com.rexense.smart.presenter.SystemParameter;
+import com.rexense.smart.utility.GsonUtil;
+import com.rexense.smart.utility.QMUITipDialogUtil;
+import com.rexense.smart.utility.RetrofitUtil;
+import com.rexense.smart.utility.ToastUtils;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.vise.log.ViseLog;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+/**
+ * @author fyy
+ * @date 2018/7/17
+ */
+public class IndexFragment2 extends BaseFragment implements View.OnClickListener {
+    @BindView(R.id.sceneImgAdd)
+    protected ImageView mImgAdd;
+    @BindView(R.id.sceneLblScene)
+    protected TextView mLblScene;
+    @BindView(R.id.sceneLblSceneDL)
+    protected TextView mLblSceneDL;
+    @BindView(R.id.sceneLblMy)
+    protected TextView mLblMy;
+    @BindView(R.id.sceneLblMyDL)
+    protected TextView mLblMyDL;
+    @BindView(R.id.sceneLstSceneModel)
+    protected ListView mListSceneModel;
+    @BindView(R.id.sceneLstMy)
+    protected ListView mListMy;
+    @BindView(R.id.sceneLstMy_rl)
+    protected SmartRefreshLayout mListMyRL;
+    @BindView(R.id.scene_nodata_view)
+    protected LinearLayout mSceneNodataView;
+
+    private final int SCENE_PAGE_SIZE = 50;
+    private final int REQUEST_CODE = 1000;
+
+    private SceneManager mSceneManager = null;
+    private List<EScene.sceneModelEntry> mModelList = null;
+    private List<EScene.sceneListItemEntry> mSceneList = new ArrayList<>();
+    private AptSceneList mAptSceneList;
+    private String mSceneType;
+    private String mLocalSceneType;
+
+    private final List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
+    private ItemSceneInGateway mDelItemScene;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 注销刷新场景数据事件
+        EventBus.getDefault().unregister(this);
+        // mUnbinder.unbind();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            // 订阅刷新场景数据事件
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        RealtimeDataReceiver.addEventCallbackHandler("IndexFragment2LocalSceneCallback", mAPIDataHandler);
+        // 刷新场景列表数据
+        /*if (SystemParameter.getInstance().getIsRefreshSceneListData()) {
+            // this.startGetSceneList(CScene.TYPE_AUTOMATIC);
+            SystemParameter.getInstance().setIsRefreshSceneListData(false);
+            RefreshData.refreshSceneListData();
+        } else {
+            if (mSceneList.size() == 0) {
+                mSceneNodataView.setVisibility(View.VISIBLE);
+                mListMy.setVisibility(View.GONE);
+            } else {
+                mSceneNodataView.setVisibility(View.GONE);
+                mListMy.setVisibility(View.VISIBLE);
+            }
+        }*/
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("IndexFragment2LocalSceneCallback");
+    }
+
+    @Override
+    protected int setLayout() {
+        return R.layout.fragment_index2;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // 获取碎片所依附的活动的上下文环境
+        View view = inflater.inflate(setLayout(), container, false);
+        mUnbinder = ButterKnife.bind(this, view);
+        mListMyRL.setEnableLoadMore(false);
+        mListMyRL.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                    querySceneList();
+                } else {
+                    RefreshData.refreshHomeSceneListData();
+
+                    startGetSceneList(CScene.TYPE_AUTOMATIC);
+                    SystemParameter.getInstance().setIsRefreshSceneListData(false);
+                }
+            }
+        });
+        mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
+        mListMy.setOnItemClickListener(sceneListOnItemClickListener);
+        initView();
+        // 开始获取场景列表
+        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+            loadAllScene();
+        } else {
+            startGetSceneList(CScene.TYPE_AUTOMATIC);
+        }
+        return view;
+    }
+
+    private void querySceneList() {
+        SceneManager.querySceneList(mActivity, "", "", new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    QMUITipDialogUtil.dismiss();
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    DeviceBuffer.initSceneBuffer();
+                    mItemSceneList.clear();
+                    mSceneList.clear();
+                    if (sceneList != null) {
+                        for (int i = 0; i < sceneList.size(); i++) {
+                            JSONObject sceneObj = sceneList.getJSONObject(i);
+                            ItemSceneInGateway scene = JSONObject.toJavaObject(sceneObj, ItemSceneInGateway.class);
+                            DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+
+                            JSONObject appParams = scene.getAppParams();
+                            if (appParams != null) {
+                                String switchIotId = appParams.getString("switchIotId");
+                                if (switchIotId != null && switchIotId.length() > 0) continue;
+                            }
+
+                            mItemSceneList.add(scene);
+                            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                            entry.id = scene.getSceneDetail().getSceneId();
+                            entry.name = scene.getSceneDetail().getName();
+                            entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                            entry.description = scene.getSceneDetail().getMac();
+                            entry.catalogId = scene.getSceneDetail().getType();
+                            mSceneList.add(entry);
+                        }
+                    }
+                    mAptSceneList.setData(mSceneList);
+                    mListMyRL.finishRefresh(true);
+                    if (mSceneList.size() > 0) {
+                        mListMyRL.setVisibility(View.VISIBLE);
+                        mListMy.setVisibility(View.VISIBLE);
+                        mSceneNodataView.setVisibility(View.GONE);
+                    } else {
+                        mListMy.setVisibility(View.GONE);
+                        mListMyRL.setVisibility(View.VISIBLE);
+                        mSceneNodataView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mListMyRL.finishRefresh(false);
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mListMyRL.finishRefresh(false);
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(mActivity, e.getMessage());
+            }
+        });
+    }
+
+    private void loadAllScene() {
+        for (ItemSceneInGateway scene : DeviceBuffer.getAllScene().values()) {
+            JSONObject appParams = scene.getAppParams();
+            if (appParams != null) {
+                String switchIotId = appParams.getString("switchIotId");
+                if (switchIotId != null && switchIotId.length() > 0) continue;
+            }
+
+            mItemSceneList.add(scene);
+            EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+            entry.id = scene.getSceneDetail().getSceneId();
+            entry.name = scene.getSceneDetail().getName();
+            entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+            entry.description = scene.getSceneDetail().getMac();
+            entry.catalogId = scene.getSceneDetail().getType();
+            mSceneList.add(entry);
+        }
+
+        mAptSceneList.setData(mSceneList);
+        if (mSceneList.size() > 0) {
+            mListMyRL.setVisibility(View.VISIBLE);
+            mListMy.setVisibility(View.VISIBLE);
+            mSceneNodataView.setVisibility(View.GONE);
+        } else {
+            mListMyRL.setVisibility(View.GONE);
+            mListMy.setVisibility(View.GONE);
+            mSceneNodataView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void dismissQMUIDialog() {
+        super.dismissQMUIDialog();
+        mListMyRL.finishRefresh(false);
+    }
+
+    @Override
+    protected void init() {
+
+    }
+
+    private void initView() {
+        mSceneManager = new SceneManager(mActivity);
+        mModelList = mSceneManager.genSceneModelList();
+        AptSceneModel aptSceneModel = new AptSceneModel(mActivity);
+        aptSceneModel.setData(mModelList);
+        mListSceneModel.setAdapter(aptSceneModel);
+        mAptSceneList = new AptSceneList(mActivity, mSceneList, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler,
+                new AptSceneList.AptSceneListCallback() {
+                    @Override
+                    public void onDelItem(String sceneId) {
+                        if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                            QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
+                            String gatewayMac = "";
+                            for (ItemSceneInGateway scene : mItemSceneList) {
+                                if (sceneId.equals(scene.getSceneDetail().getSceneId())) {
+                                    gatewayMac = scene.getGwMac();
+                                    mDelItemScene = scene;
+                                    break;
+                                }
+                            }
+                            /*if (DeviceBuffer.getDevByMac(gatewayMac) == null) {
+                                QMUITipDialogUtil.dismiss();
+                                ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                            } else {
+                                deleteScene(gatewayMac, sceneId);
+                            }*/
+                            deleteScene(gatewayMac, sceneId);
+                        } else {
+                            if (mSceneList != null) {
+                                for (int i = 0; i < mSceneList.size(); i++) {
+                                    EScene.sceneListItemEntry entry = mSceneList.get(i);
+                                    if (entry.id.equals(sceneId)) {
+                                        mSceneList.remove(i);
+                                        mAptSceneList.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+                                if (mSceneList.size() == 0) {
+                                    mSceneNodataView.setVisibility(View.VISIBLE);
+                                    mListMy.setVisibility(View.GONE);
+                                    mListMyRL.setVisibility(View.GONE);
+                                } else {
+                                    mSceneNodataView.setVisibility(View.GONE);
+                                    mListMy.setVisibility(View.VISIBLE);
+                                    mListMyRL.setVisibility(View.VISIBLE);
+                                }
+                            } else {
+                                mSceneNodataView.setVisibility(View.VISIBLE);
+                                mListMy.setVisibility(View.GONE);
+                                mListMyRL.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                });
+
+        mListMy.setAdapter(mAptSceneList);
+
+        // 添加点击处理
+        mImgAdd.setOnClickListener(this);
+
+        // 推荐场景点击处理
+        mLblScene.setOnClickListener(this);
+
+        // 我的场景点击处理
+        mLblMy.setOnClickListener(this);
+
+        // 场景模板点击处理
+        mListSceneModel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mModelList.get(position).code == CScene.SMC_NONE) {
+                    return;
+                }
+
+                if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                    Intent intent = new Intent(mActivity, SceneModelActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_CREATE);
+                    intent.putExtra("sceneModelCode", mModelList.get(position).code);
+                    intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
+                    intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    startActivityForResult(intent, REQUEST_CODE);
+                } else {
+                    Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                    intent.putExtra("operateType", CScene.OPERATE_CREATE);
+                    intent.putExtra("sceneModelCode", mModelList.get(position).code);
+                    intent.putExtra("sceneModelName", getString(mModelList.get(position).name));
+                    intent.putExtra("sceneModelIcon", mModelList.get(position).icon);
+                    intent.putExtra("sceneNumber", mSceneList.size());
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+
+    private void deleteScene(String gatewayMac, String sceneId) {
+        SceneManager.deleteScene(mActivity, gatewayMac, sceneId, new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                QMUITipDialogUtil.dismiss();
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    mItemSceneList.clear();
+                    mSceneList.clear();
+                    EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(gatewayMac);
+                    if (dev != null) {
+                        SceneManager.manageSceneService(dev.iotId, sceneId, 3,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    }
+                    DeviceBuffer.removeScene(sceneId);
+                    RefreshData.refreshHomeSceneListData();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(mActivity, e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            switch (resultCode) {
+                case 100: {
+                    // 删除场景
+                    String sceneId = data.getStringExtra("scene_id");
+                    if (mSceneList != null) {
+                        for (int i = 0; i < mSceneList.size(); i++) {
+                            EScene.sceneListItemEntry entry = mSceneList.get(i);
+                            if (entry.id.equals(sceneId)) {
+                                mSceneList.remove(i);
+                                mAptSceneList.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case 101: {
+                    // 更新场景
+                    String catalogId = data.getStringExtra("catalog_id");
+                    String desc = data.getStringExtra("description");
+                    boolean enable = data.getBooleanExtra("enable", true);
+                    String id = data.getStringExtra("id");
+                    String name = data.getStringExtra("name");
+                    boolean valid = data.getBooleanExtra("valid", true);
+
+                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                    entry.id = id;
+                    entry.catalogId = catalogId;
+                    entry.description = desc;
+                    entry.enable = enable;
+                    entry.name = name;
+                    entry.valid = valid;
+
+                    for (int i = 0; i < mSceneList.size(); i++) {
+                        if (entry.id.equals(mSceneList.get(i).id)) {
+                            mSceneList.set(i, entry);
+                            break;
+                        }
+                    }
+                    mAptSceneList.notifyDataSetChanged();
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case Constant.ADD_LOCAL_SCENE_FOR_SCENE_MODEL: {
+                    // 新增场景
+                    mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
+                    mLblSceneDL.setVisibility(View.INVISIBLE);
+                    mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
+                    mLblMyDL.setVisibility(View.VISIBLE);
+
+                    mListSceneModel.setVisibility(View.GONE);
+                    mListMy.setVisibility(View.VISIBLE);
+                    mListMyRL.setVisibility(View.VISIBLE);
+                    ToastUtils.showLongToast(mActivity, R.string.scenario_created_successfully);
+                    RefreshData.refreshHomeSceneListData();
+                    break;
+                }
+                case Constant.DEL_SCENE_IN_LOCALSCENEACTIVITY: {
+                    // 删除场景
+                    ToastUtils.showLongToast(mActivity, R.string.scene_delete_successfully);
+                    break;
+                }
+                case Constant.RESULT_CODE_UPDATE_SCENE: {
+                    // 编辑场景
+                    ToastUtils.showLongToast(mActivity, R.string.scene_updated_successfully);
+                    break;
+                }
+            }
+        }
+    }
+
+    // 场景列表长按监听器
+    private final AdapterView.OnItemLongClickListener sceneListOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            mAptSceneList.setDelete(position);
+            return true;
+        }
+    };
+
+    // 场景列表单按监听器
+    private final AdapterView.OnItemClickListener sceneListOnItemClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            // 将删除隐藏掉
+            mAptSceneList.hideDeleteButton();
+
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                ItemScene itemScene = mItemSceneList.get(i).getSceneDetail();
+                EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(mItemSceneList.get(i).getGwMac());
+                // dev = DeviceBuffer.getDevByMac("LUXE_TEST");
+
+                if (dev != null) {
+                    String gatewayId = dev.iotId;
+
+                    EEventScene scene = new EEventScene();
+                    scene.setTarget("LocalSceneActivity");
+                    scene.setGatewayId(gatewayId);
+                    scene.setScene(mItemSceneList.get(i).getSceneDetail());
+                    scene.setGatewayMac(mItemSceneList.get(i).getGwMac());
+                    EventBus.getDefault().postSticky(scene);
+
+                    Intent intent = new Intent(mActivity, LocalSceneActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
+                } else {
+                    ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                }
+            } else {
+                // 获取场景模板代码
+                int sceneModelCode = new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description);
+                if (sceneModelCode < CScene.SMC_NIGHT_RISE_ON) {
+                    // 非模板场景处理
+                    //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, mSceneList.get(i).catalogId, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                    //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+
+                    Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                    intent.putExtra("scene_id", mSceneList.get(i).id);
+                    intent.putExtra("catalog_id", mSceneList.get(i).catalogId);
+                    startActivityForResult(intent, 1000);
+                } else {
+                    // 模板场景处理
+                    if (mSceneList.get(i).catalogId.equals(CScene.TYPE_MANUAL)) {
+                        Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                        intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                        intent.putExtra("sceneId", mSceneList.get(i).id);
+                        intent.putExtra("name", mSceneList.get(i).name);
+                        intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                        intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                        intent.putExtra("sceneNumber", mSceneList.size());
+                        mActivity.startActivity(intent);
+                    } else {
+                        //PluginHelper.editScene(mActivity, CScene.TYPE_IFTTT, CScene.TYPE_AUTOMATIC, SystemParameter.getInstance().getHomeId(), mSceneList.get(i).id);
+                        //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+                        Intent intent = new Intent(mActivity, SceneMaintainActivity.class);
+                        intent.putExtra("operateType", CScene.OPERATE_UPDATE);
+                        intent.putExtra("sceneId", mSceneList.get(i).id);
+                        intent.putExtra("name", mSceneList.get(i).name);
+                        intent.putExtra("sceneModelCode", new SceneManager(mActivity).getSceneModelCode(mSceneList.get(i).description));
+                        intent.putExtra("sceneModelIcon", ImageProvider.genSceneIcon(mActivity, mSceneList.get(i).description));
+                        intent.putExtra("sceneNumber", mSceneList.size());
+                        mActivity.startActivity(intent);
+                    }
+                }
+            }
+        }
+    };
+
+    // 开始获取场景列表
+    private void startGetSceneList(String type) {
+        mSceneType = type;
+        if (mSceneList == null) {
+            mSceneList = new ArrayList<EScene.sceneListItemEntry>();
+        } else {
+            if (mSceneType.equalsIgnoreCase(CScene.TYPE_AUTOMATIC)) {
+                mSceneList.clear();
+            }
+        }
+        // mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), type, 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+    }
+
+    // API数据处理器
+    private final Handler mAPIDataHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                /*case Constant.MSG_CALLBACK_LNEVENTNOTIFY: {
+                    // 删除网关下的场景
+                    JSONObject jsonObject = JSON.parseObject((String) msg.obj);
+                    // ViseLog.d("网关返回删除结果 IndexFragment2 = " + jsonObject.toJSONString());
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    String identifier = jsonObject.getString("identifier");
+                    if ("ManageSceneNotification".equals(identifier)) {
+                        String type = value.getString("Type");
+                        String status = value.getString("Status");
+                        // status  0: 成功  1: 失败
+                        if ("0".equals(status)) {
+                            // type  1: 增加场景  2: 编辑场景  3: 删除场景
+                            if ("3".equals(type)) {
+                                if (mDelItemScene != null) {
+                                    ViseLog.d("IndexFragment2 删除场景");
+                                    deleteScene(mDelItemScene.getGwMac(), mDelItemScene.getSceneDetail().getSceneId());
+                                }
+                            }
+                        } else {
+                            QMUITipDialogUtil.dismiss();
+                            ToastUtils.showLongToast(mActivity, R.string.gw_del_scene_fail);
+                        }
+                    }
+                    break;
+                }*/
+                case Constant.MSG_CALLBACK_QUERYSCENELIST:
+                    // 处理获取场景列表数据
+                    EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
+                    if (sceneList != null && sceneList.scenes != null) {
+                        for (EScene.sceneListItemEntry item : sceneList.scenes) {
+                            //ViseLog.d(new Gson().toJson(item));
+                            if (!item.description.contains("mode == CA,")) {
+                                SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
+                                mSceneList.add(item);
+                            }
+                        }
+                        if (sceneList.scenes.size() >= sceneList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                        } else {
+                            // 如果自动场景获取结束则开始获取手动场景
+                            if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
+                                startGetSceneList(CScene.TYPE_MANUAL);
+                            }
+                            if (mSceneType.equals(CScene.TYPE_MANUAL)) {
+                                // 数据获取完则设置场景列表数据
+                                mAptSceneList.setData(mSceneList);
+                                mAptSceneList.notifyDataSetChanged();
+                                //mListMy.setAdapter(mAptSceneList);
+                                mListMy.setOnItemLongClickListener(sceneListOnItemLongClickListener);
+                                mListMy.setOnItemClickListener(sceneListOnItemClickListener);
+                            }
+                            QMUITipDialogUtil.dismiss();
+                        }
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                    }
+                    mListMyRL.finishRefresh(true);
+
+                    if (mSceneList.size() == 0) {
+                        mSceneNodataView.setVisibility(View.VISIBLE);
+                        mListMy.setVisibility(View.GONE);
+                        mListMyRL.setVisibility(View.GONE);
+                    } else {
+                        mSceneNodataView.setVisibility(View.GONE);
+                        mListMy.setVisibility(View.VISIBLE);
+                        mListMyRL.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case Constant.MSG_CALLBACK_DELETESCENE:
+                    // 处理删除列表数据
+                    String sceneId = CloudDataParser.processDeleteSceneResult((String) msg.obj);
+                    QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
+                    if (sceneId != null && sceneId.length() > 0) {
+                        mAptSceneList.deleteData(sceneId);
+                        RefreshData.refreshHomeSceneListData();
+                    }
+                    //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    });
+
+    // 订阅刷新场景列表数据事件
+    @Subscribe
+    public void onRefreshSceneListData(EEvent eventEntry) {
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA)) {
+            startGetSceneList(CScene.TYPE_AUTOMATIC);
+            SystemParameter.getInstance().setIsRefreshSceneListData(false);
+
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
+                }
+            });
+        } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+            // 刷新主界面场景列表
+            querySceneList();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == mImgAdd.getId()) {
+            //SystemParameter.getInstance().setIsRefreshSceneListData(true);
+            //PluginHelper.createScene(mActivity, CScene.TYPE_IFTTT, SystemParameter.getInstance().getHomeId());
+            if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+                List<EDevice.deviceEntry> list = DeviceBuffer.getGatewayDevs();
+                List<EDevice.deviceEntry> myGWList = new ArrayList<>();
+                for (EDevice.deviceEntry entry : list) {
+                    if (entry.owned == 1) {
+                        myGWList.add(entry);
+                    }
+                }
+                if (myGWList.size() == 0) {
+                    ToastUtils.showLongToast(mActivity, R.string.add_gateway_dev_first);
+                } else {
+                    if (myGWList.size() == 1) {
+                        String gwMac = DeviceBuffer.getDeviceMac(myGWList.get(0).iotId);
+                        LocalSceneActivity.start(mActivity, myGWList.get(0).iotId, gwMac, 10000);
+                    } else {
+                        LocalGatewayListActivity.start(mActivity);
+                    }
+                }
+            } else {
+                Intent intent = new Intent(mActivity, NewSceneActivity.class);
+                startActivity(intent);
+            }
+            // deleteScene("5C0272FFFE720594", "3");
+        } else if (v.getId() == mLblScene.getId()) {
+            mLblScene.setTextColor(getResources().getColor(R.color.topic_color1));
+            mLblSceneDL.setVisibility(View.VISIBLE);
+            mLblMy.setTextColor(getResources().getColor(R.color.normal_font_color));
+            mLblMyDL.setVisibility(View.INVISIBLE);
+
+            mListSceneModel.setVisibility(View.VISIBLE);
+            mListMy.setVisibility(View.GONE);
+            mListMyRL.setVisibility(View.GONE);
+        } else if (v.getId() == mLblMy.getId()) {
+            mLblScene.setTextColor(getResources().getColor(R.color.normal_font_color));
+            mLblSceneDL.setVisibility(View.INVISIBLE);
+            mLblMy.setTextColor(getResources().getColor(R.color.topic_color1));
+            mLblMyDL.setVisibility(View.VISIBLE);
+
+            mListSceneModel.setVisibility(View.GONE);
+            mListMy.setVisibility(View.VISIBLE);
+            mListMyRL.setVisibility(View.VISIBLE);
+        }
+    }
+}
