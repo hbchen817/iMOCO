@@ -3086,6 +3086,51 @@ public class SceneManager {
                 });
     }
 
+    // 删除网关下所有本地场景
+    public static void deleteAllScene(Activity activity, String pk, String mac, Callback callback) {
+        RetrofitUtil.getInstance().deleteAllScene(activity, pk, mac)
+                .subscribeOn(Schedulers.io())
+                .retryWhen(ERetrofit.retryTokenFun(activity))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    deleteAllScene(activity, pk, mac, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     public interface Callback {
         void onNext(JSONObject response);
 

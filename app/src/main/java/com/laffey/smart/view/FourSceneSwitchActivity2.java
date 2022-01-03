@@ -24,6 +24,7 @@ import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
@@ -727,6 +728,7 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     activity.mKey3TV.setText(activity.mKeyName3);
                     activity.mKey4TV.setText(activity.mKeyName4);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }

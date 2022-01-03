@@ -291,7 +291,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response, Constant.QUERY_SCENE_LIST);
                     }
                     break;
                 }
@@ -311,7 +311,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                        RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response, Constant.QUERY_GW_ID_BY_SUB_ID);
                     }
                     break;
                 }
@@ -466,7 +466,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                     }
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response, Constant.QUERY_GW_ID_BY_SUB_ID);
                 }
             }
 
@@ -474,7 +474,7 @@ public class ColorLightDetailActivity extends DetailActivity {
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage());
+                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage() + ":\n" + Constant.QUERY_GW_ID_BY_SUB_ID);
             }
         });
     }
@@ -502,7 +502,7 @@ public class ColorLightDetailActivity extends DetailActivity {
                             Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response);
+                    RetrofitUtil.showErrorMsg(ColorLightDetailActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
                 }
             }
 
@@ -510,7 +510,7 @@ public class ColorLightDetailActivity extends DetailActivity {
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage());
+                ToastUtils.showLongToast(ColorLightDetailActivity.this, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
             }
         });
     }

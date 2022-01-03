@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.BuildConfig;
@@ -28,7 +27,6 @@ import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EEventScene;
-import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.ItemScene;
 import com.laffey.smart.model.ItemSceneInGateway;
@@ -36,6 +34,7 @@ import com.laffey.smart.presenter.AptSceneList;
 import com.laffey.smart.presenter.AptSceneModel;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
@@ -43,7 +42,6 @@ import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
-import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -51,7 +49,6 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.log.ViseLog;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -62,13 +59,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author fyy
@@ -197,7 +187,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
             @Override
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
-                ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
+                // ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     QMUITipDialogUtil.dismiss();
                     JSONArray sceneList = response.getJSONArray("sceneList");
@@ -532,7 +522,8 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     Intent intent = new Intent(mActivity, LocalSceneActivity.class);
                     startActivityForResult(intent, REQUEST_CODE);
                 } else {
-                    ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                    // ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                    queryMacByIotId(i);
                 }
             } else {
                 // 获取场景模板代码
@@ -573,6 +564,55 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
             }
         }
     };
+
+    private void queryMacByIotId(int pos) {
+        QMUITipDialogUtil.showLoadingDialg(mActivity, R.string.is_loading);
+        List<String> idList = new ArrayList<>();
+        idList.addAll(DeviceBuffer.getAllIotId());
+        DeviceManager.queryMacByIotId(mActivity, idList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    EDevice.deviceEntry dev = DeviceBuffer.getDevByMac(mItemSceneList.get(pos).getGwMac());
+
+                    if (dev != null) {
+                        QMUITipDialogUtil.dismiss();
+                        String gatewayId = dev.iotId;
+
+                        EEventScene scene = new EEventScene();
+                        scene.setTarget("LocalSceneActivity");
+                        scene.setGatewayId(gatewayId);
+                        scene.setScene(mItemSceneList.get(pos).getSceneDetail());
+                        scene.setGatewayMac(mItemSceneList.get(pos).getGwMac());
+                        EventBus.getDefault().postSticky(scene);
+
+                        Intent intent = new Intent(mActivity, LocalSceneActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE);
+                    } else {
+                        ToastUtils.showLongToast(mActivity, R.string.gateway_dev_does_not_exist);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
+    }
 
     // 开始获取场景列表
     private void startGetSceneList(String type) {
@@ -622,7 +662,6 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     EScene.sceneListEntry sceneList = CloudDataParser.processSceneList((String) msg.obj);
                     if (sceneList != null && sceneList.scenes != null) {
                         for (EScene.sceneListItemEntry item : sceneList.scenes) {
-                            //ViseLog.d(new Gson().toJson(item));
                             if (!item.description.contains("mode == CA,")) {
                                 SceneCatalogIdCache.getInstance().put(item.id, item.catalogId);
                                 mSceneList.add(item);
@@ -630,7 +669,8 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                         }
                         if (sceneList.scenes.size() >= sceneList.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, sceneList.pageNo + 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType,
+                                    sceneList.pageNo + 1, SCENE_PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 如果自动场景获取结束则开始获取手动场景
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
@@ -667,7 +707,7 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     QMUITipDialogUtil.showSuccessDialog(mActivity, R.string.scene_delete_sucess);
                     if (sceneId != null && sceneId.length() > 0) {
                         mAptSceneList.deleteData(sceneId);
-                        RefreshData.refreshHomeSceneListData();
+                        RefreshData.refreshHomeSceneListDataOnly();
                     }
                     //ToastUtils.showToastCentrally(mActivity, R.string.scene_delete_sucess);
                     break;
@@ -691,7 +731,8 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
                     QMUITipDialogUtil.showLoadingDialg(mActivity, getString(R.string.is_loading));
                 }
             });
-        } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME)) {
+        } else if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME) ||
+                eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME_ONLY)) {
             // 刷新主界面场景列表
             querySceneList();
         }

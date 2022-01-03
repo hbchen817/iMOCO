@@ -159,7 +159,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     queryBindingTable();
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.QUERY_GW_ID_BY_SUB_ID);
                 }
             }
 
@@ -272,7 +272,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     mAdapter.notifyDataSetChanged();
                     refreshNoDataView();
                 } else {
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.GET_MULTI_CONTROL);
                 }
             }
 
@@ -351,7 +351,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     queryBindingTable();
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.DEL_MULTI_CONTROL_GROUP);
                 }
             }
 
@@ -359,7 +359,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage());
+                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage() + "：\n" + Constant.DEL_MULTI_CONTROL_GROUP);
             }
         });
     }
@@ -376,7 +376,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     queryBindingTable();
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.ADD_OR_EDIT_MULTI_CONTROL);
                 }
             }
 
@@ -384,7 +384,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage());
+                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage() + "：\n" + Constant.ADD_OR_EDIT_MULTI_CONTROL);
             }
         });
     }
@@ -445,7 +445,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     mControlGroup.setName(name);
                     DeviceBuffer.getBindList(mDevMac + "-" + mKeyValue).setName(name);
                 } else {
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.EDIT_CONTROL_GROUP_NAME);
                 }
             }
 
@@ -453,7 +453,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage());
+                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage() + "：\n" + Constant.EDIT_CONTROL_GROUP_NAME);
             }
         });
     }
@@ -526,7 +526,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
                     queryBindingTable();
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AssociatedBindListActivity.this, response, Constant.CANCEL_BIND_RELATION);
                 }
             }
 
@@ -534,7 +534,7 @@ public class AssociatedBindListActivity extends BaseActivity implements View.OnC
             public void onError(Throwable e) {
                 ViseLog.e(e);
                 QMUITipDialogUtil.dismiss();
-                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage());
+                ToastUtils.showLongToast(AssociatedBindListActivity.this, e.getMessage() + ":\n" + Constant.CANCEL_BIND_RELATION);
             }
         });
     }

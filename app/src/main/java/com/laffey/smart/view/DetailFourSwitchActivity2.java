@@ -29,6 +29,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
@@ -187,18 +188,22 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
         mStateName1 = findViewById(R.id.detailTwoSwitchLblStateName1);
         mStateName1.setOnLongClickListener(this);
         mStateValue1 = findViewById(R.id.detailTwoSwitchLblStateValue1);
+        mStateValue1.setOnClickListener(this);
 
         mStateName2 = findViewById(R.id.detailTwoSwitchLblStateName2);
         mStateName2.setOnLongClickListener(this);
         mStateValue2 = findViewById(R.id.detailTwoSwitchLblStateValue2);
+        mStateValue2.setOnClickListener(this);
 
         mStateName3 = findViewById(R.id.detailFourSwitchLblStateName3);
         mStateName3.setOnLongClickListener(this);
         mStateValue3 = findViewById(R.id.detailFourSwitchLblStateValue3);
+        mStateValue3.setOnClickListener(this);
 
         mStateName4 = findViewById(R.id.detailFourSwitchLblStateName4);
         mStateName4.setOnLongClickListener(this);
         mStateValue4 = findViewById(R.id.detailFourSwitchLblStateValue4);
+        mStateValue4.setOnClickListener(this);
 
         // 键2操作事件处理
         mImgOperate2 = findViewById(R.id.detailFourSwitchImgOperate2);
@@ -313,7 +318,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == mImgOperate1.getId()) {
+        if (v.getId() == mImgOperate1.getId() ||
+                v.getId() == mStateValue1.getId()) {
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
                 if (mState1 == CTSL.STATUS_ON) {
@@ -323,7 +329,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate2.getId()) {
+        } else if (v.getId() == mImgOperate2.getId() ||
+                v.getId() == mStateValue2.getId()) {
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
                 if (mState2 == CTSL.STATUS_ON) {
@@ -333,7 +340,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate3.getId()) {
+        } else if (v.getId() == mImgOperate3.getId() ||
+                v.getId() == mStateValue3.getId()) {
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
                 if (mState3 == CTSL.STATUS_ON) {
@@ -343,7 +351,8 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate4.getId()) {
+        } else if (v.getId() == mImgOperate4.getId() ||
+                v.getId() == mStateValue4.getId()) {
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
                 if (mState4 == CTSL.STATUS_ON) {
@@ -447,6 +456,7 @@ public class DetailFourSwitchActivity2 extends DetailActivity implements View.On
                     activity.mStateName3.setText(activity.mKeyName3);
                     activity.mStateName4.setText(activity.mKeyName4);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }

@@ -234,6 +234,42 @@ public class HomeSpaceManager {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 获取家网关列表
+    public static void getHomeGatewayList(Activity activity, String homeId, int pageNo, int pageSize,
+                                   APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETHOMEDEVICELIST;
+        requestParameterEntry.version = "1.0.0";
+        if (homeId != null && homeId.length() > 0) {
+            requestParameterEntry.addParameter("homeId", homeId);
+        }
+        requestParameterEntry.addParameter("deviceNodeType", "GATEWAY");
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMEGATWAYLIST;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
+    // 获取家网关列表
+    public static void getHomeSubDeviceList(Activity activity, String homeId, int pageNo, int pageSize,
+                                          APIChannel.Callback callback) {
+        // 设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETHOMEDEVICELIST;
+        requestParameterEntry.version = "1.0.0";
+        if (homeId != null && homeId.length() > 0) {
+            requestParameterEntry.addParameter("homeId", homeId);
+        }
+        requestParameterEntry.addParameter("deviceNodeType", "DEVICE");
+        requestParameterEntry.addParameter("pageNo", pageNo < 1 ? 1 : pageNo);
+        requestParameterEntry.addParameter("pageSize", pageSize <= 0 || pageSize > 50 ? 50 : pageSize);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETHOMEGATWAYLIST;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 更新房间设备
     public void updateRoomDevice(String homeId, String roomId, String iotId,
                                  Handler commitFailureHandler,

@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
@@ -143,6 +144,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickL
 
         mStateValue = findViewById(R.id.detailOneSwitchLblStateValue);
         mRootLayout = findViewById(R.id.detailOneSwitchLl);
+        mStateValue.setOnClickListener(this);
 
         TextView timerIc = findViewById(R.id.timer_ic_tv);
         mBacklightTV = findViewById(R.id.back_light_txt);
@@ -201,7 +203,8 @@ public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickL
         if (v.getId() == mAssociatedLayout.getId()) {
             // 双控
             showAssociatedPopupWindow();
-        } else if (v.getId() == mImgOperate.getId()) {
+        } else if (v.getId() == mImgOperate.getId() ||
+                v.getId() == mStateValue.getId()) {
             // 按键触发 时间间隔1.5秒
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -415,6 +418,7 @@ public class DetailOneSwitchActivity2 extends DetailActivity implements OnClickL
                 QMUITipDialogUtil.dismiss();
                 activity.mStateName.setText(activity.mKeyName);
                 DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                RefreshData.refreshDeviceKeyName();
                 ToastUtils.showShortToast(activity, R.string.set_success);
             } else if (msg.what == Constant.MSG_CALLBACK_IDENTIFIER_LIST) {
                 String result = (String) msg.obj;

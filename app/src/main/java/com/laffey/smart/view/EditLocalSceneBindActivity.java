@@ -278,10 +278,10 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                         }
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response, Constant.UPDATE_SCENE);
                     }
                 } else {
-                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response, Constant.UPDATE_SCENE);
                 }
             }
 
@@ -316,10 +316,10 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                         setResult(2);
                         finish();
                     } else {
-                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                        RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response, Constant.DELETE_SCENE);
                     }
                 } else {
-                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response);
+                    RetrofitUtil.showErrorMsg(EditLocalSceneBindActivity.this, response, Constant.DELETE_SCENE);
                 }
             }
 
@@ -390,10 +390,10 @@ public class EditLocalSceneBindActivity extends BaseActivity {
                             activity.setResult(2);
                             activity.finish();
                         } else {
-                            RetrofitUtil.showErrorMsg(activity, response);
+                            RetrofitUtil.showErrorMsg(activity, response, Constant.DELETE_SCENE);
                         }
                     } else {
-                        RetrofitUtil.showErrorMsg(activity, response);
+                        RetrofitUtil.showErrorMsg(activity, response, Constant.DELETE_SCENE);
                     }
                     break;
                 }

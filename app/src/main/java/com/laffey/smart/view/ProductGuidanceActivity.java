@@ -13,7 +13,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,11 +22,9 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.databinding.ActivityProductguidanceBinding;
 import com.laffey.smart.presenter.CloudDataParser;
-import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.ProductHelper;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EProduct;
-import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.widget.DialogUtils;
 
 /**
@@ -45,7 +42,6 @@ public class ProductGuidanceActivity extends BaseActivity {
     private int mGatewayNumber = 0;
     private List<EProduct.configGuidanceEntry> mGuidances;
     private int mStepCount, mCurrentStepIndex;
-    private String[] mIgnoreList = {};
 
     // 数据处理器
     private final Handler processDataHandler = new Handler(new Handler.Callback() {
@@ -94,7 +90,19 @@ public class ProductGuidanceActivity extends BaseActivity {
         // 引导完作后的处理
         if (mCurrentStepIndex >= mStepCount || mProductKey.equals(CTSL.PK_GATEWAY_RG4100) /*|| mProductKey.equalsIgnoreCase(CTSL.PK_SIX_TWO_SCENE_SWITCH)*/) {
             if (!mViewBinding.productGuidanceChbRead.isChecked()) {
-                Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
+                // Dialog.confirm(ProductGuidanceActivity.this, R.string.dialog_title, getString(R.string.productguidance_hint), R.drawable.dialog_prompt, R.string.dialog_confirm, false);
+                DialogUtils.showConfirmDialog(this, getString(R.string.dialog_title),
+                        getString(R.string.productguidance_hint), getString(R.string.dialog_confirm), new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
                 return;
             }
 

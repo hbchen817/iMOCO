@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.laffey.smart.R;
@@ -30,7 +31,9 @@ import com.laffey.smart.contract.CScene;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.databinding.ActivityMoreSubdeviceBinding;
 import com.laffey.smart.event.RefreshData;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EScene;
+import com.laffey.smart.model.EUser;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -45,6 +48,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
@@ -145,11 +149,13 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
                     mViewBinding.moreSubdeviceLblVersion.setText(thingBaseInforEntry.firmwareVersion);
                     break;
                 case Constant.MSG_CALLBACK_UNBINDEVICE:
+                    ViseLog.d("处理设备解除绑定回调");
                     QMUITipDialogUtil.dismiss();
                     // 处理设备解除绑定回调(用于Detail界面直接退出)
                     setResult(Constant.RESULTCODE_CALLMOREACTIVITYUNBIND, null);
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
+                    RefreshData.refreshDeviceStateDataFromBuffer();
                     SystemParameter.getInstance().setIsRefreshDeviceData(true);
                     DialogUtils.showConfirmDialog(MoreSubdeviceActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
                             R.string.dialog_confirm, new DialogUtils.Callback() {
@@ -333,37 +339,147 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
 
         mViewBinding.includeToolbar.includeTitleLblTitle.setText(name);
 
-        // 分享设备不允许修改房间，故不显示
-        if (intent.getIntExtra("owned", 0) == 0) {
-            mViewBinding.moreSubdeviceRLRoom.setVisibility(View.GONE);
-        }
-
         initStatusBar();
 
         // 回退处理
         mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(this);
+        mViewBinding.moreSubdeviceLblName.setText(name);
 
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
-        String roomName = "";
-        String bindTimeStr = "";
-        if (deviceEntry != null) {
-            roomName = deviceEntry.roomName;
-            bindTimeStr = deviceEntry.bindTime;
-            mViewBinding.moreSubdeviceLblMACAddress.setText(deviceEntry.deviceName);
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        if (deviceEntry == null) {
+            getHomeSubDeviceList(1);
         } else {
-            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-            mViewBinding.moreSubdeviceLblUnbind.setOnClickListener(this);
-            mViewBinding.moreSubdeviceImgUnbind.setOnClickListener(this);
-            return;
+            initView(deviceEntry);
         }
+    }
 
+    private void getHomeSubDeviceList(int pageNo) {
+        HomeSpaceManager.getHomeSubDeviceList(this, SystemParameter.getInstance().getHomeId(), pageNo, 50,
+                new APIChannel.Callback() {
+                    @Override
+                    public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                        commitFailure(MoreSubdeviceActivity.this, failEntry);
+                    }
+
+                    @Override
+                    public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                        responseError(MoreSubdeviceActivity.this, errorEntry);
+                    }
+
+                    @Override
+                    public void onProcessData(String result) {
+                        EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList(result);
+                        if (homeDeviceList != null && homeDeviceList.data != null) {
+                            // 向缓存追加家列表数据
+                            EHomeSpace.deviceEntry deviceEntry = null;
+                            for (EHomeSpace.deviceEntry entry : homeDeviceList.data) {
+                                if (mIOTId.equals(entry.iotId)) {
+                                    deviceEntry = entry;
+                                    break;
+                                }
+                            }
+
+                            if (deviceEntry != null) {
+                                DeviceBuffer.addHomeDevice(deviceEntry);
+                                getDeviceList(1);
+                            } else {
+                                if (homeDeviceList.data.size() >= homeDeviceList.pageSize) {
+                                    // 数据没有获取完则获取下一页数据
+                                    getHomeSubDeviceList(homeDeviceList.pageNo + 1);
+                                } else {
+                                    ToastUtils.showLongToast(MoreSubdeviceActivity.this, getString(R.string.pls_try_again_later)
+                                            + ":\n" + Constant.API_PATH_GETHOMEDEVICELIST);
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    // 数据获取完则同步刷新设备列表数据
+    private void getDeviceList(int pageNo) {
+        UserCenter.getDeviceList(MoreSubdeviceActivity.this, pageNo, 50, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(MoreSubdeviceActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(MoreSubdeviceActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 处理获取用户设备列表数据
+                EUser.bindDeviceListEntry userBindDeviceList = CloudDataParser.processUserDeviceList(result);
+                // ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
+                if (userBindDeviceList != null && userBindDeviceList.data != null) {
+                    EUser.deviceEntry deviceEntry = null;
+                    for (EUser.deviceEntry entry : userBindDeviceList.data) {
+                        if (mIOTId.equals(entry.iotId)) {
+                            deviceEntry = entry;
+                            break;
+                        }
+                    }
+                    if (deviceEntry != null) {
+                        DeviceBuffer.addUserBindDevice(deviceEntry);
+                        queryMac();
+                    } else {
+                        if (userBindDeviceList.data.size() >= userBindDeviceList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            getDeviceList(userBindDeviceList.pageNo + 1);
+                        } else {
+                            ToastUtils.showLongToast(MoreSubdeviceActivity.this, getString(R.string.pls_try_again_later)
+                                    + ":\n" + Constant.API_PATH_GETUSERDEVICELIST);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void queryMac() {
+        List<String> iotList = new ArrayList<>();
+        iotList.add(mIOTId);
+        DeviceManager.queryMacByIotId(MoreSubdeviceActivity.this, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                // ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    initView(DeviceBuffer.getDeviceInformation(mIOTId));
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreSubdeviceActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
+    }
+
+    private void initView(EDevice.deviceEntry deviceEntry) {
+        mViewBinding.moreSubdeviceLblMACAddress.setText(deviceEntry.deviceName);
+        mViewBinding.moreSubdeviceLblRoom.setText(deviceEntry.roomName);
+        mViewBinding.moreSubdeviceLblBindTime.setText(deviceEntry.bindTime);
         mViewBinding.includeWheelPicker.oneItemWheelPickerRLPicker.setVisibility(View.GONE);
-        mViewBinding.moreSubdeviceLblRoom.setText(roomName);
-        mViewBinding.moreSubdeviceLblBindTime.setText(bindTimeStr);
 
         // 显示设备名称修改对话框事件处理
-        mViewBinding.moreSubdeviceLblName.setText(name);
         mViewBinding.moreSubdeviceImgName.setOnClickListener(this);
 
         // 选择所属房间处理
@@ -389,8 +505,14 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
         mUserCenter = new UserCenter(this);
 
         RealtimeDataReceiver.addEventCallbackHandler("MoreSubDevSceneListCallback", mAPIDataHandler);
-        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         getGWIotIdBySubIotId();
+
+        // 分享设备不允许修改房间，故不显示
+        if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 0) {
+            mViewBinding.moreSubdeviceRLRoom.setVisibility(View.GONE);
+        } else {
+            mViewBinding.moreSubdeviceRLRoom.setVisibility(View.VISIBLE);
+        }
     }
 
     private void getGWIotIdBySubIotId() {

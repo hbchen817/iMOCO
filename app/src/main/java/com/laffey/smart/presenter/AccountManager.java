@@ -690,6 +690,50 @@ public class AccountManager {
                 });
     }
 
+    // 用户注销接口（iot系统）
+    public static void cancellationIot(Activity activity, Callback callback) {
+        RetrofitUtil.getInstance().cancellationIot(activity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    cancellationIot(activity, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    LoginActivity.start(activity, null);
+                                    activity.finish();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     // 查询用户信息
     public static void getCaccountsInfo(Context context, int resultTag, int errorTag, Handler resultHandler) {
         Observable.just(new JSONObject())

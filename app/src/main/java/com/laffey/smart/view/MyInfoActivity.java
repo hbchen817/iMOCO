@@ -160,4 +160,9 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
+    }
 }

@@ -170,6 +170,19 @@ public class DeviceBuffer {
         return list;
     }
 
+    // 删除网关下所有场景
+    public static void deleteAllSceneInGw(String gwMac) {
+        List<String> sceneIdList = new ArrayList<>();
+        for (ItemSceneInGateway scene : mSceneBuffer.values()) {
+            if (gwMac.equals(scene.getGwMac())) {
+                sceneIdList.add(scene.getSceneDetail().getSceneId());
+            }
+        }
+        for (String sceneId : sceneIdList) {
+            mSceneBuffer.remove(sceneId);
+        }
+    }
+
     // 获取指定网关下场景列表
     public static List<ItemSceneInGateway> getAllSceneInGW(String gwMac) {
         List<ItemSceneInGateway> list = new ArrayList<>();
@@ -263,6 +276,39 @@ public class DeviceBuffer {
         }
     }
 
+    // 追加家设备列表
+    public static void addHomeDevice(EHomeSpace.deviceEntry entry) {
+        if (!mBuffer.containsKey(entry.iotId)) {
+            EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
+            deviceEntry.iotId = entry.iotId;
+            deviceEntry.nickName = entry.nickName;
+            deviceEntry.deviceName = entry.deviceName;
+            deviceEntry.mac = entry.mac;
+            deviceEntry.productKey = entry.productKey;
+            deviceEntry.roomId = entry.roomId == null ? "" : entry.roomId;
+            deviceEntry.roomName = entry.roomName == null ? "" : entry.roomName;
+            deviceEntry.owned = 1;
+            deviceEntry.status = entry.status;
+            deviceEntry.nodeType = entry.nodeType;
+            deviceEntry.image = entry.image;
+            mBuffer.put(entry.iotId, deviceEntry);
+        } else {
+            EDevice.deviceEntry deviceEntry = mBuffer.get(entry.iotId);
+            if (deviceEntry != null) {
+                deviceEntry.iotId = entry.iotId;
+                deviceEntry.nickName = entry.nickName;
+                deviceEntry.deviceName = entry.deviceName;
+                deviceEntry.productKey = entry.productKey;
+                deviceEntry.roomId = entry.roomId == null ? "" : entry.roomId;
+                deviceEntry.roomName = entry.roomName == null ? "" : entry.roomName;
+                deviceEntry.owned = 1;
+                deviceEntry.status = entry.status;
+                deviceEntry.nodeType = entry.nodeType;
+                deviceEntry.image = entry.image;
+            }
+        }
+    }
+
     // 追加用户绑定设备列表
     public static void addUserBindDeviceList(EUser.bindDeviceListEntry userListEntry) {
         if (userListEntry != null && userListEntry.data != null && userListEntry.data.size() > 0) {
@@ -288,6 +334,27 @@ public class DeviceBuffer {
         }
     }
 
+    // 追加用户绑定设备列表
+    public static void addUserBindDevice(EUser.deviceEntry entry) {
+        if (mBuffer.containsKey(entry.iotId)) {
+            Objects.requireNonNull(mBuffer.get(entry.iotId)).bindTime = entry.bindTime;
+            Objects.requireNonNull(mBuffer.get(entry.iotId)).status = entry.status;
+        } else {
+            EDevice.deviceEntry deviceEntry = new EDevice.deviceEntry();
+            deviceEntry.iotId = entry.iotId;
+            deviceEntry.nickName = entry.nickName;
+            deviceEntry.deviceName = entry.deviceName;
+            deviceEntry.mac = entry.mac;
+            deviceEntry.productKey = entry.productKey;
+            deviceEntry.owned = entry.owned;
+            deviceEntry.bindTime = entry.bindTime;
+            deviceEntry.status = entry.status;
+            deviceEntry.nodeType = entry.nodeType;
+            deviceEntry.image = entry.image;
+            mBuffer.put(entry.iotId, deviceEntry);
+        }
+    }
+
     // 删除设备
     public static void deleteDevice(String iotId) {
         if (mBuffer.containsKey(iotId)) {
@@ -298,6 +365,15 @@ public class DeviceBuffer {
     // 获取所有设备信息
     public static Map<String, EDevice.deviceEntry> getAllDeviceInformation() {
         return mBuffer;
+    }
+
+    // 获取设备所有iotId
+    public static List<String> getAllIotId() {
+        List<String> ids = new ArrayList<>();
+        for (EDevice.deviceEntry entry : mBuffer.values()) {
+            ids.add(entry.iotId);
+        }
+        return ids;
     }
 
     // 为获取网关设备列表

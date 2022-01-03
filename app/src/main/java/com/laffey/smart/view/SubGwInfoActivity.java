@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivitySubGwInfoBinding;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -300,6 +301,7 @@ public class SubGwInfoActivity extends BaseActivity implements View.OnClickListe
                             if (subGwEntry != null) {
                                 subGwEntry.setNickname(name);
                                 DeviceBuffer.addSubGw(mSubGwEntry.getMac(), subGwEntry);
+                                RefreshData.refreshDeviceStateDataFromBuffer();
                             }
                             ToastUtils.showLongToast(SubGwInfoActivity.this, R.string.modify_success);
                         } else {

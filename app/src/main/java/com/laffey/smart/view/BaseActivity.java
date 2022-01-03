@@ -122,10 +122,12 @@ public class BaseActivity extends FragmentActivity {
                         Toast.makeText(BaseActivity.this, getString(R.string.api_responseerror_hint), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(BaseActivity.this,
-                                ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg) + "\n"
+                                ResponseMessageUtil.replaceMessage(responseErrorEntry.localizedMsg) + ":\n"
                                         + responseErrorEntry.path, Toast.LENGTH_LONG).show();
                     }
                 }
+                ViseLog.d("responseErrorEntry.code = " + responseErrorEntry.code +
+                        "\nresponseErrorEntry.localizedMsg = " + responseErrorEntry.localizedMsg);
                 notifyResponseError(responseErrorEntry.code);
                 notifyFailureOrError(2);
             }

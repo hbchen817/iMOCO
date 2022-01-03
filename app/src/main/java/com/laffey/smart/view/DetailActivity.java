@@ -224,7 +224,6 @@ public class DetailActivity extends BaseActivity {
         new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIProperyDataHandler);
 
         // 添加实时数据属性回调处理器
-        ViseLog.d("this.toString() = " + this.toString());
         RealtimeDataReceiver.addPropertyCallbackHandler(this.toString() + "Property", this.mRealtimeDataPropertyHandler);
     }
 

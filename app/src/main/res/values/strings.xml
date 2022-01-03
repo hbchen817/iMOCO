@@ -150,7 +150,7 @@
     <string name="productguidance_title">添加产品引导</string>
     <string name="productguidance_opearte">配网操作</string>
     <string name="productguidance_read">我已经阅读</string>
-    <string name="productguidance_hint">请点选我已经阅读然后操作。</string>
+    <string name="productguidance_hint">请点选“我已经阅读”然后操作。</string>
     <string name="productguidance_help">长按开关任意按键5s以上，红色指示灯快闪，网关进入配网状态！</string>
 
     <string name="wifi_title">请选择WiFi</string>
@@ -888,4 +888,5 @@
     <string name="click_scene">触发场景</string>
     <string name="click_backlight">触发背光</string>
     <string name="sharing_dev_does_not_support_edit_scene">分享设备不支持编辑场景</string>
+    <string name="is_unregistering">正在注销</string>
 </resources>

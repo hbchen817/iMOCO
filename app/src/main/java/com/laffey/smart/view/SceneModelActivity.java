@@ -179,7 +179,13 @@ public class SceneModelActivity extends BaseActivity {
         mViewBinding.sceneMaintainRlOperate.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                createScene();
+                mGatewayDevList.clear();
+                mGatewayDevList.addAll(DeviceBuffer.getGatewayDevs("1"));
+                if (mGatewayDevList.size() > 0) {
+                    createScene();
+                } else {
+                    ToastUtils.showLongToast(SceneModelActivity.this, R.string.add_gateway_dev_first);
+                }
             }
         });
 
@@ -196,35 +202,47 @@ public class SceneModelActivity extends BaseActivity {
         // new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
 
         mUserCenter = new UserCenter(this);
-        mGatewayDevList.addAll(DeviceBuffer.getGatewayDevs());
-        mGatewayEntry = mGatewayDevList.get(0);
-        if (mGatewayDevList.size() == 1) {
-            mViewBinding.gatewayIv.setVisibility(View.GONE);
-        } else mViewBinding.gatewayIv.setVisibility(View.VISIBLE);
-        mViewBinding.gatewayTv.setText(mGatewayEntry.nickName);
-        mViewBinding.gatewayTv.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mGatewayDevList.size() > 1) {
-                    QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(SceneModelActivity.this);
-                    for (EDevice.deviceEntry entry : mGatewayDevList) {
-                        builder.addItem(entry.nickName);
-                    }
-                    builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
-                        @Override
-                        public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
-                            EDevice.deviceEntry entry = mGatewayDevList.get(position);
-                            mViewBinding.gatewayTv.setText(entry.nickName);
-                            mGatewayEntry = mGatewayDevList.get(position);
-                            dialog.dismiss();
+        mGatewayDevList.addAll(DeviceBuffer.getGatewayDevs("1"));
+        ViseLog.d("mGatewayDevList = " + mGatewayDevList.size());
+        if (mGatewayDevList.size() > 0) {
+            mGatewayEntry = mGatewayDevList.get(0);
+            if (mGatewayDevList.size() == 1) {
+                mViewBinding.gatewayIv.setVisibility(View.GONE);
+            } else mViewBinding.gatewayIv.setVisibility(View.VISIBLE);
+            mViewBinding.gatewayTv.setText(mGatewayEntry.nickName);
+            mViewBinding.gatewayTv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mGatewayDevList.size() > 1) {
+                        QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(SceneModelActivity.this);
+                        for (EDevice.deviceEntry entry : mGatewayDevList) {
+                            builder.addItem(entry.nickName);
                         }
-                    });
-                    builder.build().show();
+                        builder.setOnSheetItemClickListener(new QMUIBottomSheet.BottomListSheetBuilder.OnSheetItemClickListener() {
+                            @Override
+                            public void onClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+                                EDevice.deviceEntry entry = mGatewayDevList.get(position);
+                                mViewBinding.gatewayTv.setText(entry.nickName);
+                                mGatewayEntry = mGatewayDevList.get(position);
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.build().show();
+                    }
                 }
-            }
-        });
-        mUserCenter.getGatewaySubdeviceList(mGatewayEntry.iotId, 1, PAGE_SIZE, Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST,
-                mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+            });
+            mUserCenter.getGatewaySubdeviceList(mGatewayEntry.iotId, 1, PAGE_SIZE, Constant.MSG_CALLBACK_GETGATEWAYSUBDEVICTLIST,
+                    mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        } else {
+            mViewBinding.gatewayTv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToastUtils.showLongToast(SceneModelActivity.this, R.string.add_gateway_dev_first);
+                }
+            });
+            // 获取支持配网产品列表
+            new ProductHelper(this).getConfigureList(mCommitFailureHandler, mResponseErrorHandler, processDataHandler);
+        }
 
         initStatusBar();
     }
@@ -464,7 +482,7 @@ public class SceneModelActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
-        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
+        if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID) || mGatewayDevList.size() == 0) {
             mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
         } else {
             mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList, mGatewayEntry.iotId);

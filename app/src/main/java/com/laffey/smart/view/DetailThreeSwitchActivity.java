@@ -28,6 +28,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
@@ -176,14 +177,17 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
         mStateName1 = findViewById(R.id.detailThreeSwitchLblStateName1);
         mStateName1.setOnLongClickListener(this);
         mStateValue1 = findViewById(R.id.detailThreeSwitchLblStateValue1);
+        mStateValue1.setOnClickListener(this);
 
         mStateName2 = findViewById(R.id.detailThreeSwitchLblStateName2);
         mStateName2.setOnLongClickListener(this);
         mStateValue2 = findViewById(R.id.detailThreeSwitchLblStateValue2);
+        mStateValue2.setOnClickListener(this);
 
         mStateName3 = findViewById(R.id.detailThreeSwitchLblStateName3);
         mStateName3.setOnLongClickListener(this);
         mStateValue3 = findViewById(R.id.detailThreeSwitchLblStateValue3);
+        mStateValue3.setOnClickListener(this);
 
         // 云端定时处理
         mTimerLayout = findViewById(R.id.timer_layout);
@@ -218,7 +222,8 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
         if (v.getId() == mAssociatedLayout.getId()) {
             // 双控
             showAssociatedPopupWindow();
-        } else if (v.getId() == mImgOperate1.getId()) {
+        } else if (v.getId() == mImgOperate1.getId() ||
+                v.getId() == mStateValue1.getId()) {
             // 触发按键1
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -229,7 +234,8 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate2.getId()) {
+        } else if (v.getId() == mImgOperate2.getId() ||
+                v.getId() == mStateValue2.getId()) {
             // 触发按键2
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -240,7 +246,8 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate3.getId()) {
+        } else if (v.getId() == mImgOperate3.getId() ||
+                v.getId() == mStateValue3.getId()) {
             // 触发按键3
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -420,6 +427,7 @@ public class DetailThreeSwitchActivity extends DetailActivity implements OnClick
                     activity.mStateName2.setText(activity.mKeyName2);
                     activity.mStateName3.setText(activity.mKeyName3);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }

@@ -300,7 +300,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String telNum = mViewBinding.userNameEt.getText().toString();
                 String pwd = mViewBinding.pwdEt.getText().toString();
                 if (telNum.length() > 0 && pwd.length() > 0) {
-                    QMUITipDialogUtil.showLoadingDialg(this, R.string.is_logining);
+                    QMUITipDialogUtil.showLoadingDialg(LoginActivity.this, R.string.is_logining);
                     authAccountsPwd(LoginActivity.this, telNum, pwd);
                 }
             } else {
@@ -554,7 +554,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         AccountManager.authAccountsPwd(activity, accounts, pwd, new AccountManager.Callback() {
             @Override
             public void onNext(JSONObject response) {
-                // ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
+                ViseLog.d("帐号密码认证、登录 = " + response.toJSONString());
                 int code = response.getInteger("code");
                 if (code == 200) {
                     // 登录成功
@@ -585,7 +585,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onNext(JSONObject response) {
                 // 获取AuthCode
-                // ViseLog.d("获取AuthCode = " + response.toJSONString());
+                ViseLog.d("获取AuthCode = " + response.toJSONString());
                 int code = response.getInteger("code");
                 if (code == 200) {
                     // 登录成功 authCode

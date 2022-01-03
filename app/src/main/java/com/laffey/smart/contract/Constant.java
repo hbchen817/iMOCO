@@ -455,7 +455,7 @@ public class Constant {
     public static final String QUERY_IOT_ID_BY_MAC_VER              = "1.0";
 
     // 根据子设备iotId查询网关iotId
-    public static final String QUERY_GW_ID_BY_SUB_ID                = "/app/device/getGWIotIdBySubIotId";
+    public static final String QUERY_GW_ID_BY_SUB_ID                = "/app/device/getGwIotIdBySubIotId";
     public static final String QUERY_GW_ID_BY_SUB_ID_VER            = "1.0";
 
     // 滑动图片获取
@@ -577,5 +577,9 @@ public class Constant {
     // 网关绑定到项目
     public static final String GW_BIND_TO_PROJECT                   = "/app/device/gwBindToProject";
     public static final String GW_BIND_TO_PROJECT_VER               = "1.0";
+
+    // 删除网关下所有本地场景
+    public static final String DELETE_ALL_SCENE                     = "/app/scene/deleteAll";
+    public static final String DELETE_ALL_SCENE_VER                 = "1.0";
 }
 

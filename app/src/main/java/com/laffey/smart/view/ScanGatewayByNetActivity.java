@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,6 +29,7 @@ import com.aliyun.alink.business.devicecenter.api.add.DeviceInfo;
 import com.aliyun.alink.business.devicecenter.api.discovery.DiscoveryType;
 import com.aliyun.alink.business.devicecenter.api.discovery.IDeviceDiscoveryListener;
 import com.aliyun.alink.business.devicecenter.api.discovery.LocalDeviceMgr;
+import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
@@ -36,14 +39,22 @@ import com.laffey.smart.model.EConfigureNetwork;
 import com.laffey.smart.model.ItemGateway;
 import com.laffey.smart.model.Visitable;
 import com.laffey.smart.presenter.ConfigureNetwork;
+import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Dialog;
+import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.viewholder.CommonAdapter;
 import com.laffey.smart.widget.DialogUtils;
+import com.vise.log.ViseLog;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +148,20 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                                     @Override
                                     public void onNext(@NonNull Long number) {
                                         mProgressDialog.dismiss();
-                                        Dialog.confirm(ScanGatewayByNetActivity.this, R.string.dialog_title, getString(R.string.confignetwork_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
+                                        // Dialog.confirm(ScanGatewayByNetActivity.this, R.string.dialog_title, getString(R.string.confignetwork_timeout), R.drawable.dialog_fail, R.string.dialog_confirm, false);
+                                        DialogUtils.showConfirmDialog(ScanGatewayByNetActivity.this,
+                                                getString(R.string.dialog_title), getString(R.string.confignetwork_timeout),
+                                                getString(R.string.dialog_confirm), new DialogUtils.Callback() {
+                                                    @Override
+                                                    public void positive() {
+
+                                                    }
+
+                                                    @Override
+                                                    public void negative() {
+
+                                                    }
+                                                });
                                     }
 
                                     @Override
@@ -267,7 +291,19 @@ public class ScanGatewayByNetActivity extends BaseActivity {
             }
             activity.mProgressDialog.dismiss();
             EAPIChannel.responseErrorEntry responseErrorEntry = (EAPIChannel.responseErrorEntry) msg.obj;
-            Dialog.confirm(activity, R.string.dialog_title, responseErrorEntry.message, R.drawable.dialog_fail, R.string.dialog_confirm, false);
+            // Dialog.confirm(activity, R.string.dialog_title, responseErrorEntry.message, R.drawable.dialog_fail, R.string.dialog_confirm, false);
+            DialogUtils.showConfirmDialog(activity, activity.getString(R.string.dialog_title), responseErrorEntry.message,
+                    activity.getString(R.string.dialog_confirm), new DialogUtils.Callback() {
+                        @Override
+                        public void positive() {
+
+                        }
+
+                        @Override
+                        public void negative() {
+
+                        }
+                    });
         }
     }
 
@@ -287,6 +323,8 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                 case Constant.MSG_CALLBACK_FILTER_DEVICE:
                     JSONArray items = JSON.parseArray((String) msg.obj);
                     int size = items.size();
+                    //StringBuffer sb = new StringBuffer();
+
                     for (int i = 0; i < size; i++) {
                         JSONObject o = items.getJSONObject(i);
                         ItemGateway itemGateway = new ItemGateway();
@@ -294,7 +332,13 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                         itemGateway.setMac(activity.mDeviceMap.get(o.getString("deviceName")).mac);
                         activity.mList.add(itemGateway);
                         activity.mAdapter.notifyDataSetChanged();
+
+                        /*sb.append("pos = " + i +
+                                "\ndeviceName = " + itemGateway.getName() +
+                                "\nmac = " + itemGateway.getMac() + "\n\n");*/
                     }
+                    /*if (BuildConfig.DEBUG)
+                        activity.printGwMac(sb.toString());*/
                     break;
                 case Constant.MSG_CALLBACK_BINDEVICE:
                     if (activity.mDisposable != null && !activity.mDisposable.isDisposed()) {
@@ -308,6 +352,34 @@ public class ScanGatewayByNetActivity extends BaseActivity {
                 default:
                     break;
             }
+        }
+    }
+
+    private void printGwMac(String content) {
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            long timestamp = System.currentTimeMillis();
+            String time = formatter.format(new Date());
+            String fileName = "gwMac-" + time + "-" + timestamp + ".log";
+            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                String path = MocoApplication.sContext.getExternalCacheDir() + "/crash/";
+
+                if (BuildConfig.DEBUG) {
+                    String name = BuildConfig.APPLICATION_ID.replace(".", "_");
+                    path = Environment.getExternalStorageDirectory() + "/" + name + "_crash_log/";
+                }
+
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                FileOutputStream fos = new FileOutputStream(path + fileName);
+                fos.write(content.getBytes());
+                fos.close();
+            }
+            ToastUtils.showLongToast(this, "打印完成");
+        } catch (Exception e) {
+            ViseLog.e(e);
         }
     }
 }

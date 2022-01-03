@@ -135,7 +135,7 @@ public class AddSubGwActivity extends BaseActivity implements View.OnClickListen
                     }
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(AddSubGwActivity.this, response);
+                    RetrofitUtil.showErrorMsg(AddSubGwActivity.this, response, Constant.VERIFY_SUB_GW_MAC);
                 }
             }
 
@@ -171,7 +171,7 @@ public class AddSubGwActivity extends BaseActivity implements View.OnClickListen
 
                             finish();
                         } else {
-                            RetrofitUtil.showErrorMsg(AddSubGwActivity.this, response);
+                            RetrofitUtil.showErrorMsg(AddSubGwActivity.this, response, Constant.ADD_SUB_GW);
                         }
                     }
 

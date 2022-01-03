@@ -257,7 +257,7 @@ public class BindSuccessActivity extends BaseActivity {
                 if (code == 200) {
 
                 } else {
-                    RetrofitUtil.showErrorMsg(BindSuccessActivity.this, response);
+                    RetrofitUtil.showErrorMsg(BindSuccessActivity.this, response, Constant.GW_BIND_TO_PROJECT);
                 }
             }
 
@@ -265,7 +265,7 @@ public class BindSuccessActivity extends BaseActivity {
             public void onError(Throwable e) {
                 ViseLog.e(e);
                 QMUITipDialogUtil.dismiss();
-                ToastUtils.showLongToast(BindSuccessActivity.this, e.getMessage());
+                ToastUtils.showLongToast(BindSuccessActivity.this, e.getMessage()+":\n" + Constant.GW_BIND_TO_PROJECT);
             }
         });
     }

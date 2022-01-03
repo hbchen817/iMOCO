@@ -423,6 +423,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
 
     // 主动获取设备属性
     private void getDeviceProperty(int pos) {
+        // ViseLog.d("主动获取设备属性 mDeviceList.size() = " + mDeviceList.size());
         if (mDeviceList == null || mDeviceList.size() == 0) {
             mGridRL.finishRefresh(true);
             mListRL.finishRefresh(true);
@@ -570,8 +571,10 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                         mDeviceList.remove(i);
                     }
                 }
-                mAptDeviceList.notifyDataSetChanged();
-                mAptDeviceGrid.notifyDataSetChanged();
+                /*mAptDeviceList.notifyDataSetChanged();
+                mAptDeviceGrid.notifyDataSetChanged();*/
+                mAptDeviceListAdapter.notifyDataSetChanged();
+                mAptDeviceGridAdapter.notifyDataSetChanged();
             }
             if (mDeviceList == null) {
                 mListDevNodataView.setVisibility(View.VISIBLE);
@@ -874,6 +877,62 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                     // 数据获取完则设置场景列表数据
                     setSceneList(mSceneList);
                     startGetDeviceList(1);
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(mActivity, response);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(mActivity, e.getMessage());
+            }
+        });
+    }
+
+    // 查询本地场景列表
+    private void queryOnlySceneList() {
+        SceneManager.querySceneList(mActivity, "", "", new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray sceneList = response.getJSONArray("sceneList");
+                    mSceneList.clear();
+                    DeviceBuffer.initSceneBuffer();
+                    if (sceneList != null) {
+                        for (int i = 0; i < sceneList.size(); i++) {
+                            JSONObject sceneObj = sceneList.getJSONObject(i);
+                            try {
+                                ItemSceneInGateway scene = JSONObject.parseObject(sceneObj.toJSONString(), ItemSceneInGateway.class);
+
+                                DeviceBuffer.addScene(scene.getSceneDetail().getSceneId(), scene);
+
+                                if ("1".equals(scene.getSceneDetail().getType())) {
+                                    JSONObject appParams = scene.getAppParams();
+                                    if (appParams != null) {
+                                        String switchIotId = appParams.getString("switchIotId");
+                                        if (switchIotId != null && switchIotId.length() > 0)
+                                            continue;
+                                    }
+
+                                    EScene.sceneListItemEntry entry = new EScene.sceneListItemEntry();
+                                    entry.id = scene.getSceneDetail().getSceneId();
+                                    entry.name = scene.getSceneDetail().getName();
+                                    entry.valid = !"0".equals(scene.getSceneDetail().getEnable());
+                                    entry.description = scene.getGwMac();
+                                    mSceneList.add(entry);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    // 数据获取完则设置场景列表数据
+                    setSceneList(mSceneList);
                 } else {
                     QMUITipDialogUtil.dismiss();
                     RetrofitUtil.showErrorMsg(mActivity, response);
@@ -1275,7 +1334,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                         }
                     }
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(mActivity, response);
+                    RetrofitUtil.showErrorMsg(mActivity, response, Constant.QUERY_MAC_BY_IOTID);
                 }
             }
 
@@ -1283,7 +1342,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
             public void onError(Throwable e) {
                 ViseLog.e(e);
                 QMUITipDialogUtil.dismiss();
-                ToastUtils.showLongToast(mActivity, e.getMessage());
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
             }
         });
     }
@@ -1577,7 +1636,8 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                         JSONObject value = jsonObject.getJSONObject("value");
                         if (value != null) {
                             String operation = value.getString("operation");
-                            if ("Unbind".equalsIgnoreCase(operation)) {
+                            String productKey = value.getString("productKey");
+                            if ("Unbind".equalsIgnoreCase(operation)/* && CTSL.PK_GATEWAY_RG4100.equals(productKey)*/) {
                                 startGetDeviceList(1);
                             }
                         }
@@ -1647,6 +1707,19 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
     // 订阅刷新数据事件
     @Subscribe
     public void onRefreshRoomData(EEvent eventEntry) {
+        // 刷新场景列表数据（首页）
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME_ONLY)) {
+            queryOnlySceneList();
+            return;
+        }
+
+        // 刷新设备按键昵称
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_KEY_NAME)) {
+            mAptDeviceGridAdapter.notifyDataSetChanged();
+            mAptDeviceListAdapter.notifyDataSetChanged();
+            return;
+        }
+
         // ViseLog.d("订阅刷新数据事件 eventEntry.name = " + eventEntry.name);
         // 处理刷新房间列表数据
         if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA)) {

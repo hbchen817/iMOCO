@@ -169,6 +169,10 @@ public interface RetrofitService {
     @POST(Constant.GET_DATA_CONVERSION_RULES)
     Observable<JSONObject> getDataConversionRules(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
 
+    // 删除网关下所有本地场景
+    @POST(Constant.DELETE_ALL_SCENE)
+    Observable<JSONObject> deleteAllScene(@Header("REX-TOKEN") String token, @Header("DEVICE-ID") String devId, @Body RequestBody body);
+
     @FormUrlEncoded
     @POST("/query")
     Observable<JSONObject> test(@Field("type") String type, @Field("postid") String postid);

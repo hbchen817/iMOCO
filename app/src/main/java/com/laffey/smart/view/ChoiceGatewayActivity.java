@@ -58,7 +58,8 @@ public class ChoiceGatewayActivity extends BaseActivity {
         mViewBinding.includeToolbar.includeTitleImgBack.setOnClickListener(v -> finish());
 
         // 获取网关
-        new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+        new HomeSpaceManager(this).getHomeGatewayList(SystemParameter.getInstance().getHomeId(), "", 1,
+                PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
 
         initStatusBar();
     }

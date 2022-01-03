@@ -1,6 +1,8 @@
 package com.laffey.smart.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import android.Manifest;
@@ -43,6 +45,7 @@ import com.laffey.smart.presenter.AptSubGwList;
 import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.OTAHelper;
 import com.laffey.smart.presenter.RealtimeDataParser;
@@ -124,7 +127,8 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
     }
 
     // 开始获取网关子设备列表
-    private void startGetGatewaySubdeive() {
+    private void startGetGatewaySubdeive(int line) {
+        ViseLog.d("line ====== " + line);
         mAptDeviceList.clearData();
         mDeviceList.clear();
         new UserCenter(this).getGatewaySubdeviceList(mIOTId, 1, PAGE_SIZE,
@@ -189,12 +193,17 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                         new UserCenter(DetailGatewayActivity.this).getGatewaySubdeviceList(mIOTId, list.pageNo + 1, PAGE_SIZE, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
                     } else {
                         // 数据获取完则加载显示
+                        ViseLog.d("数据获取完则加载显示 mDeviceList = " + mDeviceList.size());
                         mAptDeviceList.setData(mDeviceList);
                         mSubDevLV.setAdapter(mAptDeviceList);
                         mSubDevLV.setOnItemClickListener(deviceListOnItemClickListener);
                         onlineCount();
                         // 子网关列表
-                        getSubGwList();
+                        if (mGwMac == null || mGwMac.length() == 0) {
+                            queryMacByIotId();
+                        } else {
+                            getSubGwList();
+                        }
                     }
                 }
             }
@@ -264,7 +273,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                         }
                         if (!isFound) {
                             // 开始获取网关子设备列表以刷新数据
-                            startGetGatewaySubdeive();
+                            startGetGatewaySubdeive(276);
                         }
                     }
                     break;
@@ -374,6 +383,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         mLblAarmMode.setOnClickListener(armModeClick);
         mLblAarmModeClick.setOnClickListener(armModeClick);
 
+        ViseLog.d("mOwned ==== " + mOwned);
         // 共享网关不能添加子设备
         if (mOwned == 0) {
             RelativeLayout rlAdd = findViewById(R.id.detailGatewayRlAdd);
@@ -414,7 +424,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         EventBus.getDefault().register(this);
 
         // 开始获取网关子设备列表
-        startGetGatewaySubdeive();
+        startGetGatewaySubdeive(427);
         // 非共享设备才能去获取版本号信息
         if (mOwned > 0) {
             OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, processAPIDataHandler);
@@ -423,7 +433,8 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
 
         mDevRG.setOnCheckedChangeListener(mDevCheckedChangeListener);
         mGwMac = DeviceBuffer.getDeviceMac(mIOTId);
-        mDevRG.setVisibility(DeviceBuffer.getDeviceOwned(mIOTId) == 1 ? View.VISIBLE : View.GONE);
+        ViseLog.d("mGwMac = " + mGwMac);
+        mDevRG.setVisibility(mOwned == 1 ? View.VISIBLE : View.GONE);
 
         mIsShowSubGwList = getIntent().getBooleanExtra(SHOW_SUB_GW_LIST, false);
         if (mIsShowSubGwList) mSubGwRB.setChecked(true);
@@ -455,6 +466,67 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                 return false;
             }
         }));
+    }
+
+    private final Handler mThingEventCallbackHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.what == Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY) {
+                ViseLog.d("开始获取设备列表 = \n" + GsonUtil.toJson(msg.obj));
+                JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
+                String identifier = jsonObject.getString("identifier");
+                if ("awss.BindNotify".equals(identifier)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    if (value != null) {
+                        String operation = value.getString("operation");
+                        String productKey = value.getString("productKey");
+                        if ("Unbind".equalsIgnoreCase(operation)) {
+                            if (!CTSL.PK_GATEWAY_RG4100.equals(productKey)) {
+                                startGetGatewaySubdeive(486);
+                            } else {
+                                finish();
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+    });
+
+    private void queryMacByIotId() {
+        if (mOwned != 1) return;
+        List<String> iotList = Collections.singletonList(mIOTId);
+        DeviceManager.queryMacByIotId(this, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                // ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                        if (mIOTId.equals(iotId)) {
+                            mGwMac = mac;
+                        }
+                    }
+                    getSubGwList();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
     }
 
     // 添加子设备处理
@@ -494,7 +566,6 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         if (Build.VERSION.SDK_INT >= 23) {
             View view = getWindow().getDecorView();
             view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-            //getWindow().setStatusBarColor(Color.BLACK);
         }
     }
 
@@ -502,31 +573,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
     protected void onResume() {
         // 刷新数据
         super.onResume();
-        if (mDeviceList != null && mDeviceList.size() > 0) {
-            EDevice.deviceEntry bufferEntry, displayEntry;
-            for (int i = mDeviceList.size() - 1; i >= 0; i--) {
-                displayEntry = mDeviceList.get(i);
-                bufferEntry = DeviceBuffer.getDeviceInformation(displayEntry.iotId);
-                if (bufferEntry != null) {
-                    // 更新备注名称
-                    displayEntry.nickName = bufferEntry.nickName;
-                } else {
-                    // 删除不存在的数据
-                    mDeviceList.remove(i);
-                }
-            }
-            mAptDeviceList.notifyDataSetChanged();
-        }
-        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
-            // 拥有者
-            for (EDevice.subGwEntry entry : mGwList) {
-                EDevice.subGwEntry subGwEntry = DeviceBuffer.getSubGw(entry.getMac());
-                if (subGwEntry != null)
-                    entry.setNickname(subGwEntry.getNickname());
-            }
-            mGwDeviceList.notifyDataSetChanged();
-        }
-        onlineCount();
+        RealtimeDataReceiver.addThingEventCallbackHandler("DetailGatewayMainEventCallback", mThingEventCallbackHandler);
     }
 
     @Override
@@ -540,6 +587,12 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         super.onDestroy();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RealtimeDataReceiver.deleteCallbackHandler("DetailGatewayMainEventCallback");
+    }
+
     // 订阅刷新数据事件
     @Subscribe
     public void onRefreshRoomData(EEvent eventEntry) {
@@ -549,8 +602,9 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         }
 
         // 处理刷新设备列表数据
-        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA)) {
-            startGetGatewaySubdeive();
+        if (eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA) ||
+                eventEntry.name.equalsIgnoreCase(CEvent.EVENT_NAME_REFRESH_DEVICE_BUFFER_DATA)) {
+            startGetGatewaySubdeive(627);
         }
     }
 
@@ -558,7 +612,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
     public void onClick(View v) {
         if (v.getId() == R.id.add_dev_rl) {
             // 新增设备
-            if (DeviceBuffer.getDeviceOwned(mIOTId) == 1) {
+            if (mOwned == 1) {
                 // 拥有者
                 QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(this);
                 builder.addItem(getString(R.string.detailgateway_add));
@@ -616,19 +670,21 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         // 重新获取子网关列表
         mSubGwRB.setChecked(true);
         // 子网关状态0-未激活，1-已激活，2-所有
-        getSubGwList();
+        if (mGwMac == null || mGwMac.length() == 0)
+            queryMacByIotId();
+        else getSubGwList();
         mIsShowSubGwList = getIntent().getBooleanExtra(SHOW_SUB_GW_LIST, false);
     }
 
     private void getSubGwList() {
-        if (DeviceBuffer.getDeviceOwned(mIOTId) == 1)
+        if (mOwned == 1)
             UserCenter.getSubGwList(this, mGwMac, "2",
                     new UserCenter.Callback() {
                         @Override
                         public void onNext(JSONObject response) {
                             // 获取网关下的子网关列表
                             int code = response.getInteger("code");
-                            ViseLog.d("子网关列表 = \n" + GsonUtil.toJson(response));
+                            // ViseLog.d("子网关列表 = \n" + GsonUtil.toJson(response));
                             if (code == 200) {
                                 JSONArray subGwList = response.getJSONArray("subGwList");
                                 mGwList.clear();
@@ -656,7 +712,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                                 }
                                 onlineCount();
                             } else {
-                                RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response);
+                                RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response, Constant.GET_SUB_GW_LIST);
                             }
                         }
 
@@ -664,7 +720,7 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
                         public void onError(Throwable e) {
                             // 获取网关下的子网关列表失败
                             ViseLog.e(e);
-                            ToastUtils.showLongToast(DetailGatewayActivity.this, e.getMessage());
+                            ToastUtils.showLongToast(DetailGatewayActivity.this, e.getMessage() + ":\n" + Constant.GET_SUB_GW_LIST);
                         }
                     });
     }

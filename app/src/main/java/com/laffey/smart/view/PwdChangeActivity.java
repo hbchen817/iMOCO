@@ -268,4 +268,10 @@ public class PwdChangeActivity extends AppCompatActivity implements View.OnClick
             }
         }
     };
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
+    }
 }

@@ -10,31 +10,37 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class RefreshData {
     // 刷新场景列表数据
-    public static void refreshSceneListData(){
+    public static void refreshSceneListData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA);
         EventBus.getDefault().post(event);
     }
 
     // 刷新场景列表数据（首页）
-    public static void refreshHomeSceneListData(){
+    public static void refreshHomeSceneListData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME);
         EventBus.getDefault().post(event);
     }
 
+    // 刷新场景列表数据（首页）
+    public static void refreshHomeSceneListDataOnly() {
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_SCENE_LIST_DATA_HOME_ONLY);
+        EventBus.getDefault().post(event);
+    }
+
     // 刷新房间列表数据
-    public static void refreshRoomListData(){
+    public static void refreshRoomListData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_ROOM_LIST_DATA);
         EventBus.getDefault().post(event);
     }
 
     // 刷新设备列表房间数据
-    public static void refreshDeviceListRoomData(String iotId){
+    public static void refreshDeviceListRoomData(String iotId) {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_ROOM_DATA, iotId);
         EventBus.getDefault().post(event);
     }
 
     // 刷新设备状态数据
-    public static void refreshDeviceStateData(){
+    public static void refreshDeviceStateData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_STATE_DATA);
         EventBus.getDefault().post(event);
     }
@@ -46,20 +52,26 @@ public class RefreshData {
     }
 
     // 刷新设备数量数据
-    public static void refreshDeviceNumberData(){
+    public static void refreshDeviceNumberData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_NUMBER_DATA);
         EventBus.getDefault().post(event);
     }
 
     // 刷新设备数量数据
-    public static void refreshDeviceListData(){
+    public static void refreshDeviceListData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_LIST_DATA);
         EventBus.getDefault().post(event);
     }
 
     // 刷新网关固件数据
-    public static void refreshGatewayFirmwareData(){
+    public static void refreshGatewayFirmwareData() {
         EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_GATEWAY_FIRMWARE_DATA);
+        EventBus.getDefault().post(event);
+    }
+
+    // 刷新设备按键昵称
+    public static void refreshDeviceKeyName() {
+        EEvent event = new EEvent(CEvent.EVENT_NAME_REFRESH_DEVICE_KEY_NAME);
         EventBus.getDefault().post(event);
     }
 }

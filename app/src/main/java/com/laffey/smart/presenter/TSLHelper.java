@@ -54,6 +54,19 @@ public class TSLHelper {
         new APIChannel().commit(requestParameterEntry, commitFailureHandler, responseErrorHandler, processDataHandler);
     }
 
+    // 获取物的基本信息
+    public static void getBaseInformation(Activity activity, String iotId,
+                                          APIChannel.Callback callback) {
+        //设置请求参数
+        EAPIChannel.requestParameterEntry requestParameterEntry = new EAPIChannel.requestParameterEntry();
+        requestParameterEntry.path = Constant.API_PATH_GETTHINGBASEINFORMATION;
+        requestParameterEntry.version = "1.0.2";
+        requestParameterEntry.addParameter("iotId", iotId);
+        requestParameterEntry.callbackMessageType = Constant.MSG_CALLBACK_GETTHINGBASEINFO;
+        //提交
+        new APIChannel().commit(activity, requestParameterEntry, callback);
+    }
+
     // 获取属性
     public void getProperty(String iotId,
                             Handler commitFailureHandler,

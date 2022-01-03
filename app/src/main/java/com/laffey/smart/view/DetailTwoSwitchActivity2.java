@@ -1,6 +1,5 @@
 package com.laffey.smart.view;
 
-import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,10 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.fastjson.JSONObject;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
-import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.CodeMapper;
@@ -41,7 +40,6 @@ import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.Logger;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.ToastUtils;
-import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -163,6 +161,9 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         mImgOperate2.setOnClickListener(this);
         mStateName1.setOnLongClickListener(this);
         mStateName2.setOnLongClickListener(this);
+
+        mStateValue1.setOnClickListener(this);
+        mStateValue2.setOnClickListener(this);
 
         // 云端定时处理
         RelativeLayout timer = findViewById(R.id.detailTwoSwitchRLTimer);
@@ -286,7 +287,8 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
         if (v.getId() == mAssociatedLayout.getId()) {
             // 双控
             showAssociatedPopupWindow();
-        } else if (v.getId() == mImgOperate1.getId()) {
+        } else if (v.getId() == mImgOperate1.getId() ||
+                v.getId() == mStateValue1.getId()) {
             // 键1操作事件处理
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -297,7 +299,8 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
                 }
             }
             mDoubleClickedTime = System.currentTimeMillis();
-        } else if (v.getId() == mImgOperate2.getId()) {
+        } else if (v.getId() == mImgOperate2.getId() ||
+                v.getId() == mStateValue2.getId()) {
             // 键2操作事件处理
             if (System.currentTimeMillis() - mDoubleClickedTime >= 1000) {
                 QMUITipDialogUtil.showLoadingDialg(this, R.string.click_btn);
@@ -451,6 +454,7 @@ public class DetailTwoSwitchActivity2 extends DetailActivity implements OnClickL
                     activity.mStateName1.setText(activity.mKeyName1);
                     activity.mStateName2.setText(activity.mKeyName2);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }

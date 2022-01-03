@@ -34,6 +34,7 @@ import com.laffey.smart.BuildConfig;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.event.SceneBindEvent;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.EScene;
@@ -722,7 +723,8 @@ public class SixTwoSceneSwitchActivity2 extends DetailActivity implements View.O
                 mKey4TV.setText(mKeyName4);
                 mKey5TV.setText(mKeyName5);
                 mKey6TV.setText(mKeyName6);
-                // DeviceBuffer.addExtendedInfo(mIOTId, resultObj);
+                DeviceBuffer.addExtendedInfo(mIOTId, resultObj);
+                RefreshData.refreshDeviceKeyName();
                 ToastUtils.showShortToast(SixTwoSceneSwitchActivity2.this, R.string.set_success);
             }
         });

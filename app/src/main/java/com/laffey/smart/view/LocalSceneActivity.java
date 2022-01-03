@@ -1419,7 +1419,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
                 List<EAction> eActionList = new ArrayList<>();
                 eActionList.add(eAction);
                 boolean isSame = compareConditionAndAction(mConditionList, eActionList);// 比较条件与动作是否相同
-                if (isSame && getString(R.string.there_are).equals(mViewBinding.conditionEnableTv)) {
+                ViseLog.d("mConditionList = \n" + GsonUtil.toJson(mConditionList) +
+                        "\neActionList = \n" + GsonUtil.toJson(eActionList));
+                if (isSame && getString(R.string.there_are).equals(mViewBinding.conditionEnableTv.getText().toString())) {
                     ToastUtils.showLongToast(this, R.string.action_can_not_be_condition_at_same_time);
                     mActionList.set(mActionList.indexOf(eAction), mTmpEAction);
                     mActionAdapter.notifyDataSetChanged();
@@ -1518,6 +1520,9 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
             List<ItemScene.Action> actionList = queryAllActions(eActionList);
             for (ItemScene.Action action : actionList) {
                 ItemScene.ActionParameter actionParameter = action.getParameters();
+                ViseLog.d("devId = " + devId + " , actionParameter.getDeviceId() = " + actionParameter.getDeviceId() +
+                        "\nendpointId = " + endpointId + " , actionParameter.getEndpointId() = " + actionParameter.getEndpointId() +
+                        "\ncompareValue = " + compareValue + " , actionParameter.getCommand().getString(name) = " + actionParameter.getCommand().getString(name));
                 if (devId.equals(actionParameter.getDeviceId())
                         && endpointId.equals(actionParameter.getEndpointId())
                         && actionParameter.getCommand() != null

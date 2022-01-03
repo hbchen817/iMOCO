@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -231,7 +232,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
     }
 
     private static class MyHandler extends Handler {
-        private WeakReference<TwoWayCurtainsDetailActivity> ref;
+        private final WeakReference<TwoWayCurtainsDetailActivity> ref;
 
         public MyHandler(TwoWayCurtainsDetailActivity activity) {
             ref = new WeakReference<>(activity);
@@ -262,6 +263,7 @@ public class TwoWayCurtainsDetailActivity extends DetailActivity {
                     activity.mKeyName2TV.setText(activity.mKeyName2);
                     activity.mTitle2TV.setText(activity.mKeyName2);
                     DeviceBuffer.addExtendedInfo(activity.mIOTId, activity.mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(activity, R.string.set_success);
                     break;
                 }

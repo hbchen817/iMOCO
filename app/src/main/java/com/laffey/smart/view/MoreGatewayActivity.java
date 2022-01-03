@@ -39,6 +39,7 @@ import com.laffey.smart.databinding.ActivityMoreGatewayBinding;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
 import com.laffey.smart.event.RefreshData;
+import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.model.EScene;
 import com.laffey.smart.model.EUser;
@@ -59,6 +60,7 @@ import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.model.ETSL;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.Dialog;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
@@ -282,6 +284,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                         for (EUser.deviceEntry e : list.data) {
                             if (Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID)) {
                                 SceneManager.delExtendedProperty(MoreGatewayActivity.this, e.iotId, Constant.TAG_DEV_KEY_NICKNAME, null);
+                                DeviceBuffer.removeExtendedInfo(e.iotId);
                             } else {
                                 switch (e.productKey) {
                                     case CTSL.PK_LIGHT:
@@ -652,16 +655,18 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
         // 获取房间与绑定时间
         EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(this.mIOTId);
+        ViseLog.d("deviceEntry ========= \n" + GsonUtil.toJson(deviceEntry));
         if (deviceEntry != null) {
-            mRoomName = deviceEntry.roomName;
-            mBindTime = deviceEntry.bindTime;
+            initView(deviceEntry);
         } else {
-            ToastUtils.showShortToast(this, R.string.pls_try_again_later);
-            mViewBinding.moreLblUnbind.setOnClickListener(this);
-            mViewBinding.moreImgUnbind.setOnClickListener(this);
-            return;
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+            getGwInfo(1);
         }
+    }
 
+    private void initView(EDevice.deviceEntry deviceEntry) {
+        mRoomName = deviceEntry.roomName;
+        mBindTime = deviceEntry.bindTime;
         mViewBinding.moreGatewayLblId.setText(deviceEntry.deviceName);
 
         // 分享设备不能进行升级,故不显示
@@ -715,8 +720,129 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
         if (mOwned > 0) {
             OTAHelper.getFirmwareInformation(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
         }
-
+        QMUITipDialogUtil.dismiss();
         mUnBindingHandler = new UnBindingHandler(this);
+    }
+
+    private void getGwInfo(int pageNo) {
+        ViseLog.d("mIOTId =================== " + mIOTId);
+        HomeSpaceManager.getHomeGatewayList(this, SystemParameter.getInstance().getHomeId(), pageNo, 50, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(MoreGatewayActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(MoreGatewayActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                ViseLog.d("=========================\n" + GsonUtil.toJson(JSONObject.parseObject(result)));
+                EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList(result);
+                if (homeDeviceList != null && homeDeviceList.data != null) {
+                    // 向缓存追加家列表数据
+                    EHomeSpace.deviceEntry deviceEntry = null;
+                    for (EHomeSpace.deviceEntry entry : homeDeviceList.data) {
+                        if (mIOTId.equals(entry.iotId)) {
+                            deviceEntry = entry;
+                            break;
+                        }
+                    }
+
+                    if (deviceEntry != null) {
+                        DeviceBuffer.addHomeDevice(deviceEntry);
+                        getDeviceList(1);
+                    } else {
+                        if (homeDeviceList.data.size() >= homeDeviceList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            getGwInfo(homeDeviceList.pageNo + 1);
+                        } else {
+                            ToastUtils.showLongToast(MoreGatewayActivity.this, getString(R.string.pls_try_again_later)
+                                    + ":\n" + Constant.API_PATH_GETHOMEDEVICELIST);
+                        }
+                    }
+                    ViseLog.d("2222222222222222222222222222\n" + GsonUtil.toJson(homeDeviceList));
+                }
+            }
+        });
+    }
+
+    // 数据获取完则同步刷新设备列表数据
+    private void getDeviceList(int pageNo) {
+        UserCenter.getDeviceList(MoreGatewayActivity.this, pageNo, 50, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(MoreGatewayActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(MoreGatewayActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 处理获取用户设备列表数据
+                EUser.bindDeviceListEntry userBindDeviceList = CloudDataParser.processUserDeviceList(result);
+                // ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
+                if (userBindDeviceList != null && userBindDeviceList.data != null) {
+                    EUser.deviceEntry deviceEntry = null;
+                    for (EUser.deviceEntry entry : userBindDeviceList.data) {
+                        if (mIOTId.equals(entry.iotId)) {
+                            deviceEntry = entry;
+                            break;
+                        }
+                    }
+                    if (deviceEntry != null) {
+                        DeviceBuffer.addUserBindDevice(deviceEntry);
+                        queryMac();
+                    } else {
+                        if (userBindDeviceList.data.size() >= userBindDeviceList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            getDeviceList(userBindDeviceList.pageNo + 1);
+                        } else {
+                            ToastUtils.showLongToast(MoreGatewayActivity.this, getString(R.string.pls_try_again_later)
+                                    + ":\n" + Constant.API_PATH_GETUSERDEVICELIST);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void queryMac() {
+        List<String> iotList = new ArrayList<>();
+        iotList.add(mIOTId);
+        DeviceManager.queryMacByIotId(MoreGatewayActivity.this, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    ViseLog.d("111111111111111111111 \n" + GsonUtil.toJson(DeviceBuffer.getDeviceInformation(mIOTId)));
+                    initView(DeviceBuffer.getDeviceInformation(mIOTId));
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
     }
 
     // 解除绑定处理
@@ -730,7 +856,14 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             //deleteScene();
                             QMUITipDialogUtil.showLoadingDialg(MoreGatewayActivity.this, R.string.is_submitted);
                             mSubDevList.clear();
-                            deleteControlGroup();
+                            if (DeviceBuffer.getDeviceInformation(mIOTId).owned == 1) {
+                                // 拥有者
+                                deleteAllScene();
+                            } else {
+                                // 分享者
+                                mUserCenter.getGatewaySubdeviceList(mIOTId, 1, 50,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            }
                         }
 
                         @Override
@@ -740,6 +873,40 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     });
         }
     };
+
+    // 删除网关下所有本地场景
+    private void deleteAllScene() {
+        SceneManager.deleteAllScene(this, mProductKey, DeviceBuffer.getDeviceMac(mIOTId), new SceneManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                ViseLog.d("删除网关下所有本地场景 = \n" + GsonUtil.toJson(response));
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    boolean result = response.getBoolean("result");
+                    if (result) {
+                        SceneManager.manageSceneService(MoreGatewayActivity.this, mIOTId, "-1", 3,
+                                null);
+                        DeviceBuffer.deleteAllSceneInGw(DeviceBuffer.getDeviceMac(mIOTId));
+                        RefreshData.refreshHomeSceneListDataOnly();
+                        deleteControlGroup();
+                    } else {
+                        QMUITipDialogUtil.dismiss();
+                        RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response, Constant.DELETE_ALL_SCENE);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MoreGatewayActivity.this, response, Constant.DELETE_ALL_SCENE);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MoreGatewayActivity.this, e.getMessage() + ":\n" + Constant.DELETE_ALL_SCENE);
+            }
+        });
+    }
 
     // 删除多控组
     private void deleteControlGroup() {
@@ -976,6 +1143,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
+        QMUITipDialogUtil.dismiss();
         RealtimeDataReceiver.deleteCallbackHandler("MoreGatewaySceneListCallback");
     }
 }

@@ -607,6 +607,45 @@ public class RetrofitUtil {
                 ERetrofit.convertToBody(object.toJSONString()));
     }
 
+    // 删除网关下所有本地场景
+    public Observable<JSONObject> deleteAllScene(Activity activity, String pk, String mac) {
+        JSONObject object = new JSONObject();
+        object.put("apiVer", Constant.DELETE_ALL_SCENE_VER);
+        JSONObject params = new JSONObject();
+        params.put("pk", pk);
+        params.put("mac", mac);
+        object.put("params", params);
+
+        return getRetrofitService().deleteAllScene(SpUtils.getAccessToken(activity), AppUtils.getPesudoUniqueID(),
+                ERetrofit.convertToBody(object.toJSONString()));
+    }
+
+    public static void showErrorMsg(Activity activity, JSONObject response, String api) {
+        String message = response.getString("message");
+        String localizedMsg = response.getString("localizedMsg");
+        String errorMess = response.getString("errorMess");
+        String errorCode = response.getString("errorCode");
+        int code = response.getInteger("code");
+        if (message != null && message.length() > 0) {
+            String msg = message + ":\ncode: " + code + "\nerrorCode: " + errorCode + "\napi = " + api;
+            ToastUtils.showLongToast(activity, msg);
+        } else if (localizedMsg != null && localizedMsg.length() > 0) {
+            String msg = localizedMsg + ":\ncode: " + code + "\nerrorCode: " + errorCode + "\napi = " + api;
+            ToastUtils.showLongToast(activity, msg);
+        } else if (errorMess != null && errorMess.length() > 0) {
+            String msg = errorMess + ":\ncode: " + code + "\nerrorCode: " + errorCode + "\napi = " + api;
+            ToastUtils.showLongToast(activity, msg);
+        } else {
+            if (api != null && api.length() > 0)
+                ToastUtils.showLongToast(activity, R.string.pls_try_again_later);
+            else
+                ToastUtils.showLongToast(activity, activity.getString(R.string.pls_try_again_later) + "：\n" + api);
+        }
+        if (code == 10100) {
+            LoginActivity.start(activity, null);
+        }
+    }
+
     public static void showErrorMsg(Activity activity, JSONObject response) {
         String message = response.getString("message");
         String localizedMsg = response.getString("localizedMsg");

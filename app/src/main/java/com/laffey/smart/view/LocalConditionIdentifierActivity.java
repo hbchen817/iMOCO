@@ -151,7 +151,7 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
     private JSONObject mIdentifierJSONObject;
 
     private void getConditionIdentifier() {
-        SceneManager.queryIdentifierListForCA(this, mDevIot, 1, new APIChannel.Callback() {
+        SceneManager.queryIdentifierListForCA(this, mDevIot, 0, new APIChannel.Callback() {
             @Override
             public void onFailure(EAPIChannel.commitFailEntry failEntry) {
                 commitFailure(LocalConditionIdentifierActivity.this, failEntry);
@@ -211,11 +211,13 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
                 mList.get(position).setTarget("LocalConditionValueActivity");
                 EventBus.getDefault().postSticky(mList.get(position));
 
-                JSONObject o = mIdentifierJSONObject.getJSONArray("data").getJSONObject(position);
-                DeviceBuffer.addExtendedInfo("tmp", o);
+                if (position < mIdentifierJSONObject.getJSONArray("data").size()) {
+                    JSONObject o = mIdentifierJSONObject.getJSONArray("data").getJSONObject(position);
+                    DeviceBuffer.addExtendedInfo("tmp", o);
 
-                Intent intent = new Intent(LocalConditionIdentifierActivity.this, LocalConditionValueActivity.class);
-                startActivity(intent);
+                    Intent intent = new Intent(LocalConditionIdentifierActivity.this, LocalConditionValueActivity.class);
+                    startActivity(intent);
+                }
             }
         });
         mViewBinding.recyclerRl.setEnableLoadMore(false);

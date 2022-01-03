@@ -185,12 +185,27 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onNext(JSONObject response) {
                 // 密码重置
-                // ViseLog.d("密码重置 = " + response.toJSONString());
+                ViseLog.d("密码重置 = " + response.toJSONString());
                 int code = response.getInteger("code");
                 if (code == 200) {
                     LoginActivity.start(PwdSettingActivity.this, mTelNum);
                 } else {
+                    String errorCode = response.getString("errorCode");
                     RetrofitUtil.showErrorMsg(PwdSettingActivity.this, response);
+                    if ("06".equals(errorCode) ||
+                            "02".equals(errorCode)) {
+                        // 02：验证码校验失败次数过多！
+                        // 06：该手机号未注册!
+                        LoginActivity.start(PwdSettingActivity.this, null);
+                    } else if ("03".equals(errorCode) ||
+                            "04".equals(errorCode) ||
+                            "05".equals(errorCode)) {
+                        // 03：请先获取验证码!
+                        // 04：验证码错误!
+                        // 05：验证码错误!
+                        setResult(Constant.RESULTCODE_CALLPWDSETTINGACTIVITY);
+                        finish();
+                    }
                 }
             }
 
@@ -219,8 +234,17 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
                             String errorCode = response.getString("errorCode");
                             QMUITipDialogUtil.dismiss();
                             RetrofitUtil.showErrorMsg(PwdSettingActivity.this, response);
-                            if ("03".equals(errorCode)) {
-                                // 请先获取验证码!
+                            if ("02".equals(errorCode) ||
+                                    "06".equals(errorCode)) {
+                                // 02：验证码校验失败次数过多！
+                                // 02：该手机号已经注册!
+                                LoginActivity.start(PwdSettingActivity.this, null);
+                            } else if ("03".equals(errorCode) ||
+                                    "04".equals(errorCode) ||
+                                    "05".equals(errorCode)) {
+                                // 03：请先获取验证码!
+                                // 04：验证码已失效，请重新获取!
+                                // 05：验证码错误!
                                 setResult(Constant.RESULTCODE_CALLPWDSETTINGACTIVITY);
                                 finish();
                             }
@@ -251,5 +275,11 @@ public class PwdSettingActivity extends AppCompatActivity implements View.OnClic
             }
         }
         return false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
     }
 }

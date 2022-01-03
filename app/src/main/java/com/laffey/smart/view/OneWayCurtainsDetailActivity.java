@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshData;
 import com.laffey.smart.model.EAPIChannel;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.DeviceBuffer;
@@ -238,6 +239,7 @@ public class OneWayCurtainsDetailActivity extends DetailActivity {
                     mKeyName1TV.setText(mKeyName);
                     mTitleTV.setText(mKeyName);
                     DeviceBuffer.addExtendedInfo(mIOTId, mResultObj);
+                    RefreshData.refreshDeviceKeyName();
                     ToastUtils.showShortToast(OneWayCurtainsDetailActivity.this, R.string.set_success);
                     break;
                 }

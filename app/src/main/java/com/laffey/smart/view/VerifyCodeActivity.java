@@ -239,7 +239,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                     mVerifyViewDialog.dismiss();
 
                     if (!"Success!".equals(message)) {
-                        ToastUtils.showLongToast(VerifyCodeActivity.this,R.string.frequently_send_and_pls_later);
+                        ToastUtils.showLongToast(VerifyCodeActivity.this, R.string.frequently_send_and_pls_later);
                     } else {
                         mCountdownTime = 60;
                         mViewBinding.sendVerifiCodeTv.setText(mCountdownTime + "秒");
@@ -276,7 +276,12 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                         }
                         case "01":// 单日短信发送总量超限制！
                         case "02":// 单日单ip短信发送总量超限制！
-                        case "05":// 频繁发送！
+                        case "05": {// 频繁发送！
+                            mVerifyViewDialog.dismiss();
+                            ToastUtils.showLongToast(VerifyCodeActivity.this, resultMess);
+                            LoginActivity.start(VerifyCodeActivity.this, null);
+                            break;
+                        }
                         case "06": {
                             // 短信发送失败！
                             mVerifyViewDialog.dismiss();
@@ -488,5 +493,11 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mSMSReceiver);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
     }
 }
