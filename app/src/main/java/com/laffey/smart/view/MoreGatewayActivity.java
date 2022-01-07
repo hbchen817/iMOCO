@@ -182,14 +182,9 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             }
                             ViseLog.d("云端删除场景 = " + mSceneList.size());
                             if (mSceneList.size() > 0) {
-                                if (Constant.IS_TEST_DATA) {
-                                    mSceneManager.deleteScene(MoreGatewayActivity.this, mSceneList.get(0).getGwMac(), mSceneList.get(0).getSceneDetail().getSceneId(),
-                                            Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mAPIDataHandler);
-                                } else {
-                                    ViseLog.d("去网关删除场景 = " + mSceneList.get(0).getSceneDetail().getSceneId());
-                                    SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
-                                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
-                                }
+                                ViseLog.d("去网关删除场景 = " + mSceneList.get(0).getSceneDetail().getSceneId());
+                                SceneManager.manageSceneService(mIOTId, mSceneList.get(0).getSceneDetail().getSceneId(), 3,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             } else {
                                 EDevice.deviceEntry deviceEntry = DeviceBuffer.getDeviceInformation(mIOTId);
                                 if (deviceEntry != null) {
@@ -256,7 +251,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     // 删除缓存中的数据
                     DeviceBuffer.deleteDevice(mIOTId);
                     //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
-                    DialogUtils.showConfirmDialog(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                    DialogUtils.showConfirmDialogDismiss(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
                             R.string.dialog_confirm, new DialogUtils.Callback() {
                                 @Override
                                 public void positive() {
@@ -265,7 +260,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
                                 @Override
                                 public void negative() {
-
+                                    finish();
                                 }
                             });
                     break;
@@ -338,12 +333,14 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                         }
                         if (list.data.size() >= list.pageSize) {
                             // 数据没有获取完则获取下一页数据
-                            mUserCenter.getGatewaySubdeviceList(mIOTId, list.pageNo + 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                            mUserCenter.getGatewaySubdeviceList(mIOTId, list.pageNo + 1, 50,
+                                    mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                         } else {
                             // 数据获取完则加载显示
                             /*if (mDeviceMap.size() > 0) {
                                 mSceneType = CScene.TYPE_AUTOMATIC;
-                                // mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                // mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50,
+                                mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             } else {
                                 mUserCenter.unbindDevice(mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }*/
@@ -424,9 +421,8 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                             SystemParameter.getInstance().setIsRefreshDeviceData(true);
                             // 删除缓存中的数据
                             DeviceBuffer.deleteDevice(mIOTId);
-                            //SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
-                            // Dialog.confirm(MoreGatewayActivity.this, R.string.dialog_title, getString(R.string.dialog_unbind_ok), R.drawable.dialog_prompt, R.string.dialog_ok, true);
-                            DialogUtils.showConfirmDialog(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                            // SpUtils.removeKey(MoreGatewayActivity.this, SpUtils.SP_DEVS_INFO, mIOTId);
+                            DialogUtils.showConfirmDialogDismiss(MoreGatewayActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
                                     R.string.dialog_confirm, new DialogUtils.Callback() {
                                         @Override
                                         public void positive() {
@@ -435,7 +431,7 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
 
                                         @Override
                                         public void negative() {
-
+                                            finish();
                                         }
                                     });
                             return false;
@@ -491,7 +487,8 @@ public class MoreGatewayActivity extends BaseActivity implements OnClickListener
                     mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.GW_P_AlarmSoundVolume}, new String[]{value});
                 } else if (mSetType == 5) {
                     // 设置设备所属房间
-                    mHomeSpaceManager.updateRoomDevice(SystemParameter.getInstance().getHomeId(), mNewRoomId, mIOTId, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                    mHomeSpaceManager.updateRoomDevice(SystemParameter.getInstance().getHomeId(), mNewRoomId, mIOTId,
+                            mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                 }
             }
         });

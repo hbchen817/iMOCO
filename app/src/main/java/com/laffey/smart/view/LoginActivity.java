@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -51,6 +52,11 @@ import com.vise.log.ViseLog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -293,6 +299,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if (v.getId() == mViewBinding.forgetPwdTv.getId()) {
             // 忘记密码 01：注册02：短信登录03：密码找回 04: 修改密码
             VerifyCodeActivity.start(this, "03");
+
+            /*new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    readBuffer(mViewBinding.userNameEt.getText().toString());
+                }
+            }).start();*/
         } else if (v.getId() == mViewBinding.loginBtn.getId()) {
             // 登录
             if (mViewBinding.userPwdLayout.getVisibility() == View.VISIBLE) {
@@ -346,6 +359,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 mViewBinding.loginMethodsIc.setText(R.string.icon_msg);
                 mViewBinding.loginMethodsTv.setText(R.string.msg_login_methods);
             }
+        }
+    }
+
+    private void readBuffer(String id) {
+        try {
+            String path = Environment.getExternalStorageDirectory().getPath();
+            File file = new File(path + "/a123xOYK0CCYpkaS");
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                InputStream inputStream = new FileInputStream(files[i]);
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader br = new BufferedReader(inputStreamReader);
+                StringBuffer sb = new StringBuffer();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+                inputStream.close();
+                if (sb.toString().contains(id)) {
+                    ViseLog.d("wyy id = " + id + " , files[i].getAbsolutePath() = " + files[i].getAbsolutePath());
+                }
+            }
+        } catch (Exception e) {
+            ViseLog.d(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -478,7 +516,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     mVerifyView.setWidthAndHeightAndScaleView(QMUIDisplayHelper.getScreenWidth(LoginActivity.this),
                             QMUIDisplayHelper.getScreenHeight(LoginActivity.this), scaleValue);
 
-                    mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    // mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    mVerifyViewSb.setMax(100);
                     mVerifyViewSb.setProgress(0);
 
                     mVerifyView.setDrawBitmap(mBackgroundBitmap);
@@ -523,7 +562,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private final SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            mVerifyView.setMove(progress * 0.001);
+            mVerifyView.setMove(progress * 0.01);
         }
 
         @Override
@@ -538,7 +577,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     + "\n滑动值 = " + mViewBinding.verifyViewSb.getProgress()
                     + "\n小图片宽度 = " + mFloatBitmap.getWidth());*/
             float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
-            result = result - 10;
+            // result = result - 10;
             ViseLog.d("真实值 = " + result);
             QMUITipDialogUtil.showLoadingDialg(LoginActivity.this, R.string.is_security_verification);
             sendSMSVerifyCode(String.valueOf(result));

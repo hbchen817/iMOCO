@@ -146,59 +146,6 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         querySceneList(this, mGatewayMac, "1");
     }
 
-    // 根据IotId查询Mac
-    /*private void queryMacByIotId(Context context, String apiVer, String plantForm, String iotId) {
-        Observable.just(new JSONObject())
-                .flatMap(new Function<JSONObject, ObservableSource<JSONObject>>() {
-                    @Override
-                    public ObservableSource<JSONObject> apply(@NonNull JSONObject jsonObject) throws Exception {
-                        return RetrofitUtil.getInstance()
-                                .queryMacByIotId(context, apiVer, plantForm, iotId);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .retryWhen(ERetrofit.retryTokenFun(context))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JSONObject>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull JSONObject response) {
-                        int code = response.getInteger("code");
-                        String mac = response.getString("mac");
-                        String msg = response.getString("message");
-                        // ViseLog.d("缓存 = " + GsonUtil.toJson(DeviceBuffer.getAllDeviceInformation()));
-                        if (code == 200) {
-                            if (mac == null || mac.length() == 0) {
-                                ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.MAC_does_not_exist);
-                            }
-                            mGatewayMac = mac;
-                            querySceneList(context, mac, "1");
-                        } else if (code == 404) {
-                            ToastUtils.showLongToast(LocalActionScenesActivity.this, msg);
-                        } else {
-                            RetrofitUtil.showErrorMsg(LocalActionScenesActivity.this, response);
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        ViseLog.e(e);
-                        ToastUtils.showLongToast(LocalActionScenesActivity.this, R.string.pls_try_again_later);
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-
-    }*/
-
     // 查询本地场景列表
     private void querySceneList(Context context, String mac, String type) {
         Observable.just(new JSONObject())
@@ -305,6 +252,10 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
         if (v.getId() == mViewBinding.includeToolbar.ivToolbarLeft.getId()) {
             finish();
         } else if (v.getId() == mViewBinding.includeToolbar.tvToolbarRight.getId()) {
+            if (mSelectPos == -1) {
+                ToastUtils.showLongToast(this, R.string.pls_select_the_scene_first);
+                return;
+            }
             if (mSceneList.size() == 0) {
                 ToastUtils.showLongToast(this, R.string.no_scene_data);
                 return;
@@ -339,6 +290,7 @@ public class LocalActionScenesActivity extends AppCompatActivity implements View
             if ("LocalActionScenesActivity".equals(target)) {
                 mEAction = (EAction) obj;
                 ViseLog.d(GsonUtil.toJson(mEAction));
+                EventBus.getDefault().removeStickyEvent(obj);
             }
         }
     }

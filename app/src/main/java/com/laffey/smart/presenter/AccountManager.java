@@ -2,15 +2,20 @@ package com.laffey.smart.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
+import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.laffey.smart.R;
 import com.laffey.smart.model.ERetrofit;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.view.LoginActivity;
+import com.laffey.smart.view.StartActivity;
 import com.vise.log.ViseLog;
 
 import io.reactivex.Observable;
@@ -242,8 +247,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -321,8 +325,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -365,8 +368,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -445,8 +447,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -544,8 +545,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -715,8 +715,7 @@ public class AccountManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }
@@ -776,6 +775,49 @@ public class AccountManager {
                 });
     }
 
+    // 查询用户信息
+    public static void getCaccountsInfo(Activity activity, Callback callback) {
+        RetrofitUtil.getInstance().getCaccountsInfo(activity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject response) {
+                        int code = response.getInteger("code");
+                        if (code != 401) {
+                            callback.onNext(response);
+                        } else {
+                            RetrofitUtil.showErrorMsg(activity, response, new RetrofitUtil.Callback() {
+                                @Override
+                                public void onNext(JSONObject response) {
+                                    cancellationIot(activity, callback);
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        callback.onError(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     // 编辑用户信息
     public static void updateCaccountsInfo(Context context, String email, String nickName, String headPortrait,
                                            String gender, String area, String personalSignature,
@@ -825,5 +867,24 @@ public class AccountManager {
         void onNext(JSONObject response);
 
         void onError(Throwable e);
+    }
+
+    public static void logOut(Activity activity, String tip) {//todo 其他设备登录后强制退出
+        LoginBusiness.logout(new ILogoutCallback() {
+            @Override
+            public void onLogoutSuccess() {
+                ToastUtils.showToastCentrally(activity, tip);
+                Intent intent = new Intent(activity, StartActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onLogoutFailed(int code, String error) {
+                ToastUtils.showToastCentrally(activity, activity.getString(R.string.account_logout_failed) + ":\n" + error);
+            }
+        });
     }
 }

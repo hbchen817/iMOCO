@@ -1,5 +1,6 @@
 package com.laffey.smart.model;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -7,13 +8,19 @@ import android.util.TimeUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.framework.log.HttpLoggingInterceptor;
+import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
+import com.aliyun.iot.aep.sdk.login.LoginBusiness;
+import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.RetrofitService;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
+import com.laffey.smart.utility.ToastUtils;
+import com.laffey.smart.view.IndexActivity;
 import com.laffey.smart.view.LoginActivity;
+import com.laffey.smart.view.StartActivity;
 import com.vise.log.ViseLog;
 
 import java.io.InputStream;
@@ -228,7 +235,7 @@ public class ERetrofit {
                                     return o;
                                 } else {
                                     count = 0;
-                                    LoginActivity.start(context, null);
+                                    logOut(context);
                                     return Observable.error(throwable);
                                 }
                             } else return Observable.error(throwable);
@@ -240,4 +247,20 @@ public class ERetrofit {
         };
     }
 
+    public static void logOut(Context context) {//todo 其他设备登录后强制退出
+        LoginBusiness.logout(new ILogoutCallback() {
+            @Override
+            public void onLogoutSuccess() {
+                ToastUtils.showToastCentrally(context, "token超时刷新失败");
+                Intent intent = new Intent(context, StartActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(intent);
+            }
+
+            @Override
+            public void onLogoutFailed(int code, String error) {
+                ToastUtils.showToastCentrally(context, context.getString(R.string.account_logout_failed) + ":\n" + error);
+            }
+        });
+    }
 }

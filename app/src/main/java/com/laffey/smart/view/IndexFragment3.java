@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.component.router.Router;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
+import com.laffey.smart.event.RefreshMyinfo;
 import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.sdk.Account;
 import com.laffey.smart.utility.AppUtils;
@@ -26,6 +27,9 @@ import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.ref.WeakReference;
 
@@ -60,6 +64,18 @@ public class IndexFragment3 extends BaseFragment {
         mActivity = (Activity) context;
     }
 
+    @Subscribe
+    public void onRefreshMyInfo(RefreshMyinfo refreshMyinfo) {
+        userAccount.setText(SpUtils.getNickName(mActivity));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        QMUITipDialogUtil.dismiss();
+        EventBus.getDefault().unregister(this);
+    }
+
     @Override
     public void onDestroyView() {
 //        EventBus.getDefault().unregister(this);
@@ -74,6 +90,7 @@ public class IndexFragment3 extends BaseFragment {
 
     @Override
     protected void init() {
+        EventBus.getDefault().register(this);
         tvToolbarTitle.setText(getString(R.string.rb_tab_three_desc));
         ivToolbarLeft.setVisibility(View.GONE);
         userAccount.setText(Account.getUserPhone());
@@ -139,7 +156,11 @@ public class IndexFragment3 extends BaseFragment {
                     if (code == 200) {
                         QMUITipDialogUtil.dismiss();
 
-                        fragment.userAccount.setText(response.getString("accounts"));
+                        String nickName = response.getString("nickName");
+                        if (nickName != null && nickName.length() > 0) {
+                            fragment.userAccount.setText(nickName);
+                        } else
+                            fragment.userAccount.setText(response.getString("accounts"));
                         SpUtils.putCaccountsInfo(fragment.mActivity, response.toJSONString());
                     } else {
                         RetrofitUtil.showErrorMsg(fragment.mActivity, response);

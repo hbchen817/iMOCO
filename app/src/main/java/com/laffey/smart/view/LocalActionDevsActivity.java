@@ -133,9 +133,6 @@ public class LocalActionDevsActivity extends BaseActivity implements View.OnClic
         mSceneManager = new SceneManager(this);
 
         QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
-        if (Constant.IS_TEST_DATA) {
-            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-        }
         new UserCenter(this).getGatewaySubdeviceList(mGatewayId, 1, PAGE_SIZE,
                 mCommitFailureHandler, mResponseErrorHandler, mHandler);
     }

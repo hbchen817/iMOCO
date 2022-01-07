@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.laffey.smart.R;
@@ -14,6 +15,7 @@ import com.laffey.smart.model.ETSL;
 import com.laffey.smart.presenter.PluginHelper;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.vise.log.ViseLog;
 
 public class AirConditionerActivity extends DetailActivity {
@@ -38,6 +40,7 @@ public class AirConditionerActivity extends DetailActivity {
         // 室温
         if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String currentTem = propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_AirConditioner);
             mViewBinding.currentTemTv.setText(currentTem);
         }
@@ -45,14 +48,19 @@ public class AirConditionerActivity extends DetailActivity {
         if (propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner).length() > 0) {
             String targetTem = propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_AirConditioner);
-            mTargetTem = Integer.parseInt(targetTem);
+            /*mTargetTem = Integer.parseInt(targetTem);
             mViewBinding.targetTemShowTv.setText(targetTem);
-            mViewBinding.targetTemTv.setText(targetTem);
+            mViewBinding.targetTemTv.setText(targetTem);*/
+
+            mSeekBarRunnable.setTargetTem(targetTem);
+            mHandler.removeCallbacks(mSeekBarRunnable);
+            mHandler.postDelayed(mSeekBarRunnable, 500);
         }
 
         // 开关
         if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_AirConditioner);
             int power = Integer.parseInt(powerSwitch);
             refreshViewState(power);
@@ -61,6 +69,7 @@ public class AirConditionerActivity extends DetailActivity {
         // 风速
         if (propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String windSpeed = propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_AirConditioner);
             mFanMode = Integer.parseInt(windSpeed);
             switch (mFanMode) {
@@ -95,6 +104,7 @@ public class AirConditionerActivity extends DetailActivity {
         // 工作模式
         if (propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String workMode = propertyEntry.getPropertyValue(CTSL.M3I1_WorkMode_AirConditioner);
             mWorkMode = Integer.parseInt(workMode);
             switch (mWorkMode) {
@@ -137,14 +147,48 @@ public class AirConditionerActivity extends DetailActivity {
         return true;
     }
 
+    private Handler mHandler = new Handler();
+    private SeekBarRunnable mSeekBarRunnable;
+
+    private class SeekBarRunnable implements Runnable {
+
+        private int progress;
+        private String targetTem;
+
+        public String getTargetTem() {
+            return targetTem;
+        }
+
+        public void setTargetTem(String targetTem) {
+            this.targetTem = targetTem;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
+
+        @Override
+        public void run() {
+            QMUITipDialogUtil.dismiss();
+            mTargetTem = Integer.parseInt(targetTem);
+            mViewBinding.targetTemShowTv.setText(targetTem);
+            mViewBinding.targetTemTv.setText(targetTem);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewBinding = ActivityAirConditionerForFullScreenBinding.inflate(getLayoutInflater());
         setContentView(mViewBinding.getRoot());
 
+        mSeekBarRunnable = new SeekBarRunnable();
         initStatusBar();
-
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         mTSLHelper = new TSLHelper(this);
 
         Typeface iconfont = Typeface.createFromAsset(getAssets(), Constant.ICON_FONT_TTF);
@@ -191,6 +235,7 @@ public class AirConditionerActivity extends DetailActivity {
     protected void onViewClicked(View view) {
         int id = view.getId();
         if (id == R.id.switch_layout) {
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
             // 开关
             if (mViewBinding.switchIc.getCurrentTextColor() == getResources().getColor(R.color.index_imgcolor)) {
                 // 关闭
@@ -204,6 +249,7 @@ public class AirConditionerActivity extends DetailActivity {
             if (mViewBinding.subTv.getCurrentTextColor() == getResources().getColor(R.color.white)) {
                 if (mTargetTem > 16) {
                     mTargetTem--;
+                    QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 }
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_AirConditioner}, new String[]{"" + mTargetTem});
             }
@@ -212,12 +258,14 @@ public class AirConditionerActivity extends DetailActivity {
             if (mViewBinding.addTv.getCurrentTextColor() == getResources().getColor(R.color.white)) {
                 if (mTargetTem < 30) {
                     mTargetTem++;
+                    QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 }
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_AirConditioner}, new String[]{"" + mTargetTem});
             }
         } else if (id == R.id.workmode_layout) {
             // 模式
             if (mViewBinding.workmodeIc.getCurrentTextColor() != getResources().getColor(R.color.all_8_2)) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 if (mWorkMode == 3) {
                     mWorkMode = 4;
                 } else if (mWorkMode == 4) {
@@ -230,6 +278,7 @@ public class AirConditionerActivity extends DetailActivity {
         } else if (id == R.id.fanmode_layout) {
             // 风速
             if (mViewBinding.fanmodeIc.getCurrentTextColor() != getResources().getColor(R.color.all_8_2)) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 switch (mFanMode) {
                     case 5: {
                         // 自动
@@ -327,5 +376,11 @@ public class AirConditionerActivity extends DetailActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
     }
 }

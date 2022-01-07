@@ -72,7 +72,7 @@ public class SceneModelActivity extends BaseActivity {
     private SceneManager mSceneManager;
     private String mSceneId;
     private int mOperateType, mSceneModelCode, mSceneNumber;
-    private List<EScene.parameterEntry> mParameterList;
+    private List<EScene.parameterEntry> mParameterList = new ArrayList<>();
     private LocalSceneAdapter mSceneAdapter;
     private int mSetTimeIndex = -1;
     private boolean mEnable = true;
@@ -482,11 +482,12 @@ public class SceneModelActivity extends BaseActivity {
 
     // 生成场景参数列表
     private void genSceneParameterList(List<EProduct.configListEntry> mConfigProductList) {
+        mParameterList.clear();
         if (!Constant.PACKAGE_NAME.equals(BuildConfig.APPLICATION_ID) || mGatewayDevList.size() == 0) {
-            mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList);
+            mParameterList.addAll(mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList));
         } else {
-            mParameterList = mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList, mGatewayEntry.iotId);
-            ViseLog.d("生成场景参数列表 = " + GsonUtil.toJson(mParameterList));
+            mParameterList.addAll(mSceneManager.genSceneModelParameterList(mSceneModelCode, mConfigProductList, mGatewayEntry.iotId));
+            // ViseLog.d("生成场景参数列表 = " + GsonUtil.toJson(mParameterList));
             refreshModelList();
         }
 

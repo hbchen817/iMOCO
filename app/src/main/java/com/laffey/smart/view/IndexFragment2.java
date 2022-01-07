@@ -187,7 +187,6 @@ public class IndexFragment2 extends BaseFragment implements View.OnClickListener
             @Override
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
-                // ViseLog.d("场景列表 = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     QMUITipDialogUtil.dismiss();
                     JSONArray sceneList = response.getJSONArray("sceneList");

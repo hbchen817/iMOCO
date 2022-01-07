@@ -27,6 +27,7 @@ import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.vise.log.ViseLog;
 
 import butterknife.BindView;
@@ -38,6 +39,7 @@ public class FloorHeatingActivity extends DetailActivity {
 
     private int mPowerSwitch = 0;// 0: 关闭  1: 打开
     private int mTargetTem = 0;
+    private int mFlag = -1;
 
     private TSLHelper mTSLHelper;
 
@@ -49,10 +51,11 @@ public class FloorHeatingActivity extends DetailActivity {
         if (propertyEntry == null || propertyEntry.properties == null || propertyEntry.properties.size() == 0) {
             return false;
         }
-
+        ViseLog.d("温度 = " + (mViewBinding.temperatureSeekBar.getProgress() + 16));
         // 开关
         ViseLog.d("更新状态 = \n" + GsonUtil.toJson(propertyEntry));
         if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating) != null && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FloorHeating);
             mPowerSwitch = Integer.parseInt(powerSwitch);
             refreshViewState(mPowerSwitch);
@@ -62,17 +65,24 @@ public class FloorHeatingActivity extends DetailActivity {
         if (propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating).length() > 0) {
             String targetTem = propertyEntry.getPropertyValue(CTSL.M3I1_TargetTemperature_FloorHeating);
-            mTargetTem = Integer.parseInt(targetTem);
+
+            mSeekBarRunnable.setTargetTem(targetTem);
+            mHandler.removeCallbacks(mSeekBarRunnable);
+            mHandler.postDelayed(mSeekBarRunnable, 500);
+
+            /*mTargetTem = Integer.parseInt(targetTem);
+            mFlag = mTargetTem;
             mViewBinding.temperatureValue.setText(String.valueOf(mTargetTem));
             mViewBinding.temperature2.setText(String.valueOf(mTargetTem));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                 mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16, true);
-            else mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16);
+            else mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16);*/
         }
 
         // 当前温度
         if (propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String currentTem = propertyEntry.getPropertyValue(CTSL.M3I1_CurrentTemperature_FloorHeating);
             mViewBinding.temperature.setText(currentTem);
         }
@@ -80,6 +90,7 @@ public class FloorHeatingActivity extends DetailActivity {
         // 加热状态
         if (propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String autoWorkMode = propertyEntry.getPropertyValue(CTSL.M3I1_AutoWorkMode_FloorHeating);
             mViewBinding.autoWorkModeTv.setText("0".equals(autoWorkMode) ? R.string.close : R.string.open);
         }
@@ -93,6 +104,7 @@ public class FloorHeatingActivity extends DetailActivity {
         setContentView(mViewBinding.getRoot());
 
         mTSLHelper = new TSLHelper(this);
+        mSeekBarRunnable = new SeekBarRunnable();
 
         initStatusBar();
         initView();
@@ -129,8 +141,10 @@ public class FloorHeatingActivity extends DetailActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                QMUITipDialogUtil.showLoadingDialg(FloorHeatingActivity.this, R.string.is_loading);
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_TargetTemperature_FloorHeating},
                         new String[]{"" + (16 + seekBar.getProgress())});
+
             }
         });
         mViewBinding.temperatureValue.setText("--");
@@ -141,12 +155,14 @@ public class FloorHeatingActivity extends DetailActivity {
         mViewBinding.switchLayout.setOnClickListener(this::onViewClicked);
         mViewBinding.timingLayout.setOnClickListener(this::onViewClicked);
 
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         // 主动获取设备属性
         new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
                 if (msg.what == Constant.MSG_CALLBACK_GETTSLPROPERTY) {
                     // 处理获取属性回调
+                    ViseLog.d("主动获取设备属性");
                     ETSL.propertyEntry propertyEntry = new ETSL.propertyEntry();
                     JSONObject items = JSON.parseObject((String) msg.obj);
                     if (items != null) {
@@ -164,12 +180,50 @@ public class FloorHeatingActivity extends DetailActivity {
             public boolean handleMessage(Message msg) {
                 if (msg.what == Constant.MSG_CALLBACK_LNPROPERTYNOTIFY) {
                     // 处理属性通知回调
+                    ViseLog.d("处理属性通知回调");
                     ETSL.propertyEntry propertyEntry = RealtimeDataParser.processProperty((String) msg.obj);
                     updateState(propertyEntry);
                 }
                 return false;
             }
         }));
+    }
+
+    private Handler mHandler = new Handler();
+    private SeekBarRunnable mSeekBarRunnable;
+
+    private class SeekBarRunnable implements Runnable {
+
+        private int progress;
+        private String targetTem;
+
+        public String getTargetTem() {
+            return targetTem;
+        }
+
+        public void setTargetTem(String targetTem) {
+            this.targetTem = targetTem;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
+        }
+
+        @Override
+        public void run() {
+            mTargetTem = Integer.parseInt(targetTem);
+            mFlag = mTargetTem;
+            mViewBinding.temperatureValue.setText(String.valueOf(mTargetTem));
+            mViewBinding.temperature2.setText(String.valueOf(mTargetTem));
+            ViseLog.d("mTargetTem ========================= " + mTargetTem);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16, true);
+            else mViewBinding.temperatureSeekBar.setProgress(mTargetTem - 16);
+        }
     }
 
     @Override
@@ -195,6 +249,7 @@ public class FloorHeatingActivity extends DetailActivity {
         int viewId = view.getId();
         if (viewId == R.id.switch_layout) {
             // 开关
+            QMUITipDialogUtil.showLoadingDialg(FloorHeatingActivity.this, R.string.is_loading);
             if (mPowerSwitch == 1) {
                 // 关闭
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FloorHeating}, new String[]{"" + CTSL.STATUS_OFF});
@@ -253,5 +308,11 @@ public class FloorHeatingActivity extends DetailActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
     }
 }

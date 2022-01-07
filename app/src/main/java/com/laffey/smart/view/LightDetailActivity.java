@@ -101,6 +101,7 @@ public class LightDetailActivity extends DetailActivity {
     private SceneManager mSceneManager;
     private String mGatewayId;
     private String mGatewayMac;
+    private int mFlag = -1;
 
     @Override
     protected boolean updateState(ETSL.propertyEntry propertyEntry) {
@@ -110,10 +111,12 @@ public class LightDetailActivity extends DetailActivity {
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS).length() > 0) {
             mLightness = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-            mLightnessText.setText(String.valueOf(mLightness));
-            mLightnessProgressBar.setOnSeekBarChangeListener(null);
-            mLightnessProgressBar.setProgress(mLightness);
-            mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+            if (mFlag == -1 || mLightnessProgressBar.getProgress() == mLightness) {
+                mLightnessText.setText(String.valueOf(mLightness));
+                mLightnessProgressBar.setOnSeekBarChangeListener(null);
+                mLightnessProgressBar.setProgress(mLightness);
+                mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE).length() > 0) {
@@ -319,9 +322,6 @@ public class LightDetailActivity extends DetailActivity {
                     String gwId = response.getString("gwIotId");
                     if (code == 200) {
                         mGatewayId = gwId;
-                        if (Constant.IS_TEST_DATA) {
-                            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                        }
                         mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
                         mSceneManager.querySceneList(LightDetailActivity.this, mGatewayMac, "1",
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);

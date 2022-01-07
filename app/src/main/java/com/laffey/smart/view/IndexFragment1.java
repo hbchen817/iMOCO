@@ -232,7 +232,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
         mUnbinder = ButterKnife.bind(this, view);
 
         mSceneManager = new SceneManager(mActivity);
-        mLblSceneTitle.setVisibility(View.GONE);
+        //mLblSceneTitle.setVisibility(View.GONE);
         mHscSceneList.setVisibility(View.GONE);
         mListRL.setEnableLoadMore(false);
         mListRL.setOnRefreshListener(new OnRefreshListener() {
@@ -630,7 +630,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
     private void setSceneList(List<EScene.sceneListItemEntry> list) {
         // ViseLog.d("设置场景水平列表 = " + GsonUtil.toJson(list));
         if (list == null || list.size() == 0) {
-            mLblSceneTitle.setVisibility(View.GONE);
+            // mLblSceneTitle.setVisibility(View.GONE);
             mHscSceneList.setVisibility(View.GONE);
             return;
         }
@@ -878,6 +878,8 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                     setSceneList(mSceneList);
                     startGetDeviceList(1);
                 } else {
+                    mListRL.finishRefresh(false);
+                    mGridRL.finishRefresh(false);
                     QMUITipDialogUtil.dismiss();
                     RetrofitUtil.showErrorMsg(mActivity, response);
                 }
@@ -885,6 +887,8 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
 
             @Override
             public void onError(Throwable e) {
+                mListRL.finishRefresh(false);
+                mGridRL.finishRefresh(false);
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
                 ToastUtils.showLongToast(mActivity, e.getMessage());
@@ -1129,7 +1133,7 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
             public void onProcessData(String result) {
                 // 处理获取用户设备列表数据
                 EUser.bindDeviceListEntry userBindDeviceList = CloudDataParser.processUserDeviceList(result);
-                // ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
+                ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
                 if (userBindDeviceList != null && userBindDeviceList.data != null) {
                     // 向缓存追加用户绑定设备列表数据
                     DeviceBuffer.addUserBindDeviceList(userBindDeviceList);
@@ -1630,18 +1634,8 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
                 case Constant.MSG_CALLBACK_LNTHINGEVENTNOTIFY: {
                     // 开始获取设备列表
                     ViseLog.d("开始获取设备列表 = \n" + GsonUtil.toJson(msg.obj));
-                    JSONObject jsonObject = JSONObject.parseObject((String) msg.obj);
-                    String identifier = jsonObject.getString("identifier");
-                    if ("awss.BindNotify".equals(identifier)) {
-                        JSONObject value = jsonObject.getJSONObject("value");
-                        if (value != null) {
-                            String operation = value.getString("operation");
-                            String productKey = value.getString("productKey");
-                            if ("Unbind".equalsIgnoreCase(operation)/* && CTSL.PK_GATEWAY_RG4100.equals(productKey)*/) {
-                                startGetDeviceList(1);
-                            }
-                        }
-                    }
+                    mThingEventNotifyHandler.removeCallbacks(mThingEventNotifyRunnable);
+                    mThingEventNotifyHandler.postDelayed(mThingEventNotifyRunnable, 500);
                     break;
                 }
                 case Constant.MSG_CALLBACK_LNPROPERTYNOTIFY:
@@ -1703,6 +1697,14 @@ public class IndexFragment1 extends BaseFragment implements View.OnClickListener
             return false;
         }
     });
+
+    private final Handler mThingEventNotifyHandler = new Handler();
+    private final Runnable mThingEventNotifyRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startGetDeviceList(1);
+        }
+    };
 
     // 订阅刷新数据事件
     @Subscribe

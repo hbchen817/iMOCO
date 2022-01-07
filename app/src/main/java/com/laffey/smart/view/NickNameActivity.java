@@ -52,9 +52,43 @@ public class NickNameActivity extends BaseActivity {
         mViewBinding.includeToolbar.tvToolbarTitle.setText(getString(R.string.myinfo_nickname));
 
         initStatusBar();
-        mViewBinding.nickNameEt.setText(SpUtils.getNickName(this));
+        // mViewBinding.nickNameEt.setText(SpUtils.getNickName(this));
         mViewBinding.includeToolbar.tvToolbarRight.setOnClickListener(this::onClick);
         mHandler = new MyHandler(this);
+        getNickName();
+    }
+
+    private void getNickName() {
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        AccountManager.getCaccountsInfo(this, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String nickName = response.getString("nickName");
+                    if (nickName != null && nickName.length() > 0) {
+                        mViewBinding.nickNameEt.setText(nickName);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(NickNameActivity.this, response, Constant.GET_CACCOUNTS_INFO);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(NickNameActivity.this, e.getMessage() + ":\n" +
+                        Constant.GET_CACCOUNTS_INFO);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        QMUITipDialogUtil.dismiss();
     }
 
     // 嵌入式状态栏
@@ -118,6 +152,7 @@ public class NickNameActivity extends BaseActivity {
                     int code = response.getInteger("code");
                     if (code == 200) {
                         SpUtils.putNickName(activity, activity.mViewBinding.nickNameEt.getText().toString());
+                        EventBus.getDefault().post(new RefreshMyinfo());
                         ToastUtils.showLongToast(activity, R.string.submit_completed);
                         activity.finish();
                     } else {

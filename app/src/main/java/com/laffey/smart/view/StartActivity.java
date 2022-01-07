@@ -3,6 +3,7 @@ package com.laffey.smart.view;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyun.iot.aep.sdk.login.ILoginCallback;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
@@ -22,9 +24,11 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.presenter.DeviceBuffer;
+import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.MocoApplication;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.utility.AppUtils;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.LogcatFileManager;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -32,6 +36,11 @@ import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.vise.log.ViseLog;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 
 import io.reactivex.Observer;
@@ -67,6 +76,73 @@ public class StartActivity extends BaseActivity {
         } else {
             initEvent();
         }
+
+        // getDataConversionRules();
+
+        // demo();
+    }
+
+    private void demo() {
+        try {
+            JSONObject o = new JSONObject();
+            o.put("alarm","1");
+            o.put("twinkle","2");
+            o.put("duration","1");
+            Demo demo1 = JSONObject.parseObject(o.toJSONString(), Demo.class);
+            ViseLog.d("demo1 = " + GsonUtil.toJson(demo1));
+        } catch (Exception e) {
+            ViseLog.e(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static class Demo {
+        String Alarm;
+        String Twinkle;
+        String Duration;
+
+        public Demo() {
+        }
+
+        public String getAlarm() {
+            return Alarm;
+        }
+
+        public String getTwinkle() {
+            return Twinkle;
+        }
+
+        public String getDuration() {
+            return Duration;
+        }
+
+        public void setAlarm(String alarm) {
+            Alarm = alarm;
+        }
+
+        public void setTwinkle(String twinkle) {
+            Twinkle = twinkle;
+        }
+
+        public void setDuration(String duration) {
+            Duration = duration;
+        }
+    }
+
+    private void getDataConversionRules() {
+        DeviceManager.getDataConversionRules(this, "a1msNJjnfnQ", new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                ViseLog.d("response = " + GsonUtil.toJson(response));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                QMUITipDialogUtil.dismiss();
+                ViseLog.e(e);
+                ToastUtils.showLongToast(StartActivity.this, e.getMessage());
+            }
+        });
     }
 
     private void initView() {

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.sdk.android.openaccount.OpenAccountSDK;
 import com.alibaba.sdk.android.openaccount.ui.OpenAccountUIService;
 import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
@@ -17,13 +18,17 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.databinding.ActivityMyinfoBinding;
 import com.laffey.smart.event.RefreshMyinfo;
+import com.laffey.smart.presenter.AccountManager;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.sdk.Account;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
+import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.SpUtils;
 import com.laffey.smart.utility.ToastUtils;
 import com.laffey.smart.widget.DialogUtils;
+import com.vise.log.ViseLog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -64,7 +69,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
 
     @Subscribe
     public void onRefreshMyInfo(RefreshMyinfo refreshMyinfo) {
-        mViewBinding.nickName.setText(Account.getUserNick());
+        mViewBinding.nickName.setText(SpUtils.getNickName(this));
     }
 
     @Override
@@ -82,12 +87,42 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         mViewBinding.changePassword.setOnClickListener(this);
         mViewBinding.deleteAccount.setOnClickListener(this);
         mViewBinding.logoutBtn.setOnClickListener(this);
+        // mViewBinding.nickName.setText(Account.getUserNick());
+        ViseLog.d("Account = \n" + GsonUtil.toJson(LoginBusiness.getUserInfo()));
+        getNickName();
+    }
+
+    private void getNickName() {
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+        AccountManager.getCaccountsInfo(this, new AccountManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                if (code == 200) {
+                    String nickName = response.getString("nickName");
+                    if (nickName != null && nickName.length() > 0) {
+                        mViewBinding.nickName.setText(nickName);
+                        SpUtils.putNickName(MyInfoActivity.this, nickName);
+                    }
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(MyInfoActivity.this, response, Constant.GET_CACCOUNTS_INFO);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(MyInfoActivity.this, e.getMessage() + ":\n" +
+                        Constant.GET_CACCOUNTS_INFO);
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mViewBinding.nickName.setText(SpUtils.getNickName(this));//Account.getUserNick()
         mViewBinding.userAccount.setText(SpUtils.getTelNum(this));
     }
 
@@ -103,6 +138,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        QMUITipDialogUtil.dismiss();
         EventBus.getDefault().unregister(this);
     }
 

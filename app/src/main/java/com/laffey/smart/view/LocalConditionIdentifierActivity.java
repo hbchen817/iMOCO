@@ -45,7 +45,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -89,7 +91,8 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         initStatusBar();
         initRecyclerView();
-        initData();
+        if (!Constant.IS_TEST_DATA)
+            initData();
 
         getConditionIdentifier();
     }
@@ -100,10 +103,9 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
                 if (code == 200) {
-                    ViseLog.d("response = \n" + GsonUtil.toJson(response));
                     String ruleJson = response.getString("ruleJson");
-                    JSONObject object = JSONObject.parseObject(ruleJson);
-                    ViseLog.d("object = \n" + GsonUtil.toJson(object));
+                    JSONObject sdkRule = JSONObject.parseObject(ruleJson);
+                    ViseLog.d("sdkRule = \n" + GsonUtil.toJson(sdkRule));
 
                     JSONArray array = mIdentifierJSONObject.getJSONArray("data");
                     for (int i = 0; i < array.size(); i++) {
@@ -113,7 +115,7 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
                         String name = data.getString("name");
                         if (type == 1) {
                             // 属性
-                            /*JSONArray reportStateRules = object.getJSONArray("report_state_rules");
+                            JSONArray reportStateRules = sdkRule.getJSONArray("report_state_rules");
                             for (int j = 0; j < reportStateRules.size(); j++) {
                                 JSONObject rule = reportStateRules.getJSONObject(j);
                                 String toId = rule.getString("to_id");
@@ -121,21 +123,37 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
                                     ViseLog.d("rule = \n" + GsonUtil.toJson(rule));
                                     String rexEndpointId = rule.getString("rex_endpoint_id");
                                     String rexId = rule.getString("rex_id");
-                                    if (mProductKey.equals(CTSL.PK_ONEWAYSWITCH) ||
-                                            mProductKey.equals(CTSL.PK_TWOWAYSWITCH) ||
-                                            mProductKey.equals(CTSL.PK_THREE_KEY_SWITCH) ||
-                                            mProductKey.equals(CTSL.PK_FOURWAYSWITCH_2))
-                                        initSwitchData(identifier, name, rexEndpointId, rexId);
+                                    initPropertyData(identifier, name, rexEndpointId, rexId);
                                 }
-                            }*/
-                        } else if (type == 3) {
-                            // 事件
+                            }
                         }
-                        //mAdapter.notifyDataSetChanged();
+                        if (type == 3) {
+                            // 事件
+                            JSONArray reportEventRules = sdkRule.getJSONArray("report_event_rules");
+                            Map<String, JSONObject> toIdMap = new HashMap<>();
+                            for (int k = 0; k < reportEventRules.size(); k++) {
+                                JSONObject reportEventRule = reportEventRules.getJSONObject(k);
+                                toIdMap.put(reportEventRule.getString("to_id"), reportEventRule);
+                            }
+                            for (String toId : toIdMap.keySet()) {
+                                if (identifier.equals(toId)) {
+                                    JSONObject object = toIdMap.get(toId);
+                                    String eventType = object.getString("rex_event_type");
+                                    JSONArray parameters = object.getJSONArray("parameters");
+                                    if (parameters != null && parameters.size() > 0) {
+                                        String rexId = parameters.getJSONObject(0).getString("rex_id");
+                                        initEventData(name, "1", eventType, rexId);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
                     }
                 } else {
                     QMUITipDialogUtil.dismiss();
-                    RetrofitUtil.showErrorMsg(LocalConditionIdentifierActivity.this, response);
+                    RetrofitUtil.showErrorMsg(LocalConditionIdentifierActivity.this, response,
+                            Constant.GET_DATA_CONVERSION_RULES);
                 }
             }
 
@@ -143,7 +161,8 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
             public void onError(Throwable e) {
                 QMUITipDialogUtil.dismiss();
                 ViseLog.e(e);
-                ToastUtils.showLongToast(LocalConditionIdentifierActivity.this, e.getMessage());
+                ToastUtils.showLongToast(LocalConditionIdentifierActivity.this, e.getMessage() + ":\n" +
+                        Constant.GET_DATA_CONVERSION_RULES);
             }
         });
     }
@@ -169,7 +188,8 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
                 }
                 mIdentifierJSONObject = JSONObject.parseObject(result);
                 ViseLog.d("mIdentifierJSONObject = \n" + GsonUtil.toJson(mIdentifierJSONObject));
-                // getDataConversionRules();
+                if (Constant.IS_TEST_DATA)
+                    getDataConversionRules();
             }
         });
     }
@@ -332,7 +352,7 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
             keyName = getString(R.string.curtains_control);
         }
         ECondition eCondition = initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "CurtainState", "==");
+                "1", "State", "==");
         mList.add(eCondition);
     }
 
@@ -347,9 +367,9 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
             keyName2 = getString(R.string.two_curtains);
         }
         mList.add(initStateECondition(mDevIot, keyName1, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "1", "CurtainState", "=="));
+                "1", "State", "=="));
         mList.add(initStateECondition(mDevIot, keyName2, DeviceBuffer.getDeviceInformation(mDevIot).mac,
-                "2", "CurtainState", "=="));
+                "2", "State", "=="));
     }
 
     // 一键面板
@@ -363,13 +383,21 @@ public class LocalConditionIdentifierActivity extends BaseActivity {
     }
 
     // 开关面板
-    private void initSwitchData(String keyNickNameTag, String keyNickName, String endId, String rexId) {
+    private void initPropertyData(String keyNickNameTag, String keyNickName, String endId, String rexId) {
         String keyName = DeviceBuffer.getExtendedInfo(mDevIot).getString(keyNickNameTag);
         if (keyName == null || keyName.length() == 0) {
             keyName = keyNickName;
         }
         mList.add(initStateECondition(mDevIot, keyName, DeviceBuffer.getDeviceInformation(mDevIot).mac,
                 endId, rexId, "=="));
+    }
+
+    // 场景开关
+    private void initEventData(String keyNickName, String endId, String eventType, String paramName) {
+        ECondition eCondition = initEventECondition(mDevIot, keyNickName, DeviceBuffer.getDeviceInformation(mDevIot).mac, endId,
+                eventType, paramName, "==");
+
+        mList.add(eCondition);
     }
 
     // 二键面板

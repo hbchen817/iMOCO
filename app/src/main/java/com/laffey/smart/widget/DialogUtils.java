@@ -301,6 +301,44 @@ public class DialogUtils {
         });
     }
 
+    // 自定义确认dialog
+    public static void showConfirmDialogDismiss(Activity activity, int title, int msg, int positiveText,
+                                         Callback callback) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);
+        final View view = LayoutInflater.from(activity).inflate(R.layout.dialog_confirm_3, null);
+        builder.setView(view);
+        builder.setCancelable(true);
+        TextView titleTv = (TextView) view.findViewById(R.id.title_tv);
+        titleTv.setText(activity.getString(title));
+        TextView msgTV = (TextView) view.findViewById(R.id.msg_tv);
+        msgTV.setText(activity.getString(msg));
+
+        final android.app.Dialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = QMUIDisplayHelper.getScreenWidth(activity) * 4 / 5;
+        //这行要放在dialog.show()之后才有效
+        dialog.getWindow().setAttributes(params);
+
+        TextView positiveTV = view.findViewById(R.id.positive_tv);
+        positiveTV.setText(activity.getString(positiveText));
+        positiveTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                callback.positive();
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                callback.negative();
+            }
+        });
+    }
+
     // 文字输入dialog
     public static void showInputDialog(Activity activity, String title, String hint, String content, InputCallback callback) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(activity);

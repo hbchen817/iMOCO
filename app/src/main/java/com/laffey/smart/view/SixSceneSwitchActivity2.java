@@ -179,8 +179,10 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
 
         if (CTSL.PK_SIX_SCENE_SWITCH.equals(mProductKey)) {
             mBackLightLayout.setVisibility(View.VISIBLE);
+            mBatteryLayout.setVisibility(View.GONE);
         } else if (CTSL.PK_SYT_SIX_SCENE_SWITCH.equals(mProductKey)) {
             mBackLightLayout.setVisibility(View.GONE);
+            mBatteryLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -194,9 +196,6 @@ public class SixSceneSwitchActivity2 extends DetailActivity {
 
     // 获取面板所属网关iotId
     private void getGatewayId(String iotId) {
-        if (Constant.IS_TEST_DATA) {
-            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
-        }
         mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }

@@ -271,12 +271,7 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
                         String mac = response.getString("mac");
                         activity.mSceneType = "0";
                         if (code == 200) {
-                            if (Constant.IS_TEST_DATA) {
-                                mac = "LUXE_TEST";
-                            }
                             activity.mGatewayMac = mac;
-                            // ViseLog.d("mGatewayMac = " + activity.mGatewayMac);
-                            // activity.querySceneList("chengxunfei", activity.mGatewayMac, activity.mSceneType);
                             activity.mSceneType = "0";
                             activity.mSceneManager.querySceneList(activity, activity.mGatewayMac, activity.mSceneType, Constant.MSG_QUEST_QUERY_SCENE_LIST,
                                     Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, activity.mHandler);
@@ -475,13 +470,8 @@ public class TimerLocalSceneListActivity extends BaseActivity implements View.On
         DialogUtils.showConfirmDialog(this, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene(TimerLocalSceneListActivity.this, scene,
-                            Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
-                } else {
-                    mSceneManager.manageSceneService(mGatewayId, scene.getSceneDetail().getSceneId(), 3,
-                            mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                }
+                mSceneManager.manageSceneService(mGatewayId, scene.getSceneDetail().getSceneId(), 3,
+                        mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         }, content, title);
     }

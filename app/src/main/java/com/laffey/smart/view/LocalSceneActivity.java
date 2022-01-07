@@ -205,7 +205,30 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         mConditionAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                showDelDialog(R.string.do_you_really_want_to_delete_the_current_option, position, DEL_NORMAL_CONDITION_TAG);
+                // showDelDialog(R.string.do_you_really_want_to_delete_the_current_option, position, DEL_NORMAL_CONDITION_TAG);
+                DialogUtils.showConfirmDialog(LocalSceneActivity.this, getString(R.string.dialog_title),
+                        getString(R.string.do_you_really_want_to_delete_the_current_option),
+                        getString(R.string.dialog_confirm), getString(R.string.dialog_cancel),
+                        new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+                                // 删除条件
+                                mConditionList.remove(position);
+                                mConditionAdapter.notifyDataSetChanged();
+                                if (mConditionList.size() == 0) {
+                                    mViewBinding.conditionRv.setVisibility(View.GONE);
+                                    mViewBinding.addConditionLayout.setVisibility(View.VISIBLE);
+                                } else {
+                                    mViewBinding.conditionRv.setVisibility(View.VISIBLE);
+                                    mViewBinding.addConditionLayout.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
                 return true;
             }
         });
@@ -292,7 +315,29 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         mActionAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                showDelDialog(R.string.do_you_really_want_to_delete_the_current_option, position, DEL_ACTION_TAG);
+                DialogUtils.showConfirmDialog(LocalSceneActivity.this, getString(R.string.dialog_title),
+                        getString(R.string.do_you_really_want_to_delete_the_current_option),
+                        getString(R.string.dialog_confirm), getString(R.string.dialog_cancel),
+                        new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+                                // 删除条件
+                                mActionList.remove(position);
+                                mActionAdapter.notifyDataSetChanged();
+                                if (mActionList.size() == 0) {
+                                    mViewBinding.actionRv.setVisibility(View.GONE);
+                                    mViewBinding.addActionLayout.setVisibility(View.VISIBLE);
+                                } else {
+                                    mViewBinding.actionRv.setVisibility(View.VISIBLE);
+                                    mViewBinding.addActionLayout.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
                 return true;
             }
         });
@@ -664,7 +709,24 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         mTimerAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                showDelDialog(R.string.do_you_really_want_to_delete_the_current_option, 0, DEL_TIME_CONDITION_TAG);
+                DialogUtils.showConfirmDialog(LocalSceneActivity.this, getString(R.string.dialog_title),
+                        getString(R.string.do_you_really_want_to_delete_the_current_option),
+                        getString(R.string.dialog_confirm), getString(R.string.dialog_cancel),
+                        new DialogUtils.Callback() {
+                            @Override
+                            public void positive() {
+                                // 删除时间条件
+                                mTimerList.clear();
+                                mTimerAdapter.notifyDataSetChanged();
+                                mViewBinding.timeConditionRv.setVisibility(View.GONE);
+                                mViewBinding.addTimeLayout.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void negative() {
+
+                            }
+                        });
                 return true;
             }
         });
@@ -672,68 +734,6 @@ public class LocalSceneActivity extends BaseActivity implements View.OnClickList
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         mViewBinding.timeConditionRv.setAdapter(mTimerAdapter);
         mViewBinding.timeConditionRv.setLayoutManager(layoutManager);
-    }
-
-    private final int DEL_TIME_CONDITION_TAG = 10001;
-    private final int DEL_NORMAL_CONDITION_TAG = 10002;
-    private final int DEL_ACTION_TAG = 10003;
-
-    private void showDelDialog(int msgId, int pos, int tag) {
-        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(LocalSceneActivity.this).create();
-        alert.setIcon(R.drawable.dialog_quest);
-        alert.setTitle(R.string.dialog_title);
-        alert.setMessage(getResources().getString(msgId));
-        //添加否按钮
-        alert.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.dialog_no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        //添加是按钮
-        alert.setButton(DialogInterface.BUTTON_POSITIVE, getResources().getString(R.string.dialog_yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                switch (tag) {
-                    case DEL_TIME_CONDITION_TAG: {
-                        // 删除时间条件
-                        mTimerList.clear();
-                        mTimerAdapter.notifyDataSetChanged();
-                        mViewBinding.timeConditionRv.setVisibility(View.GONE);
-                        mViewBinding.addTimeLayout.setVisibility(View.VISIBLE);
-                        break;
-                    }
-                    case DEL_NORMAL_CONDITION_TAG: {
-                        // 删除条件
-                        mConditionList.remove(pos);
-                        mConditionAdapter.notifyDataSetChanged();
-                        if (mConditionList.size() == 0) {
-                            mViewBinding.conditionRv.setVisibility(View.GONE);
-                            mViewBinding.addConditionLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            mViewBinding.conditionRv.setVisibility(View.VISIBLE);
-                            mViewBinding.addConditionLayout.setVisibility(View.GONE);
-                        }
-                        break;
-                    }
-                    case DEL_ACTION_TAG: {
-                        // 删除动作
-                        mActionList.remove(pos);
-                        mActionAdapter.notifyDataSetChanged();
-                        if (mActionList.size() == 0) {
-                            mViewBinding.actionRv.setVisibility(View.GONE);
-                            mViewBinding.addActionLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            mViewBinding.actionRv.setVisibility(View.VISIBLE);
-                            mViewBinding.addActionLayout.setVisibility(View.GONE);
-                        }
-                        break;
-                    }
-                }
-                arg0.dismiss();
-            }
-        });
-        alert.show();
     }
 
     /**

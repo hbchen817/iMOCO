@@ -39,6 +39,8 @@ import com.laffey.smart.R;
 import com.laffey.smart.contract.CTSL;
 import com.laffey.smart.event.CEvent;
 import com.laffey.smart.event.EEvent;
+import com.laffey.smart.model.EAPIChannel;
+import com.laffey.smart.model.EHomeSpace;
 import com.laffey.smart.presenter.ActivityRouter;
 import com.laffey.smart.presenter.AptDeviceList;
 import com.laffey.smart.presenter.AptSubGwList;
@@ -46,11 +48,13 @@ import com.laffey.smart.presenter.CloudDataParser;
 import com.laffey.smart.presenter.CodeMapper;
 import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.DeviceManager;
+import com.laffey.smart.presenter.HomeSpaceManager;
 import com.laffey.smart.presenter.ImageProvider;
 import com.laffey.smart.presenter.OTAHelper;
 import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.SceneManager;
+import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.presenter.UserCenter;
 import com.laffey.smart.contract.Constant;
@@ -58,6 +62,7 @@ import com.laffey.smart.model.EDevice;
 import com.laffey.smart.model.ERealtimeData;
 import com.laffey.smart.model.ETSL;
 import com.laffey.smart.model.EUser;
+import com.laffey.smart.sdk.APIChannel;
 import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
@@ -432,6 +437,137 @@ public class DetailGatewayActivity extends DetailActivity implements OnClickList
         initStatusBar();
 
         mDevRG.setOnCheckedChangeListener(mDevCheckedChangeListener);
+
+        if (DeviceBuffer.getDeviceInformation(mIOTId) == null) {
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+            getGwInfo(1);
+        } else {
+            initData();
+        }
+    }
+
+    private void getGwInfo(int pageNo) {
+        ViseLog.d("mIOTId =================== " + mIOTId);
+        HomeSpaceManager.getHomeGatewayList(this, SystemParameter.getInstance().getHomeId(), pageNo, 50, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(DetailGatewayActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(DetailGatewayActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                ViseLog.d("=========================\n" + GsonUtil.toJson(JSONObject.parseObject(result)));
+                EHomeSpace.homeDeviceListEntry homeDeviceList = CloudDataParser.processHomeDeviceList(result);
+                if (homeDeviceList != null && homeDeviceList.data != null) {
+                    // 向缓存追加家列表数据
+                    EHomeSpace.deviceEntry deviceEntry = null;
+                    for (EHomeSpace.deviceEntry entry : homeDeviceList.data) {
+                        if (mIOTId.equals(entry.iotId)) {
+                            deviceEntry = entry;
+                            break;
+                        }
+                    }
+
+                    if (deviceEntry != null) {
+                        DeviceBuffer.addHomeDevice(deviceEntry);
+                        getDeviceList(1);
+                    } else {
+                        if (homeDeviceList.data.size() >= homeDeviceList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            getGwInfo(homeDeviceList.pageNo + 1);
+                        } else {
+                            ToastUtils.showLongToast(DetailGatewayActivity.this, getString(R.string.pls_try_again_later)
+                                    + ":\n" + Constant.API_PATH_GETHOMEDEVICELIST);
+                        }
+                    }
+                    ViseLog.d("2222222222222222222222222222\n" + GsonUtil.toJson(homeDeviceList));
+                }
+            }
+        });
+    }
+
+    // 数据获取完则同步刷新设备列表数据
+    private void getDeviceList(int pageNo) {
+        UserCenter.getDeviceList(DetailGatewayActivity.this, pageNo, 50, new APIChannel.Callback() {
+            @Override
+            public void onFailure(EAPIChannel.commitFailEntry failEntry) {
+                commitFailure(DetailGatewayActivity.this, failEntry);
+            }
+
+            @Override
+            public void onResponseError(EAPIChannel.responseErrorEntry errorEntry) {
+                responseError(DetailGatewayActivity.this, errorEntry);
+            }
+
+            @Override
+            public void onProcessData(String result) {
+                // 处理获取用户设备列表数据
+                EUser.bindDeviceListEntry userBindDeviceList = CloudDataParser.processUserDeviceList(result);
+                // ViseLog.d("设备列表 = \n" + GsonUtil.toJson(userBindDeviceList));
+                if (userBindDeviceList != null && userBindDeviceList.data != null) {
+                    EUser.deviceEntry deviceEntry = null;
+                    for (EUser.deviceEntry entry : userBindDeviceList.data) {
+                        if (mIOTId.equals(entry.iotId)) {
+                            deviceEntry = entry;
+                            break;
+                        }
+                    }
+                    if (deviceEntry != null) {
+                        DeviceBuffer.addUserBindDevice(deviceEntry);
+                        queryMac();
+                    } else {
+                        if (userBindDeviceList.data.size() >= userBindDeviceList.pageSize) {
+                            // 数据没有获取完则获取下一页数据
+                            getDeviceList(userBindDeviceList.pageNo + 1);
+                        } else {
+                            ToastUtils.showLongToast(DetailGatewayActivity.this, getString(R.string.pls_try_again_later)
+                                    + ":\n" + Constant.API_PATH_GETUSERDEVICELIST);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void queryMac() {
+        List<String> iotList = new ArrayList<>();
+        iotList.add(mIOTId);
+        DeviceManager.queryMacByIotId(DetailGatewayActivity.this, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    ViseLog.d("111111111111111111111 \n" + GsonUtil.toJson(DeviceBuffer.getDeviceInformation(mIOTId)));
+                    initData();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(DetailGatewayActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
+    }
+
+    private void initData() {
         mGwMac = DeviceBuffer.getDeviceMac(mIOTId);
         ViseLog.d("mGwMac = " + mGwMac);
         mDevRG.setVisibility(mOwned == 1 ? View.VISIBLE : View.GONE);

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.iot.aep.sdk.login.ILogoutCallback;
+import com.aliyun.iot.aep.sdk.login.LoginBusiness;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
 import com.laffey.smart.model.ERetrofit;
@@ -13,7 +15,9 @@ import com.laffey.smart.model.ItemBindRelation;
 import com.laffey.smart.model.ItemSceneInGateway;
 import com.laffey.smart.presenter.SystemParameter;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.view.IndexActivity;
 import com.laffey.smart.view.LoginActivity;
+import com.laffey.smart.view.StartActivity;
 import com.vise.log.ViseLog;
 
 import java.util.List;
@@ -642,8 +646,27 @@ public class RetrofitUtil {
                 ToastUtils.showLongToast(activity, activity.getString(R.string.pls_try_again_later) + "：\n" + api);
         }
         if (code == 10100) {
-            LoginActivity.start(activity, null);
+            logOut(activity, activity.getString(R.string.account_other_device_login));
         }
+    }
+
+    public static void logOut(Activity activity, String tip) {//todo 其他设备登录后强制退出
+        LoginBusiness.logout(new ILogoutCallback() {
+            @Override
+            public void onLogoutSuccess() {
+                ToastUtils.showToastCentrally(activity, tip);
+                Intent intent = new Intent(activity, StartActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+                activity.finish();
+                activity.overridePendingTransition(0, 0);
+            }
+
+            @Override
+            public void onLogoutFailed(int code, String error) {
+                ToastUtils.showToastCentrally(activity, activity.getString(R.string.account_logout_failed) + ":\n" + error);
+            }
+        });
     }
 
     public static void showErrorMsg(Activity activity, JSONObject response) {
@@ -662,15 +685,14 @@ public class RetrofitUtil {
         }
         int code = response.getInteger("code");
         if (code == 10100) {
-            LoginActivity.start(activity, null);
+            logOut(activity, activity.getString(R.string.account_other_device_login));
         }
     }
 
     public static void showErrorMsg(Activity activity, JSONObject response, Callback callback) {
         int code = response.getInteger("code");
         if (code == 10100) {
-            LoginActivity.start(activity, null);
-            activity.finish();
+            logOut(activity, activity.getString(R.string.account_other_device_login));
         } else if (code == 401) {
             if (mRetryCount <= 2) {
                 mRetryCount++;
@@ -685,21 +707,29 @@ public class RetrofitUtil {
                             SpUtils.putRefreshToken(activity, refreshToken);
                             callback.onNext(response);
                         } else {
-                            LoginActivity.start(activity, null);
-                            activity.finish();
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("code : " + code);
+                            String message = response.getString("message");
+                            String localizedMsg = response.getString("localizedMsg");
+                            if (message != null && message.length() > 0) {
+                                sb.append("\nmessage : " + message);
+                            }
+                            if (localizedMsg != null && localizedMsg.length() > 0) {
+                                sb.append("\nlocalizedMsg : " + localizedMsg);
+                            }
+                            logOut(activity, sb.toString());
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        LoginActivity.start(activity, null);
-                        activity.finish();
+                        String tip = activity.getString(R.string.token_refresh_fail) + "\n" + e.getMessage();
+                        logOut(activity, tip);
                     }
                 });
             } else {
                 mRetryCount = 0;
-                LoginActivity.start(activity, null);
-                activity.finish();
+                logOut(activity, activity.getString(R.string.refresh_token_overdue));
             }
         } else {
             String message = response.getString("message");

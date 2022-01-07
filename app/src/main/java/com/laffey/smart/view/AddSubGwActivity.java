@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.laffey.smart.R;
 import com.laffey.smart.contract.Constant;
@@ -27,6 +28,7 @@ import com.laffey.smart.presenter.DeviceBuffer;
 import com.laffey.smart.presenter.DeviceManager;
 import com.laffey.smart.presenter.SceneManager;
 import com.laffey.smart.presenter.UserCenter;
+import com.laffey.smart.utility.GsonUtil;
 import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.laffey.smart.utility.RetrofitUtil;
 import com.laffey.smart.utility.ToastUtils;
@@ -34,6 +36,8 @@ import com.laffey.smart.widget.DialogUtils;
 import com.vise.log.ViseLog;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddSubGwActivity extends BaseActivity implements View.OnClickListener {
     private ActivityAddSubGwBinding mViewBinding;
@@ -72,6 +76,45 @@ public class AddSubGwActivity extends BaseActivity implements View.OnClickListen
         mViewBinding.subGwNameIv.setOnClickListener(this);
 
         mViewBinding.subGwNameTv.setText(getString(R.string.sub_gateway) + " *" + mSubGwMac.substring(mSubGwMac.length() - 4, mSubGwMac.length()));
+        if (mGwMac == null || mGwMac.length() == 0) {
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
+            queryMac();
+        }
+    }
+
+    private void queryMac() {
+        List<String> iotList = new ArrayList<>();
+        iotList.add(mGwId);
+        DeviceManager.queryMacByIotId(this, iotList, new DeviceManager.Callback() {
+            @Override
+            public void onNext(JSONObject response) {
+                int code = response.getInteger("code");
+                ViseLog.d("iot - mac = \n" + GsonUtil.toJson(response));
+                if (code == 200) {
+                    JSONArray iotIdAndMacList = response.getJSONArray("iotIdAndMacList");
+                    for (int i = 0; i < iotIdAndMacList.size(); i++) {
+                        JSONObject o = iotIdAndMacList.getJSONObject(i);
+                        String iotId = o.getString("iotId");
+                        String mac = o.getString("mac");
+                        if (mGwId.equals(iotId)) {
+                            mGwMac = mac;
+                        }
+                        DeviceBuffer.updateDeviceMac(iotId, mac);
+                    }
+                    QMUITipDialogUtil.dismiss();
+                } else {
+                    QMUITipDialogUtil.dismiss();
+                    RetrofitUtil.showErrorMsg(AddSubGwActivity.this, response, Constant.QUERY_MAC_BY_IOTID);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                ViseLog.e(e);
+                QMUITipDialogUtil.dismiss();
+                ToastUtils.showLongToast(mActivity, e.getMessage() + ":\n" + Constant.QUERY_MAC_BY_IOTID);
+            }
+        });
     }
 
     // 嵌入式状态栏

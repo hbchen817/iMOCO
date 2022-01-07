@@ -173,6 +173,7 @@ public class BindSuccessActivity extends BaseActivity {
                     // 查询用户和设备的关系
                     JSONObject jsonObject = JSON.parseObject((String) msg.obj);
                     mNickName = jsonObject.getString("productName");
+                    if (mNickName == null) break;
                     if (mNickName.contains(getString(R.string.app_brand))) {
                         mNickName = mNickName.replace(getString(R.string.app_brand), getString(R.string.app_brand_show));
                         mUserCenter.setDeviceNickName(mIotId, mNickName, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
@@ -265,7 +266,7 @@ public class BindSuccessActivity extends BaseActivity {
             public void onError(Throwable e) {
                 ViseLog.e(e);
                 QMUITipDialogUtil.dismiss();
-                ToastUtils.showLongToast(BindSuccessActivity.this, e.getMessage()+":\n" + Constant.GW_BIND_TO_PROJECT);
+                ToastUtils.showLongToast(BindSuccessActivity.this, e.getMessage() + ":\n" + Constant.GW_BIND_TO_PROJECT);
             }
         });
     }

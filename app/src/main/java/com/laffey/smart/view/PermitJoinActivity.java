@@ -82,7 +82,7 @@ public class PermitJoinActivity extends BaseActivity {
             } else if (Constant.MSG_PERMITJOIN_TIMEOUT == msg.what) {
                 // 超时处理
                 if (mJoinThread != null)
-                    DialogUtils.showConfirmDialog(PermitJoinActivity.this, R.string.dialog_title, R.string.permitjoin_timeout,
+                    DialogUtils.showConfirmDialogDismiss(PermitJoinActivity.this, R.string.dialog_title, R.string.permitjoin_timeout,
                             R.string.dialog_confirm, new DialogUtils.Callback() {
                                 @Override
                                 public void positive() {
@@ -91,7 +91,7 @@ public class PermitJoinActivity extends BaseActivity {
 
                                 @Override
                                 public void negative() {
-
+                                    finish();
                                 }
                             });
             }

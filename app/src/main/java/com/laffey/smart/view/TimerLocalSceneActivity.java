@@ -1010,9 +1010,8 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
                             boolean result = response.getBoolean("result");
                             if (result) {
                                 QMUITipDialogUtil.dismiss();
-                                if (!Constant.IS_TEST_DATA)
-                                    activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 2,
-                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 2,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
                                 RefreshData.refreshHomeSceneListData();
                                 activity.setResult(Constant.RESULT_CODE_UPDATE_SCENE);
                                 activity.finish();
@@ -1046,9 +1045,8 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
                             boolean result = response.getBoolean("result");
                             if (result) {
                                 QMUITipDialogUtil.dismiss();
-                                if (!Constant.IS_TEST_DATA)
-                                    activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 1,
-                                            activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
+                                activity.mSceneManager.manageSceneService(activity.mGatewayId, sceneId, 1,
+                                        activity.mCommitFailureHandler, activity.mResponseErrorHandler, activity.mHandler);
                                 RefreshData.refreshHomeSceneListData();
                                 activity.setResult(Constant.ADD_LOCAL_SCENE);
                                 activity.finish();
@@ -1189,12 +1187,8 @@ public class TimerLocalSceneActivity extends BaseActivity implements View.OnClic
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 QMUITipDialogUtil.showLoadingDialg(TimerLocalSceneActivity.this, R.string.is_submitted);
-                if (Constant.IS_TEST_DATA) {
-                    mSceneManager.deleteScene(TimerLocalSceneActivity.this, mGatewayMac, sceneId, Constant.MSG_QUEST_DELETE_SCENE, Constant.MSG_QUEST_DELETE_SCENE_ERROR, mHandler);
-                } else {
-                    ViseLog.d("需要删除的场景id = " + mSceneId);
-                    SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
-                }
+                ViseLog.d("需要删除的场景id = " + mSceneId);
+                SceneManager.manageSceneService(mGatewayId, mSceneId, 3, mCommitFailureHandler, mResponseErrorHandler, mHandler);
             }
         }, content, title);
     }

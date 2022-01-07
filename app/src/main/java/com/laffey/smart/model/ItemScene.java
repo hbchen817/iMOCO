@@ -103,90 +103,90 @@ public class ItemScene {
     }
 
     public static class Action {
-        private String Type;
-        private ActionParameter Parameters;
+        private String type;
+        private ActionParameter parameters;
 
         public Action() {
         }
 
         public String getType() {
-            return Type;
+            return type;
         }
 
         public void setType(String type) {
-            Type = type;
+            this.type = type;
         }
 
         public ActionParameter getParameters() {
-            return Parameters;
+            return parameters;
         }
 
         public void setParameters(ActionParameter parameters) {
-            Parameters = parameters;
+            this.parameters = parameters;
         }
 
         public Action(String type, ActionParameter parameters) {
-            Type = type;
-            Parameters = parameters;
+            this.type = type;
+            this.parameters = parameters;
         }
     }
 
     public static class ActionParameter {
-        private String DeviceId;
-        private String EndpointId;
-        private String CommandType;
-        private JSONObject Command;
-        private String SceneId;
+        private String deviceId;
+        private String endpointId;
+        private String commandType;
+        private JSONObject command;
+        private String sceneId;
 
         public ActionParameter() {
         }
 
         public String getDeviceId() {
-            return DeviceId;
+            return deviceId;
         }
 
         public void setDeviceId(String deviceId) {
-            DeviceId = deviceId;
+            this.deviceId = deviceId;
         }
 
         public String getEndpointId() {
-            return EndpointId;
+            return endpointId;
         }
 
         public void setEndpointId(String endpointId) {
-            EndpointId = endpointId;
+            this.endpointId = endpointId;
         }
 
         public String getCommandType() {
-            return CommandType;
+            return commandType;
         }
 
         public void setCommandType(String commandType) {
-            CommandType = commandType;
+            this.commandType = commandType;
         }
 
         public JSONObject getCommand() {
-            return Command;
+            return command;
         }
 
         public void setCommand(JSONObject command) {
-            Command = command;
+            this.command = command;
         }
 
         public String getSceneId() {
-            return SceneId;
+            return sceneId;
         }
 
         public void setSceneId(String sceneId) {
-            SceneId = sceneId;
+            this.sceneId = sceneId;
         }
 
         public ActionParameter(String deviceId, String endpointId, String commandType, JSONObject command, String sceneId) {
-            DeviceId = deviceId;
-            EndpointId = endpointId;
-            CommandType = commandType;
-            Command = command;
-            SceneId = sceneId;
+            this.deviceId = deviceId;
+            this.endpointId = endpointId;
+            this.commandType = commandType;
+            this.command = command;
+            this.sceneId = sceneId;
         }
     }
 

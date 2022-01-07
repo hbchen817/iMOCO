@@ -101,6 +101,8 @@ public class ColorLightDetailActivity extends DetailActivity {
     private String mGatewayId;
     private String mGatewayMac;
 
+    private int mFlag = -1;
+
     private List<ItemSceneInGateway> mItemSceneList = new ArrayList<>();
 
     @Override
@@ -111,10 +113,12 @@ public class ColorLightDetailActivity extends DetailActivity {
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS).length() > 0) {
             mLightness = Integer.parseInt(propertyEntry.getPropertyValue(CTSL.LIGHT_P_BRIGHTNESS));
-            mLightnessText.setText(String.valueOf(mLightness));
-            mLightnessProgressBar.setOnSeekBarChangeListener(null);
-            mLightnessProgressBar.setProgress(mLightness);
-            mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+            if (mLightnessProgressBar.getProgress() == mLightness || mFlag == -1) {
+                mLightnessText.setText(String.valueOf(mLightness));
+                mLightnessProgressBar.setOnSeekBarChangeListener(null);
+                mLightnessProgressBar.setProgress(mLightness);
+                mLightnessProgressBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
+            }
         }
 
         if (propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE) != null && propertyEntry.getPropertyValue(CTSL.LIGHT_P_COLOR_TEMPERATURE).length() > 0) {
@@ -303,9 +307,6 @@ public class ColorLightDetailActivity extends DetailActivity {
                     String gwId = response.getString("gwIotId");
                     if (code == 200) {
                         mGatewayId = gwId;
-                        if (Constant.IS_TEST_DATA) {
-                            mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                        }
                         mGatewayMac = DeviceBuffer.getDeviceMac(mGatewayId);
                         mSceneManager.querySceneList(ColorLightDetailActivity.this, mGatewayMac, "1",
                                 Constant.MSG_QUEST_QUERY_SCENE_LIST, Constant.MSG_QUEST_QUERY_SCENE_LIST_ERROR, mAPIDataHandler);

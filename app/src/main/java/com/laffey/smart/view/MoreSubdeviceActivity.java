@@ -157,7 +157,7 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
                     DeviceBuffer.deleteDevice(mIOTId);
                     RefreshData.refreshDeviceStateDataFromBuffer();
                     SystemParameter.getInstance().setIsRefreshDeviceData(true);
-                    DialogUtils.showConfirmDialog(MoreSubdeviceActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
+                    DialogUtils.showConfirmDialogDismiss(MoreSubdeviceActivity.this, R.string.dialog_title, R.string.dialog_unbind_ok,
                             R.string.dialog_confirm, new DialogUtils.Callback() {
                                 @Override
                                 public void positive() {
@@ -166,7 +166,7 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
 
                                 @Override
                                 public void negative() {
-
+                                    finish();
                                 }
                             });
                     break;
@@ -186,7 +186,8 @@ public class MoreSubdeviceActivity extends BaseActivity implements OnClickListen
                             // 如果自动场景获取结束则开始获取手动场景
                             if (mSceneType.equals(CScene.TYPE_AUTOMATIC)) {
                                 mSceneType = CScene.TYPE_MANUAL;
-                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50, mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
+                                mSceneManager.querySceneList(SystemParameter.getInstance().getHomeId(), mSceneType, 1, 50,
+                                        mCommitFailureHandler, mResponseErrorHandler, mAPIDataHandler);
                             }
                             if (mSceneType.equals(CScene.TYPE_MANUAL)) {
                                 // 数据获取完则设置场景列表数据

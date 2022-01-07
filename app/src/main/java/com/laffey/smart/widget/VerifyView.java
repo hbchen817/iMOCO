@@ -120,8 +120,8 @@ public class VerifyView extends View {
         int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        int w = widthSpecSize;
-        int h = heightSpecSize;
+        int w = 0;
+        int h = 0;
 
         if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
             w = (int) (scaleValue * drawBitmap.getWidth());

@@ -46,6 +46,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
     private ActivityFreeRegistBinding mViewBinding;
 
     private static final int COUNT_DOWN_TAG = 200;
+    private static final int COUNT_DOWN_TIME_TAG = 60;
     private static final String CODE_TYPE = "code_type";
 
     private Typeface mIconFont;
@@ -241,7 +242,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                     if (!"Success!".equals(message)) {
                         ToastUtils.showLongToast(VerifyCodeActivity.this, R.string.frequently_send_and_pls_later);
                     } else {
-                        mCountdownTime = 60;
+                        mCountdownTime = COUNT_DOWN_TIME_TAG;
                         mViewBinding.sendVerifiCodeTv.setText(mCountdownTime + "秒");
                         mViewBinding.sendVerifiCodeTv.setClickable(false);
 
@@ -324,10 +325,15 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
                     Bitmap floatBitmap = base64ToBitmap(floatImage);
 
                     float scaleValue = (float) (QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this) - 120) / mBackgroundBitmap.getWidth();
+                    ViseLog.d("QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this) - 120 = " + (QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this) - 120)
+                            + "\nmBackgroundBitmap.getWidth() = " + mBackgroundBitmap.getWidth()
+                            + "\nscaleValue = " + scaleValue);
                     mVerifyView.setWidthAndHeightAndScaleView(QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this),
                             QMUIDisplayHelper.getScreenHeight(VerifyCodeActivity.this), scaleValue);
 
-                    mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    // mVerifyViewSb.setMax((int) (scaleValue * mBackgroundBitmap.getWidth()));
+                    //mVerifyViewSb.setMax(QMUIDisplayHelper.getScreenWidth(VerifyCodeActivity.this) - 120);
+                    mVerifyViewSb.setMax(100);
                     mVerifyViewSb.setProgress(0);
 
                     mVerifyView.setDrawBitmap(mBackgroundBitmap);
@@ -383,7 +389,7 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
     private final SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            mVerifyView.setMove(progress * 0.001);
+            mVerifyView.setMove(progress * 0.01);
         }
 
         @Override
@@ -398,8 +404,9 @@ public class VerifyCodeActivity extends AppCompatActivity implements View.OnClic
             // 滑动值 = mViewBinding.verifyViewSb.getProgress()
             // 小图片宽度 = mFloatBitmap.getWidth()
             // 真实值 = result
+            // float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
             float result = (float) mVerifyViewSb.getProgress() * mBackgroundBitmap.getWidth() / mVerifyViewSb.getMax();
-            result = result - 10;
+            // result = result - 8;
             QMUITipDialogUtil.showLoadingDialg(VerifyCodeActivity.this, R.string.is_security_verification);
             sendSMSVerifyCode(mViewBinding.phoneNumEt.getText().toString(), mCodeType, String.valueOf(result));
         }

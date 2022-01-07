@@ -21,6 +21,7 @@ import com.laffey.smart.presenter.RealtimeDataParser;
 import com.laffey.smart.presenter.RealtimeDataReceiver;
 import com.laffey.smart.presenter.TSLHelper;
 import com.laffey.smart.utility.GsonUtil;
+import com.laffey.smart.utility.QMUITipDialogUtil;
 import com.vise.log.ViseLog;
 
 public class FreshAirActivity extends DetailActivity {
@@ -49,6 +50,7 @@ public class FreshAirActivity extends DetailActivity {
         // 风速
         if (propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_FreshAir) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_FreshAir).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String windSpeed = propertyEntry.getPropertyValue(CTSL.M3I1_WindSpeed_FreshAir);
             mFanMode = Integer.parseInt(windSpeed);
             refreshFanLayout(mFanMode);
@@ -57,6 +59,7 @@ public class FreshAirActivity extends DetailActivity {
         // 开关
         if (propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir) != null
                 && propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir).length() > 0) {
+            QMUITipDialogUtil.dismiss();
             String powerSwitch = propertyEntry.getPropertyValue(CTSL.M3I1_PowerSwitch_FreshAir);
             mPowerSwitch = Integer.parseInt(powerSwitch);
             refreshPowerSwitchLayout(mPowerSwitch);
@@ -73,7 +76,7 @@ public class FreshAirActivity extends DetailActivity {
         initStatusBar();
         initView();
         mTSLHelper = new TSLHelper(this);
-
+        QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
         // 主动获取设备属性
         new TSLHelper(this).getProperty(this.mIOTId, mCommitFailureHandler, mResponseErrorHandler, new Handler(new Handler.Callback() {
             @Override
@@ -161,18 +164,25 @@ public class FreshAirActivity extends DetailActivity {
     protected void onViewClicked(View view) {
         if (view.getId() == R.id.low_wind_layout) {
             // 低风
-            if (mPowerSwitch == 1)
+            if (mPowerSwitch == 1) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_FreshAir}, new String[]{"" + 1});
+            }
         } else if (view.getId() == R.id.mid_wind_layout) {
             // 中风
-            if (mPowerSwitch == 1)
+            if (mPowerSwitch == 1) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_FreshAir}, new String[]{"" + 2});
+            }
         } else if (view.getId() == R.id.high_wind_layout) {
             // 高风
-            if (mPowerSwitch == 1)
+            if (mPowerSwitch == 1) {
+                QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_WindSpeed_FreshAir}, new String[]{"" + 3});
+            }
         } else if (view.getId() == R.id.switch_layout) {
             // 开关
+            QMUITipDialogUtil.showLoadingDialg(this, R.string.is_loading);
             if (mPowerSwitch == 1) {
                 // 关闭
                 mTSLHelper.setProperty(mIOTId, mProductKey, new String[]{CTSL.M3I1_PowerSwitch_FreshAir}, new String[]{"" + CTSL.STATUS_OFF});
@@ -382,5 +392,11 @@ public class FreshAirActivity extends DetailActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        QMUITipDialogUtil.dismiss();
     }
 }

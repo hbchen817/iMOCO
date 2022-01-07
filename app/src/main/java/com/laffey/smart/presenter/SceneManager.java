@@ -2744,8 +2744,7 @@ public class SceneManager {
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    LoginActivity.start(activity, null);
-                                    activity.finish();
+
                                 }
                             });
                         }

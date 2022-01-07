@@ -142,10 +142,12 @@ public class SwitchLocalSceneListActivity extends BaseActivity {
             @Override
             public void onNext(JSONObject response) {
                 int code = response.getInteger("code");
+                ViseLog.d("删掉原来绑定的自动场景 response = \n" + GsonUtil.toJson(response));
                 if (code == 200) {
                     boolean result = response.getBoolean("result");
                     if (result) {
                         String sceneId = response.getString("sceneId");
+                        // String sceneId = DeviceBuffer.getSceneByCid(mSceneId, mKeyCode).getSceneDetail().getSceneId();
                         DeviceBuffer.removeScene(sceneId);
 
                         // bindKeyScene(mBindPos);

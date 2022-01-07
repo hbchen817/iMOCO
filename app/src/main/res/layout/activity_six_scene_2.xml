@@ -197,7 +197,8 @@
             android:layout_marginHorizontal="@dimen/dp_20"
             android:layout_marginTop="@dimen/dp_30"
             android:background="@drawable/key_status_background"
-            android:paddingLeft="@dimen/dp_20">
+            android:paddingLeft="@dimen/dp_20"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/battery_tv"

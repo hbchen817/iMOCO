@@ -212,9 +212,6 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
 
     // 获取面板所属网关iotId
     private void getGatewayId(String iotId) {
-        if (Constant.IS_TEST_DATA) {
-            iotId = "y6pVEun2KgQ6wMlxLdLhdTtYmY";
-        }
         mSceneManager.getGWIotIdBySubIotId(this, iotId, Constant.MSG_QUEST_GW_ID_BY_SUB_ID,
                 Constant.MSG_QUEST_GW_ID_BY_SUB_ID_ERROR, mMyHandler);
     }
@@ -611,14 +608,11 @@ public class FourSceneSwitchActivity2 extends DetailActivity {
                     String gwId = response.getString("gwIotId");
                     if (code == 200) {
                         activity.mGatewayId = gwId;
-                        if (Constant.IS_TEST_DATA) {
-                            activity.mGatewayId = DeviceBuffer.getGatewayDevs().get(0).iotId;
-                        }
                         activity.mGatewayMac = DeviceBuffer.getDeviceMac(activity.mGatewayId);
                         activity.querySceneName();
                     } else {
                         QMUITipDialogUtil.dismiss();
-                        RetrofitUtil.showErrorMsg(activity, response);
+                        RetrofitUtil.showErrorMsg(activity, response, Constant.QUERY_GW_ID_BY_SUB_ID);
                     }
                     break;
                 }

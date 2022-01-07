@@ -164,6 +164,7 @@ public class LocalConditionValueActivity extends BaseActivity {
     }
 
     private void initIdentifierObject(JSONObject abilityDsl) {
+        ViseLog.d("abilityDsl = \n" + GsonUtil.toJson(abilityDsl));
         JSONArray properties = abilityDsl.getJSONArray("properties");
         JSONArray events = abilityDsl.getJSONArray("events");
         // ViseLog.d("properties = \n" + GsonUtil.toJson(properties));
@@ -1222,7 +1223,7 @@ public class LocalConditionValueActivity extends BaseActivity {
         }
         mIsRun = false;
         mECondition.setTarget("LocalSceneActivity");
-        // ViseLog.d("结果 = " + GsonUtil.toJson(mECondition));
+        ViseLog.d("结果 = " + GsonUtil.toJson(mECondition));
         EventBus.getDefault().postSticky(mECondition);
 
         Intent intent = new Intent(this, LocalSceneActivity.class);
